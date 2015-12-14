@@ -29,11 +29,6 @@
     // Do any additional setup after loading the view.
     self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Bkgnd"]];
     
-    // Init reveal view controller
-    if ( self == [self.navigationController.viewControllers objectAtIndex:0] ) {
-        [self initSidebarDrawerButton];
-    }
-    
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
@@ -92,7 +87,6 @@
 {
     [super viewWillAppear:animated];
     [self updateNavigationBarButtons];
-    [self updateVipPoints];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -199,39 +193,6 @@
 - (void)onBtnLogin:(id)sender {
     LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
     [self.navigationController pushViewController:loginController animated:YES];
-}
-
-- (void)onBtnFriends:(id)sender {
-    [self clearNavigationBarSubviews];
-    self.title = @"";
-
-    FriendListViewController *friendController = [[FriendListViewController alloc] initWithNibName:@"FriendListViewController" bundle:nil];
-    [self.navigationController pushViewController:friendController animated:YES];
-}
-
-- (void)onBtnMessages:(id)sender {
-    [self clearNavigationBarSubviews];
-    self.title = @"";
-
-    MessageViewController *messageController = [[MessageViewController alloc] initWithNibName:@"MessageViewController" bundle:nil];
-    [self.navigationController pushViewController:messageController animated:YES];
-}
-
-- (IBAction)openMemberInfo:(id)sender
-{
-    SWRevealViewController *revealController = self.revealViewController;
-    
-    AppDelegate *appDelegate = (AppDelegate*)[UIApplication sharedApplication].delegate;
-    MemberInfoViewController *memberInfoViewController = appDelegate.memberInfoViewController;
-    
-    UINavigationController *frontNavigationController = [[UINavigationController alloc] initWithRootViewController:memberInfoViewController];
-    [revealController pushFrontViewController:frontNavigationController animated:YES];
-}
-
-- (void)updateVipPoints {
-    WebService *ws = [[WebService alloc] init];
-    [ws searchLastPointValue:[g_MemberInfo objectForKey:INFO_KEY_ACCKEY]];
-    [ws setDelegate:self];
 }
 
 //==================================================================

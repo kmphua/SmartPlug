@@ -1,5 +1,5 @@
 //
-//  ChangePasswordViewController.h
+//  ResetPasswordViewController.h
 //  PosApp
 //
 //  Created by Kevin Phua on 9/8/15.
@@ -10,6 +10,6 @@
 #import "BaseViewController.h"
 #import "WebService.h"
 
-@interface ChangePasswordViewController : BaseViewController <WebServiceDelegate>
+@interface ResetPasswordViewController : BaseViewController <WebServiceDelegate>
 
 @end

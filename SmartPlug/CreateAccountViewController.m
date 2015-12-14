@@ -1,12 +1,12 @@
 //
-//  SignupViewController.m
+//  CreateAccountViewController.m
 //  PosApp
 //
 //  Created by Kevin Phua on 9/8/15.
 //  Copyright (c) 2015 hagarsoft. All rights reserved.
 //
 
-#import "SignupViewController.h"
+#import "CreateAccountViewController.h"
 #import "Global.h"
 
 #define STEP_1              0
@@ -16,7 +16,7 @@
 
 #define LABEL_FONT_SIZE     18.0
 
-@interface SignupViewController ()
+@interface CreateAccountViewController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) UITextField *txtPhoneNumber;
@@ -32,7 +32,7 @@
 
 @end
 
-@implementation SignupViewController
+@implementation CreateAccountViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

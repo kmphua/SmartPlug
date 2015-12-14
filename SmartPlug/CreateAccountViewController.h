@@ -1,5 +1,5 @@
 //
-//  SignupViewController.h
+//  CreateAccountViewController.h
 //  PosApp
 //
 //  Created by Kevin Phua on 9/8/15.
@@ -9,6 +9,6 @@
 #import <UIKit/UIKit.h>
 #import "WebService.h"
 
-@interface SignupViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, WebServiceDelegate>
+@interface CreateAccountViewController : UIViewController <UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, WebServiceDelegate>
 
 @end

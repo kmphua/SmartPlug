@@ -8,6 +8,13 @@
 
 #import "AppDelegate.h"
 
+BOOL g_IsLogin;
+BOOL g_IsOnline;
+NSString *g_MemberPhone;
+NSString *g_MemberPassword;
+NSMutableDictionary *g_MemberInfo;
+
+
 @interface AppDelegate ()
 
 @end

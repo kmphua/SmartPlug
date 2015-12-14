@@ -1,17 +1,17 @@
 //
-//  ChangePasswordViewController.m
+//  ResetPasswordViewController.m
 //  PosApp
 //
 //  Created by Kevin Phua on 9/8/15.
 //  Copyright (c) 2015 hagarsoft. All rights reserved.
 //
 
-#import "ChangePasswordViewController.h"
-#import "SignupViewController.h"
+#import "ResetPasswordViewController.h"
+#import "CreateAccountViewController.h"
 #import "CustomBadge.h"
 #import "Global.h"
 
-@interface ChangePasswordViewController ()
+@interface ResetPasswordViewController ()
 
 @property (weak, nonatomic) IBOutlet UITextField *txtOldPassword;
 @property (weak, nonatomic) IBOutlet UITextField *txtNewPassword;
@@ -19,7 +19,7 @@
 
 @end
 
-@implementation ChangePasswordViewController
+@implementation ResetPasswordViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];

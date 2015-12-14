@@ -7,7 +7,7 @@
 //
 
 #import "LoginViewController.h"
-#import "SignupViewController.h"
+#import "CreateAccountViewController.h"
 #import "CustomBadge.h"
 #import "Global.h"
 
@@ -105,8 +105,8 @@
         
         // Based on the attributes, do something
         if ([attributes objectForKey:@"loadSignUpPage"]) {
-            SignupViewController *signupController = [[SignupViewController alloc] initWithNibName:@"SignupViewController" bundle:nil];
-            [self.navigationController pushViewController:signupController animated:YES];
+            CreateAccountViewController *createAcctController = [[CreateAccountViewController alloc] initWithNibName:@"CreateAccountViewController" bundle:nil];
+            [self.navigationController pushViewController:createAcctController animated:YES];
         }
     }
 }
