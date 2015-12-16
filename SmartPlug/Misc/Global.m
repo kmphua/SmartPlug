@@ -1,6 +1,6 @@
 //
 //  Global.m
-//  PosApp
+//  SmartPlug
 //
 //  Created by Kevin Phua on 9/16/15.
 //  Copyright (c) 2015 hagarsoft. All rights reserved.
@@ -15,26 +15,39 @@
 {
     UIColor *color;
     switch (type) {
-        case COLOR_TYPE_TEXTBOX_BG:
-        case COLOR_TYPE_BUTTON_UP:
+        case COLOR_TYPE_NAVBAR_BG:
         {
-            color = [UIColor colorWithRed:181/255.0f green:181/255.0f blue:181/255.0f alpha:1.0f];
+            color = [UIColor colorWithRed:79/255.0f green:171/255.0f blue:167/255.0f alpha:1.0f];
+            break;
+        }
+        case COLOR_TYPE_DEFAULT_BG:
+        {
+            color = [UIColor colorWithRed:239/255.0f green:244/255.0f blue:244/255.0f alpha:1.0f];
             break;
         }
         case COLOR_TYPE_LINK:
-        case COLOR_TYPE_BUTTON_DOWN:
         {
-            color = [UIColor colorWithRed:252/255.0f green:184/255.0f blue:48/255.0f alpha:1.0f];
+            color = [UIColor darkGrayColor];
             break;
         }
-        case COLOR_TYPE_LIST_BG:
+        case COLOR_TYPE_TITLE_BG_BLUE:
         {
-            color = [UIColor colorWithRed:160/255.0f green:160/255.0f blue:160/255.0f alpha:0.7f];
+            color = [UIColor colorWithRed:91/255.0f green:181/255.0f blue:206/255.0f alpha:1.0f];
             break;
         }
-        case COLOR_TYPE_BODY_BG:
+        case COLOR_TYPE_TITLE_BG_RED:
         {
-            color = [UIColor colorWithRed:255/255.0f green:255/255.0f blue:255/255.0f alpha:0.2f];
+            color = [UIColor colorWithRed:253/255.0f green:98/255.0f blue:94/255.0f alpha:1.0f];
+            break;
+        }
+        case COLOR_TYPE_TITLE_BG_GREEN:
+        {
+            color = [UIColor colorWithRed:136/255.0f green:186/255.0f blue:63/255.0f alpha:1.0f];
+            break;
+        }
+        case COLOR_TYPE_TITLE_BG_YELLOW:
+        {
+            color = [UIColor colorWithRed:255/255.0f green:190/255.0f blue:21/255.0f alpha:1.0f];
             break;
         }
         default:
@@ -78,6 +91,12 @@
     CGImageRelease(bitmapImage);
     
     return scaledImage;
+}
+
++ (NSString *)getCurrentLang {
+    //NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+    //return language;
+    return @"en";
 }
 
 @end

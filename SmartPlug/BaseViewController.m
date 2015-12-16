@@ -14,11 +14,6 @@
 
 @interface BaseViewController ()<WebServiceDelegate>
 
-@property (nonatomic, strong) UIButton *btnFriends;
-@property (nonatomic, strong) UIButton *btnMessages;
-@property (nonatomic, strong) UILabel *lblName;
-@property (nonatomic, strong) UILabel *lblPoints;
-
 @end
 
 @implementation BaseViewController
@@ -27,7 +22,9 @@
     [super viewDidLoad];
 
     // Do any additional setup after loading the view.
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Bkgnd"]];
+    self.navigationItem.title = @"";
+    self.navigationItem.titleView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"logo"]];
+    self.view.backgroundColor = [Global colorWithType:COLOR_TYPE_DEFAULT_BG];
     
     CGRect screenRect = [[UIScreen mainScreen] bounds];
     CGFloat screenWidth = screenRect.size.width;
@@ -99,94 +96,16 @@
         // Setup navigation status bar with member info and messages
         int navBarWidth = self.navigationController.navigationBar.frame.size.width;
         
-        UITapGestureRecognizer *tapGestureMemberInfo = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(openMemberInfo:)];
-        
-        // Member name
-        if (!_lblName) {
-            _lblName = [[UILabel alloc] initWithFrame:CGRectMake(60, 0, 200, 25)];
-            _lblName.textColor = [UIColor whiteColor];
-            _lblName.font = [UIFont systemFontOfSize:14.0];
-            _lblName.userInteractionEnabled = YES;
-            [_lblName addGestureRecognizer:tapGestureMemberInfo];
-        }
-        _lblName.text = [g_MemberInfo objectForKey:INFO_KEY_NAME];
-        [self.navigationController.navigationBar addSubview:_lblName];
-        
-        // Member points
-        if (!_lblPoints) {
-            _lblPoints = [[UILabel alloc] initWithFrame:CGRectMake(60, 20, 200, 25)];            
-            _lblPoints.textColor = [UIColor whiteColor];
-            _lblPoints.font = [UIFont systemFontOfSize:14.0];
-            _lblPoints.userInteractionEnabled = YES;
-            [_lblPoints addGestureRecognizer:tapGestureMemberInfo];
-        }
-        int points = [[g_MemberInfo objectForKey:INFO_KEY_LAST_POINT] intValue];
-        _lblPoints.text = [NSString stringWithFormat:@"%@:%d",
-                           NSLocalizedString(@"MemberPoints", nil),
-                           points];
-        [self.navigationController.navigationBar addSubview:_lblPoints];
-        
-        // Friends button
-        if (!_btnFriends) {
-            _btnFriends = [UIButton buttonWithType:UIButtonTypeCustom];
-            [_btnFriends setImage:[UIImage imageNamed:@"ic_menu_friends"] forState:UIControlStateNormal];
-            [_btnFriends addTarget:self action:@selector(onBtnFriends:) forControlEvents:UIControlEventTouchUpInside];
-            _btnFriends.frame = CGRectMake(navBarWidth-90, 8, 32, 32);
-            [_btnFriends.titleLabel setHidden:YES];
-        }
-        [self.navigationController.navigationBar addSubview:_btnFriends];
-        
-        // Messages button
-        if (!_btnMessages) {
-            _btnMessages = [UIButton buttonWithType:UIButtonTypeCustom];
-            [_btnMessages setImage:[UIImage imageNamed:@"Ic_menu_msg"] forState:UIControlStateNormal];
-            [_btnMessages addTarget:self action:@selector(onBtnMessages:) forControlEvents:UIControlEventTouchUpInside];
-            _btnMessages.frame = CGRectMake(navBarWidth-42, 8, 32, 32);
-            [_btnMessages.titleLabel setHidden:YES];
-        }
-        [self.navigationController.navigationBar addSubview:_btnMessages];
-        
         self.navigationItem.rightBarButtonItem = nil;
     } else {
+        /*
         UIBarButtonItem *btnLogin = [[UIBarButtonItem alloc]
                                      initWithTitle:NSLocalizedString(@"MemberLogin", nil)
                                      style:UIBarButtonItemStyleBordered
                                      target:self
                                      action:@selector(onBtnLogin:)];
         self.navigationItem.rightBarButtonItem = btnLogin;
-        
-        if (_btnFriends) {
-            [_btnFriends removeFromSuperview];
-            _btnFriends = nil;
-        }
-        if (_btnMessages) {
-            [_btnMessages removeFromSuperview];
-            _btnMessages = nil;
-        }
-    }
-}
-
-- (void)clearNavigationBarSubviews {
-    if (_lblName) {
-        [_lblName removeFromSuperview];
-    }
-    if (_lblPoints) {
-        [_lblPoints removeFromSuperview];
-    }
-    if (_btnFriends) {
-        [_btnFriends removeFromSuperview];
-    }
-    if (_btnMessages) {
-        [_btnMessages removeFromSuperview];
-    }
-}
-
-- (void)clearNavigationBarButtons {
-    if (_btnFriends) {
-        [_btnFriends removeFromSuperview];
-    }
-    if (_btnMessages) {
-        [_btnMessages removeFromSuperview];
+         */
     }
 }
 
@@ -212,27 +131,6 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName compare:WS_SEARCH_LAST_POINT_VALUE] == NSOrderedSame) {
-            long code = [[jsonObject objectForKey:@"code"] longValue];
-            if (code == 0) {
-                // Success
-                NSString *vipPoint = (NSString *)[jsonObject objectForKey:@"vip_point"];
-                if (vipPoint && vipPoint.length > 0) {
-                    [g_MemberInfo setObject:vipPoint forKey:INFO_KEY_LAST_POINT];
-                }
-                [self updateNavigationBarButtons];
-                
-            } else {
-                // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        }
     }
 }
 

@@ -10,7 +10,7 @@
 "id_password" = "Password";
 "btn_login" = "Login";
 "lnk_createAccount" = "Create Account";
-"lnk_forgetPassword" = "Forget Password";
+"lnk_forgetPassword" = "Forgot Password";
 "title_passwordResetSent" = "Password Reset Sent";
 "msg_passwordResetBtn" = "Password reset details has been sent to your email, please check the email for further instructions.";
 "title_resetPassword" = "Reset Password";
@@ -23,7 +23,7 @@
 "msg_accountCreatedBtn" = "Please check your e-mail for the activation url. This account will be disable after 7 days if you do not activate it. In the meantime, you may start using the account.";
 "id_createAccount" = "Create Account";
 "msg_enterEmail" = "Enter Your Email";
-"id_ email" = "Email";
+"id_email" = "Email";
 "msg_enterNewPassword" = "Enter A New Password";
 "msg_confirmPassword" = "Confirm Password";
 "btn_main" = "Main";

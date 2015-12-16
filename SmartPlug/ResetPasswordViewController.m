@@ -1,6 +1,6 @@
 //
 //  ResetPasswordViewController.m
-//  PosApp
+//  SmartPlug
 //
 //  Created by Kevin Phua on 9/8/15.
 //  Copyright (c) 2015 hagarsoft. All rights reserved.
@@ -13,9 +13,11 @@
 
 @interface ResetPasswordViewController ()
 
-@property (weak, nonatomic) IBOutlet UITextField *txtOldPassword;
-@property (weak, nonatomic) IBOutlet UITextField *txtNewPassword;
-@property (weak, nonatomic) IBOutlet UIButton *btnChangePassword;
+@property (weak, nonatomic) IBOutlet UIView *bgView;
+@property (weak, nonatomic) IBOutlet UILabel *lblTitle;
+@property (weak, nonatomic) IBOutlet UILabel *lblUsername;
+@property (weak, nonatomic) IBOutlet UITextField *txtUsername;
+@property (weak, nonatomic) IBOutlet UIButton *btnSubmit;
 
 @end
 
@@ -25,12 +27,14 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view from its nib.
-    self.title = NSLocalizedString(@"ChangePassword", nil);
+    self.bgView.layer.cornerRadius = CORNER_RADIUS;
+    self.lblTitle.text = NSLocalizedString(@"title_resetPassword", nil);
+    self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_BLUE];
+    self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
-    self.txtOldPassword.placeholder = NSLocalizedString(@"OldPassword", nil);
-    self.txtNewPassword.placeholder = NSLocalizedString(@"NewPassword", nil);
-    
-    [self.btnChangePassword setTitle:NSLocalizedString(@"ChangePassword", nil) forState:UIControlStateNormal];
+    self.lblUsername.text = NSLocalizedString(@"msg_enterNewUserName", nil);
+    self.txtUsername.placeholder = NSLocalizedString(@"id_username", nil);
+    [self.btnSubmit setTitle:NSLocalizedString(@"btn_submit", nil) forState:UIControlStateNormal];
     
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
     [self.view addGestureRecognizer:tapView];
@@ -41,21 +45,40 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (IBAction)onBtnChangePassword:(id)sender {
-    WebService *ws = [[WebService alloc] init];
-    [ws setDelegate:self];
-    
-    NSString *vipId = [g_MemberInfo objectForKey:INFO_KEY_VIPID];
-    NSString *acckey = [g_MemberInfo objectForKey:INFO_KEY_ACCKEY];
-    
-    [ws changePassword:vipId acckey:acckey oldpass:self.txtOldPassword.text password:self.txtNewPassword.text];
-    [ws showWaitingView:self.view];
-}
-
 - (void)onTapView:(UITapGestureRecognizer *)tapGesture
 {
     // Dismiss keyboard
     [self.view endEditing:YES];
+}
+
+- (BOOL)checkInputFields
+{
+    if (self.txtUsername.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Error"
+                                              message:@"Username field is empty"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    
+    return YES;
+}
+
+- (IBAction)onBtnSubmit:(id)sender
+{
+    if (![self checkInputFields]) {
+        return;
+    }
+    
+    /*
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws newUser:self.txtUsername.text password:self.txtPassword.text email:self.txtEmail.text lang:[Global getCurrentLang]];
+    [ws showWaitingView:self.view];
+     */
 }
 
 //==================================================================
@@ -76,7 +99,7 @@
         NSLog(@"jsonDict - %@", jsonDict);
         
         long code = [[jsonObject objectForKey:@"code"] longValue];
-        if ([resultName compare:WS_CHANGE_PASSWORD] == NSOrderedSame) {
+        if ([resultName compare:WS_CHANGE_PWD] == NSOrderedSame) {
             if (code == 0) {
                 // Success
                 NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
@@ -86,10 +109,6 @@
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
-                
-                // Save new password
-                [[NSUserDefaults standardUserDefaults] setObject:_txtNewPassword.text forKey:UD_KEY_PASSWORD];
-                [[NSUserDefaults standardUserDefaults] synchronize];
                 
                 // Go back
                 [self.navigationController popViewControllerAnimated:YES];
@@ -105,26 +124,7 @@
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
             }
-        } else if ([resultName compare:WS_SEARCH_LAST_POINT_VALUE] == NSOrderedSame) {
-            long code = [[jsonObject objectForKey:@"code"] longValue];
-            if (code == 0) {
-                // Success
-                NSString *vipPoint = (NSString *)[jsonObject objectForKey:@"vip_point"];
-                if (vipPoint && vipPoint.length > 0) {
-                    [g_MemberInfo setObject:vipPoint forKey:INFO_KEY_LAST_POINT];
-                }
-                [self updateNavigationBarButtons];
-            } else {
-                // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        }
+        } 
     }
 }
 

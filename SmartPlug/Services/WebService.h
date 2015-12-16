@@ -8,45 +8,32 @@
 
 #import <UIKit/UIKit.h>
 
-#define MEMBER_SERVER_URL           @"http://posapp.hihost.com.tw/webservice/member/"
-#define PRODUCT_SERVER_URL          @"http://posapp.hihost.com.tw/webservice/product/"
-#define BASIC_SERVER_URL            @"http://posapp.hihost.com.tw/webservice/basic/"
-#define TICKET_SERVER_URL           @"http://posapp.hihost.com.tw/webservice/ticket/"
+#define SERVER_URL                  @"http://182.234.253.236:7001/api/"
 
-#define PRODUCT_IMAGE_PATH          @"http://posapp.hihost.com.tw/public/product00/"
-#define NEWS_IMAGE_PATH             @"http://posapp.hihost.com.tw/public/newsinfo/"
+#define WS_LONG_POLL                @"longpoll"
 
+#define WS_NEW_USER                 @"newuser"
+#define WS_VERIFY_ACCT              @"verifyacct"
 #define WS_LOGIN                    @"login"
-#define WS_REGISTER                 @"register"
-#define WS_AUTH                     @"auth"
-#define WS_SET_PASSWORD             @"set_pass"
-#define WS_CHANGE_PASSWORD          @"pass_change"
-#define WS_REGISTER_DEVICE          @"register_device"
+#define WS_CHANGE_PWD               @"changepwd"
+#define WS_REG_PUSH                 @"regpush"
+#define WS_ACT_DEV                  @"actdev"
 
-#define WS_GET_DEPARTMENT           @"get_department"
-#define WS_UPDATE_DEPARTMENT        @"update_department"
-#define WS_GET_PRODUCT              @"get_product"
-#define WS_UPDATE_PRODUCT           @"update_product"
-#define WS_GET_FRIEND_LIST          @"get_friend_list"
-#define WS_INVITE_FRIEND            @"invite"
-#define WS_FRIEND_AGREE             @"friend_agree"
-#define WS_FRIEND_DENY              @"friend_deny"
-#define WS_FRIEND_DELETE            @"friend_delete"
+#define WS_DEV_CTRL                 @"devctrl"
+#define WS_DEV_LIST                 @"devlist"
+#define WS_DEV_GET                  @"devget"
+#define WS_DEV_SET                  @"devset"
+#define WS_DEV_LOG                  @"devlog"
 
-#define WS_SEARCH_LAST_POINT_VALUE  @"SearchLastPointValue"
-#define WS_VIP_POINT_MOVE_SHOP      @"VipPointMove_Shop"
-#define WS_GET_TICKET_LIST          @"get_ticket_list"
-#define WS_TICKET_GIFT              @"ticket_gift"
-#define WS_USE_TICKET               @"use_ticket"
-#define WS_RECEIVE_TICKET           @"receive_ticket"
-#define WS_UPDATE_TICKET_RULE       @"update_ticket_rule"
-#define WS_UPDATE_TICKET            @"update_ticket"
-#define WS_GET_VIP_BONUS_LIST       @"GetVipBonusList"
+#define WS_GALLERY_LIST             @"gallerylist"  //??
 
-#define WS_GET_NEWS                 @"get_news"
-#define WS_GET_MESSAGE_LIST         @"get_message_list"
-#define WS_READ_MESSAGE             @"read_message"
-#define WS_GET_PAGE_LIST            @"get_page_list"
+typedef enum {
+    ICON_RES_1x = 0,
+    ICON_RES_1_5x,
+    ICON_RES_2x,
+    ICON_RES_3x,
+    ICON_RES_4x
+} IconResolution;
 
 @protocol WebServiceDelegate <NSObject>
 
@@ -63,39 +50,21 @@
 - (void)showWaitingView:(UIView*)parentView;
 - (void)dismissWaitingView;
 
-- (void)login:(NSString *)sid password:(NSString *)password;
-- (void)registerAccount:(NSString *)sid;
-- (void)authenticate:(NSString *)sid authCode:(NSString *)authCode;
-- (void)setPassword:(NSString *)vipId acckey:(NSString *)acckey password:(NSString *)password;
-- (void)changePassword:(NSString *)vipId acckey:(NSString *)acckey
-               oldpass:(NSString *)oldpass password:(NSString *)password;
-- (void)registerDevice:(NSString *)acckey deviceId:(NSString *)deviceId;
+- (void)longPoll:(NSString *)deviceId;
 
-- (void)getDepartment:(NSString *)acckey;
-- (void)updateDepartment:(NSString *)data;
-- (void)getProduct:(NSString *)acckey deptId:(NSString *)deptId;
-- (void)updateProduct:(NSString *)data;
+- (void)newUser:(NSString *)username password:(NSString *)password email:(NSString *)email lang:(NSString *)lang;
+- (void)verifyAcct:(NSString *)username verificationKey:(NSString *)verificationKey lang:(NSString *)lang;
+- (void)login:(NSString *)username password:(NSString *)password lang:(NSString *)lang;
+- (void)changePassword:(NSString *)username password:(NSString *)password lang:(NSString *)lang;
+- (void)regPush:(NSString *)userToken lang:(NSString *)lang devToken:(NSString *)devToken;
+- (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 
-- (void)getFriendList:(NSString *)acckey;
-- (void)inviteFriend:(NSString *)acckey fId:(NSString *)fId;
-- (void)friendAgree:(NSString *)acckey fId:(NSString *)fId;
-- (void)friendDeny:(NSString *)acckey fId:(NSString *)fId;
-- (void)friendDelete:(NSString *)acckey fId:(NSString *)fId;
-
-- (void)searchLastPointValue:(NSString *)acckey;
-- (void)vipPointMoveShop:(NSString *)acckey fId:(NSString *)fId point:(NSString *)point;
-- (void)getTicketList:(NSString *)acckey;
-- (void)ticketGift:(NSString *)acckey fId:(NSString *)fId serno:(NSString *)serno tkno:(NSString *)tkno;
-- (void)useTicket:(NSString *)acckey tkno:(NSString *)tkno;
-- (void)receiveTicket:(NSString *)acckey tkno:(NSString *)tkno;
-- (void)updateTicket:(NSString *)data;
-- (void)updateTicketRule:(NSString *)data;
-- (void)getVipBonusList:(NSString *)acckey;
-
-- (void)getNews:(NSString *)acckey;
-- (void)getMessageList:(NSString *)acckey;
-- (void)readMessage:(NSString *)acckey infoId:(NSString *)infoId;
-- (void)getPageList:(NSString *)acckey;
+- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId isReply:(BOOL)isReply;
+- (void)devList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
+- (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
+- (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger;
+- (void)devLog:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
+- (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
 
 @end
 

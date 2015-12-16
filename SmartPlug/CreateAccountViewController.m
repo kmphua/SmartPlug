@@ -1,6 +1,6 @@
 //
 //  CreateAccountViewController.m
-//  PosApp
+//  SmartPlug
 //
 //  Created by Kevin Phua on 9/8/15.
 //  Copyright (c) 2015 hagarsoft. All rights reserved.
@@ -9,26 +9,24 @@
 #import "CreateAccountViewController.h"
 #import "Global.h"
 
-#define STEP_1              0
-#define STEP_2              1
-#define STEP_3              2
-#define STEP_4              3
-
-#define LABEL_FONT_SIZE     18.0
+#define kOFFSET_FOR_KEYBOARD 80.0
 
 @interface CreateAccountViewController ()
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) UITextField *txtPhoneNumber;
-@property (strong, nonatomic) UITextField *txtVerificationCode;
-@property (strong, nonatomic) UITextField *txtPassword;
-@property (strong, nonatomic) UITextField *txtConfirmPassword;
+@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
+@property (weak, nonatomic) IBOutlet UIView *bgView;
+@property (weak, nonatomic) IBOutlet UILabel *lblTitle;
+@property (weak, nonatomic) IBOutlet UILabel *lblEmail;
+@property (weak, nonatomic) IBOutlet UILabel *lblUsername;
+@property (weak, nonatomic) IBOutlet UILabel *lblPassword;
+@property (weak, nonatomic) IBOutlet UILabel *lblConfirmPassword;
+@property (weak, nonatomic) IBOutlet UITextField *txtEmail;
+@property (weak, nonatomic) IBOutlet UITextField *txtUsername;
+@property (weak, nonatomic) IBOutlet UITextField *txtPassword;
+@property (weak, nonatomic) IBOutlet UITextField *txtConfirmPassword;
+@property (weak, nonatomic) IBOutlet UIButton *btnSubmit;
 
-@property (nonatomic, strong) NSArray *headers;
-@property (nonatomic) int currentStep;
-
-@property (nonatomic, strong) NSString *phoneNumber;
-@property (nonatomic, strong) NSString *verificationCode;
+@property (strong, nonatomic) UITextField *activeField;
 
 @end
 
@@ -38,73 +36,52 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view from its nib.
-    self.view.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"Bkgnd"]];
-    self.title = NSLocalizedString(@"RegisterAccount", nil);
+    self.bgView.layer.cornerRadius = CORNER_RADIUS;
+    self.lblTitle.text = NSLocalizedString(@"lnk_createAccount", nil);
+    self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_BLUE];
+    self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
-    self.headers = [NSArray arrayWithObjects:NSLocalizedString(@"StepOne", nil),
-                    NSLocalizedString(@"StepTwo", nil),
-                    NSLocalizedString(@"StepThree", nil),
-                    NSLocalizedString(@"StepFour", nil), nil];
-    
-    self.tableView.delegate = self;
-    self.tableView.dataSource = self;
-    self.tableView.backgroundColor = [UIColor clearColor];
-    
-    self.currentStep = STEP_1;
+    self.lblEmail.text = NSLocalizedString(@"msg_enterEmail", nil);
+    self.txtEmail.placeholder = NSLocalizedString(@"id_email", nil);
+    self.lblUsername.text = NSLocalizedString(@"msg_enterNewUserName", nil);
+    self.txtUsername.placeholder = NSLocalizedString(@"id_username", nil);
+    self.lblPassword.text = NSLocalizedString(@"msg_enterNewPassword", nil);
+    self.txtPassword.placeholder = NSLocalizedString(@"id_password", nil);
+    self.lblConfirmPassword.text = NSLocalizedString(@"msg_confirmPassword", nil);
+    self.txtConfirmPassword.placeholder = NSLocalizedString(@"id_password", nil);
+    [self.btnSubmit setTitle:NSLocalizedString(@"btn_submit", nil) forState:UIControlStateNormal];
     
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
     [self.view addGestureRecognizer:tapView];
 }
 
-- (void)viewDidAppear:(BOOL)animated {
-    self.phoneNumber = @"";
-    self.verificationCode = @"";
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    // register for keyboard notifications
+    [self registerForKeyboardNotifications];
+    
+    [self.scrollView sizeToFit];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    // unregister for keyboard notifications while not visible.
+    [self deregisterForKeyboardNotifications];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (NSAttributedString *)attributedResendString
-{
-    NSMutableAttributedString *paragraph = [[NSMutableAttributedString alloc] initWithString:NSLocalizedString(@"NotReceivedVerCode", nil) attributes:@{NSForegroundColorAttributeName:[UIColor whiteColor],                                                                                  NSFontAttributeName:[UIFont systemFontOfSize:18]}];
-    
-    NSAttributedString* attributedString1 = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"SendAgain", nil)
-                                                                            attributes:@{NSForegroundColorAttributeName:[Global colorWithType:COLOR_TYPE_LINK],NSFontAttributeName:[UIFont systemFontOfSize:18], NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle),  @"resendVerCode": @(YES)}];
-    
-    [paragraph appendAttributedString:attributedString1];
-    return [paragraph copy];
-}
-
-- (void)onTapResend:(UITapGestureRecognizer *)tapGesture
-{
-    UITextView *textView = (UITextView *)tapGesture.view;
-    
-    // Location of the tap in text-container coordinates
-    NSLayoutManager *layoutManager = textView.layoutManager;
-    CGPoint location = [tapGesture locationInView:textView];
-    location.x -= textView.textContainerInset.left;
-    location.y -= textView.textContainerInset.top;
-    
-    //NSLog(@"location: %@", NSStringFromCGPoint(location));
-    
-    // Find the character that's been tapped on
-    NSUInteger characterIndex;
-    characterIndex = [layoutManager characterIndexForPoint:location
-                                           inTextContainer:textView.textContainer
-                  fractionOfDistanceBetweenInsertionPoints:NULL];
-    
-    if (characterIndex < textView.textStorage.length) {
-        NSRange range;
-        NSDictionary *attributes = [textView.textStorage attributesAtIndex:characterIndex effectiveRange:&range];
-        //NSLog(@"%@, %@", attributes, NSStringFromRange(range));
-        
-        // Based on the attributes, do something
-        if ([attributes objectForKey:@"resendVerCode"]) {
-            [self onBtnStep1:nil];
-        }
-    }
 }
 
 - (void)onTapView:(UITapGestureRecognizer *)tapGesture
@@ -113,274 +90,141 @@
     [self.view endEditing:YES];
 }
 
-//==================================================================
-#pragma mark - Table view delegate
-//==================================================================
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+- (BOOL)checkInputFields
 {
-    // Return the number of sections.
-    return [_headers count];
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 50.0;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 50)];
-    
-    /* Create custom view to display section header... */
-    UILabel *titleLabel = [[UILabel alloc] initWithFrame:CGRectMake(20, 15, 200, 30)];
-    titleLabel.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-    titleLabel.text = [_headers objectAtIndex:section];
-    titleLabel.textColor = [Global colorWithType:COLOR_TYPE_LINK];
-    [titleLabel sizeToFit];
-    [view addSubview:titleLabel];
-
-    if (section < _currentStep) {
-        CGFloat lblWidth = titleLabel.frame.size.width;
-        UIImageView *imgTick = [[UIImageView alloc] initWithFrame:CGRectMake(lblWidth+25, 10, 32, 32)];
-        imgTick.image = [UIImage imageNamed:@"Ic_menu_yes_orange"];
-        [view addSubview:imgTick];
+    if (self.txtEmail.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Error"
+                                              message:@"Email field is empty"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    if (self.txtUsername.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Error"
+                                              message:@"Username field is empty"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    if (self.txtPassword.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Error"
+                                              message:@"Password field is empty"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    if (self.txtConfirmPassword.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Error"
+                                              message:@"Confirm password field is empty"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
     }
     
-    [view setBackgroundColor:[UIColor clearColor]];
-    return view;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    // Return the number of rows in the section.
-    if (section == _currentStep) {
-        switch (section) {
-            case STEP_2:
-            case STEP_3:
-                return 4;
-            case STEP_4:
-                return 2;
-            default:
-                return 3;
-        }
-    } else {
-        return 0;
-    }
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.section == STEP_2 && indexPath.row == 0) {
-        return 60;
-    }
-    return 50;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *CellIdentifier = @"TableCell";
-    UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-    cell.backgroundColor = [UIColor clearColor];
-    
-    NSInteger section = [indexPath section];
-    NSInteger row = [indexPath row];
-    
-    switch (section) {
-        case STEP_1:
-            if (row == 0) {
-                cell.textLabel.text = NSLocalizedString(@"PleaseEnterPhone", nil);
-                cell.textLabel.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                cell.textLabel.textColor = [UIColor whiteColor];
-            } else if (row == 1) {
-                // Add phone number text field
-                _txtPhoneNumber = [[UITextField alloc]initWithFrame:CGRectMake(20, 0, cell.frame.size.width, 30)];
-                _txtPhoneNumber.textAlignment = NSTextAlignmentLeft;
-                _txtPhoneNumber.delegate = self;
-                _txtPhoneNumber.placeholder = NSLocalizedString(@"PhoneNumber", nil);
-                _txtPhoneNumber.keyboardType = UIKeyboardTypeNumberPad;
-                _txtPhoneNumber.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                _txtPhoneNumber.backgroundColor = [Global colorWithType:COLOR_TYPE_TEXTBOX_BG];
-                _txtPhoneNumber.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:_txtPhoneNumber];
-            } else if (row == 2) {
-                // Add next button
-                CGRect buttonRect = CGRectMake(20, 0, 80, 34);
-                UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-                button.frame = buttonRect;
-                [button setTitle:NSLocalizedString(@"Next", nil) forState:UIControlStateNormal];
-                [button addTarget:self action:@selector(onBtnStep1:) forControlEvents:UIControlEventTouchUpInside];
-                [button.titleLabel setFont:[UIFont systemFontOfSize:LABEL_FONT_SIZE]];
-                button.backgroundColor = [Global colorWithType:COLOR_TYPE_BUTTON_UP];
-                button.titleLabel.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:button];
-            }
-            break;
-        case STEP_2:
-            if (row == 0) {
-                UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(20, 0, 300, 60)];
-                textView.text = NSLocalizedString(@"VerificationMsg", nil);
-                textView.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                textView.backgroundColor = [UIColor clearColor];
-                textView.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:textView];
-            } else if (row == 1) {
-                // Add verification code field
-                _txtVerificationCode = [[UITextField alloc]initWithFrame:CGRectMake(20, 0, cell.frame.size.width, 30)];
-                _txtVerificationCode.textAlignment = NSTextAlignmentLeft;
-                _txtVerificationCode.delegate = self;
-                _txtVerificationCode.placeholder = NSLocalizedString(@"VerificationCode", nil);
-                _txtVerificationCode.keyboardType = UIKeyboardTypeNumberPad;
-                _txtVerificationCode.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                _txtVerificationCode.backgroundColor = [Global colorWithType:COLOR_TYPE_TEXTBOX_BG];
-                _txtVerificationCode.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:_txtVerificationCode];
-            } else if (row == 2) {
-                // Add next button
-                CGRect buttonRect = CGRectMake(20, 0, 80, 34);
-                UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-                button.frame = buttonRect;
-                [button setTitle:NSLocalizedString(@"Next", nil) forState:UIControlStateNormal];
-                [button addTarget:self action:@selector(onBtnStep2:) forControlEvents:UIControlEventTouchUpInside];
-                [button.titleLabel setFont:[UIFont systemFontOfSize:LABEL_FONT_SIZE]];
-                button.backgroundColor = [Global colorWithType:COLOR_TYPE_BUTTON_UP];
-                button.titleLabel.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:button];
-            } else if (row == 3) {
-                // Add resend label
-                UITextView *textView = [[UITextView alloc] initWithFrame:CGRectMake(20, 0, cell.frame.size.width, 30)];
-                textView.attributedText = [self attributedResendString];
-                UITapGestureRecognizer *tapGestureResend = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapResend:)];
-                [tapGestureResend setNumberOfTouchesRequired:1];
-                [tapGestureResend setNumberOfTapsRequired:1];
-                textView.backgroundColor = [UIColor clearColor];
-                [textView addGestureRecognizer:tapGestureResend];
-                [cell.contentView addSubview:textView];
-            }
-            break;
-        case STEP_3:
-            if (row == 0) {
-                cell.textLabel.text = NSLocalizedString(@"PleaseEnterNewPassword", nil);
-                cell.textLabel.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                cell.textLabel.textColor = [UIColor whiteColor];
-            } else if (row == 1) {
-                // Add password field
-                _txtPassword = [[UITextField alloc]initWithFrame:CGRectMake(20, 0, cell.frame.size.width, 30)];
-                _txtPassword.textAlignment = NSTextAlignmentLeft;
-                _txtPassword.delegate = self;
-                _txtPassword.placeholder = NSLocalizedString(@"NewPassword", nil);
-                _txtPassword.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                _txtPassword.secureTextEntry = YES;
-                _txtPassword.backgroundColor = [Global colorWithType:COLOR_TYPE_TEXTBOX_BG];
-                _txtPassword.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:_txtPassword];
-            } else if (row == 2) {
-                // Add confirm password field
-                _txtConfirmPassword = [[UITextField alloc]initWithFrame:CGRectMake(20, 0, cell.frame.size.width, 30)];
-                _txtConfirmPassword.textAlignment = NSTextAlignmentLeft;
-                _txtConfirmPassword.delegate = self;
-                _txtConfirmPassword.placeholder = NSLocalizedString(@"ConfirmPassword", nil);
-                _txtConfirmPassword.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                _txtConfirmPassword.secureTextEntry = YES;
-                _txtConfirmPassword.backgroundColor = [Global colorWithType:COLOR_TYPE_TEXTBOX_BG];
-                _txtConfirmPassword.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:_txtConfirmPassword];
-            } else if (row == 3) {
-                // Add next button
-                CGRect buttonRect = CGRectMake(20, 0, 80, 34);
-                UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-                button.frame = buttonRect;
-                [button setTitle:NSLocalizedString(@"Next", nil) forState:UIControlStateNormal];
-                [button addTarget:self action:@selector(onBtnStep3:) forControlEvents:UIControlEventTouchUpInside];
-                [button.titleLabel setFont:[UIFont systemFontOfSize:LABEL_FONT_SIZE]];
-                button.backgroundColor = [Global colorWithType:COLOR_TYPE_BUTTON_UP];
-                button.titleLabel.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:button];
-            }
-            break;
-        case STEP_4:
-            if (row == 0) {
-                cell.textLabel.text = NSLocalizedString(@"YouCanStartUsing", nil);
-                cell.textLabel.font = [UIFont systemFontOfSize:LABEL_FONT_SIZE];
-                cell.textLabel.textColor = [UIColor whiteColor];
-            } else if (row == 1) {
-                // Add done button
-                CGRect buttonRect = CGRectMake(20, 0, 80, 34);
-                UIButton *button = [UIButton buttonWithType:UIButtonTypeCustom];
-                button.frame = buttonRect;
-                [button setTitle:NSLocalizedString(@"Done", nil) forState:UIControlStateNormal];
-                [button addTarget:self action:@selector(onBtnStep4:) forControlEvents:UIControlEventTouchUpInside];
-                [button.titleLabel setFont:[UIFont systemFontOfSize:LABEL_FONT_SIZE]];
-                button.backgroundColor = [Global colorWithType:COLOR_TYPE_BUTTON_UP];
-                button.titleLabel.textColor = [UIColor whiteColor];
-                [cell.contentView addSubview:button];
-            }
-            break;
+    if ([self.txtPassword.text compare:self.txtConfirmPassword.text] != NSOrderedSame) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:@"Error"
+                                              message:@"Passwords do not match"
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
     }
     
-    return cell;
+    return YES;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (IBAction)onBtnSubmit:(id)sender
 {
-}
-
-- (void)onBtnStep1:(id)sender {
-    if (!_txtPhoneNumber || [_txtPhoneNumber.text length] == 0) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                            message:NSLocalizedString(@"PhoneNumberError", nil)
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                  otherButtonTitles:nil, nil];
-        [alertView show];
-        return;
-    }
-    
-    WebService *ws = [[WebService alloc] init];
-    ws.delegate = self;
-    [ws registerAccount:_txtPhoneNumber.text];
-    [ws showWaitingView:self.view];
-}
-
-- (void)onBtnStep2:(id)sender {
-    if (!_txtVerificationCode || [_txtVerificationCode.text length] == 0) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                            message:NSLocalizedString(@"VerificationCodeError", nil)
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                  otherButtonTitles:nil, nil];
-        [alertView show];
+    if (![self checkInputFields]) {
         return;
     }
 
-    WebService *ws = [[WebService alloc] init];
+    WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws authenticate:self.phoneNumber authCode:_txtVerificationCode.text];
+    [ws newUser:self.txtUsername.text password:self.txtPassword.text email:self.txtEmail.text lang:[Global getCurrentLang]];
     [ws showWaitingView:self.view];
 }
 
-- (void)onBtnStep3:(id)sender {
-    if (!_txtPassword || [_txtPassword.text length] == 0 ||
-        !_txtConfirmPassword || [_txtConfirmPassword.text length] == 0 ||
-        [_txtPassword.text compare:_txtConfirmPassword.text] != NSOrderedSame) {
-        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                            message:NSLocalizedString(@"PasswordError", nil)
-                                                           delegate:nil
-                                                  cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                  otherButtonTitles:nil, nil];
-        [alertView show];
-        return;
-    }
+// Call this method somewhere in your view controller setup code.
+- (void)registerForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWasShown:)
+                                                 name:UIKeyboardDidShowNotification object:nil];
     
-    WebService *ws = [[WebService alloc] init];
-    ws.delegate = self;
-    [ws setPassword:[g_MemberInfo objectForKey:INFO_KEY_VIPID] acckey:[g_MemberInfo objectForKey:INFO_KEY_ACCKEY] password:_txtPassword.text];
-    [ws showWaitingView:self.view];
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(keyboardWillBeHidden:)
+                                                 name:UIKeyboardWillHideNotification object:nil];
+    
 }
 
-- (void)onBtnStep4:(id)sender {
-    // Go back to login page
-    [self.navigationController popViewControllerAnimated:YES];
+- (void)deregisterForKeyboardNotifications
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIKeyboardWillShowNotification
+                                                  object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self
+                                                    name:UIKeyboardWillHideNotification
+                                                  object:nil];
+}
+
+// Called when the UIKeyboardDidShowNotification is sent.
+- (void)keyboardWasShown:(NSNotification*)aNotification
+{
+    NSDictionary* info = [aNotification userInfo];
+    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    
+    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+    
+    // If active text field is hidden by keyboard, scroll it so it's visible
+    // Your app might not need or want this behavior.
+    CGRect keyPadFrame=[[UIApplication sharedApplication].keyWindow convertRect:[[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue] fromView:self.view];
+    kbSize = keyPadFrame.size;
+    CGRect activeRect=[self.view convertRect:self.activeField.frame fromView:self.activeField.superview];
+    CGRect aRect = self.view.bounds;
+    aRect.size.height -= (kbSize.height);
+    
+    CGPoint origin =  activeRect.origin;
+    origin.y -= self.scrollView.contentOffset.y;
+    if (!CGRectContainsPoint(aRect, origin)) {
+        CGPoint scrollPoint = CGPointMake(0.0,CGRectGetMaxY(activeRect)-(aRect.size.height));
+        [self.scrollView setContentOffset:scrollPoint animated:YES];
+    }
+}
+
+// Called when the UIKeyboardWillHideNotification is sent
+- (void)keyboardWillBeHidden:(NSNotification*)aNotification
+{
+    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
+    self.scrollView.contentInset = contentInsets;
+    self.scrollView.scrollIndicatorInsets = contentInsets;
+}
+
+- (void)textFieldDidBeginEditing:(UITextField *)textField
+{
+    self.activeField = textField;
+}
+
+- (void)textFieldDidEndEditing:(UITextField *)textField
+{
+    self.activeField = nil;
 }
 
 //==================================================================
@@ -404,12 +248,12 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName compare:WS_REGISTER] == NSOrderedSame) {
+        if ([resultName compare:WS_NEW_USER] == NSOrderedSame) {
             // Register
-            long code = [[jsonObject objectForKey:@"code"] longValue];
-            if (code == 0) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
                 // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RegisterSuccess", nil)
                                                                     message:message
                                                                    delegate:nil
@@ -417,79 +261,10 @@
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
                 
-                self.phoneNumber = _txtPhoneNumber.text;
-                _currentStep = STEP_2;
-                [self.tableView reloadData];
-            } else {
+            } else  {
                 // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RegisterFailed", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        } else if ([resultName compare:WS_AUTH] == NSOrderedSame) {
-            // Auth
-            long code = [[jsonObject objectForKey:@"code"] longValue];
-            if (code == 0) {
-                // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"VerificationSuccess", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-
-                NSString *vipId = (NSString *)[jsonObject objectForKey:@"vip_id"];
-                if (vipId && vipId.length > 0) {
-                    [g_MemberInfo setObject:vipId forKey:INFO_KEY_VIPID];
-                }
-                NSString *accKey = (NSString *)[jsonObject objectForKey:@"acckey"];
-                if (accKey && accKey.length > 0) {
-                    [g_MemberInfo setObject:accKey forKeyedSubscript:INFO_KEY_ACCKEY];
-                }
-                
-                _currentStep = STEP_3;
-                [self.tableView reloadData];
-            } else {
-                // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"VerificationFailed", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        } else if ([resultName compare:WS_SET_PASSWORD] == NSOrderedSame) {
-            // Set password
-            long code = [[jsonObject objectForKey:@"code"] longValue];
-            if (code == 0) {
-                // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PasswordSuccess", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-                
-                NSString *vipId = (NSString *)[jsonObject objectForKey:@"vip_id"];
-                if (vipId && vipId.length > 0) {
-                    [g_MemberInfo setObject:vipId forKey:INFO_KEY_VIPID];
-                }
-                
-                _currentStep = STEP_4;
-                [self.tableView reloadData];
-            } else {
-                // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"PasswordFailed", nil)
                                                                     message:message
                                                                    delegate:nil
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)

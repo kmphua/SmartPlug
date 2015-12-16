@@ -32,15 +32,10 @@
 
 - (void)postData:(NSString *)serverUrl params:(NSString *)params
 {
-    NSData *postData = [params dataUsingEncoding:NSASCIIStringEncoding allowLossyConversion:YES];
-    NSString *postLength = [NSString stringWithFormat:@"%ld", [postData length]];
-    
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:serverUrl]];
+    NSString *requestUrl = [NSString stringWithFormat:@"%@?%@", serverUrl, params];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrl]];
     [request setHTTPMethod:@"POST"];
-    [request setValue:@"application/x-www-form-urlencoded; charset=utf-8" forHTTPHeaderField:@"Content-Type"];
-    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     [request setTimeoutInterval:20.0];
-    [request setHTTPBody:postData];
     
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (connection) {
@@ -95,201 +90,108 @@
 
 #pragma mark - WebService functions
 
-- (void)login:(NSString *)sid password:(NSString *)password
+- (void)longPoll:(NSString *)deviceId
 {
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_LONG_POLL];
+    NSString *params = [NSString stringWithFormat:@"id=%@", deviceId];
+    self.resultName = WS_LONG_POLL;
+    [self postData:apiUrl params:params];
+}
+
+- (void)newUser:(NSString *)username password:(NSString *)password email:(NSString *)email lang:(NSString *)lang
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_NEW_USER];
+    NSString *params = [NSString stringWithFormat:@"user=%@&pwd=%@&email=%@&hl=%@", username, password, email, lang];
+    self.resultName = WS_NEW_USER;
+    [self postData:apiUrl params:params];
+}
+
+- (void)verifyAcct:(NSString *)username verificationKey:(NSString *)verificationKey lang:(NSString *)lang
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_VERIFY_ACCT];
+    NSString *params = [NSString stringWithFormat:@"user=%@&vk=%@&hl=%@", username, verificationKey, lang];
+    self.resultName = WS_VERIFY_ACCT;
+    [self postData:apiUrl params:params];
+}
+
+- (void)login:(NSString *)username password:(NSString *)password lang:(NSString *)lang
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_LOGIN];
+    NSString *params = [NSString stringWithFormat:@"user=%@&pwd=%@&hl=%@", username, password, lang];
     self.resultName = WS_LOGIN;
-    NSString *params = [NSString stringWithFormat:@"op=login&sId=%@&password=%@", sid, password];
-    [self postData:MEMBER_SERVER_URL params:params];
+    [self postData:apiUrl params:params];
 }
 
-- (void)registerAccount:(NSString *)sid
+- (void)changePassword:(NSString *)username password:(NSString *)password lang:(NSString *)lang
 {
-    self.resultName = WS_REGISTER;
-    NSString *params = [NSString stringWithFormat:@"op=register&sId=%@", sid];
-    [self postData:MEMBER_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_CHANGE_PWD];
+    NSString *params = [NSString stringWithFormat:@"user=%@&pwd=%@&hl=%@", username, password, lang];
+    self.resultName = WS_CHANGE_PWD;
+    [self postData:apiUrl params:params];
 }
 
-- (void)authenticate:(NSString *)sid authCode:(NSString *)authCode
+- (void)regPush:(NSString *)userToken lang:(NSString *)lang devToken:(NSString *)devToken
 {
-    self.resultName = WS_AUTH;
-    NSString *params = [NSString stringWithFormat:@"op=auth&sId=%@&auth_code=%@", sid, authCode];
-    [self postData:MEMBER_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_REG_PUSH];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&type=%@&devtoken=%@", userToken, lang, @"iOS", devToken];
+    self.resultName = WS_REG_PUSH;
+    [self postData:apiUrl params:params];
 }
 
-- (void)setPassword:(NSString *)vipId acckey:(NSString *)acckey password:(NSString *)password
+- (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
 {
-    self.resultName = WS_SET_PASSWORD;
-    NSString *params = [NSString stringWithFormat:@"op=set_pass&sId=%@&acckey=%@&password=%@", vipId, acckey, password];
-    [self postData:MEMBER_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ACT_DEV];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    self.resultName = WS_ACT_DEV;
+    [self postData:apiUrl params:params];
 }
 
-- (void)changePassword:(NSString *)vipId acckey:(NSString *)acckey
-               oldpass:(NSString *)oldpass password:(NSString *)password
+- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId isReply:(BOOL)isReply
 {
-    self.resultName = WS_CHANGE_PASSWORD;
-    NSString *params = [NSString stringWithFormat:@"op=pass_change&sId=%@&acckey=%@&opass=%@&password=%@", vipId, acckey, oldpass, password];
-    [self postData:MEMBER_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&isReply=%d", userToken, lang, devId, isReply];
+    self.resultName = WS_DEV_CTRL;
+    [self postData:apiUrl params:params];
 }
 
-- (void)registerDevice:(NSString *)acckey deviceId:(NSString *)deviceId
+- (void)devList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes
 {
-    self.resultName = WS_REGISTER_DEVICE;
-    NSString *params = [NSString stringWithFormat:@"op=register_device&acckey=%@&ostype=ios&deviceid=%@", acckey, deviceId];
-    [self postData:MEMBER_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_LIST];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d", userToken, lang, iconRes];
+    self.resultName = WS_DEV_LIST;
+    [self postData:apiUrl params:params];
 }
 
-- (void)getDepartment:(NSString *)acckey
+- (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes
 {
-    self.resultName = WS_GET_DEPARTMENT;
-    NSString *params = [NSString stringWithFormat:@"op=get_department&acckey=%@", acckey];
-    [self postData:PRODUCT_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_GET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d", userToken, lang, iconRes];
+    self.resultName = WS_DEV_GET;
+    [self postData:apiUrl params:params];
 }
 
-- (void)updateDepartment:(NSString *)data
+- (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger
 {
-    self.resultName = WS_UPDATE_DEPARTMENT;
-    NSString *params = [NSString stringWithFormat:@"op=%@&data=%@", WS_UPDATE_DEPARTMENT, data];
-    [self postData:PRODUCT_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=%@&title=%@&notify_power=%@&notify_timer=%@&notify_danger=%@", userToken, lang, devId, icon, title, notifyPower, notifyTimer, notifyDanger];
+    self.resultName = WS_DEV_SET;
+    [self postData:apiUrl params:params];
 }
 
-- (void)getProduct:(NSString *)acckey deptId:(NSString *)deptId
+- (void)devLog:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
 {
-    self.resultName = WS_GET_PRODUCT;
-    NSString *params = [NSString stringWithFormat:@"op=get_product&acckey=%@&dep_id=%@", acckey, deptId];
-    [self postData:PRODUCT_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_LOG];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    self.resultName = WS_DEV_LOG;
+    [self postData:apiUrl params:params];
 }
 
-- (void)updateProduct:(NSString *)data
+- (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes
 {
-    self.resultName = WS_UPDATE_PRODUCT;
-    NSString *params = [NSString stringWithFormat:@"op=%@&data=%@", WS_UPDATE_PRODUCT, data];
-    [self postData:PRODUCT_SERVER_URL params:params];
-}
-
-- (void)getFriendList:(NSString *)acckey
-{
-    self.resultName = WS_GET_FRIEND_LIST;
-    NSString *params = [NSString stringWithFormat:@"op=get_friend_list&acckey=%@", acckey];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)inviteFriend:(NSString *)acckey fId:(NSString *)fId
-{
-    self.resultName = WS_INVITE_FRIEND;
-    NSString *params = [NSString stringWithFormat:@"op=invite&acckey=%@&fId=%@", acckey, fId];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)friendAgree:(NSString *)acckey fId:(NSString *)fId
-{
-    self.resultName = WS_FRIEND_AGREE;
-    NSString *params = [NSString stringWithFormat:@"op=friend_agree&acckey=%@&fId=%@", acckey, fId];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)friendDeny:(NSString *)acckey fId:(NSString *)fId
-{
-    self.resultName = WS_FRIEND_DENY;
-    NSString *params = [NSString stringWithFormat:@"op=friend_deny&acckey=%@&fId=%@", acckey, fId];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)friendDelete:(NSString *)acckey fId:(NSString *)fId
-{
-    self.resultName = WS_FRIEND_DELETE;
-    NSString *params = [NSString stringWithFormat:@"op=friend_delete&acckey=%@&fId=%@", acckey, fId];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)searchLastPointValue:(NSString *)acckey
-{
-    self.resultName = WS_SEARCH_LAST_POINT_VALUE;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@", WS_SEARCH_LAST_POINT_VALUE, acckey];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)vipPointMoveShop:(NSString *)acckey fId:(NSString *)fId point:(NSString *)point
-{
-    self.resultName = WS_VIP_POINT_MOVE_SHOP;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@&fId=%@&point=%@", WS_VIP_POINT_MOVE_SHOP, acckey, fId, point];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)getTicketList:(NSString *)acckey
-{
-    self.resultName = WS_GET_TICKET_LIST;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@", WS_GET_TICKET_LIST, acckey];
-    [self postData:TICKET_SERVER_URL params:params];
-    }
-
-- (void)ticketGift:(NSString *)acckey fId:(NSString *)fId serno:(NSString *)serno tkno:(NSString *)tkno
-{
-    self.resultName = WS_TICKET_GIFT;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@&fId=%@&serno=%@&tkno=%@", WS_TICKET_GIFT, acckey, fId, serno, tkno];
-    [self postData:TICKET_SERVER_URL params:params];
-}
-
-- (void)useTicket:(NSString *)acckey tkno:(NSString *)tkno
-{
-    self.resultName = WS_USE_TICKET;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@&tkno=%@", WS_USE_TICKET, acckey, tkno];
-    [self postData:TICKET_SERVER_URL params:params];
-}
-
-- (void)receiveTicket:(NSString *)acckey tkno:(NSString *)tkno
-{
-    self.resultName = WS_RECEIVE_TICKET;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@&tkno=%@", WS_RECEIVE_TICKET, acckey, tkno];
-    [self postData:TICKET_SERVER_URL params:params];
-}
-
-- (void)updateTicket:(NSString *)data
-{
-    self.resultName = WS_UPDATE_TICKET;
-    NSString *params = [NSString stringWithFormat:@"op=%@&data=%@", WS_UPDATE_TICKET, data];
-    [self postData:TICKET_SERVER_URL params:params];
-}
-
-- (void)updateTicketRule:(NSString *)data
-{
-    self.resultName = WS_UPDATE_TICKET_RULE;
-    NSString *params = [NSString stringWithFormat:@"op=%@&data=%@", WS_UPDATE_TICKET_RULE, data];
-    [self postData:TICKET_SERVER_URL params:params];
-}
-
-- (void)getVipBonusList:(NSString *)acckey
-{
-    self.resultName = WS_GET_VIP_BONUS_LIST;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@", WS_GET_VIP_BONUS_LIST, acckey];
-    [self postData:MEMBER_SERVER_URL params:params];
-}
-
-- (void)getNews:(NSString *)acckey
-{
-    self.resultName = WS_GET_NEWS;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@", WS_GET_NEWS, acckey];
-    [self postData:BASIC_SERVER_URL params:params];
-}
-
-- (void)getMessageList:(NSString *)acckey
-{
-    self.resultName = WS_GET_MESSAGE_LIST;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@&ostype=ios", WS_GET_MESSAGE_LIST, acckey];
-    [self postData:BASIC_SERVER_URL params:params];
-}
-
-- (void)readMessage:(NSString *)acckey infoId:(NSString *)infoId
-{
-    self.resultName = WS_READ_MESSAGE;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@&infoid=%@", WS_READ_MESSAGE, acckey, infoId];
-    [self postData:BASIC_SERVER_URL params:params];
-}
-
-- (void)getPageList:(NSString *)acckey
-{
-    self.resultName = WS_GET_PAGE_LIST;
-    NSString *params = [NSString stringWithFormat:@"op=%@&acckey=%@", WS_GET_PAGE_LIST, acckey];
-    [self postData:BASIC_SERVER_URL params:params];
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_GALLERY_LIST];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d", userToken, lang, iconRes];
+    self.resultName = WS_GALLERY_LIST;
+    [self postData:apiUrl params:params];
 }
 
 @end
