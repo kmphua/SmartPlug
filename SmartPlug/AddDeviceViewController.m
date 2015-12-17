@@ -109,8 +109,7 @@
     
     // Configure Service Browser
     [self.serviceBrowser setDelegate:self];
-    [self.serviceBrowser searchForBrowsableDomains];
-    [self.serviceBrowser searchForServicesOfType:@"_dns-sd._udp" inDomain:@""];
+    [self.serviceBrowser searchForServicesOfType:@"_dns-sd._udp." inDomain:@"local."];
 }
 
 - (void)stopBrowsing {
@@ -119,54 +118,8 @@
         [self.serviceBrowser setDelegate:nil];
         [self setServiceBrowser:nil];
     }
-}
-
-- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
-    self.searching = YES;
-    [self updateUI];
-}
-
-// Sent when browsing stops
-- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser {
-    [self stopBrowsing];
     self.searching = NO;
     [self updateUI];
-}
-
-// Sent if browsing fails
-- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
-             didNotSearch:(NSDictionary *)errorDict {
-    [self stopBrowsing];
-    self.searching = NO;
-    [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
-    [self updateUI];
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
-    NSLog(@"Found domain: %@", domainString);
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
-    // Update Services
-    [self.services addObject:service];
-    
-    if(!moreComing) {
-        // Sort Services
-        [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
-        
-        // Update Table View
-        [self.tableView reloadData];
-    }
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
-    // Update Services
-    [self.services removeObject:service];
-    
-    if(!moreComing) {
-        // Update Table View
-        [self.tableView reloadData];
-    }
 }
 
 // Error handling code
@@ -188,6 +141,129 @@
     else {
         [self.imgWait stopAnimating];
     }
+}
+
+//==================================================================
+#pragma mark - NSNetServiceBrowserDelegate
+//==================================================================
+
+- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
+    self.searching = YES;
+    [self updateUI];
+}
+
+// Sent when browsing stops
+- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser {
+    [self stopBrowsing];
+}
+
+// Sent if browsing fails
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+             didNotSearch:(NSDictionary *)errorDict {
+    [self stopBrowsing];
+    self.searching = NO;
+    [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
+    [self updateUI];
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
+    NSLog(@"Found domain: %@", domainString);
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
+    // Update Services
+    [self.services addObject:service];
+    // Sort Services
+    [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
+
+    // Update Table View
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
+    
+    if (!moreComing) {
+        [self stopBrowsing];
+    }
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
+    // Update Services
+    [self.services removeObject:service];
+    // Update Table View
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
+    
+    if (!moreComing) {
+        [self stopBrowsing];
+    }
+}
+
+//==================================================================
+#pragma mark - NSNetServiceDelegate
+//==================================================================
+
+- (void)netServiceDidResolveAddress:(NSNetService *)service {
+    // Connect With Service
+    if ([self connectWithService:service]) {
+        NSLog(@"Did Connect with Service: domain(%@) type(%@) name(%@) port(%i)", [service domain], [service type], [service name], (int)[service port]);
+    } else {
+        NSLog(@"Unable to Connect with Service: domain(%@) type(%@) name(%@) port(%i)", [service domain], [service type], [service name], (int)[service port]);
+    }
+}
+
+- (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
+    [service setDelegate:nil];
+}
+
+//==================================================================
+#pragma mark - Service UDP connection
+//==================================================================
+
+- (BOOL)connectWithService:(NSNetService *)service {
+    BOOL _isConnected = NO;
+    
+    // Copy Service Addresses
+    NSArray *addresses = [[service addresses] mutableCopy];
+    
+    if (!self.socket || ![self.socket isConnected]) {
+        // Initialize Socket
+        self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+        
+        // Connect
+        while (!_isConnected && [addresses count]) {
+            NSData *address = [addresses objectAtIndex:0];
+            
+            NSError *error = nil;
+            if ([self.socket connectToAddress:address error:&error]) {
+                _isConnected = YES;
+                
+            } else if (error) {
+                NSLog(@"Unable to connect to address. Error %@ with user info %@.", error, [error userInfo]);
+            }
+        }
+        
+    } else {
+        _isConnected = [self.socket isConnected];
+    }
+    
+    return _isConnected;
+}
+
+//==================================================================
+#pragma mark - GCDAsyncSocketDelegate
+//==================================================================
+
+- (void)socket:(GCDAsyncSocket *)socket didConnectToHost:(NSString *)host port:(UInt16)port {
+    NSLog(@"Socket Did Connect to Host: %@ Port: %hu", host, port);
+    
+    // Start Reading
+    [socket readDataToLength:sizeof(uint64_t) withTimeout:-1.0 tag:0];
+}
+
+- (void)socketDidDisconnect:(GCDAsyncSocket *)socket withError:(NSError *)error {
+    NSLog(@"Socket Did Disconnect with Error %@ with User Info %@.", error, [error userInfo]);
+    
+    [socket setDelegate:nil];
+    [self setSocket:nil];
 }
 
 //==================================================================
