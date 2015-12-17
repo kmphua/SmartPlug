@@ -30,8 +30,13 @@
 		7512C1851C1BB3B700489091 /* CustomBadgeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7512C16F1C1BB3B700489091 /* CustomBadgeViewController.m */; };
 		7512C1861C1BB3B700489091 /* PickerActionSheet.m in Sources */ = {isa = PBXBuildFile; fileRef = 7512C1711C1BB3B700489091 /* PickerActionSheet.m */; };
 		7512C1871C1BB3B700489091 /* PRPShadowedTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7512C1731C1BB3B700489091 /* PRPShadowedTableView.m */; };
-		7512C1881C1BB3B700489091 /* RaiseAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7512C1751C1BB3B700489091 /* RaiseAlertView.m */; };
 		7512C1891C1BB3B700489091 /* UIWaitingView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7512C1771C1BB3B700489091 /* UIWaitingView.m */; };
+		751510C71C225369007772FE /* MainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510C51C225369007772FE /* MainViewController.m */; };
+		751510C81C225369007772FE /* MainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510C61C225369007772FE /* MainViewController.xib */; };
+		751510CE1C225D71007772FE /* MainViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510CC1C225D71007772FE /* MainViewCell.m */; };
+		751510CF1C225D71007772FE /* MainViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510CD1C225D71007772FE /* MainViewCell.xib */; };
+		751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510D11C22698C007772FE /* AddDeviceViewController.m */; };
+		751510D41C22698C007772FE /* AddDeviceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510D21C22698C007772FE /* AddDeviceViewController.xib */; };
 		75667A591C1F864C001B30B2 /* bkgnd2@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679781C1F864B001B30B2 /* bkgnd2@1x.png */; };
 		75667A5A1C1F864C001B30B2 /* bkgnd2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679791C1F864B001B30B2 /* bkgnd2@2x.png */; };
 		75667A5B1C1F864C001B30B2 /* btn_add@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7566797A1C1F864B001B30B2 /* btn_add@1x.png */; };
@@ -285,10 +290,17 @@
 		7512C1711C1BB3B700489091 /* PickerActionSheet.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PickerActionSheet.m; sourceTree = "<group>"; };
 		7512C1721C1BB3B700489091 /* PRPShadowedTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PRPShadowedTableView.h; sourceTree = "<group>"; };
 		7512C1731C1BB3B700489091 /* PRPShadowedTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PRPShadowedTableView.m; sourceTree = "<group>"; };
-		7512C1741C1BB3B700489091 /* RaiseAlertView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RaiseAlertView.h; sourceTree = "<group>"; };
-		7512C1751C1BB3B700489091 /* RaiseAlertView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = RaiseAlertView.m; sourceTree = "<group>"; };
 		7512C1761C1BB3B700489091 /* UIWaitingView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UIWaitingView.h; sourceTree = "<group>"; };
 		7512C1771C1BB3B700489091 /* UIWaitingView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UIWaitingView.m; sourceTree = "<group>"; };
+		751510C41C225369007772FE /* MainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewController.h; sourceTree = "<group>"; };
+		751510C51C225369007772FE /* MainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewController.m; sourceTree = "<group>"; };
+		751510C61C225369007772FE /* MainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewController.xib; sourceTree = "<group>"; };
+		751510CB1C225D71007772FE /* MainViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MainViewCell.h; sourceTree = "<group>"; };
+		751510CC1C225D71007772FE /* MainViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MainViewCell.m; sourceTree = "<group>"; };
+		751510CD1C225D71007772FE /* MainViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = MainViewCell.xib; sourceTree = "<group>"; };
+		751510D01C22698C007772FE /* AddDeviceViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AddDeviceViewController.h; sourceTree = "<group>"; };
+		751510D11C22698C007772FE /* AddDeviceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
+		751510D21C22698C007772FE /* AddDeviceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddDeviceViewController.xib; sourceTree = "<group>"; };
 		756679781C1F864B001B30B2 /* bkgnd2@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@1x.png"; sourceTree = "<group>"; };
 		756679791C1F864B001B30B2 /* bkgnd2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@2x.png"; sourceTree = "<group>"; };
 		7566797A1C1F864B001B30B2 /* btn_add@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_add@1x.png"; sourceTree = "<group>"; };
@@ -548,17 +560,7 @@
 				7512C1241C1BA3B900489091 /* AppDelegate.m */,
 				7512C1261C1BA3B900489091 /* ViewController.h */,
 				7512C1271C1BA3B900489091 /* ViewController.m */,
-				7512C1531C1BB3B700489091 /* BaseViewController.h */,
-				7512C1541C1BB3B700489091 /* BaseViewController.m */,
-				7512C1581C1BB3B700489091 /* LoginViewController.h */,
-				7512C1591C1BB3B700489091 /* LoginViewController.m */,
-				7512C15A1C1BB3B700489091 /* LoginViewController.xib */,
-				7512C1551C1BB3B700489091 /* CreateAccountViewController.h */,
-				7512C1561C1BB3B700489091 /* CreateAccountViewController.m */,
-				7512C1571C1BB3B700489091 /* CreateAccountViewController.xib */,
-				7512C1601C1BB3B700489091 /* ResetPasswordViewController.h */,
-				7512C1611C1BB3B700489091 /* ResetPasswordViewController.m */,
-				7512C1621C1BB3B700489091 /* ResetPasswordViewController.xib */,
+				751510CA1C2256FB007772FE /* ViewControllers */,
 				7512C1661C1BB3B700489091 /* Widgets */,
 				7512C1631C1BB3B700489091 /* Services */,
 				7512C15B1C1BB3B700489091 /* Misc */,
@@ -625,8 +627,6 @@
 				7512C1711C1BB3B700489091 /* PickerActionSheet.m */,
 				7512C1721C1BB3B700489091 /* PRPShadowedTableView.h */,
 				7512C1731C1BB3B700489091 /* PRPShadowedTableView.m */,
-				7512C1741C1BB3B700489091 /* RaiseAlertView.h */,
-				7512C1751C1BB3B700489091 /* RaiseAlertView.m */,
 				7512C1761C1BB3B700489091 /* UIWaitingView.h */,
 				7512C1771C1BB3B700489091 /* UIWaitingView.m */,
 			);
@@ -646,6 +646,49 @@
 				7512C16F1C1BB3B700489091 /* CustomBadgeViewController.m */,
 			);
 			path = CustomBadge;
+			sourceTree = "<group>";
+		};
+		751510C31C225346007772FE /* Member */ = {
+			isa = PBXGroup;
+			children = (
+				7512C1581C1BB3B700489091 /* LoginViewController.h */,
+				7512C1591C1BB3B700489091 /* LoginViewController.m */,
+				7512C15A1C1BB3B700489091 /* LoginViewController.xib */,
+				7512C1551C1BB3B700489091 /* CreateAccountViewController.h */,
+				7512C1561C1BB3B700489091 /* CreateAccountViewController.m */,
+				7512C1571C1BB3B700489091 /* CreateAccountViewController.xib */,
+				7512C1601C1BB3B700489091 /* ResetPasswordViewController.h */,
+				7512C1611C1BB3B700489091 /* ResetPasswordViewController.m */,
+				7512C1621C1BB3B700489091 /* ResetPasswordViewController.xib */,
+			);
+			name = Member;
+			sourceTree = "<group>";
+		};
+		751510C91C2256E9007772FE /* Device */ = {
+			isa = PBXGroup;
+			children = (
+				751510C41C225369007772FE /* MainViewController.h */,
+				751510C51C225369007772FE /* MainViewController.m */,
+				751510C61C225369007772FE /* MainViewController.xib */,
+				751510D01C22698C007772FE /* AddDeviceViewController.h */,
+				751510D11C22698C007772FE /* AddDeviceViewController.m */,
+				751510D21C22698C007772FE /* AddDeviceViewController.xib */,
+				751510CB1C225D71007772FE /* MainViewCell.h */,
+				751510CC1C225D71007772FE /* MainViewCell.m */,
+				751510CD1C225D71007772FE /* MainViewCell.xib */,
+			);
+			name = Device;
+			sourceTree = "<group>";
+		};
+		751510CA1C2256FB007772FE /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				7512C1531C1BB3B700489091 /* BaseViewController.h */,
+				7512C1541C1BB3B700489091 /* BaseViewController.m */,
+				751510C31C225346007772FE /* Member */,
+				751510C91C2256E9007772FE /* Device */,
+			);
+			name = ViewControllers;
 			sourceTree = "<group>";
 		};
 		756679761C1F864B001B30B2 /* Resources */ = {
@@ -1029,8 +1072,10 @@
 				7512C12D1C1BA3B900489091 /* Assets.xcassets in Resources */,
 				75667A631C1F864C001B30B2 /* btn_big_bkgnd_0_off_pressed@1x.png in Resources */,
 				75667B191C1F864C001B30B2 /* svc_3_big_off@2x.png in Resources */,
+				751510C81C225369007772FE /* MainViewController.xib in Resources */,
 				75667A9D1C1F864C001B30B2 /* ic_delete@1x.png in Resources */,
 				75667B211C1F864C001B30B2 /* title_bkgnd_green@2x.png in Resources */,
+				751510CF1C225D71007772FE /* MainViewCell.xib in Resources */,
 				75667B201C1F864C001B30B2 /* title_bkgnd_green@1x.png in Resources */,
 				75667AB51C1F864C001B30B2 /* logo@1x.png in Resources */,
 				75667AC91C1F864C001B30B2 /* main_item_3_a@1x.png in Resources */,
@@ -1078,6 +1123,7 @@
 				75667B2B1C1F864C001B30B2 /* wait_0@2x.png in Resources */,
 				75667AD41C1F864C001B30B2 /* marker_warn2@2x.png in Resources */,
 				75667B1B1C1F864C001B30B2 /* svc_3_small@2x.png in Resources */,
+				751510D41C22698C007772FE /* AddDeviceViewController.xib in Resources */,
 				75667B281C1F864C001B30B2 /* toast_warn_icon.png in Resources */,
 				75667AA41C1F864C001B30B2 /* ic_edit_pressed@2x.png in Resources */,
 				75667AB31C1F864C001B30B2 /* ir_record@1x.png in Resources */,
@@ -1237,14 +1283,16 @@
 				7512C1861C1BB3B700489091 /* PickerActionSheet.m in Sources */,
 				7512C1831C1BB3B700489091 /* CustomBadge.m in Sources */,
 				7512C1871C1BB3B700489091 /* PRPShadowedTableView.m in Sources */,
+				751510C71C225369007772FE /* MainViewController.m in Sources */,
 				7512C1811C1BB3B700489091 /* WebService.m in Sources */,
 				7512C17B1C1BB3B700489091 /* LoginViewController.m in Sources */,
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
+				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,
+				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
 				7512C1891C1BB3B700489091 /* UIWaitingView.m in Sources */,
 				7512C17E1C1BB3B700489091 /* ISO8601DateFormatter.m in Sources */,
 				7512C1251C1BA3B900489091 /* AppDelegate.m in Sources */,
-				7512C1881C1BB3B700489091 /* RaiseAlertView.m in Sources */,
 				7512C17F1C1BB3B700489091 /* ResetPasswordViewController.m in Sources */,
 				7512C1821C1BB3B700489091 /* BadgeStyle.m in Sources */,
 				7512C1841C1BB3B700489091 /* CustomBadgeAppDelegate.m in Sources */,

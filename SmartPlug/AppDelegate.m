@@ -21,6 +21,7 @@ BOOL g_IsLogin;
 BOOL g_IsOnline;
 NSString *g_Username;
 NSString *g_Password;
+NSString *g_DevToken;
 NSMutableDictionary *g_AppInfo;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -102,6 +103,7 @@ NSMutableDictionary *g_AppInfo;
                                     stringByReplacingOccurrencesOfString: @" " withString: @""];
     
     NSLog(@"Device token = %@", deviceTokenString);
+    g_DevToken = deviceTokenString;
     [[NSUserDefaults standardUserDefaults] setObject:deviceTokenString forKey:UD_DEVICE_TOKEN];
     [[NSUserDefaults standardUserDefaults] synchronize];
 }

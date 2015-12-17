@@ -94,8 +94,8 @@
 {
     if (self.txtEmail.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Error"
-                                              message:@"Email field is empty"
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"EmailEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -104,8 +104,8 @@
     }
     if (self.txtUsername.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Error"
-                                              message:@"Username field is empty"
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"UsernameEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -114,8 +114,8 @@
     }
     if (self.txtPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Error"
-                                              message:@"Password field is empty"
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"PasswordEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -124,8 +124,8 @@
     }
     if (self.txtConfirmPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Error"
-                                              message:@"Confirm password field is empty"
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"ConfirmPasswordEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -135,8 +135,8 @@
     
     if ([self.txtPassword.text compare:self.txtConfirmPassword.text] != NSOrderedSame) {
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Error"
-                                              message:@"Passwords do not match"
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"PasswordsNotMatch", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -254,8 +254,7 @@
             if (result == 0) {
                 // Success
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RegisterSuccess", nil)
-                                                                    message:message
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"title_accountCreated", nil)                                                                    message:NSLocalizedString(@"msg_accountCreatedBtn", nil)
                                                                    delegate:nil
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];

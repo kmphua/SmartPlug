@@ -30,6 +30,7 @@ extern BOOL g_IsLogin;
 extern BOOL g_IsOnline;
 extern NSString *g_Username;
 extern NSString *g_Password;
+extern NSString *g_DevToken;
 extern NSMutableDictionary *g_AppInfo;
 
 @interface Global : NSObject

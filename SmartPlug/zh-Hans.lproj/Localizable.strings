@@ -6,6 +6,15 @@
   Copyright © 2015 Kevin Phua. All rights reserved.
 */
 
+"OK" = "確定";
+"Cancel" = "取消";
+"Error" = "錯誤";
+"EmailEmpty" = "電子郵件地址未填";
+"UsernameEmpty" = "使用者未填";
+"PasswordEmpty" = "新密碼未填";
+"ConfirmPasswordEmpty" = "確認密碼未填";
+"PasswordsNotMatch" = "密碼不一樣";
+
 "id_username" = "使用者";
 "id_password" = "密码";
 "btn_login" = "登入";

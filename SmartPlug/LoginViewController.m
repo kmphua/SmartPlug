@@ -9,6 +9,7 @@
 #import "LoginViewController.h"
 #import "CreateAccountViewController.h"
 #import "ResetPasswordViewController.h"
+#import "MainViewController.h"
 #import "CustomBadge.h"
 #import "Global.h"
 
@@ -57,11 +58,46 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (BOOL)checkInputFields
+{
+    if (self.txtLogin.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"UsernameEmpty", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    if (self.txtPassword.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"PasswordEmpty", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    
+    return YES;
+}
+
 - (IBAction)onBtnLogin:(id)sender {
+    if (![self checkInputFields]) {
+        return;
+    }
+
+    MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
+    [self.navigationController pushViewController:mainController animated:YES];
+    
+    /*
     WebService *ws = [[WebService alloc] init];
     [ws setDelegate:self];
     [ws login:self.txtLogin.text password:self.txtPassword.text lang:[Global getCurrentLang]];
     [ws showWaitingView:self.view];
+     */
 }
 
 - (NSAttributedString *)attributedTextViewString

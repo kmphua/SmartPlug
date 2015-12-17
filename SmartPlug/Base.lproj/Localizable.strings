@@ -6,6 +6,15 @@
   Copyright © 2015 Kevin Phua. All rights reserved.
 */
 
+"OK" = "OK";
+"Cancel" = "Cancel";
+"Error" = "Error";
+"EmailEmpty" = "Email field is empty";
+"UsernameEmpty" = "Username field is empty";
+"PasswordEmpty" = "Password field is empty";
+"ConfirmPasswordEmpty" = "Confirm password field is empty";
+"PasswordsNotMatch" = "Passwords do not match";
+
 "id_username" = "Username";
 "id_password" = "Password";
 "btn_login" = "Login";

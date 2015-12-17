@@ -25,7 +25,7 @@
 #define WS_DEV_SET                  @"devset"
 #define WS_DEV_LOG                  @"devlog"
 
-#define WS_GALLERY_LIST             @"gallerylist"  //??
+#define WS_GALLERY_LIST             @"gallery"
 
 typedef enum {
     ICON_RES_1x = 0,

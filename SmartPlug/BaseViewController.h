@@ -10,10 +10,4 @@
 
 @interface BaseViewController : UIViewController
 
-@property (nonatomic, strong) UIView *viewNetworkError;
-@property (nonatomic, strong) UIView *viewDownloadError;
-
-- (void)updateNavigationBarButtons;
-- (void)clearNavigationBarButtons;
-
 @end

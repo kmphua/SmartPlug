@@ -55,15 +55,14 @@
 {
     if (self.txtUsername.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:@"Error"
-                                              message:@"Username field is empty"
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"UsernameEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
         [self presentViewController:alertController animated:YES completion:nil];
         return NO;
-    }
-    
+    }    
     return YES;
 }
 
@@ -73,12 +72,10 @@
         return;
     }
     
-    /*
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws newUser:self.txtUsername.text password:self.txtPassword.text email:self.txtEmail.text lang:[Global getCurrentLang]];
+    [ws changePassword:self.txtUsername.text password:nil lang:[Global getCurrentLang]];
     [ws showWaitingView:self.view];
-     */
 }
 
 //==================================================================
@@ -103,8 +100,8 @@
             if (code == 0) {
                 // Success
                 NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"ChangePassword", nil)
-                                                                    message:message
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"title_passwordResetSent", nil)
+                                                                    message:NSLocalizedString(@"msg_passwordResetBtn", nil)
                                                                    delegate:nil
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];
