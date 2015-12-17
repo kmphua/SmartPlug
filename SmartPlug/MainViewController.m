@@ -9,8 +9,6 @@
 #import "MainViewController.h"
 #import "AddDeviceViewController.h"
 #import "MainViewCell.h"
-#import "Global.h"
-#import "WebService.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate>
 

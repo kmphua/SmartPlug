@@ -10,8 +10,6 @@
 #import "CreateAccountViewController.h"
 #import "ResetPasswordViewController.h"
 #import "MainViewController.h"
-#import "CustomBadge.h"
-#import "Global.h"
 
 @interface LoginViewController ()
 

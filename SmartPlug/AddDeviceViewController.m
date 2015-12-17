@@ -7,10 +7,9 @@
 //
 
 #import "AddDeviceViewController.h"
-#import "Global.h"
-#import "WebService.h"
 
-@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate>
+
+@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, GCDAsyncSocketDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *titleBgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
@@ -20,7 +19,11 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
-@property (strong, nonatomic) NSMutableArray *devices;
+
+@property (strong, nonatomic) GCDAsyncSocket *socket;
+@property (strong, nonatomic) NSMutableArray *services;
+@property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
+@property (nonatomic) BOOL searching;
 
 @end
 
@@ -42,7 +45,7 @@
     
     [self.btnInitDevices setTitle:NSLocalizedString(@"Initialize Devices", nil) forState:UIControlStateNormal];
     
-    self.devices = [NSMutableArray new];
+    self.services = [NSMutableArray new];
     
     // Load animation images
     NSArray *waitImageNames = @[@"wait_0.png", @"wait_1.png", @"wait_2.png",
@@ -67,11 +70,7 @@
 }
 
 - (IBAction)onBtnInitDevices:(id)sender {
-    if (!self.imgWait.isAnimating) {
-        [self.imgWait startAnimating];
-    } else {
-        [self.imgWait stopAnimating];
-    }
+    [self startBrowsing];
 }
 
 - (void)adjustHeightOfTableview
@@ -95,6 +94,103 @@
 }
 
 //==================================================================
+#pragma mark - Bonjour service discovery
+//==================================================================
+
+- (void)startBrowsing {
+    if (self.services) {
+        [self.services removeAllObjects];
+    } else {
+        self.services = [[NSMutableArray alloc] init];
+    }
+    
+    // Initialize Service Browser
+    self.serviceBrowser = [[NSNetServiceBrowser alloc] init];
+    
+    // Configure Service Browser
+    [self.serviceBrowser setDelegate:self];
+    [self.serviceBrowser searchForBrowsableDomains];
+    [self.serviceBrowser searchForServicesOfType:@"_dns-sd._udp" inDomain:@""];
+}
+
+- (void)stopBrowsing {
+    if (self.serviceBrowser) {
+        [self.serviceBrowser stop];
+        [self.serviceBrowser setDelegate:nil];
+        [self setServiceBrowser:nil];
+    }
+}
+
+- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
+    self.searching = YES;
+    [self updateUI];
+}
+
+// Sent when browsing stops
+- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser {
+    [self stopBrowsing];
+    self.searching = NO;
+    [self updateUI];
+}
+
+// Sent if browsing fails
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+             didNotSearch:(NSDictionary *)errorDict {
+    [self stopBrowsing];
+    self.searching = NO;
+    [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
+    [self updateUI];
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
+    NSLog(@"Found domain: %@", domainString);
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
+    // Update Services
+    [self.services addObject:service];
+    
+    if(!moreComing) {
+        // Sort Services
+        [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
+        
+        // Update Table View
+        [self.tableView reloadData];
+    }
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
+    // Update Services
+    [self.services removeObject:service];
+    
+    if(!moreComing) {
+        // Update Table View
+        [self.tableView reloadData];
+    }
+}
+
+// Error handling code
+- (void)handleError:(NSNumber *)error {
+    NSString *errorMsg = [NSString stringWithFormat:@"An error occurred.\nNSNetServicesErrorCode = %d", [error intValue]];
+    // Handle error here
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)                                                                    message:errorMsg
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                              otherButtonTitles:nil, nil];
+    [alertView show];
+}
+
+// UI update code
+- (void)updateUI {
+    if (self.searching) {
+        [self.imgWait startAnimating];
+    }
+    else {
+        [self.imgWait stopAnimating];
+    }
+}
+
+//==================================================================
 #pragma mark - Table view delegate
 //==================================================================
 
@@ -106,7 +202,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.devices count];
+    return [self.services count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -119,12 +215,21 @@
     static NSString *CellIdentifier = @"TableCell";
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     
+    // Fetch Service
+    NSNetService *service = [self.services objectAtIndex:[indexPath row]];
+    
+    // Configure Cell
+    [cell.textLabel setText:[service name]];
+    
     return cell;
 }
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
+    NSNetService *service = [self.services objectAtIndex:[indexPath row]];
+    // Resolve Service
+    [service setDelegate:self];
+    [service resolveWithTimeout:30.0];
 }
 
 //==================================================================
@@ -154,10 +259,10 @@
                 // Success
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
-                if (devices) {
-                    NSLog(@"Total %ld devices", devices.count);
-                    [self.devices setArray:devices];
-                }
+               // if (devices) {
+                   // NSLog(@"Total %ld devices", devices.count);
+                 //   [self.devices setArray:devices];
+                //}
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
             } else {

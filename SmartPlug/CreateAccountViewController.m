@@ -7,7 +7,6 @@
 //
 
 #import "CreateAccountViewController.h"
-#import "Global.h"
 
 #define kOFFSET_FOR_KEYBOARD 80.0
 

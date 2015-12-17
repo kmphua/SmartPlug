@@ -9,8 +9,8 @@
 #import "BaseViewController.h"
 #import "LoginViewController.h"
 #import "AppDelegate.h"
-#import "Global.h"
-#import "WebService.h"
+//#import "Global.h"
+//#import "WebService.h"
 
 @interface BaseViewController ()<WebServiceDelegate>
 

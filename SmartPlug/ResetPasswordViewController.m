@@ -8,8 +8,6 @@
 
 #import "ResetPasswordViewController.h"
 #import "CreateAccountViewController.h"
-#import "CustomBadge.h"
-#import "Global.h"
 
 @interface ResetPasswordViewController ()
 
