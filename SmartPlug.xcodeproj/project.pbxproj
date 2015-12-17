@@ -302,6 +302,7 @@
 		751510D11C22698C007772FE /* AddDeviceViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AddDeviceViewController.m; sourceTree = "<group>"; };
 		751510D21C22698C007772FE /* AddDeviceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddDeviceViewController.xib; sourceTree = "<group>"; };
 		751510D61C22908A007772FE /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = SOURCE_ROOT; };
+		751510D71C22B9E8007772FE /* smartplug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smartplug.h; sourceTree = "<group>"; };
 		756679781C1F864B001B30B2 /* bkgnd2@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@1x.png"; sourceTree = "<group>"; };
 		756679791C1F864B001B30B2 /* bkgnd2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@2x.png"; sourceTree = "<group>"; };
 		7566797A1C1F864B001B30B2 /* btn_add@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_add@1x.png"; sourceTree = "<group>"; };
@@ -617,6 +618,7 @@
 			children = (
 				7512C1641C1BB3B700489091 /* WebService.h */,
 				7512C1651C1BB3B700489091 /* WebService.m */,
+				751510D71C22B9E8007772FE /* smartplug.h */,
 			);
 			path = Services;
 			sourceTree = "<group>";
