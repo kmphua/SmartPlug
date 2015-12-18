@@ -8,6 +8,7 @@
 
 #import "MainViewController.h"
 #import "AddDeviceViewController.h"
+#import "DeviceMainViewController.h"
 #import "MainViewCell.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate>
@@ -34,30 +35,35 @@
     [device1 setObject:@"Desk Lamp" forKey:@"title"];
     [device1 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
     [device1 setObject:[NSNumber numberWithBool:NO] forKey:@"hasWarning"];
+    [device1 setObject:@"see_Table Lamps_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device1];
     
     NSMutableDictionary *device2 = [NSMutableDictionary new];
     [device2 setObject:@"Bedroom" forKey:@"title"];
     [device2 setObject:[NSNumber numberWithBool:NO] forKey:@"hasTimer"];
     [device2 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
+    [device2 setObject:@"see_bedroom_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device2];
     
     NSMutableDictionary *device3 = [NSMutableDictionary new];
-    [device3 setObject:@"Living Room" forKey:@"title"];
+    [device3 setObject:@"TV" forKey:@"title"];
     [device3 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
     [device3 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
+    [device3 setObject:@"see_TV_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device3];
 
     NSMutableDictionary *device4 = [NSMutableDictionary new];
     [device4 setObject:@"Kitchen" forKey:@"title"];
     [device4 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
     [device4 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
+    [device4 setObject:@"see_Datong Electric Pans_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device4];
 
     NSMutableDictionary *device5 = [NSMutableDictionary new];
-    [device5 setObject:@"Toilet" forKey:@"title"];
+    [device5 setObject:@"Wi-Fi" forKey:@"title"];
     [device5 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
     [device5 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
+    [device5 setObject:@"see_Wi-Fi sharing device_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device5];
 }
 
@@ -158,10 +164,12 @@
     NSString *deviceName = [device objectForKey:@"title"];
     BOOL hasTimer = [[device objectForKey:@"hasTimer"] boolValue];
     BOOL hasWarning = [[device objectForKey:@"hasWarning"] boolValue];
+    NSString *deviceUrl = [device objectForKey:@"icon"];
     
     cell.lblDeviceName.text = deviceName;
     [cell.btnTimer setHidden:!hasTimer];
     [cell.btnWarn setHidden:!hasWarning];
+    cell.imgDeviceIcon.image = [UIImage imageNamed:deviceUrl];
     
     // Modify cell background according to row position
     NSInteger rowCount = [self.devices count];
@@ -186,6 +194,9 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
+    DeviceMainViewController *devMainVc = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
+    devMainVc.device = device;
+    [self.navigationController pushViewController:devMainVc animated:YES];
 }
 
 //==================================================================

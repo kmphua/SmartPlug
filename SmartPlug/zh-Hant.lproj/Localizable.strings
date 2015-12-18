@@ -24,8 +24,8 @@
 "msg_passwordResetBtn" = "密碼重置信息已發送到你的郵箱，請檢查電子郵件獲取進一步的說明。";
 "title_resetPassword" = "重設密碼";
 "title_initializeDevices" = "初始化設備";
-"msg_enterSSID&password." = "請輸入您當前的SSID和密碼。";
-"msg_pleaseWait." = "請稍後";
+"msg_enterSSID&password" = "請輸入您當前的SSID和密碼。";
+"msg_pleaseWait" = "請稍後";
 "msg_enterNewUserName" = "輸入新的使用者名稱";
 "btn_submit" = "提交";
 "title_accountCreated" = "帳號創建";

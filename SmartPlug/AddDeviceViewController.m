@@ -302,10 +302,18 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"btn_addingDevice", nil)                                                                    message:NSLocalizedString(@"msg_pleaseWait", nil)
+                                                       delegate:nil
+                                              cancelButtonTitle:nil
+                                              otherButtonTitles:nil, nil];
+    [alertView show];
+    
+    /*
     NSNetService *service = [self.services objectAtIndex:[indexPath row]];
     // Resolve Service
     [service setDelegate:self];
     [service resolveWithTimeout:30.0];
+     */
 }
 
 //==================================================================

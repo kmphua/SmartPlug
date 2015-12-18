@@ -24,8 +24,8 @@
 "msg_passwordResetBtn" = "Password reset details has been sent to your email, please check the email for further instructions.";
 "title_resetPassword" = "Reset Password";
 "title_initializeDevices" = "Initialize Devices";
-"msg_enterSSID&password." = "Please enter your current SSID & password. ";
-"msg_pleaseWait." = "Please wait.";
+"msg_enterSSID&password" = "Please enter your current SSID & password. ";
+"msg_pleaseWait" = "Please wait.";
 "msg_enterNewUserName" = "Enter A New User Name";
 "btn_submit" = "Submit";
 "title_accountCreated" = "Account Created";

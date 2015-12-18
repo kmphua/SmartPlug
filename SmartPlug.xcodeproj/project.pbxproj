@@ -225,6 +225,45 @@
 		75667B371C1F864C001B30B2 /* wait_6@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75667A561C1F864C001B30B2 /* wait_6@2x.png */; };
 		75667B381C1F864C001B30B2 /* wait_7@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75667A571C1F864C001B30B2 /* wait_7@1x.png */; };
 		75667B391C1F864C001B30B2 /* wait_7@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75667A581C1F864C001B30B2 /* wait_7@2x.png */; };
+		757411741C23ADC300CDCC2D /* DeviceMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 757411721C23ADC300CDCC2D /* DeviceMainViewController.m */; };
+		757411751C23ADC300CDCC2D /* DeviceMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 757411731C23ADC300CDCC2D /* DeviceMainViewController.xib */; };
+		7574119C1C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411771C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd.png */; };
+		7574119D1C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411781C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd_small.png */; };
+		7574119E1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411791C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd.png */; };
+		7574119F1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574117A1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd_small.png */; };
+		757411A01C23AEE600CDCC2D /* see_Air conditioning_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574117B1C23AEE600CDCC2D /* see_Air conditioning_1_white_bkgnd.png */; };
+		757411A11C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574117C1C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd.png */; };
+		757411A21C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574117D1C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd_small.png */; };
+		757411A31C23AEE600CDCC2D /* see_bedroom_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574117E1C23AEE600CDCC2D /* see_bedroom_1_white_bkgnd.png */; };
+		757411A41C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574117F1C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd.png */; };
+		757411A51C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411801C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd_small.png */; };
+		757411A61C23AEE600CDCC2D /* see_Coffee machine_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411811C23AEE600CDCC2D /* see_Coffee machine_1_white_bkgnd.png */; };
+		757411A71C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411821C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd.png */; };
+		757411A81C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411831C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd_small.png */; };
+		757411A91C23AEE600CDCC2D /* see_Datong Electric Pans_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411841C23AEE600CDCC2D /* see_Datong Electric Pans_1_white_bkgnd.png */; };
+		757411AA1C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411851C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd.png */; };
+		757411AB1C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411861C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd_small.png */; };
+		757411AC1C23AEE600CDCC2D /* see_Electric fan_ 1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411871C23AEE600CDCC2D /* see_Electric fan_ 1_white_bkgnd.png */; };
+		757411AD1C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411881C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent.png */; };
+		757411AE1C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411891C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent_small.png */; };
+		757411AF1C23AEE600CDCC2D /* see_Electric light_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574118A1C23AEE600CDCC2D /* see_Electric light_1_white_bkgnd.png */; };
+		757411B01C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574118B1C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd.png */; };
+		757411B11C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574118C1C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd_small.png */; };
+		757411B21C23AEE600CDCC2D /* see_Heater_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574118D1C23AEE600CDCC2D /* see_Heater_1_white_bkgnd.png */; };
+		757411B31C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574118E1C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd.png */; };
+		757411B41C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574118F1C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd_small.png */; };
+		757411B51C23AEE600CDCC2D /* see_Kettle_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411901C23AEE600CDCC2D /* see_Kettle_1_white_bkgnd.png */; };
+		757411B61C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411911C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd.png */; };
+		757411B71C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411921C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd_small.png */; };
+		757411B81C23AEE600CDCC2D /* see_Table Lamps_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411931C23AEE600CDCC2D /* see_Table Lamps_1_white_bkgnd.png */; };
+		757411B91C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411941C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd.png */; };
+		757411BA1C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411951C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd_small.png */; };
+		757411BB1C23AEE600CDCC2D /* see_TV_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411961C23AEE600CDCC2D /* see_TV_1_white_bkgnd.png */; };
+		757411BC1C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411971C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd.png */; };
+		757411BD1C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411981C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd_small.png */; };
+		757411BE1C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */; };
+		757411BF1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */; };
+		757411C01C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */; };
 		75E926821C2106EF004C476C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 75E926841C2106EF004C476C /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -491,6 +530,46 @@
 		75667A561C1F864C001B30B2 /* wait_6@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "wait_6@2x.png"; sourceTree = "<group>"; };
 		75667A571C1F864C001B30B2 /* wait_7@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "wait_7@1x.png"; sourceTree = "<group>"; };
 		75667A581C1F864C001B30B2 /* wait_7@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "wait_7@2x.png"; sourceTree = "<group>"; };
+		757411711C23ADC300CDCC2D /* DeviceMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceMainViewController.h; sourceTree = "<group>"; };
+		757411721C23ADC300CDCC2D /* DeviceMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceMainViewController.m; sourceTree = "<group>"; };
+		757411731C23ADC300CDCC2D /* DeviceMainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DeviceMainViewController.xib; sourceTree = "<group>"; };
+		757411771C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_AC full pwr_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		757411781C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_AC full pwr_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		757411791C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_AC_2_transparent_bkgnd.png; sourceTree = "<group>"; };
+		7574117A1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_AC_2_transparent_bkgnd_small.png; sourceTree = "<group>"; };
+		7574117B1C23AEE600CDCC2D /* see_Air conditioning_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Air conditioning_1_white_bkgnd.png"; sourceTree = "<group>"; };
+		7574117C1C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Air conditioning_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		7574117D1C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Air conditioning_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		7574117E1C23AEE600CDCC2D /* see_bedroom_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_bedroom_1_white_bkgnd.png; sourceTree = "<group>"; };
+		7574117F1C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_bedroom_2_transparent_bkgnd.png; sourceTree = "<group>"; };
+		757411801C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_bedroom_2_transparent_bkgnd_small.png; sourceTree = "<group>"; };
+		757411811C23AEE600CDCC2D /* see_Coffee machine_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Coffee machine_1_white_bkgnd.png"; sourceTree = "<group>"; };
+		757411821C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Coffee machine_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		757411831C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Coffee machine_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		757411841C23AEE600CDCC2D /* see_Datong Electric Pans_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Datong Electric Pans_1_white_bkgnd.png"; sourceTree = "<group>"; };
+		757411851C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Datong Electric Pans_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		757411861C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Datong Electric Pans_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		757411871C23AEE600CDCC2D /* see_Electric fan_ 1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Electric fan_ 1_white_bkgnd.png"; sourceTree = "<group>"; };
+		757411881C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Electric fan_ 2_white_transparent.png"; sourceTree = "<group>"; };
+		757411891C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Electric fan_ 2_white_transparent_small.png"; sourceTree = "<group>"; };
+		7574118A1C23AEE600CDCC2D /* see_Electric light_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Electric light_1_white_bkgnd.png"; sourceTree = "<group>"; };
+		7574118B1C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Electric light_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		7574118C1C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Electric light_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		7574118D1C23AEE600CDCC2D /* see_Heater_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_Heater_1_white_bkgnd.png; sourceTree = "<group>"; };
+		7574118E1C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_Heater_2_transparent_bkgnd.png; sourceTree = "<group>"; };
+		7574118F1C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_Heater_2_transparent_bkgnd_small.png; sourceTree = "<group>"; };
+		757411901C23AEE600CDCC2D /* see_Kettle_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_Kettle_1_white_bkgnd.png; sourceTree = "<group>"; };
+		757411911C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_Kettle_2_transparent_bkgnd.png; sourceTree = "<group>"; };
+		757411921C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_Kettle_2_transparent_bkgnd_small.png; sourceTree = "<group>"; };
+		757411931C23AEE600CDCC2D /* see_Table Lamps_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Table Lamps_1_white_bkgnd.png"; sourceTree = "<group>"; };
+		757411941C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Table Lamps_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		757411951C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Table Lamps_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		757411961C23AEE600CDCC2D /* see_TV_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_TV_1_white_bkgnd.png; sourceTree = "<group>"; };
+		757411971C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_TV_2_transparent_bkgnd.png; sourceTree = "<group>"; };
+		757411981C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = see_TV_2_transparent_bkgnd_small.png; sourceTree = "<group>"; };
+		757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_1_white_bkgnd.png"; sourceTree = "<group>"; };
+		7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
+		7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
 		75E926831C2106EF004C476C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		75E926851C210716004C476C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		75E926861C210722004C476C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -677,6 +756,9 @@
 				751510D01C22698C007772FE /* AddDeviceViewController.h */,
 				751510D11C22698C007772FE /* AddDeviceViewController.m */,
 				751510D21C22698C007772FE /* AddDeviceViewController.xib */,
+				757411711C23ADC300CDCC2D /* DeviceMainViewController.h */,
+				757411721C23ADC300CDCC2D /* DeviceMainViewController.m */,
+				757411731C23ADC300CDCC2D /* DeviceMainViewController.xib */,
 				751510CB1C225D71007772FE /* MainViewCell.h */,
 				751510CC1C225D71007772FE /* MainViewCell.m */,
 				751510CD1C225D71007772FE /* MainViewCell.xib */,
@@ -706,6 +788,7 @@
 		756679771C1F864B001B30B2 /* Images */ = {
 			isa = PBXGroup;
 			children = (
+				757411761C23AEE600CDCC2D /* device_icons */,
 				756679781C1F864B001B30B2 /* bkgnd2@1x.png */,
 				756679791C1F864B001B30B2 /* bkgnd2@2x.png */,
 				7566797A1C1F864B001B30B2 /* btn_add@1x.png */,
@@ -898,6 +981,50 @@
 			path = Images;
 			sourceTree = "<group>";
 		};
+		757411761C23AEE600CDCC2D /* device_icons */ = {
+			isa = PBXGroup;
+			children = (
+				757411771C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd.png */,
+				757411781C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd_small.png */,
+				757411791C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd.png */,
+				7574117A1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd_small.png */,
+				7574117B1C23AEE600CDCC2D /* see_Air conditioning_1_white_bkgnd.png */,
+				7574117C1C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd.png */,
+				7574117D1C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd_small.png */,
+				7574117E1C23AEE600CDCC2D /* see_bedroom_1_white_bkgnd.png */,
+				7574117F1C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd.png */,
+				757411801C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd_small.png */,
+				757411811C23AEE600CDCC2D /* see_Coffee machine_1_white_bkgnd.png */,
+				757411821C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd.png */,
+				757411831C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd_small.png */,
+				757411841C23AEE600CDCC2D /* see_Datong Electric Pans_1_white_bkgnd.png */,
+				757411851C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd.png */,
+				757411861C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd_small.png */,
+				757411871C23AEE600CDCC2D /* see_Electric fan_ 1_white_bkgnd.png */,
+				757411881C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent.png */,
+				757411891C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent_small.png */,
+				7574118A1C23AEE600CDCC2D /* see_Electric light_1_white_bkgnd.png */,
+				7574118B1C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd.png */,
+				7574118C1C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd_small.png */,
+				7574118D1C23AEE600CDCC2D /* see_Heater_1_white_bkgnd.png */,
+				7574118E1C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd.png */,
+				7574118F1C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd_small.png */,
+				757411901C23AEE600CDCC2D /* see_Kettle_1_white_bkgnd.png */,
+				757411911C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd.png */,
+				757411921C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd_small.png */,
+				757411931C23AEE600CDCC2D /* see_Table Lamps_1_white_bkgnd.png */,
+				757411941C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd.png */,
+				757411951C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd_small.png */,
+				757411961C23AEE600CDCC2D /* see_TV_1_white_bkgnd.png */,
+				757411971C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd.png */,
+				757411981C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd_small.png */,
+				757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */,
+				7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */,
+				7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */,
+			);
+			path = device_icons;
+			sourceTree = "<group>";
+		};
 		B86E301AB5C7D2EDFCD3B268 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
@@ -1015,11 +1142,13 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				757411B31C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd.png in Resources */,
 				75667B171C1F864C001B30B2 /* svc_3_big@2x.png in Resources */,
 				75667AA81C1F864C001B30B2 /* ic_menu_new@2x.png in Resources */,
 				75667A8E1C1F864C001B30B2 /* btn_timer_on@2x.png in Resources */,
 				75667B121C1F864C001B30B2 /* svc_2_small@1x.png in Resources */,
 				75667B181C1F864C001B30B2 /* svc_3_big_off@1x.png in Resources */,
+				757411A61C23AEE600CDCC2D /* see_Coffee machine_1_white_bkgnd.png in Resources */,
 				75667A591C1F864C001B30B2 /* bkgnd2@1x.png in Resources */,
 				75667A991C1F864C001B30B2 /* ic_combo@1x.png in Resources */,
 				75667ABD1C1F864C001B30B2 /* main_item_1_a@1x.png in Resources */,
@@ -1027,14 +1156,19 @@
 				75667A951C1F864C001B30B2 /* dialog_bkgnd@1x.png in Resources */,
 				75667A921C1F864C001B30B2 /* btn_warn_close@2x.png in Resources */,
 				75667B031C1F864C001B30B2 /* svc_0_small@2x.png in Resources */,
+				757411C01C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png in Resources */,
 				75667A741C1F864C001B30B2 /* btn_big_bkgnd_3@2x.png in Resources */,
 				7512C17C1C1BB3B700489091 /* LoginViewController.xib in Resources */,
 				75667A701C1F864C001B30B2 /* btn_big_bkgnd_2_off@2x.png in Resources */,
+				757411AE1C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent_small.png in Resources */,
+				7574119C1C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd.png in Resources */,
+				7574119E1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd.png in Resources */,
 				75667B1F1C1F864C001B30B2 /* title_bkgnd_blue@2x.png in Resources */,
 				75667AD01C1F864C001B30B2 /* marker_disable@2x.png in Resources */,
 				75667A6C1C1F864C001B30B2 /* btn_big_bkgnd_1_pressed@2x.png in Resources */,
 				75667AFE1C1F864C001B30B2 /* svc_0_big@1x.png in Resources */,
 				75667A691C1F864C001B30B2 /* btn_big_bkgnd_1_off@1x.png in Resources */,
+				757411AD1C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent.png in Resources */,
 				75667A5A1C1F864C001B30B2 /* bkgnd2@2x.png in Resources */,
 				75667AC11C1F864C001B30B2 /* main_item_1_c@1x.png in Resources */,
 				75667A771C1F864C001B30B2 /* btn_big_bkgnd_3_pressed@1x.png in Resources */,
@@ -1046,8 +1180,10 @@
 				75667A971C1F864C001B30B2 /* ic_check@1x.png in Resources */,
 				75667AC01C1F864C001B30B2 /* main_item_1_b@2x.png in Resources */,
 				75667B371C1F864C001B30B2 /* wait_6@2x.png in Resources */,
+				757411AB1C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd_small.png in Resources */,
 				7512C17A1C1BB3B700489091 /* CreateAccountViewController.xib in Resources */,
 				75667AC21C1F864C001B30B2 /* main_item_1_c@2x.png in Resources */,
+				757411B81C23AEE600CDCC2D /* see_Table Lamps_1_white_bkgnd.png in Resources */,
 				75667B1E1C1F864C001B30B2 /* title_bkgnd_blue@1x.png in Resources */,
 				75667B241C1F864C001B30B2 /* title_bkgnd_yellow@1x.png in Resources */,
 				75667B0A1C1F864C001B30B2 /* svc_1_small@1x.png in Resources */,
@@ -1066,6 +1202,7 @@
 				75667ACA1C1F864C001B30B2 /* main_item_3_a@2x.png in Resources */,
 				75667A851C1F864C001B30B2 /* btn_timer_delay@1x.png in Resources */,
 				75667ABC1C1F864C001B30B2 /* main_item_0_c@2x.png in Resources */,
+				757411B21C23AEE600CDCC2D /* see_Heater_1_white_bkgnd.png in Resources */,
 				75667AC51C1F864C001B30B2 /* main_item_2_b@1x.png in Resources */,
 				75667B2F1C1F864C001B30B2 /* wait_2@2x.png in Resources */,
 				75667A8C1C1F864C001B30B2 /* btn_timer_off_pressed@2x.png in Resources */,
@@ -1080,6 +1217,7 @@
 				75667A9D1C1F864C001B30B2 /* ic_delete@1x.png in Resources */,
 				75667B211C1F864C001B30B2 /* title_bkgnd_green@2x.png in Resources */,
 				751510CF1C225D71007772FE /* MainViewCell.xib in Resources */,
+				7574119F1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd_small.png in Resources */,
 				75667B201C1F864C001B30B2 /* title_bkgnd_green@1x.png in Resources */,
 				75667AB51C1F864C001B30B2 /* logo@1x.png in Resources */,
 				75667AC91C1F864C001B30B2 /* main_item_3_a@1x.png in Resources */,
@@ -1087,6 +1225,7 @@
 				75667A831C1F864C001B30B2 /* btn_power_pressed@1x.png in Resources */,
 				75667AC61C1F864C001B30B2 /* main_item_2_b@2x.png in Resources */,
 				75667B2C1C1F864C001B30B2 /* wait_1@1x.png in Resources */,
+				757411B91C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd.png in Resources */,
 				75667A651C1F864C001B30B2 /* btn_big_bkgnd_0_pressed@1x.png in Resources */,
 				75667ABF1C1F864C001B30B2 /* main_item_1_b@1x.png in Resources */,
 				75667A6B1C1F864C001B30B2 /* btn_big_bkgnd_1_pressed@1x.png in Resources */,
@@ -1099,7 +1238,10 @@
 				75667B0E1C1F864C001B30B2 /* svc_2_big@1x.png in Resources */,
 				75667B0B1C1F864C001B30B2 /* svc_1_small@2x.png in Resources */,
 				75667A621C1F864C001B30B2 /* btn_big_bkgnd_0_off@2x.png in Resources */,
+				757411AA1C23AEE600CDCC2D /* see_Datong Electric Pans_2_transparent_bkgnd.png in Resources */,
+				757411B51C23AEE600CDCC2D /* see_Kettle_1_white_bkgnd.png in Resources */,
 				75667A6E1C1F864C001B30B2 /* btn_big_bkgnd_2@2x.png in Resources */,
+				757411A91C23AEE600CDCC2D /* see_Datong Electric Pans_1_white_bkgnd.png in Resources */,
 				75667B351C1F864C001B30B2 /* wait_5@2x.png in Resources */,
 				75667B021C1F864C001B30B2 /* svc_0_small@1x.png in Resources */,
 				75667A7E1C1F864C001B30B2 /* btn_dow_bkgnd_pressed@2x.png in Resources */,
@@ -1108,7 +1250,13 @@
 				75667ABA1C1F864C001B30B2 /* main_item_0_b@2x.png in Resources */,
 				75667A841C1F864C001B30B2 /* btn_power_pressed@2x.png in Resources */,
 				75667ABE1C1F864C001B30B2 /* main_item_1_a@2x.png in Resources */,
+				757411A51C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd_small.png in Resources */,
+				7574119D1C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd_small.png in Resources */,
+				757411A01C23AEE600CDCC2D /* see_Air conditioning_1_white_bkgnd.png in Resources */,
+				757411B01C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd.png in Resources */,
 				75667A761C1F864C001B30B2 /* btn_big_bkgnd_3_off@2x.png in Resources */,
+				757411BB1C23AEE600CDCC2D /* see_TV_1_white_bkgnd.png in Resources */,
+				757411A81C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd_small.png in Resources */,
 				75667B301C1F864C001B30B2 /* wait_3@1x.png in Resources */,
 				75667ACC1C1F864C001B30B2 /* main_item_3_b@2x.png in Resources */,
 				75667B101C1F864C001B30B2 /* svc_2_big_off@1x.png in Resources */,
@@ -1139,21 +1287,25 @@
 				75667B361C1F864C001B30B2 /* wait_6@1x.png in Resources */,
 				75667A9F1C1F864C001B30B2 /* ic_delete_pressed@1x.png in Resources */,
 				75667B071C1F864C001B30B2 /* svc_1_big@2x.png in Resources */,
+				757411A11C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd.png in Resources */,
 				75667A781C1F864C001B30B2 /* btn_big_bkgnd_3_pressed@2x.png in Resources */,
 				75667A941C1F864C001B30B2 /* btn_warn_close_pressed@2x.png in Resources */,
 				75667AD11C1F864C001B30B2 /* marker_timer@1x.png in Resources */,
 				75667A811C1F864C001B30B2 /* btn_power@1x.png in Resources */,
+				757411BA1C23AEE600CDCC2D /* see_Table Lamps_2_transparent_bkgnd_small.png in Resources */,
 				75667A891C1F864C001B30B2 /* btn_timer_off@1x.png in Resources */,
 				75667B221C1F864C001B30B2 /* title_bkgnd_red@1x.png in Resources */,
 				75667AB81C1F864C001B30B2 /* main_item_0_a@2x.png in Resources */,
 				75667A8B1C1F864C001B30B2 /* btn_timer_off_pressed@1x.png in Resources */,
 				75667A7C1C1F864C001B30B2 /* btn_dow_bkgnd@2x.png in Resources */,
+				757411AC1C23AEE600CDCC2D /* see_Electric fan_ 1_white_bkgnd.png in Resources */,
 				7512C1801C1BB3B700489091 /* ResetPasswordViewController.xib in Resources */,
 				75667AA71C1F864C001B30B2 /* ic_menu_new@1x.png in Resources */,
 				75667ACE1C1F864C001B30B2 /* main_item_3_c@2x.png in Resources */,
 				75667A711C1F864C001B30B2 /* btn_big_bkgnd_2_pressed@1x.png in Resources */,
 				75667B061C1F864C001B30B2 /* svc_1_big@1x.png in Resources */,
 				75667B081C1F864C001B30B2 /* svc_1_big_off@1x.png in Resources */,
+				757411B71C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd_small.png in Resources */,
 				75667A911C1F864C001B30B2 /* btn_warn_close@1x.png in Resources */,
 				75667AB21C1F864C001B30B2 /* ir_detect@2x.png in Resources */,
 				75667AA11C1F864C001B30B2 /* ic_edit@1x.png in Resources */,
@@ -1161,6 +1313,7 @@
 				75667A6F1C1F864C001B30B2 /* btn_big_bkgnd_2_off@1x.png in Resources */,
 				75667AA21C1F864C001B30B2 /* ic_edit@2x.png in Resources */,
 				75667AAF1C1F864C001B30B2 /* ir_choose@1x.png in Resources */,
+				757411B61C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd.png in Resources */,
 				75667AA31C1F864C001B30B2 /* ic_edit_pressed@1x.png in Resources */,
 				75667A6A1C1F864C001B30B2 /* btn_big_bkgnd_1_off@2x.png in Resources */,
 				75667AA51C1F864C001B30B2 /* ic_menu_edit@1x.png in Resources */,
@@ -1169,38 +1322,50 @@
 				75667A751C1F864C001B30B2 /* btn_big_bkgnd_3_off@1x.png in Resources */,
 				75667AAB1C1F864C001B30B2 /* ic_menu_settings@1x.png in Resources */,
 				75667B1C1C1F864C001B30B2 /* svc_3_small_off@1x.png in Resources */,
+				757411BF1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png in Resources */,
 				75667A881C1F864C001B30B2 /* btn_timer_delay_pressed@2x.png in Resources */,
 				75667A901C1F864C001B30B2 /* btn_timer_on_pressed@2x.png in Resources */,
 				75667AAE1C1F864C001B30B2 /* ic_wpa@2x.png in Resources */,
 				75667A9B1C1F864C001B30B2 /* ic_combo_down@1x.png in Resources */,
 				75667A721C1F864C001B30B2 /* btn_big_bkgnd_2_pressed@2x.png in Resources */,
 				75667B161C1F864C001B30B2 /* svc_3_big@1x.png in Resources */,
+				757411AF1C23AEE600CDCC2D /* see_Electric light_1_white_bkgnd.png in Resources */,
+				757411BC1C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd.png in Resources */,
 				75667A601C1F864C001B30B2 /* btn_big_bkgnd_0@2x.png in Resources */,
 				75667B001C1F864C001B30B2 /* svc_0_big_off@1x.png in Resources */,
 				75667AFF1C1F864C001B30B2 /* svc_0_big@2x.png in Resources */,
+				757411BE1C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png in Resources */,
 				75667ABB1C1F864C001B30B2 /* main_item_0_c@1x.png in Resources */,
 				75667B2D1C1F864C001B30B2 /* wait_1@2x.png in Resources */,
 				75667AC71C1F864C001B30B2 /* main_item_2_c@1x.png in Resources */,
 				75667B091C1F864C001B30B2 /* svc_1_big_off@2x.png in Resources */,
+				757411B11C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd_small.png in Resources */,
+				757411A21C23AEE600CDCC2D /* see_Air conditioning_2_transparent_bkgnd_small.png in Resources */,
+				757411A31C23AEE600CDCC2D /* see_bedroom_1_white_bkgnd.png in Resources */,
 				75667AFC1C1F864C001B30B2 /* Shadow@1x.png in Resources */,
 				75667A981C1F864C001B30B2 /* ic_check@2x.png in Resources */,
 				75667B151C1F864C001B30B2 /* svc_2_small_off@2x.png in Resources */,
 				75667AC31C1F864C001B30B2 /* main_item_2_a@1x.png in Resources */,
 				75667B0C1C1F864C001B30B2 /* svc_1_small_off@1x.png in Resources */,
 				75667A661C1F864C001B30B2 /* btn_big_bkgnd_0_pressed@2x.png in Resources */,
+				757411A41C23AEE600CDCC2D /* see_bedroom_2_transparent_bkgnd.png in Resources */,
 				75667AB61C1F864C001B30B2 /* logo@2x.png in Resources */,
 				75667A7B1C1F864C001B30B2 /* btn_dow_bkgnd@1x.png in Resources */,
+				757411BD1C23AEE600CDCC2D /* see_TV_2_transparent_bkgnd_small.png in Resources */,
 				75667A731C1F864C001B30B2 /* btn_big_bkgnd_3@1x.png in Resources */,
 				75667AD21C1F864C001B30B2 /* marker_timer@2x.png in Resources */,
 				75667A931C1F864C001B30B2 /* btn_warn_close_pressed@1x.png in Resources */,
+				757411A71C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd.png in Resources */,
 				75667AAD1C1F864C001B30B2 /* ic_wpa@1x.png in Resources */,
 				75667A7D1C1F864C001B30B2 /* btn_dow_bkgnd_pressed@1x.png in Resources */,
+				757411751C23ADC300CDCC2D /* DeviceMainViewController.xib in Resources */,
 				75667ACF1C1F864C001B30B2 /* marker_disable@1x.png in Resources */,
 				75667AAA1C1F864C001B30B2 /* ic_menu_schedule@2x.png in Resources */,
 				75667B1A1C1F864C001B30B2 /* svc_3_small@1x.png in Resources */,
 				75667B131C1F864C001B30B2 /* svc_2_small@2x.png in Resources */,
 				75667AA91C1F864C001B30B2 /* ic_menu_schedule@1x.png in Resources */,
 				75667B2A1C1F864C001B30B2 /* wait_0@1x.png in Resources */,
+				757411B41C23AEE600CDCC2D /* see_Heater_2_transparent_bkgnd_small.png in Resources */,
 				75667B271C1F864C001B30B2 /* toast_bkgnd@2x.png in Resources */,
 				75667A611C1F864C001B30B2 /* btn_big_bkgnd_0_off@1x.png in Resources */,
 				75667B051C1F864C001B30B2 /* svc_0_small_off@2x.png in Resources */,
@@ -1293,6 +1458,7 @@
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
 				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,
+				757411741C23ADC300CDCC2D /* DeviceMainViewController.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
 				7512C1891C1BB3B700489091 /* UIWaitingView.m in Sources */,
 				7512C17E1C1BB3B700489091 /* ISO8601DateFormatter.m in Sources */,
