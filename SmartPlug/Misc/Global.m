@@ -94,8 +94,12 @@
 }
 
 + (NSString *)getCurrentLang {
-    //NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
-    //return language;
+    NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
+    if ([language containsString:@"zh-Hant"]) {
+        return @"zh";
+    } else if ([language containsString:@"zh-Hans"]) {
+        return @"zh-CN";
+    }
     return @"en";
 }
 

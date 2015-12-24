@@ -70,10 +70,10 @@
         return;
     }
     
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws changePassword:self.txtUsername.text password:nil lang:[Global getCurrentLang]];
-    [ws showWaitingView:self.view];
+    //WebService *ws = [WebService new];
+    //ws.delegate = self;
+    //[ws changePassword:self.txtUsername.text password:nil lang:[Global getCurrentLang]];
+    //[ws showWaitingView:self.view];
 }
 
 //==================================================================

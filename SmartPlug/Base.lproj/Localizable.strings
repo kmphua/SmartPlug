@@ -14,6 +14,8 @@
 "PasswordEmpty" = "Password field is empty";
 "ConfirmPasswordEmpty" = "Confirm password field is empty";
 "PasswordsNotMatch" = "Passwords do not match";
+"LoginFailed" = "Login failed";
+"RegisterFailed" = "Register failed";
 
 "id_username" = "Username";
 "id_password" = "Password";

@@ -21,6 +21,7 @@ BOOL g_IsLogin;
 BOOL g_IsOnline;
 NSString *g_Username;
 NSString *g_Password;
+NSString *g_UserToken;
 NSString *g_DevToken;
 NSMutableDictionary *g_AppInfo;
 

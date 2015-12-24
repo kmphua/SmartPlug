@@ -55,7 +55,7 @@ typedef enum {
 - (void)newUser:(NSString *)username password:(NSString *)password email:(NSString *)email lang:(NSString *)lang;
 - (void)verifyAcct:(NSString *)username verificationKey:(NSString *)verificationKey lang:(NSString *)lang;
 - (void)login:(NSString *)username password:(NSString *)password lang:(NSString *)lang;
-- (void)changePassword:(NSString *)username password:(NSString *)password lang:(NSString *)lang;
+- (void)changePassword:(NSString *)username oldPassword:(NSString *)oldPassword newPassword:(NSString *)newPassword lang:(NSString *)lang;
 - (void)regPush:(NSString *)userToken lang:(NSString *)lang devToken:(NSString *)devToken;
 - (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 

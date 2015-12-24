@@ -1,35 +1,33 @@
 //
-//  CreateAccountViewController.m
+//  ChangePasswordViewController.m
 //  SmartPlug
 //
 //  Created by Kevin Phua on 9/8/15.
 //  Copyright (c) 2015 hagarsoft. All rights reserved.
 //
 
-#import "CreateAccountViewController.h"
+#import "ChangePasswordViewController.h"
 
 #define kOFFSET_FOR_KEYBOARD 80.0
 
-@interface CreateAccountViewController ()
+@interface ChangePasswordViewController ()
 
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
-@property (weak, nonatomic) IBOutlet UILabel *lblEmail;
-@property (weak, nonatomic) IBOutlet UILabel *lblUsername;
-@property (weak, nonatomic) IBOutlet UILabel *lblPassword;
-@property (weak, nonatomic) IBOutlet UILabel *lblConfirmPassword;
-@property (weak, nonatomic) IBOutlet UITextField *txtEmail;
-@property (weak, nonatomic) IBOutlet UITextField *txtUsername;
-@property (weak, nonatomic) IBOutlet UITextField *txtPassword;
-@property (weak, nonatomic) IBOutlet UITextField *txtConfirmPassword;
+@property (weak, nonatomic) IBOutlet UILabel *lblOldPassword;
+@property (weak, nonatomic) IBOutlet UILabel *lblNewPassword;
+@property (weak, nonatomic) IBOutlet UILabel *lblConfirmNewPassword;
+@property (weak, nonatomic) IBOutlet UITextField *txtOldPassword;
+@property (weak, nonatomic) IBOutlet UITextField *txtNewPassword;
+@property (weak, nonatomic) IBOutlet UITextField *txtConfirmNewPassword;
 @property (weak, nonatomic) IBOutlet UIButton *btnSubmit;
 
 @property (strong, nonatomic) UITextField *activeField;
 
 @end
 
-@implementation CreateAccountViewController
+@implementation ChangePasswordViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -37,17 +35,15 @@
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
     self.lblTitle.text = NSLocalizedString(@"lnk_createAccount", nil);
-    self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_BLUE];
+    self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
-    self.lblEmail.text = NSLocalizedString(@"msg_enterEmail", nil);
-    self.txtEmail.placeholder = NSLocalizedString(@"id_email", nil);
-    self.lblUsername.text = NSLocalizedString(@"msg_enterNewUserName", nil);
-    self.txtUsername.placeholder = NSLocalizedString(@"id_username", nil);
-    self.lblPassword.text = NSLocalizedString(@"msg_enterNewPassword", nil);
-    self.txtPassword.placeholder = NSLocalizedString(@"id_password", nil);
-    self.lblConfirmPassword.text = NSLocalizedString(@"msg_confirmPassword", nil);
-    self.txtConfirmPassword.placeholder = NSLocalizedString(@"id_password", nil);
+    self.lblOldPassword.text = NSLocalizedString(@"msg_enterOldPassword", nil);
+    self.txtOldPassword.placeholder = NSLocalizedString(@"id_password", nil);
+    self.lblNewPassword.text = NSLocalizedString(@"msg_enterNewPassword", nil);
+    self.txtNewPassword.placeholder = NSLocalizedString(@"id_password", nil);
+    self.lblConfirmNewPassword.text = NSLocalizedString(@"msg_confirmPassword", nil);
+    self.txtConfirmNewPassword.placeholder = NSLocalizedString(@"id_password", nil);
     [self.btnSubmit setTitle:NSLocalizedString(@"btn_submit", nil) forState:UIControlStateNormal];
     
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
@@ -91,17 +87,7 @@
 
 - (BOOL)checkInputFields
 {
-    if (self.txtEmail.text.length == 0) {
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
-                                              message:NSLocalizedString(@"EmailEmpty", nil)
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
-        [alertController addAction:ok];
-        [self presentViewController:alertController animated:YES completion:nil];
-        return NO;
-    }
-    if (self.txtUsername.text.length == 0) {
+    if (self.txtOldPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)
                                               message:NSLocalizedString(@"UsernameEmpty", nil)
@@ -111,7 +97,7 @@
         [self presentViewController:alertController animated:YES completion:nil];
         return NO;
     }
-    if (self.txtPassword.text.length == 0) {
+    if (self.txtNewPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)
                                               message:NSLocalizedString(@"PasswordEmpty", nil)
@@ -121,7 +107,7 @@
         [self presentViewController:alertController animated:YES completion:nil];
         return NO;
     }
-    if (self.txtConfirmPassword.text.length == 0) {
+    if (self.txtConfirmNewPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)
                                               message:NSLocalizedString(@"ConfirmPasswordEmpty", nil)
@@ -132,7 +118,7 @@
         return NO;
     }
     
-    if ([self.txtPassword.text compare:self.txtConfirmPassword.text] != NSOrderedSame) {
+    if ([self.txtNewPassword.text compare:self.txtConfirmNewPassword.text] != NSOrderedSame) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)
                                               message:NSLocalizedString(@"PasswordsNotMatch", nil)
@@ -154,7 +140,7 @@
 
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws newUser:self.txtUsername.text password:self.txtPassword.text email:self.txtEmail.text lang:[Global getCurrentLang]];
+    [ws changePassword:g_Username oldPassword:self.txtOldPassword.text newPassword:self.txtNewPassword.text lang:[Global getCurrentLang]];
     [ws showWaitingView:self.view];
 }
 
@@ -247,7 +233,7 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName compare:WS_NEW_USER] == NSOrderedSame) {
+        if ([resultName compare:WS_CHANGE_PWD] == NSOrderedSame) {
             // Register
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {

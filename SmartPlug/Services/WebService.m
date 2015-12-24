@@ -122,10 +122,10 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)changePassword:(NSString *)username password:(NSString *)password lang:(NSString *)lang
+- (void)changePassword:(NSString *)username oldPassword:(NSString *)oldPassword newPassword:(NSString *)newPassword lang:(NSString *)lang
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_CHANGE_PWD];
-    NSString *params = [NSString stringWithFormat:@"user=%@&pwd=%@&hl=%@", username, password, lang];
+    NSString *params = [NSString stringWithFormat:@"user=%@&pwd=%@&hl=%@&newpwd=%@", username, oldPassword, lang, newPassword];
     self.resultName = WS_CHANGE_PWD;
     [self postData:apiUrl params:params];
 }

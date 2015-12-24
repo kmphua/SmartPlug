@@ -264,6 +264,10 @@
 		757411BE1C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */; };
 		757411BF1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */; };
 		757411C01C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */; };
+		75D9D1501C2BF5CE0032F96E /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D9D14E1C2BF5CE0032F96E /* ChangePasswordViewController.m */; };
+		75D9D1511C2BF5CE0032F96E /* ChangePasswordViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75D9D14F1C2BF5CE0032F96E /* ChangePasswordViewController.xib */; };
+		75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D9D1531C2BF9C40032F96E /* SettingsViewController.m */; };
+		75D9D1561C2BF9C40032F96E /* SettingsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75D9D1541C2BF9C40032F96E /* SettingsViewController.xib */; };
 		75E926821C2106EF004C476C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 75E926841C2106EF004C476C /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -570,6 +574,12 @@
 		757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_1_white_bkgnd.png"; sourceTree = "<group>"; };
 		7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
 		7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		75D9D14D1C2BF5CE0032F96E /* ChangePasswordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ChangePasswordViewController.h; sourceTree = "<group>"; };
+		75D9D14E1C2BF5CE0032F96E /* ChangePasswordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ChangePasswordViewController.m; sourceTree = "<group>"; };
+		75D9D14F1C2BF5CE0032F96E /* ChangePasswordViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ChangePasswordViewController.xib; sourceTree = "<group>"; };
+		75D9D1521C2BF9C40032F96E /* SettingsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SettingsViewController.h; sourceTree = "<group>"; };
+		75D9D1531C2BF9C40032F96E /* SettingsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SettingsViewController.m; sourceTree = "<group>"; };
+		75D9D1541C2BF9C40032F96E /* SettingsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SettingsViewController.xib; sourceTree = "<group>"; };
 		75E926831C2106EF004C476C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		75E926851C210716004C476C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		75E926861C210722004C476C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -743,6 +753,12 @@
 				7512C1601C1BB3B700489091 /* ResetPasswordViewController.h */,
 				7512C1611C1BB3B700489091 /* ResetPasswordViewController.m */,
 				7512C1621C1BB3B700489091 /* ResetPasswordViewController.xib */,
+				75D9D1521C2BF9C40032F96E /* SettingsViewController.h */,
+				75D9D1531C2BF9C40032F96E /* SettingsViewController.m */,
+				75D9D1541C2BF9C40032F96E /* SettingsViewController.xib */,
+				75D9D14D1C2BF5CE0032F96E /* ChangePasswordViewController.h */,
+				75D9D14E1C2BF5CE0032F96E /* ChangePasswordViewController.m */,
+				75D9D14F1C2BF5CE0032F96E /* ChangePasswordViewController.xib */,
 			);
 			name = Member;
 			sourceTree = "<group>";
@@ -1164,6 +1180,7 @@
 				7574119C1C23AEE600CDCC2D /* see_AC full pwr_2_transparent_bkgnd.png in Resources */,
 				7574119E1C23AEE600CDCC2D /* see_AC_2_transparent_bkgnd.png in Resources */,
 				75667B1F1C1F864C001B30B2 /* title_bkgnd_blue@2x.png in Resources */,
+				75D9D1511C2BF5CE0032F96E /* ChangePasswordViewController.xib in Resources */,
 				75667AD01C1F864C001B30B2 /* marker_disable@2x.png in Resources */,
 				75667A6C1C1F864C001B30B2 /* btn_big_bkgnd_1_pressed@2x.png in Resources */,
 				75667AFE1C1F864C001B30B2 /* svc_0_big@1x.png in Resources */,
@@ -1244,6 +1261,7 @@
 				757411A91C23AEE600CDCC2D /* see_Datong Electric Pans_1_white_bkgnd.png in Resources */,
 				75667B351C1F864C001B30B2 /* wait_5@2x.png in Resources */,
 				75667B021C1F864C001B30B2 /* svc_0_small@1x.png in Resources */,
+				75D9D1561C2BF9C40032F96E /* SettingsViewController.xib in Resources */,
 				75667A7E1C1F864C001B30B2 /* btn_dow_bkgnd_pressed@2x.png in Resources */,
 				75E926821C2106EF004C476C /* Localizable.strings in Resources */,
 				75667AAC1C1F864C001B30B2 /* ic_menu_settings@2x.png in Resources */,
@@ -1457,6 +1475,7 @@
 				7512C17B1C1BB3B700489091 /* LoginViewController.m in Sources */,
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
 				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
+				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,
 				757411741C23ADC300CDCC2D /* DeviceMainViewController.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
@@ -1465,6 +1484,7 @@
 				7512C1251C1BA3B900489091 /* AppDelegate.m in Sources */,
 				7512C17F1C1BB3B700489091 /* ResetPasswordViewController.m in Sources */,
 				7512C1821C1BB3B700489091 /* BadgeStyle.m in Sources */,
+				75D9D1501C2BF5CE0032F96E /* ChangePasswordViewController.m in Sources */,
 				7512C1841C1BB3B700489091 /* CustomBadgeAppDelegate.m in Sources */,
 				7512C1221C1BA3B900489091 /* main.m in Sources */,
 			);

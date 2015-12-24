@@ -14,6 +14,7 @@
 #define UD_KEY_PHONE                  @"phone"
 #define UD_KEY_PASSWORD               @"password"
 #define UD_KEY_LAST_LOGIN             @"last_login"
+#define UD_USER_TOKEN                 @"user_token"
 #define UD_DEVICE_TOKEN               @"device_token"
 
 typedef enum {
@@ -30,6 +31,7 @@ extern BOOL g_IsLogin;
 extern BOOL g_IsOnline;
 extern NSString *g_Username;
 extern NSString *g_Password;
+extern NSString *g_UserToken;
 extern NSString *g_DevToken;
 extern NSMutableDictionary *g_AppInfo;
 

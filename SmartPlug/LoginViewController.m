@@ -87,15 +87,10 @@
         return;
     }
 
-    MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
-    [self.navigationController pushViewController:mainController animated:YES];
-    
-    /*
     WebService *ws = [[WebService alloc] init];
     [ws setDelegate:self];
     [ws login:self.txtLogin.text password:self.txtPassword.text lang:[Global getCurrentLang]];
     [ws showWaitingView:self.view];
-     */
 }
 
 - (NSAttributedString *)attributedTextViewString
@@ -145,14 +140,18 @@
         NSLog(@"jsonDict - %@", jsonDict);
         
         if ([resultName compare:WS_LOGIN] == NSOrderedSame) {
-            long code = [[jsonObject objectForKey:@"code"] longValue];
-            if (code == 0) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
                 // Success
-                
+                NSString *userToken = [jsonObject objectForKey:@"token"];
                 
                 // Save username and password
                 [[NSUserDefaults standardUserDefaults] setObject:_txtLogin.text forKey:UD_KEY_PHONE];
                 [[NSUserDefaults standardUserDefaults] setObject:_txtPassword.text forKey:UD_KEY_PASSWORD];
+                
+                g_Username = _txtLogin.text;
+                g_Password = _txtPassword.text;
+                g_UserToken = [jsonObject objectForKey:@"token"];
                 
                 NSString *dateString = [NSDateFormatter localizedStringFromDate:[NSDate date]
                                                                       dateStyle:NSDateFormatterShortStyle
@@ -160,13 +159,15 @@
                 [[NSUserDefaults standardUserDefaults] setObject:dateString forKey:UD_KEY_LAST_LOGIN];
                 [[NSUserDefaults standardUserDefaults] synchronize];
                                 
-                // Go back
+                // Go to main view
                 g_IsLogin = YES;
-                [self.navigationController popViewControllerAnimated:YES];
+                
+                MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
+                [self.navigationController pushViewController:mainController animated:YES];
                 
             } else {
                 // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"LoginFailed", nil)
                                                                     message:message
                                                                    delegate:nil

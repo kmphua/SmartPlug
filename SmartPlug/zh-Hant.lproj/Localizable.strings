@@ -13,7 +13,9 @@
 "UsernameEmpty" = "使用者未填";
 "PasswordEmpty" = "新密碼未填";
 "ConfirmPasswordEmpty" = "確認密碼未填";
-"PasswordsNotMatch" = "密碼不一樣";
+"PasswordsNotMatch" = "密碼不一致";
+"LoginFailed" = "登入失敗";
+"RegisterFailed" = "建立帳號失敗";
 
 "id_username" = "使用者";
 "id_password" = "密碼";
@@ -31,8 +33,8 @@
 "title_accountCreated" = "帳號創建";
 "msg_accountCreatedBtn" = "請檢查您的電子郵件的激活網址。此帳戶將在7天後禁用，如果你不激活它。在此期間，你可能會開始使用該帳戶。";
 "id_createAccount" = "建立帳號";
-"msg_enterEmail" = "輸入您的Email";
-"id_ email" = "Email";
+"msg_enterEmail" = "輸入您的電子郵件";
+"id_email" = "電子郵件";
 "msg_enterNewPassword" = "輸入新密碼";
 "msg_confirmPassword" = "確認密碼";
 "btn_main" = "主頁面";
