@@ -7,8 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SettingsViewController">
             <connections>
-                <outlet property="bgView" destination="uwo-nb-gKB" id="ieR-BH-OO6"/>
-                <outlet property="lblTitle" destination="UsN-HY-xZM" id="47U-9t-mcd"/>
+                <outlet property="tableView" destination="dKa-gb-IWl" id="eOK-t8-aJf"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -17,52 +16,33 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uwo-nb-gKB">
-                    <rect key="frame" x="28" y="80" width="319" height="200"/>
-                    <subviews>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Settings" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UsN-HY-xZM">
-                            <rect key="frame" x="0.0" y="0.0" width="319" height="75"/>
-                            <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                            <constraints>
-                                <constraint firstAttribute="height" constant="75" id="33v-z4-1BT"/>
-                            </constraints>
-                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                            <nil key="highlightedColor"/>
-                        </label>
-                    </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" style="grouped" separatorStyle="default" rowHeight="45" sectionHeaderHeight="75" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="dKa-gb-IWl">
+                    <rect key="frame" x="20" y="80" width="335" height="165"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="200" id="Ji8-r0-JYA"/>
-                        <constraint firstAttribute="width" constant="319" id="Onx-Uz-Lcn"/>
-                        <constraint firstItem="UsN-HY-xZM" firstAttribute="leading" secondItem="uwo-nb-gKB" secondAttribute="leading" id="XHB-6i-Uxb"/>
-                        <constraint firstItem="UsN-HY-xZM" firstAttribute="centerY" secondItem="uwo-nb-gKB" secondAttribute="centerY" id="hFD-Uf-t1Y"/>
-                        <constraint firstItem="UsN-HY-xZM" firstAttribute="top" secondItem="uwo-nb-gKB" secondAttribute="top" id="jFf-4X-sRA"/>
-                        <constraint firstAttribute="trailing" secondItem="UsN-HY-xZM" secondAttribute="trailing" id="o99-wu-s48"/>
-                        <constraint firstAttribute="width" constant="319" id="utw-zX-tke"/>
+                        <constraint firstAttribute="height" constant="165" id="JPP-OD-Pfj"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="YiD-nB-hYa"/>
+                        <constraint firstAttribute="height" constant="128" id="jyI-k9-BGF"/>
                     </constraints>
                     <variation key="default">
                         <mask key="constraints">
-                            <exclude reference="Onx-Uz-Lcn"/>
-                            <exclude reference="utw-zX-tke"/>
-                            <exclude reference="hFD-Uf-t1Y"/>
+                            <exclude reference="YiD-nB-hYa"/>
+                            <exclude reference="jyI-k9-BGF"/>
                         </mask>
                     </variation>
-                </view>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="ir0-N9-bdA"/>
+                        <outlet property="delegate" destination="-1" id="PWT-Vv-Gf4"/>
+                    </connections>
+                </tableView>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstItem="uwo-nb-gKB" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="7KY-Ve-ENb"/>
-                <constraint firstItem="uwo-nb-gKB" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="KoX-Zb-c7s"/>
-                <constraint firstItem="uwo-nb-gKB" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="LfE-7L-4AG"/>
-                <constraint firstItem="uwo-nb-gKB" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="28" id="xGt-aP-VkD"/>
+                <constraint firstAttribute="trailing" secondItem="dKa-gb-IWl" secondAttribute="trailing" constant="20" id="Tut-gO-pJk"/>
+                <constraint firstItem="dKa-gb-IWl" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="hht-SG-fH0"/>
+                <constraint firstItem="dKa-gb-IWl" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="j2i-Qy-d5L"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
-            <variation key="default">
-                <mask key="constraints">
-                    <exclude reference="7KY-Ve-ENb"/>
-                </mask>
-            </variation>
             <point key="canvasLocation" x="228.5" y="188.5"/>
         </view>
     </objects>

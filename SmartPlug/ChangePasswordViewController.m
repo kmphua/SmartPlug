@@ -34,7 +34,7 @@
     
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
-    self.lblTitle.text = NSLocalizedString(@"lnk_createAccount", nil);
+    self.lblTitle.text = NSLocalizedString(@"id_changePassword", nil);
     self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
