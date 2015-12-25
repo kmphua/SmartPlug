@@ -16,6 +16,8 @@
 "PasswordsNotMatch" = "Passwords do not match";
 "LoginFailed" = "Login failed";
 "RegisterFailed" = "Register failed";
+"OldPasswordEmpty" = "Old password field is empty";
+"NewPasswordEmpty" = "New Password field is empty";
 
 "id_username" = "Username";
 "id_password" = "Password";

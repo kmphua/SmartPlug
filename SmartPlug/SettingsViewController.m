@@ -124,6 +124,9 @@
         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PASSWORD];
         [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_LAST_LOGIN];
         [[NSUserDefaults standardUserDefaults] synchronize];
+        
+        // Return to login screen
+        [self.navigationController popToRootViewControllerAnimated:YES];
     }
 }
 

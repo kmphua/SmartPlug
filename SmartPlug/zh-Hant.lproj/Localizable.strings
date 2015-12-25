@@ -16,6 +16,8 @@
 "PasswordsNotMatch" = "密碼不一致";
 "LoginFailed" = "登入失敗";
 "RegisterFailed" = "建立帳號失敗";
+"OldPasswordEmpty" = "舊密碼未填";
+"NewPasswordEmpty" = "新密碼未填";
 
 "id_username" = "使用者";
 "id_password" = "密碼";

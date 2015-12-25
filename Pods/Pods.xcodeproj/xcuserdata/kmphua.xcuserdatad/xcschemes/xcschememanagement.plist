@@ -4,6 +4,11 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
+		<key>CocoaAsyncSocket.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>DQAlertView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -27,17 +32,22 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>8B476723800EAA7105C65BA7592615A9</key>
+		<key>B85EF30A250B826856D3DCE127DC87FD</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>B69DC5EBA583C94DF9FBFC67EA6F112D</key>
+		<key>D5F9B6A6D74A97A1B803D28CA8996BEE</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>E04BD3AECDEF0102E1185558199AF830</key>
+		<key>DB35A3E19E784F493449C606F710C3D7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E7CD734E26FCB7994C25AF2B49D29535</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -652,6 +652,7 @@
 				7512C1261C1BA3B900489091 /* ViewController.h */,
 				7512C1271C1BA3B900489091 /* ViewController.m */,
 				751510CA1C2256FB007772FE /* ViewControllers */,
+				75187EE91C2D67CF00093642 /* Models */,
 				7512C1661C1BB3B700489091 /* Widgets */,
 				7512C1631C1BB3B700489091 /* Services */,
 				7512C15B1C1BB3B700489091 /* Misc */,
@@ -791,6 +792,13 @@
 				751510C91C2256E9007772FE /* Device */,
 			);
 			name = ViewControllers;
+			sourceTree = "<group>";
+		};
+		75187EE91C2D67CF00093642 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Models;
 			sourceTree = "<group>";
 		};
 		756679761C1F864B001B30B2 /* Resources */ = {

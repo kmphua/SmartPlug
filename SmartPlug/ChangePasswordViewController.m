@@ -90,7 +90,7 @@
     if (self.txtOldPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)
-                                              message:NSLocalizedString(@"UsernameEmpty", nil)
+                                              message:NSLocalizedString(@"OldPasswordEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -100,7 +100,7 @@
     if (self.txtNewPassword.text.length == 0) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)
-                                              message:NSLocalizedString(@"PasswordEmpty", nil)
+                                              message:NSLocalizedString(@"NewPasswordEmpty", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
         [alertController addAction:ok];
@@ -260,7 +260,7 @@
             } else  {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"RegisterFailed", nil)
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
                                                                     message:message
                                                                    delegate:nil
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
