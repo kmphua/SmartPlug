@@ -10,8 +10,14 @@
 #import "InitDevicesViewController.h"
 #import "FirstTimeConfig.h"
 #import "Reachability.h"
+#import "JSmartPlug.h"
+#import "UDPCommunication.h"
 
-@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, GCDAsyncSocketDelegate>
+#define SERVICE_TYPE                    @"_http._tcp."
+#define SMARTCONFIG_IDENTIFIER          @"JSPlug"
+#define SMARTCONFIG_BROADCAST_TIME      5  // seconds
+
+@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, GCDAsyncSocketDelegate, InitDevicesDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *titleBgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
@@ -29,6 +35,13 @@
 
 @property (nonatomic, strong) FirstTimeConfig *config;
 @property (nonatomic, strong) Reachability *wifiReachability;
+
+@property (nonatomic, strong) NSString *ssid;
+@property (nonatomic, strong) NSString *gatewayAddress;
+@property (nonatomic, strong) NSString *wifiPassword;
+
+@property (nonatomic, strong) UDPCommunication *udp;
+@property (nonatomic, strong) NSMutableArray *plugs;
 
 @end
 
@@ -51,6 +64,7 @@
     [self.btnInitDevices setTitle:NSLocalizedString(@"Initialize Devices", nil) forState:UIControlStateNormal];
     
     self.services = [NSMutableArray new];
+    self.plugs = [NSMutableArray new];
     
     // Load animation images
     NSArray *waitImageNames = @[@"wait_0.png", @"wait_1.png", @"wait_2.png",
@@ -63,6 +77,8 @@
     self.imgWait.animationImages = waitImages;
     self.imgWait.animationDuration = 0.5;
     
+    self.udp = [UDPCommunication new];
+    
     // Check wifi connectivity
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wifiStatusChanged:) name:kReachabilityChangedNotification object:nil];
     
@@ -74,6 +90,15 @@
     if ( netStatus == NotReachable ) {// No activity if no wifi
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"CC3x Alert" message:@"WiFi not available. Please check your WiFi connection" delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alertView show];
+        [_btnInitDevices setEnabled:NO];
+        _ssid = nil;
+        _gatewayAddress = nil;
+        _wifiPassword = nil;
+    } else {
+        NSLog(@"SSID = %@, Gateway IP = %@", [FirstTimeConfig getSSID], [FirstTimeConfig getGatewayAddress]);
+        _ssid = [FirstTimeConfig getSSID];
+        _gatewayAddress = [FirstTimeConfig getGatewayAddress];
+        [_btnInitDevices setEnabled:YES];
     }
     
     //// stoping the process in app backgroud state
@@ -85,6 +110,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
+    [self startBrowsing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -93,11 +119,18 @@
 }
 
 - (IBAction)onBtnInitDevices:(id)sender {
-    InitDevicesViewController *inputAlertVC = [[InitDevicesViewController alloc] initWithNibName:@"InitDevicesViewController" bundle:nil];
-    inputAlertVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
-    inputAlertVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    [self presentViewController:inputAlertVC animated:YES completion:nil];
-    //[self startBrowsing];
+    NetworkStatus netStatus = [_wifiReachability currentReachabilityStatus];
+    if ( netStatus == NotReachable ) {// No activity if no wifi
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"CC3x Alert" message:@"WiFi not available. Please check your WiFi connection" delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alertView show];
+    } else {
+        InitDevicesViewController *inputAlertVC = [[InitDevicesViewController alloc] initWithNibName:@"InitDevicesViewController" bundle:nil];
+        inputAlertVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+        inputAlertVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        inputAlertVC.ssid = [FirstTimeConfig getSSID];
+        inputAlertVC.delegate = self;
+        [self presentViewController:inputAlertVC animated:YES completion:nil];
+    }
 }
 
 - (void)adjustHeightOfTableview
@@ -118,6 +151,18 @@
         self.tableViewHeightConstraint.constant = height;
         [self.view setNeedsUpdateConstraints];
     }];
+}
+
+//==================================================================
+#pragma mark - InitDevicesDelegate
+//==================================================================
+- (void)ssidPassword:(NSString *)password
+{
+    NSLog(@"SSID password is %@", password);
+    _wifiPassword = password;
+    
+    // Start broadcast
+    [self startTransmitting];
 }
 
 //==================================================================
@@ -153,18 +198,154 @@
     NSAssert(verifyConnection != NULL, @"currentNetworkStatus called with NULL verifyConnection Object");
     NetworkStatus netStatus = [verifyConnection currentReachabilityStatus];
     if ( netStatus == NotReachable ){
-        //if ( startbutton.selected ){
-        //    [self buttonAction:startbutton];
-        //}
         // The operation couldn’t be completed. No route to host
         UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"CC3x Alert" message:@"Wifi Not available. Please check your wifi connection" delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
         [alertView show];
-        //ssidField.text = @"";
-        //ipAddress.text = @"";
+        _ssid = nil;
+        _gatewayAddress = nil;
+        _wifiPassword = nil;
+        [_btnInitDevices setEnabled:NO];
     } else {
-        //ssidField.text = [FirstTimeConfig getSSID];
-        //ipAddress.text = [FirstTimeConfig getGatewayAddress];
+        NSLog(@"SSID = %@, Gateway IP = %@", [FirstTimeConfig getSSID], [FirstTimeConfig getGatewayAddress]);
+        _ssid = [FirstTimeConfig getSSID];
+        _gatewayAddress = [FirstTimeConfig getGatewayAddress];
+        [_btnInitDevices setEnabled:YES];
     }
+}
+
+//==================================================================
+#pragma mark - SmartConfig
+//==================================================================
+
+/*
+ This method begins configuration transmit
+ In case of a failure the method throws an OSFailureException.
+ */
+- (void)sendAction {
+    @try {
+        NSLog(@"%s begin", __PRETTY_FUNCTION__);
+        [_config transmitSettings];
+        NSLog(@"%s end", __PRETTY_FUNCTION__);
+    }
+    @catch (NSException *exception) {
+        NSLog(@"exception === %@",[exception description]);
+        //if ( startbutton.selected )/// start button in sending mode
+          //  [self buttonAction:startbutton];
+    }
+    @finally {
+        
+    }
+}
+
+/*
+ This method stop the sending of the configuration to the remote device
+ In case of a failure the method throws an OSFailureException.
+ */
+- (void)stopAction {
+    NSLog(@"%s begin", __PRETTY_FUNCTION__);
+    @try {
+        [_config stopTransmitting];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%s exception == %@",__FUNCTION__,[exception description]);
+    }
+    @finally {
+        
+    }
+    NSLog(@"%s end", __PRETTY_FUNCTION__);
+}
+
+/*
+ This method waits for an acknowledge from the remote device than it stops the transmit to the remote device and returns with data it got from the remote device.
+ This method blocks until it gets respond.
+ The method will return true if it got the ack from the remote device or false if it got aborted by a call to stopTransmitting.
+ In case of a failure the method throws an OSFailureException.
+ */
+
+- (void)waitForAckThread:(id)sender {
+    @try {
+        NSLog(@"%s begin", __PRETTY_FUNCTION__);
+        Boolean val = [_config waitForAck];
+        NSLog(@"Bool value == %d",val);
+        if ( val ){
+            [self stopAction];
+            [self enableUIAccess:YES];
+        }
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%s exception == %@",__FUNCTION__,[exception description]);
+        /// stop here
+    }
+    @finally {
+    }
+    
+    if ( [NSThread isMainThread]  == NO ){
+        NSLog(@"this is not main thread");
+        [NSThread exit];
+    }else {
+        NSLog(@"this is main thread");
+    }
+    NSLog(@"%s end", __PRETTY_FUNCTION__);
+}
+
+/*
+ This method start the transmitting the data to connected
+ AP. Nerwork validation is also done here. All exceptions from
+ library is handled.
+ */
+- (void)startTransmitting {
+    @try {
+        NetworkStatus netStatus = [_wifiReachability currentReachabilityStatus];
+        if ( netStatus == NotReachable ){// No activity if no wifi
+            UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"CC3x Alert" message:@"WiFi not available. Please check your WiFi connection" delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+            [alertView show];
+            return;
+        }
+        
+        if ( _config )
+            _config = nil;
+        
+        if ( _ssid && _wifiPassword ){
+            unsigned char buffer[1];
+            buffer[0] = 0x03;
+            NSData *keyData = [NSData dataWithBytes:buffer length:1];
+            _config = [[FirstTimeConfig alloc] initWithKey:_wifiPassword withEncryptionKey:keyData];
+        } else {
+            _config = [[FirstTimeConfig alloc] init];
+        }
+        
+        // Setting the device name
+        //if ( [deviceName.text length] <= 0 )deviceName.text = @"CC3000";
+        
+        //[_config setDeviceName:deviceName.text];
+        
+        [self sendAction];
+        
+        //[NSThread detachNewThreadSelector:@selector(waitForAckThread:) toTarget:self withObject:nil];
+        
+        NSTimer *stopTimer = [NSTimer scheduledTimerWithTimeInterval:SMARTCONFIG_BROADCAST_TIME target:self selector:@selector(stopAction) userInfo:nil repeats:NO];
+                              
+        [self enableUIAccess:NO];
+    }
+    @catch (NSException *exception) {
+        NSLog(@"%s exception == %@",__FUNCTION__,[exception description]);
+        [self enableUIAccess:YES];
+        // Sandy: may be alert for user ...
+        
+    }
+    @finally {
+    }
+}
+
+#pragma mark - Private Methods -
+
+/* enableUIAccess
+ * enable / disable the UI access like enable / disable the textfields
+ * and other component while transmitting the packets.
+ * @param: vbool is to validate the controls.
+ */
+- (void)enableUIAccess:(BOOL)isEnable {
+    [_btnInitDevices setEnabled:isEnable];
 }
 
 //==================================================================
@@ -183,7 +364,7 @@
     
     // Configure Service Browser
     [self.serviceBrowser setDelegate:self];
-    [self.serviceBrowser searchForServicesOfType:@"_dns-sd._udp." inDomain:@"local."];
+    [self.serviceBrowser searchForServicesOfType:SERVICE_TYPE inDomain:@"local."];
 }
 
 - (void)stopBrowsing {
@@ -255,7 +436,7 @@
     [self adjustHeightOfTableview];
     
     if (!moreComing) {
-        [self stopBrowsing];
+        //[self stopBrowsing];
     }
 }
 
@@ -276,12 +457,27 @@
 //==================================================================
 
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
+    
+    if ([service.name compare:SMARTCONFIG_IDENTIFIER] == NSOrderedSame) {
+        // Start UDP connection
+        JSmartPlug *smartPlug = [JSmartPlug new];
+        smartPlug.name = service.name;
+        smartPlug.server = service.hostName;
+        smartPlug.ip = (NSString *)[service.addresses objectAtIndex:0];
+        [_udp runUdpClient:service.hostName msg:@"ID?"];  // this need to be change to Chin's protocol
+        smartPlug.processId = [_udp runUdpServer];
+        //SystemClock.sleep(200);
+        [_plugs addObject:smartPlug];
+    }
+    
+    /*
     // Connect With Service
     if ([self connectWithService:service]) {
         NSLog(@"Did Connect with Service: domain(%@) type(%@) name(%@) port(%i)", [service domain], [service type], [service name], (int)[service port]);
     } else {
         NSLog(@"Unable to Connect with Service: domain(%@) type(%@) name(%@) port(%i)", [service domain], [service type], [service name], (int)[service port]);
     }
+     */
 }
 
 - (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
@@ -382,12 +578,10 @@
                                               otherButtonTitles:nil, nil];
     [alertView show];
     
-    /*
     NSNetService *service = [self.services objectAtIndex:[indexPath row]];
     // Resolve Service
     [service setDelegate:self];
     [service resolveWithTimeout:30.0];
-     */
 }
 
 //==================================================================

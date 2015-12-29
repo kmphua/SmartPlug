@@ -13,8 +13,6 @@
 @property (nonatomic, strong) NSString *ip;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *server;
-@property (nonatomic, strong) NSString *devId;
-@property (nonatomic) BOOL hasTimer;
-@property (nonatomic) BOOL hasWarning;
+@property (nonatomic) int processId;
 
 @end

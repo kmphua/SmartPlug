@@ -45,6 +45,10 @@
     [self.btnCancel setTitle:NSLocalizedString(@"Cancel", nil) forState:UIControlStateNormal];
     [self.btnOK setTitle:NSLocalizedString(@"OK", nil) forState:UIControlStateNormal];
     
+    if (self.ssid) {
+        self.txtSSID.text = self.ssid;
+    }
+    
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
     [self.view addGestureRecognizer:tapView];
 }
@@ -95,6 +99,7 @@
         return;
     }
     
+    [self.delegate ssidPassword:self.txtPassword.text];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
