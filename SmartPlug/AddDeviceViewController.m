@@ -13,8 +13,8 @@
 #import "JSmartPlug.h"
 #import "UDPCommunication.h"
 
-#define SERVICE_TYPE                    @"_http._tcp."
-#define SMARTCONFIG_IDENTIFIER          @"JSPlug"
+
+
 #define SMARTCONFIG_BROADCAST_TIME      5  // seconds
 
 @interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, GCDAsyncSocketDelegate, InitDevicesDelegate>
@@ -28,10 +28,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
-@property (strong, nonatomic) GCDAsyncSocket *socket;
-@property (strong, nonatomic) NSMutableArray *services;
-@property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
-@property (nonatomic) BOOL searching;
+
 
 @property (nonatomic, strong) FirstTimeConfig *config;
 @property (nonatomic, strong) Reachability *wifiReachability;
@@ -39,9 +36,6 @@
 @property (nonatomic, strong) NSString *ssid;
 @property (nonatomic, strong) NSString *gatewayAddress;
 @property (nonatomic, strong) NSString *wifiPassword;
-
-@property (nonatomic, strong) UDPCommunication *udp;
-@property (nonatomic, strong) NSMutableArray *plugs;
 
 @end
 
@@ -63,9 +57,6 @@
     
     [self.btnInitDevices setTitle:NSLocalizedString(@"Initialize Devices", nil) forState:UIControlStateNormal];
     
-    self.services = [NSMutableArray new];
-    self.plugs = [NSMutableArray new];
-    
     // Load animation images
     NSArray *waitImageNames = @[@"wait_0.png", @"wait_1.png", @"wait_2.png",
                                 @"wait_3.png", @"wait_4.png", @"wait_5.png",
@@ -76,9 +67,7 @@
     }
     self.imgWait.animationImages = waitImages;
     self.imgWait.animationDuration = 0.5;
-    
-    self.udp = [UDPCommunication new];
-    
+        
     // Check wifi connectivity
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wifiStatusChanged:) name:kReachabilityChangedNotification object:nil];
     
@@ -110,7 +99,7 @@
 - (void)viewWillAppear:(BOOL)animated {
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
-    [self startBrowsing];
+    //[self startBrowsing];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -348,175 +337,6 @@
     [_btnInitDevices setEnabled:isEnable];
 }
 
-//==================================================================
-#pragma mark - Bonjour service discovery
-//==================================================================
-
-- (void)startBrowsing {
-    if (self.services) {
-        [self.services removeAllObjects];
-    } else {
-        self.services = [[NSMutableArray alloc] init];
-    }
-    
-    // Initialize Service Browser
-    self.serviceBrowser = [[NSNetServiceBrowser alloc] init];
-    
-    // Configure Service Browser
-    [self.serviceBrowser setDelegate:self];
-    [self.serviceBrowser searchForServicesOfType:SERVICE_TYPE inDomain:@"local."];
-}
-
-- (void)stopBrowsing {
-    if (self.serviceBrowser) {
-        [self.serviceBrowser stop];
-        [self.serviceBrowser setDelegate:nil];
-        [self setServiceBrowser:nil];
-    }
-    self.searching = NO;
-    [self updateUI];
-}
-
-// Error handling code
-- (void)handleError:(NSNumber *)error {
-    NSString *errorMsg = [NSString stringWithFormat:@"An error occurred.\nNSNetServicesErrorCode = %d", [error intValue]];
-    // Handle error here
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)                                                                    message:errorMsg
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                              otherButtonTitles:nil, nil];
-    [alertView show];
-}
-
-// UI update code
-- (void)updateUI {
-    if (self.searching) {
-        [self.imgWait startAnimating];
-    }
-    else {
-        [self.imgWait stopAnimating];
-    }
-}
-
-//==================================================================
-#pragma mark - NSNetServiceBrowserDelegate
-//==================================================================
-
-- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
-    self.searching = YES;
-    [self updateUI];
-}
-
-// Sent when browsing stops
-- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser {
-    [self stopBrowsing];
-}
-
-// Sent if browsing fails
-- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
-             didNotSearch:(NSDictionary *)errorDict {
-    [self stopBrowsing];
-    self.searching = NO;
-    [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
-    [self updateUI];
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
-    NSLog(@"Found domain: %@", domainString);
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
-    // Update Services
-    [self.services addObject:service];
-    // Sort Services
-    [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
-
-    // Update Table View
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
-    
-    if (!moreComing) {
-        //[self stopBrowsing];
-    }
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
-    // Update Services
-    [self.services removeObject:service];
-    // Update Table View
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
-    
-    if (!moreComing) {
-        [self stopBrowsing];
-    }
-}
-
-//==================================================================
-#pragma mark - NSNetServiceDelegate
-//==================================================================
-
-- (void)netServiceDidResolveAddress:(NSNetService *)service {
-    
-    if ([service.name compare:SMARTCONFIG_IDENTIFIER] == NSOrderedSame) {
-        // Start UDP connection
-        JSmartPlug *smartPlug = [JSmartPlug new];
-        smartPlug.name = service.name;
-        smartPlug.server = service.hostName;
-        smartPlug.ip = (NSString *)[service.addresses objectAtIndex:0];
-        [_udp runUdpClient:service.hostName msg:@"ID?"];  // this need to be change to Chin's protocol
-        smartPlug.processId = [_udp runUdpServer];
-        //SystemClock.sleep(200);
-        [_plugs addObject:smartPlug];
-    }
-    
-    /*
-    // Connect With Service
-    if ([self connectWithService:service]) {
-        NSLog(@"Did Connect with Service: domain(%@) type(%@) name(%@) port(%i)", [service domain], [service type], [service name], (int)[service port]);
-    } else {
-        NSLog(@"Unable to Connect with Service: domain(%@) type(%@) name(%@) port(%i)", [service domain], [service type], [service name], (int)[service port]);
-    }
-     */
-}
-
-- (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
-    [service setDelegate:nil];
-}
-
-//==================================================================
-#pragma mark - Service UDP connection
-//==================================================================
-
-- (BOOL)connectWithService:(NSNetService *)service {
-    BOOL _isConnected = NO;
-    
-    // Copy Service Addresses
-    NSArray *addresses = [[service addresses] mutableCopy];
-    
-    if (!self.socket || ![self.socket isConnected]) {
-        // Initialize Socket
-        self.socket = [[GCDAsyncSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-        
-        // Connect
-        while (!_isConnected && [addresses count]) {
-            NSData *address = [addresses objectAtIndex:0];
-            
-            NSError *error = nil;
-            if ([self.socket connectToAddress:address error:&error]) {
-                _isConnected = YES;
-                
-            } else if (error) {
-                NSLog(@"Unable to connect to address. Error %@ with user info %@.", error, [error userInfo]);
-            }
-        }
-        
-    } else {
-        _isConnected = [self.socket isConnected];
-    }
-    
-    return _isConnected;
-}
 
 //==================================================================
 #pragma mark - GCDAsyncSocketDelegate
@@ -533,7 +353,7 @@
     NSLog(@"Socket Did Disconnect with Error %@ with User Info %@.", error, [error userInfo]);
     
     [socket setDelegate:nil];
-    [self setSocket:nil];
+    //[self setSocket:nil];
 }
 
 //==================================================================
@@ -548,7 +368,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.services count];
+    return 1;
+    //return [self.services count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath

@@ -13,6 +13,6 @@
 @property (nonatomic, strong) NSString *ip;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *server;
-@property (nonatomic) int processId;
+@property (nonatomic) int plugId;
 
 @end
