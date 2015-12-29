@@ -10,6 +10,7 @@
 #import "AddDeviceViewController.h"
 #import "DeviceMainViewController.h"
 #import "SettingsViewController.h"
+#import "ScheduleMainViewController.h"
 #import "MainViewCell.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate>
@@ -32,7 +33,6 @@
     
     self.devices = [[NSMutableArray alloc] init];
     
-    /*
     NSMutableDictionary *device1 = [NSMutableDictionary new];
     [device1 setObject:@"Desk Lamp" forKey:@"title"];
     [device1 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
@@ -67,7 +67,6 @@
     [device5 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
     [device5 setObject:@"see_Wi-Fi sharing device_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device5];
-     */
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -80,11 +79,16 @@
 
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
+    
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
 
+    /*
     WebService *ws = [[WebService alloc] init];
     ws.delegate = self;
     [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_2x];
     [ws showWaitingView:self.view];
+     */
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -123,6 +127,8 @@
 }
 
 - (void)onLeftBarButton:(id)sender {
+    ScheduleMainViewController *scheduleVc = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
+    [self.navigationController pushViewController:scheduleVc animated:YES];
 }
 
 - (void)onRightBarButton:(id)sender {

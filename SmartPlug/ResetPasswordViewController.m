@@ -8,6 +8,7 @@
 
 #import "ResetPasswordViewController.h"
 #import "CreateAccountViewController.h"
+#import "SPAlertView.h"
 
 @interface ResetPasswordViewController ()
 

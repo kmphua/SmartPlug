@@ -12,7 +12,6 @@
 
 @interface ChangePasswordViewController ()
 
-@property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
 @property (weak, nonatomic) IBOutlet UILabel *lblOldPassword;
@@ -21,7 +20,6 @@
 @property (weak, nonatomic) IBOutlet UITextField *txtOldPassword;
 @property (weak, nonatomic) IBOutlet UITextField *txtNewPassword;
 @property (weak, nonatomic) IBOutlet UITextField *txtConfirmNewPassword;
-@property (weak, nonatomic) IBOutlet UIButton *btnSubmit;
 
 @property (strong, nonatomic) UITextField *activeField;
 
@@ -44,7 +42,9 @@
     self.txtNewPassword.placeholder = NSLocalizedString(@"id_password", nil);
     self.lblConfirmNewPassword.text = NSLocalizedString(@"msg_confirmPassword", nil);
     self.txtConfirmNewPassword.placeholder = NSLocalizedString(@"id_password", nil);
-    [self.btnSubmit setTitle:NSLocalizedString(@"btn_submit", nil) forState:UIControlStateNormal];
+    
+    UIBarButtonItem *rightBarButton = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"btn_done", nil)    style:UIBarButtonItemStylePlain target:self action:@selector(onBtnSubmit:)];
+    self.navigationItem.rightBarButtonItem = rightBarButton;
     
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
     [self.view addGestureRecognizer:tapView];
@@ -53,25 +53,16 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    // register for keyboard notifications
-    [self registerForKeyboardNotifications];
-    
-    [self.scrollView sizeToFit];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
-    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
-    self.scrollView.contentInset = contentInsets;
-    self.scrollView.scrollIndicatorInsets = contentInsets;
 }
 
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
-    // unregister for keyboard notifications while not visible.
-    [self deregisterForKeyboardNotifications];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -142,64 +133,6 @@
     ws.delegate = self;
     [ws changePassword:g_Username oldPassword:self.txtOldPassword.text newPassword:self.txtNewPassword.text lang:[Global getCurrentLang]];
     [ws showWaitingView:self.view];
-}
-
-// Call this method somewhere in your view controller setup code.
-- (void)registerForKeyboardNotifications
-{
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWasShown:)
-                                                 name:UIKeyboardDidShowNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(keyboardWillBeHidden:)
-                                                 name:UIKeyboardWillHideNotification object:nil];
-    
-}
-
-- (void)deregisterForKeyboardNotifications
-{
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillShowNotification
-                                                  object:nil];
-    
-    [[NSNotificationCenter defaultCenter] removeObserver:self
-                                                    name:UIKeyboardWillHideNotification
-                                                  object:nil];
-}
-
-// Called when the UIKeyboardDidShowNotification is sent.
-- (void)keyboardWasShown:(NSNotification*)aNotification
-{
-    NSDictionary* info = [aNotification userInfo];
-    CGSize kbSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
-    
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, kbSize.height, 0.0);
-    self.scrollView.contentInset = contentInsets;
-    self.scrollView.scrollIndicatorInsets = contentInsets;
-    
-    // If active text field is hidden by keyboard, scroll it so it's visible
-    // Your app might not need or want this behavior.
-    CGRect keyPadFrame=[[UIApplication sharedApplication].keyWindow convertRect:[[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue] fromView:self.view];
-    kbSize = keyPadFrame.size;
-    CGRect activeRect=[self.view convertRect:self.activeField.frame fromView:self.activeField.superview];
-    CGRect aRect = self.view.bounds;
-    aRect.size.height -= (kbSize.height);
-    
-    CGPoint origin =  activeRect.origin;
-    origin.y -= self.scrollView.contentOffset.y;
-    if (!CGRectContainsPoint(aRect, origin)) {
-        CGPoint scrollPoint = CGPointMake(0.0,CGRectGetMaxY(activeRect)-(aRect.size.height));
-        [self.scrollView setContentOffset:scrollPoint animated:YES];
-    }
-}
-
-// Called when the UIKeyboardWillHideNotification is sent
-- (void)keyboardWillBeHidden:(NSNotification*)aNotification
-{
-    UIEdgeInsets contentInsets = UIEdgeInsetsZero;
-    self.scrollView.contentInset = contentInsets;
-    self.scrollView.scrollIndicatorInsets = contentInsets;
 }
 
 - (void)textFieldDidBeginEditing:(UITextField *)textField

@@ -7,6 +7,7 @@
 //
 
 #import "DeviceMainViewController.h"
+#import "DeviceItemSettingsViewController.h"
 
 @interface DeviceMainViewController ()
 
@@ -25,6 +26,16 @@
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
     self.imgDeviceIcon.image = [UIImage imageNamed:[self.device objectForKey:@"icon"]];
     self.lblDeviceName.text = [self.device objectForKey:@"title"];
+    self.title = [self.device objectForKey:@"title"];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+    
+    // Add navigation buttons
+    UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
+    self.navigationItem.rightBarButtonItem = rightBarBtn;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -32,14 +43,9 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)onRightBarButton:(id)sender {
+    DeviceItemSettingsViewController *itemSettingsVc = [[DeviceItemSettingsViewController alloc] initWithNibName:@"DeviceItemSettingsViewController" bundle:nil];
+    [self.navigationController pushViewController:itemSettingsVc animated:YES];
 }
-*/
 
 @end

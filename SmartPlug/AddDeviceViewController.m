@@ -7,7 +7,9 @@
 //
 
 #import "AddDeviceViewController.h"
-
+#import "InitDevicesViewController.h"
+#import "FirstTimeConfig.h"
+#import "Reachability.h"
 
 @interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, GCDAsyncSocketDelegate>
 
@@ -24,6 +26,9 @@
 @property (strong, nonatomic) NSMutableArray *services;
 @property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
 @property (nonatomic) BOOL searching;
+
+@property (nonatomic, strong) FirstTimeConfig *config;
+@property (nonatomic, strong) Reachability *wifiReachability;
 
 @end
 
@@ -57,6 +62,24 @@
     }
     self.imgWait.animationImages = waitImages;
     self.imgWait.animationDuration = 0.5;
+    
+    // Check wifi connectivity
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(wifiStatusChanged:) name:kReachabilityChangedNotification object:nil];
+    
+    _wifiReachability = [Reachability reachabilityForLocalWiFi];
+    [_wifiReachability connectionRequired];
+    [_wifiReachability startNotifier];
+    
+    NetworkStatus netStatus = [_wifiReachability currentReachabilityStatus];
+    if ( netStatus == NotReachable ) {// No activity if no wifi
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"CC3x Alert" message:@"WiFi not available. Please check your WiFi connection" delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alertView show];
+    }
+    
+    //// stoping the process in app backgroud state
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInforground:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -70,7 +93,11 @@
 }
 
 - (IBAction)onBtnInitDevices:(id)sender {
-    [self startBrowsing];
+    InitDevicesViewController *inputAlertVC = [[InitDevicesViewController alloc] initWithNibName:@"InitDevicesViewController" bundle:nil];
+    inputAlertVC.modalPresentationStyle = UIModalPresentationOverCurrentContext;
+    inputAlertVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:inputAlertVC animated:YES completion:nil];
+    //[self startBrowsing];
 }
 
 - (void)adjustHeightOfTableview
@@ -91,6 +118,53 @@
         self.tableViewHeightConstraint.constant = height;
         [self.view setNeedsUpdateConstraints];
     }];
+}
+
+//==================================================================
+#pragma mark - Wifi connection
+//==================================================================
+/*
+ Notification method handler when app enter in forground
+ @param the fired notification object
+ */
+- (void)appEnterInforground:(NSNotification*)notification{
+    NSLog(@"%s", __func__);
+    //ssidField.text = [FirstTimeConfig getSSID];
+    //ipAddress.text = [FirstTimeConfig getGatewayAddress];
+}
+
+/*
+ Notification method handler when app enter in background
+ @param the fired notification object
+ */
+- (void)appEnterInBackground:(NSNotification*)notification{
+    NSLog(@"%s", __func__);
+    //if ( startbutton.selected )
+    //    [self buttonAction:startbutton]; /// Simply revert the state
+}
+
+/*
+ Notification method handler when status of wifi changes
+ @param the fired notification object
+ */
+- (void)wifiStatusChanged:(NSNotification*)notification{
+    NSLog(@"%s", __func__);
+    Reachability *verifyConnection = [notification object];
+    NSAssert(verifyConnection != NULL, @"currentNetworkStatus called with NULL verifyConnection Object");
+    NetworkStatus netStatus = [verifyConnection currentReachabilityStatus];
+    if ( netStatus == NotReachable ){
+        //if ( startbutton.selected ){
+        //    [self buttonAction:startbutton];
+        //}
+        // The operation couldn’t be completed. No route to host
+        UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"CC3x Alert" message:@"Wifi Not available. Please check your wifi connection" delegate:Nil cancelButtonTitle:@"OK" otherButtonTitles: nil];
+        [alertView show];
+        //ssidField.text = @"";
+        //ipAddress.text = @"";
+    } else {
+        //ssidField.text = [FirstTimeConfig getSSID];
+        //ipAddress.text = [FirstTimeConfig getGatewayAddress];
+    }
 }
 
 //==================================================================

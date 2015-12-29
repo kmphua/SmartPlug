@@ -114,20 +114,47 @@
         ChangePasswordViewController *changePwdVc = [[ChangePasswordViewController alloc] initWithNibName:@"ChangePasswordViewController" bundle:nil];
         [self.navigationController pushViewController:changePwdVc animated:YES];
     } else if (indexPath.row == 1) {
-        // Logout
-        g_Username = nil;
-        g_Password = nil;
-        g_IsLogin = NO;
-        g_UserToken = nil;
         
-        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PHONE];
-        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PASSWORD];
-        [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_LAST_LOGIN];
-        [[NSUserDefaults standardUserDefaults] synchronize];
+        UIAlertController * alert = [UIAlertController
+                                     alertControllerWithTitle:NSLocalizedString(@"titlie_logout", nil)
+                                     message:NSLocalizedString(@"msg_logoutBtn", nil)
+                                     preferredStyle:UIAlertControllerStyleAlert];
         
-        // Return to login screen
-        [self.navigationController popToRootViewControllerAnimated:YES];
+        UIAlertAction* yesAction = [UIAlertAction
+                             actionWithTitle:NSLocalizedString(@"btn_yes", nil)
+                             style:UIAlertActionStyleDefault
+                             handler:^(UIAlertAction * action)
+                             {
+                                 [alert dismissViewControllerAnimated:YES completion:nil];
+                                 // Logout
+                                 g_Username = nil;
+                                 g_Password = nil;
+                                 g_IsLogin = NO;
+                                 g_UserToken = nil;
+                                 
+                                 [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PHONE];
+                                 [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PASSWORD];
+                                 [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_LAST_LOGIN];
+                                 [[NSUserDefaults standardUserDefaults] synchronize];
+                                 
+                                 // Return to login screen
+                                 [self.navigationController popToRootViewControllerAnimated:YES];
+                             }];
+        
+        UIAlertAction* noAction = [UIAlertAction
+                                    actionWithTitle:NSLocalizedString(@"btn_no", nil)
+                                    style:UIAlertActionStyleDefault
+                                    handler:^(UIAlertAction * action)
+                                    {
+                                        [alert dismissViewControllerAnimated:YES completion:nil];
+                                    }];
+        
+        [alert addAction:noAction];
+        [alert addAction:yesAction];
+        [self presentViewController:alert animated:YES completion:nil];
     }
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 

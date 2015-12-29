@@ -15,7 +15,7 @@
     self = [super initWithTitle:title message:message cancelButtonTitle:cancelButtonTitle otherButtonTitle:otherButtonTitle];
 
     UIImage *originalImage = [UIImage imageNamed:@"dialog_bkgnd"];
-    UIEdgeInsets insets = UIEdgeInsetsMake(50, 20, 20, 20);
+    UIEdgeInsets insets = UIEdgeInsetsMake(65, 20, 20, 20);
     UIImage *stretchableImage = [originalImage resizableImageWithCapInsets:insets];
 
     CGRect bounds = CGRectMake(0, 0, 300, 360);
