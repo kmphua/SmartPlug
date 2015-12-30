@@ -95,6 +95,9 @@
         [_btnInitDevices setEnabled:YES];
     }
     
+    self.services = [NSMutableArray new];
+    self.udp = [UDPCommunication new];
+    
     //// stoping the process in app backgroud state
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
@@ -158,6 +161,15 @@
     }];
 }
 
+- (void)updateUI {
+    if (self.searching) {
+        [self.imgWait startAnimating];
+    }
+    else {
+        [self.imgWait stopAnimating];
+    }
+}
+
 //==================================================================
 #pragma mark - Bonjour service discovery
 //==================================================================
@@ -203,6 +215,7 @@
 
 - (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
     self.searching = YES;
+    [self updateUI];
 }
 
 // Sent when browsing stops
@@ -216,6 +229,7 @@
     [self stopBrowsing];
     self.searching = NO;
     [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
+    [self updateUI];
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
@@ -229,18 +243,21 @@
     // Sort Services
     [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
     
-    // Resolve Service
-    [service setDelegate:self];
-    [service resolveWithTimeout:30.0];
+    // Update Table View
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
     
     if (!moreComing) {
-        [self stopBrowsing];
+        //[self stopBrowsing];
     }
 }
 
 - (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
     // Update Services
     [self.services removeObject:service];
+    // Update Table View
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
     
     if (!moreComing) {
         [self stopBrowsing];

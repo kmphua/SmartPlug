@@ -33,6 +33,11 @@
     
     self.devices = [[NSMutableArray alloc] init];
     
+    // TODO: Get saved JSmartPlugs from CoreData
+    
+    
+    // TODO: Start UDPListener and listen for broadcast packets from devices
+    
     /*
     NSMutableDictionary *device1 = [NSMutableDictionary new];
     [device1 setObject:@"Desk Lamp" forKey:@"title"];
