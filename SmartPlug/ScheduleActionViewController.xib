@@ -86,7 +86,7 @@
                             </connections>
                         </button>
                         <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="zHk-jt-5sX">
-                            <rect key="frame" x="0.0" y="188" width="130.5" height="50"/>
+                            <rect key="frame" x="0.0" y="188" width="131" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="XtW-O6-BZE"/>
                                 <constraint firstAttribute="width" constant="120" id="Z8c-Xu-w0J"/>
@@ -115,8 +115,8 @@
                                 <segment title="Sa"/>
                             </segments>
                         </segmentedControl>
-                        <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="nCo-qe-vMN">
-                            <rect key="frame" x="141.5" y="188" width="130.5" height="50"/>
+                        <datePicker contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="nCo-qe-vMN">
+                            <rect key="frame" x="142" y="188" width="131" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="120" id="1m2-aa-g8g"/>
                                 <constraint firstAttribute="height" constant="50" id="Ry6-Y3-s3y"/>

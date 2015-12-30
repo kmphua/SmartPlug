@@ -13,10 +13,6 @@
 #import "JSmartPlug.h"
 #import "UDPCommunication.h"
 
-#define SERVICE_TYPE                    @"_http._tcp."
-#define SMARTCONFIG_IDENTIFIER          @"JSPlug"
-#define SMARTCONFIG_BROADCAST_TIME      5  // seconds
-
 @interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, GCDAsyncSocketDelegate, InitDevicesDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *titleBgView;
@@ -150,17 +146,6 @@
     }];
 }
 
-- (void)saveContext
-{
-    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:^(BOOL success, NSError *error) {
-        if (success) {
-            NSLog(@"You successfully saved your context.");
-        } else if (error) {
-            NSLog(@"Error saving context: %@", error.description);
-        }
-    }];
-}
-
 - (void)updateUI {
     if (self.searching) {
         [self.imgWait startAnimating];
@@ -279,6 +264,10 @@
             // Check if plug exists
             if ([plug.server compare:service.hostName] == NSOrderedSame) {
                 addPlug = NO;
+                
+                [self.view makeToast:NSLocalizedString(@"DeviceAlreadyAdded", nil)
+                            duration:3.0
+                            position:CSToastPositionCenter];
                 break;
             }
         }
@@ -288,11 +277,19 @@
             JSmartPlug *smartPlug = [JSmartPlug MR_createEntity];
             smartPlug.name = service.name;
             smartPlug.server = service.hostName;
-            smartPlug.ip = (NSString *)[service.addresses objectAtIndex:0];
+            
+            NSArray *addresses = [[service addresses] mutableCopy];
+            NSData *address = [addresses objectAtIndex:0];
+            NSString *ip = [Global convertIpAddressToString:address];
+            smartPlug.ip = ip;
             [_udp runUdpClient:service.hostName msg:@"ID?"];  // this need to be change to Chin's protocol
             smartPlug.plugId =  [NSNumber numberWithInt:[_udp runUdpServer]];
             //SystemClock.sleep(200);
-            [self saveContext];
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+            
+            [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
+                        duration:3.0
+                        position:CSToastPositionCenter];
         }
     }
 }
@@ -585,16 +582,16 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"btn_addingDevice", nil)                                                                    message:NSLocalizedString(@"msg_pleaseWait", nil)
-                                                       delegate:nil
-                                              cancelButtonTitle:nil
-                                              otherButtonTitles:nil, nil];
-    [alertView show];
+    [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
 
     // Resolve Service
     NSNetService *service = [self.services objectAtIndex:[indexPath row]];
     [service setDelegate:self];
     [service resolveWithTimeout:30.0];
+    
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 //==================================================================

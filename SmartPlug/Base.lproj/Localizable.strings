@@ -18,6 +18,8 @@
 "RegisterFailed" = "Register failed";
 "OldPasswordEmpty" = "Old password field is empty";
 "NewPasswordEmpty" = "New Password field is empty";
+"DeviceAlreadyAdded" = "Device already added";
+"DeviceAddressUpdated" = "Device IP address updated";
 
 "id_username" = "Username";
 "id_password" = "Password";

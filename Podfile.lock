@@ -5,17 +5,20 @@ PODS:
   - SDWebImage+ExtensionSupport (3.7.1.2):
     - SDWebImage+ExtensionSupport/Core (= 3.7.1.2)
   - SDWebImage+ExtensionSupport/Core (3.7.1.2)
+  - Toast (3.0)
 
 DEPENDENCIES:
   - CocoaAsyncSocket
   - DQAlertView (~> 1.2.1)
   - MagicalRecord
   - SDWebImage+ExtensionSupport (~> 3.7)
+  - Toast (~> 3.0)
 
 SPEC CHECKSUMS:
   CocoaAsyncSocket: f5783bdedd232d91b89769bc4b5a1580aed518ad
   DQAlertView: 438c2799ae5437f2f9683f8a627314aa91eb5032
   MagicalRecord: 89eb7d7ead39fb37f01c3d010665ee94d17f8dba
   SDWebImage+ExtensionSupport: 72b57456f83ccd7996b258912c749a8275309b74
+  Toast: 32c59229abfcf41850162b83bb9259dc84372473
 
 COCOAPODS: 0.38.2

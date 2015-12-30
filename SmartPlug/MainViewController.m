@@ -11,13 +11,21 @@
 #import "DeviceMainViewController.h"
 #import "SettingsViewController.h"
 #import "ScheduleMainViewController.h"
+#import "UDPListenerService.h"
 #import "MainViewCell.h"
+#import "JSmartPlug.h"
 
-@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate>
+@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, UDPListenerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSMutableArray *devices;
+@property (strong, nonatomic) NSArray *devices;               // Added plugs
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
+
+@property (strong, nonatomic) NSMutableArray *services;
+@property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
+@property (nonatomic) BOOL searching;
+
+@property (strong, nonatomic) UDPListenerService *udpListener;
 
 @end
 
@@ -31,9 +39,10 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    self.devices = [[NSMutableArray alloc] init];
+    _udpListener = [UDPListenerService new];
+    [_udpListener startUdpBroadcastListener];
     
-    // TODO: Get saved JSmartPlugs from CoreData
+    // TODO: Update IP addresses with mDNS discovery
     
     
     // TODO: Start UDPListener and listen for broadcast packets from devices
@@ -87,13 +96,17 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
-    //[self.tableView reloadData];
-    //[self adjustHeightOfTableview];
-
+    self.devices = [JSmartPlug MR_findAll];
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
+    [self startBrowsing];
+    
+    /*
     WebService *ws = [[WebService alloc] init];
     ws.delegate = self;
     [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_2x];
     [ws showWaitingView:self.view];
+     */
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -142,6 +155,135 @@
 }
 
 //==================================================================
+#pragma mark - Bonjour service discovery
+//==================================================================
+
+- (void)startBrowsing {
+    if (self.services) {
+        [self.services removeAllObjects];
+    } else {
+        self.services = [NSMutableArray new];
+    }
+    
+    // Initialize Service Browser
+    self.serviceBrowser = [[NSNetServiceBrowser alloc] init];
+    
+    // Configure Service Browser
+    [self.serviceBrowser setDelegate:self];
+    [self.serviceBrowser searchForServicesOfType:SERVICE_TYPE inDomain:@"local."];
+}
+
+- (void)stopBrowsing {
+    if (self.serviceBrowser) {
+        [self.serviceBrowser stop];
+        [self.serviceBrowser setDelegate:nil];
+        [self setServiceBrowser:nil];
+    }
+    self.searching = NO;
+}
+
+// Error handling code
+- (void)handleError:(NSNumber *)error {
+    NSString *errorMsg = [NSString stringWithFormat:@"An error occurred.\nNSNetServicesErrorCode = %d", [error intValue]];
+    // Handle error here
+    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)                                                                    message:errorMsg
+                                                       delegate:nil
+                                              cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                              otherButtonTitles:nil, nil];
+    [alertView show];
+}
+
+//==================================================================
+#pragma mark - NSNetServiceBrowserDelegate
+//==================================================================
+
+- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
+    self.searching = YES;
+}
+
+// Sent when browsing stops
+- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser {
+    [self stopBrowsing];
+}
+
+// Sent if browsing fails
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
+             didNotSearch:(NSDictionary *)errorDict {
+    [self stopBrowsing];
+    self.searching = NO;
+    [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
+    NSLog(@"Found domain: %@", domainString);
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
+    // Update Services
+    [self.services addObject:service];
+    
+    // Sort Services
+    [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
+    
+    // Resolve Service
+    [service setDelegate:self];
+    [service resolveWithTimeout:30.0];
+    
+    if (!moreComing) {
+        //[self stopBrowsing];
+    }
+}
+
+- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
+    // Update Services
+    [self.services removeObject:service];
+    
+    if (!moreComing) {
+        [self stopBrowsing];
+    }
+}
+
+//==================================================================
+#pragma mark - NSNetServiceDelegate
+//==================================================================
+
+- (void)netServiceDidResolveAddress:(NSNetService *)service {
+    
+    if ([service.name compare:SMARTCONFIG_IDENTIFIER] == NSOrderedSame) {
+        // Update IP address
+        NSArray *plugs = [JSmartPlug MR_findAll];
+        for (JSmartPlug *plug in plugs) {
+            // Check if plug exists
+            if ([plug.server compare:service.hostName] == NSOrderedSame) {
+                NSArray *addresses = [[service addresses] mutableCopy];
+                NSData *address = [addresses objectAtIndex:0];
+                NSString *ip = [Global convertIpAddressToString:address];        
+                if ([plug.ip compare:ip] != NSOrderedSame) {
+                    plug.ip = ip;
+                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+                    [self.view makeToast:NSLocalizedString(@"DeviceAddressUpdated", nil)
+                                duration:3.0
+                                position:CSToastPositionCenter];
+                }
+                break;
+            }
+        }
+    }
+}
+
+- (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
+    [service setDelegate:nil];
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+
+- (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
+    NSLog(@"Received data from address %@", address);
+}
+
+//==================================================================
 #pragma mark - Table view delegate
 //==================================================================
 
@@ -170,12 +312,12 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     }
     
-    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
+    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
     
-    NSString *deviceName = [device objectForKey:@"title"];
-    BOOL hasTimer = [[device objectForKey:@"hasTimer"] boolValue];
-    BOOL hasWarning = [[device objectForKey:@"hasWarning"] boolValue];
-    NSString *deviceUrl = [device objectForKey:@"icon"];
+    NSString *deviceName = device.name;
+    BOOL hasTimer = YES;
+    BOOL hasWarning = YES;
+    NSString *deviceUrl = @"see_Table Lamps_1_white_bkgnd";
     
     cell.lblDeviceName.text = deviceName;
     [cell.btnTimer setHidden:!hasTimer];
@@ -239,7 +381,7 @@
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld devices", devices.count);
-                    [self.devices setArray:devices];
+                    self.devices = [NSArray arrayWithArray:devices];
                 }
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];

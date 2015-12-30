@@ -14,12 +14,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods.xcscheme</key>
+		<key>MagicalRecord.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>SCNetworkReachability.xcscheme</key>
+		<key>Pods.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -29,30 +29,40 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>Toast.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>B85EF30A250B826856D3DCE127DC87FD</key>
+		<key>30041BA2C05F40F1081A70370B599E76</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D5F9B6A6D74A97A1B803D28CA8996BEE</key>
+		<key>4A537E4D51B6BCFC03EAFE7A38A7FA6B</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>7C637D1368CB44FC5C4B41BB8E029734</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>83873210E16A6F2A2E2711D35379AF75</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>8A5BFED1CFDB8BED1EDD3CBA5EE802F5</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>DB35A3E19E784F493449C606F710C3D7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>E7CD734E26FCB7994C25AF2B49D29535</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EFC8F8BF0A280815E2F907AAD55C7999</key>
 		<dict>
 			<key>primary</key>
 			<true/>

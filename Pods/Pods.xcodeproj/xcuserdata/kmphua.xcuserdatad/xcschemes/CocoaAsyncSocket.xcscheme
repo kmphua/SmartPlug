@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "3DCB7C294AB3FE63B42FD803"
-               BuildableName = "libSCNetworkReachability.a"
-               BlueprintName = "SCNetworkReachability"
+               BlueprintIdentifier = "C041FF3616DD23D4086B3F82"
+               BuildableName = "libCocoaAsyncSocket.a"
+               BlueprintName = "CocoaAsyncSocket"
                ReferencedContainer = "container:Pods.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>

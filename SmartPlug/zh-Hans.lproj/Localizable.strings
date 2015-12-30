@@ -18,6 +18,8 @@
 "RegisterFailed" = "建立帐号失败";
 "OldPasswordEmpty" = "旧密码未填";
 "NewPasswordEmpty" = "新密码未填";
+"DeviceAlreadyAdded" = "设备已存在";
+"DeviceAddressUpdated" = "设备IP位址已更新";
 
 "id_username" = "使用者";
 "id_password" = "密码";

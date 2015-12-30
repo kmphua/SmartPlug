@@ -8,6 +8,8 @@
 
 #import <UIKit/UIKit.h>
 #import "Global.h"
+#include <sys/socket.h>
+#include <netdb.h>
 
 @implementation Global
 
@@ -56,43 +58,6 @@
     return color;
 }
 
-+ (CGImageRef)createQRImageForString:(NSString *)string size:(CGSize)size {
-    // Setup the QR filter with our string
-    CIFilter *filter = [CIFilter filterWithName:@"CIQRCodeGenerator"];
-    [filter setDefaults];
-    
-    NSData *data = [string dataUsingEncoding:NSUTF8StringEncoding];
-    [filter setValue:data forKey:@"inputMessage"];
-    CIImage *image = [filter valueForKey:@"outputImage"];
-    
-    // Calculate the size of the generated image and the scale for the desired image size
-    CGRect extent = CGRectIntegral(image.extent);
-    CGFloat scale = MIN(size.width / CGRectGetWidth(extent), size.height / CGRectGetHeight(extent));
-    
-    // Since CoreImage nicely interpolates, we need to create a bitmap image that we'll draw into
-    // a bitmap context at the desired size;
-    size_t width = CGRectGetWidth(extent) * scale;
-    size_t height = CGRectGetHeight(extent) * scale;
-    CGColorSpaceRef cs = CGColorSpaceCreateDeviceGray();
-    CGContextRef bitmapRef = CGBitmapContextCreate(nil, width, height, 8, 0, cs, (CGBitmapInfo)kCGImageAlphaNone);
-    
-    CIContext *context = [CIContext contextWithOptions:nil];
-    CGImageRef bitmapImage = [context createCGImage:image fromRect:extent];
-    
-    CGContextSetInterpolationQuality(bitmapRef, kCGInterpolationNone);
-    CGContextScaleCTM(bitmapRef, scale, scale);
-    CGContextDrawImage(bitmapRef, extent, bitmapImage);
-    
-    // Create an image with the contents of our bitmap
-    CGImageRef scaledImage = CGBitmapContextCreateImage(bitmapRef);
-    
-    // Cleanup
-    CGContextRelease(bitmapRef);
-    CGImageRelease(bitmapImage);
-    
-    return scaledImage;
-}
-
 + (NSString *)getCurrentLang {
     NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
     if ([language containsString:@"zh-Hant"]) {
@@ -101,6 +66,21 @@
         return @"zh-CN";
     }
     return @"en";
+}
+
++ (NSString *)convertIpAddressToString:(NSData *)data {
+    // Copy data to a "sockaddr_storage" structure.
+    struct sockaddr_storage sa;
+    socklen_t salen = sizeof(sa);
+    [data getBytes:&sa length:salen];
+    
+    // Get host from socket address as C string:
+    char host[NI_MAXHOST];
+    getnameinfo((struct sockaddr *)&sa, salen, host, sizeof(host), NULL, 0, NI_NUMERICHOST);
+    
+    // Convert C string to NSString:
+    NSString *ipAddress = [[NSString alloc] initWithBytes:host length:strlen(host) encoding:NSUTF8StringEncoding];
+    return ipAddress;
 }
 
 @end
