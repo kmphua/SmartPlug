@@ -194,4 +194,12 @@
     [self postData:apiUrl params:params];
 }
 
+- (void)newDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId iconRes:(IconResolution)iconRes title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger oriTitle:(NSString *)oriTitle ip:(NSString *)ip server:(NSString *)server snooze:(NSString *)snooze relay:(NSString *)relay
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_NEW_DEV];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=%d&title=%@&notify_power=%@&notify_timer=%@&notify_danger=%@&orititle=%@&ip=%@&server=%@&snooze=%@&relay=%@", userToken, lang, devId,iconRes, title, notifyPower, notifyTimer, notifyDanger, oriTitle, ip, server, snooze, relay];
+    self.resultName = WS_NEW_DEV;
+    [self postData:apiUrl params:params];
+}
+
 @end

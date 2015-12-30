@@ -27,6 +27,8 @@
 
 #define WS_GALLERY_LIST             @"gallery"
 
+#define WS_NEW_DEV                  @"newdev"
+
 typedef enum {
     ICON_RES_1x = 0,
     ICON_RES_1_5x,
@@ -65,6 +67,8 @@ typedef enum {
 - (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger;
 - (void)devLog:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 - (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
+
+- (void)newDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId iconRes:(IconResolution)iconRes title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger oriTitle:(NSString *)oriTitle ip:(NSString *)ip server:(NSString *)server snooze:(NSString *)snooze relay:(NSString *)relay;
 
 @end
 

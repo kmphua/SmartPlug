@@ -15,10 +15,10 @@ NS_ASSUME_NONNULL_BEGIN
 
 @interface JSmartPlug (CoreDataProperties)
 
-@property (nullable, nonatomic, retain) NSString *name;
-@property (nullable, nonatomic, retain) NSString *server;
-@property (nullable, nonatomic, retain) NSNumber *plugId;
 @property (nullable, nonatomic, retain) NSString *ip;
+@property (nullable, nonatomic, retain) NSString *name;
+@property (nullable, nonatomic, retain) NSNumber *devid;
+@property (nullable, nonatomic, retain) NSString *server;
 
 @end
 

@@ -75,7 +75,10 @@
       fromAddress:(NSData *)address withFilterContext:(id)filterContext
 {
     //Do something with receive data
-    NSLog(@"Received UDP data length=%ld from %@", data.length, address);
+    NSString *ipAddress = [Global convertIpAddressToString:address];
+    if (self.delegate) {
+        [self.delegate didReceiveData:data fromAddress:ipAddress];
+    }
 }
 
 @end

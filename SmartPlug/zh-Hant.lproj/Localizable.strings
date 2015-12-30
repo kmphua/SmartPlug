@@ -20,6 +20,9 @@
 "NewPasswordEmpty" = "新密碼未填";
 "DeviceAlreadyAdded" = "設備已存在";
 "DeviceAddressUpdated" = "設備IP位址已更新";
+"msg_co_warning" = "CO Warning";
+"msg_ha_warning" = "Over current Warning";
+
 
 "id_username" = "使用者";
 "id_password" = "密碼";

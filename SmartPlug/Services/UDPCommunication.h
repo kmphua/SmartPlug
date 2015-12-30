@@ -8,7 +8,15 @@
 
 #import <Foundation/Foundation.h>
 
+@protocol UDPCommunicationDelegate <NSObject>
+
+- (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address;
+
+@end
+
 @interface UDPCommunication : NSObject
+
+@property (nonatomic, assign) id<UDPCommunicationDelegate> delegate;
 
 - (BOOL)runUdpServer;
 - (void)runUdpClient:(NSString *)ip msg:(NSString *)msg;

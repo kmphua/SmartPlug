@@ -39,9 +39,6 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    _udpListener = [UDPListenerService new];
-    [_udpListener startUdpBroadcastListener];
-    
     // TODO: Update IP addresses with mDNS discovery
     
     
@@ -96,6 +93,10 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
+    _udpListener = [UDPListenerService getInstance];
+    _udpListener.delegate = self;
+    [_udpListener startUdpBroadcastListener];
+    
     self.devices = [JSmartPlug MR_findAll];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
@@ -111,7 +112,9 @@
 
 - (void)viewWillDisappear:(BOOL)animated
 {
-    
+    if (_udpListener) {
+        [_udpListener stopUdpBroadcastListener];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -230,7 +233,7 @@
     [service resolveWithTimeout:30.0];
     
     if (!moreComing) {
-        //[self stopBrowsing];
+        [self stopBrowsing];
     }
 }
 
@@ -276,11 +279,12 @@
 }
 
 //==================================================================
-#pragma WebServiceDelegate
+#pragma mark - UDPListenerDelegate
 //==================================================================
 
 - (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
-    NSLog(@"Received data from address %@", address);
+    NSString *dataStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data from address %@: %@", address, dataStr);
 }
 
 //==================================================================
@@ -346,7 +350,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
+    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
     DeviceMainViewController *devMainVc = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
     devMainVc.device = device;
     [self.navigationController pushViewController:devMainVc animated:YES];

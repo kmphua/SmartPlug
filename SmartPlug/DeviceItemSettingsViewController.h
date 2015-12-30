@@ -7,7 +7,10 @@
 //
 
 #import "BaseViewController.h"
+#import "JSmartPlug.h"
 
 @interface DeviceItemSettingsViewController : BaseViewController
+
+@property (nonatomic, assign) JSmartPlug *device;
 
 @end

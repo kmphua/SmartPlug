@@ -20,6 +20,9 @@
 "NewPasswordEmpty" = "New Password field is empty";
 "DeviceAlreadyAdded" = "Device already added";
 "DeviceAddressUpdated" = "Device IP address updated";
+"msg_co_warning" = "CO Warning";
+"msg_ha_warning" = "Over current Warning";
+
 
 "id_username" = "Username";
 "id_password" = "Password";

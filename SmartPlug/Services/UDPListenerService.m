@@ -22,6 +22,17 @@
 
 @implementation UDPListenerService
 
+static UDPListenerService *instance;
+
++ (UDPListenerService *)getInstance
+{
+    @synchronized(self) {
+        if (instance == nil)
+            instance = [[self alloc] init];
+    }
+    return instance;
+}
+
 - (BOOL)startUdpBroadcastListener
 {
     if (_isRunning) {
@@ -77,9 +88,9 @@
 {
     // Do something with receive data
     NSString *ipAddress = [Global convertIpAddressToString:address];
-     NSLog(@"Received UDP data length=%ld from %@: %@", data.length, ipAddress, data);
-    
-    [self.delegate didReceiveData:data fromAddress:ipAddress];
+    if (self.delegate) {
+        [self.delegate didReceiveData:data fromAddress:ipAddress];
+    }
 }
 
 @end

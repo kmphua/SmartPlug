@@ -13,7 +13,7 @@
 #import "JSmartPlug.h"
 #import "UDPCommunication.h"
 
-@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, GCDAsyncSocketDelegate, InitDevicesDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate>
+@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, InitDevicesDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, UDPCommunicationDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *titleBgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
@@ -92,7 +92,9 @@
     }
     
     self.services = [NSMutableArray new];
-    self.udp = [UDPCommunication new];
+    _udp = [UDPCommunication new];
+    _udp.delegate = self;
+    [_udp runUdpServer];
     
     //// stoping the process in app backgroud state
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
@@ -283,8 +285,8 @@
             NSString *ip = [Global convertIpAddressToString:address];
             smartPlug.ip = ip;
             [_udp runUdpClient:service.hostName msg:@"ID?"];  // this need to be change to Chin's protocol
-            smartPlug.plugId =  [NSNumber numberWithInt:[_udp runUdpServer]];
-            //SystemClock.sleep(200);
+            
+            // Save first, then update when device ID is returned
             [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
             
             [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
@@ -296,6 +298,38 @@
 
 - (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
     [service setDelegate:nil];
+}
+
+//==================================================================
+#pragma mark - UDPCommunicationDelegate
+//==================================================================
+
+- (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
+    NSLog(@"Received data %@ from %@", data, address);
+    
+    // Check added devices
+    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K==%@", @"ip", address];
+    NSArray *plugs = [JSmartPlug MR_findAllWithPredicate:predicate];
+    if (plugs) {
+        JSmartPlug *plug = [plugs objectAtIndex:0];
+        NSString *devIdStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
+        NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
+        f.numberStyle = NSNumberFormatterDecimalStyle;
+        NSNumber *devId = [f numberFromString:devIdStr];
+        if (devId) {
+            plug.devid = devId;
+            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+            
+            // Update to web service
+            WebService *ws = [WebService new];
+            ws.delegate = self;
+            
+            NSString *devId = [NSString stringWithFormat:@"%d", [plug.devid intValue]];
+            [ws newDev:g_UserToken lang:[Global getCurrentLang] devId:devId iconRes:ICON_RES_1x title:@"" notifyPower:@"0" notifyTimer:@"" notifyDanger:@"" oriTitle:plug.name ip:plug.ip server:plug.server snooze:@"" relay:@""];
+        } else {
+            NSLog(@"Error converting device ID!");
+        }
+    }
 }
 
 //==================================================================
@@ -615,7 +649,7 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName compare:WS_ACT_DEV] == NSOrderedSame) {
+        if ([resultName compare:WS_NEW_DEV] == NSOrderedSame) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success

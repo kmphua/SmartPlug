@@ -18,6 +18,7 @@
 
 @property (nonatomic, assign) id<UDPListenerDelegate> delegate;
 
++ (UDPListenerService *)getInstance;
 - (BOOL)startUdpBroadcastListener;
 - (void)stopUdpBroadcastListener;
 

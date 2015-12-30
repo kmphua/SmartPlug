@@ -7,9 +7,10 @@
 //
 
 #import "BaseViewController.h"
+#import "JSmartPlug.h"
 
 @interface DeviceMainViewController : BaseViewController
 
-@property (nonatomic, assign) NSDictionary *device;
+@property (nonatomic, assign) JSmartPlug *device;
 
 @end

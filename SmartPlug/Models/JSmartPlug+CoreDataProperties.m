@@ -13,9 +13,9 @@
 
 @implementation JSmartPlug (CoreDataProperties)
 
-@dynamic name;
-@dynamic server;
-@dynamic plugId;
 @dynamic ip;
+@dynamic name;
+@dynamic devid;
+@dynamic server;
 
 @end
