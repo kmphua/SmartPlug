@@ -1,18 +1,22 @@
 //
 //  JSmartPlug.h
-//  SmartPlug
+//  
 //
-//  Created by Kevin Phua on 12/25/15.
-//  Copyright © 2015 Kevin Phua. All rights reserved.
+//  Created by Kevin Phua on 12/30/15.
+//
 //
 
 #import <Foundation/Foundation.h>
+#import <CoreData/CoreData.h>
 
-@interface JSmartPlug : NSObject
+NS_ASSUME_NONNULL_BEGIN
 
-@property (nonatomic, strong) NSString *ip;
-@property (nonatomic, strong) NSString *name;
-@property (nonatomic, strong) NSString *server;
-@property (nonatomic) int plugId;
+@interface JSmartPlug : NSManagedObject
+
+// Insert code here to declare functionality of your managed object subclass
 
 @end
+
+NS_ASSUME_NONNULL_END
+
+#import "JSmartPlug+CoreDataProperties.h"

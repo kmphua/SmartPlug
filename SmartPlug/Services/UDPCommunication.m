@@ -13,7 +13,7 @@
 #define MAX_UDP_DATAGRAM_LEN        64
 #define UDP_SERVER_PORT             2390
 
-@interface UDPCommunication()
+@interface UDPCommunication()<GCDAsyncUdpSocketDelegate>
 
 @property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
 @property (nonatomic) BOOL isRunning;
@@ -55,8 +55,27 @@
 
     NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
     [_udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
-    NSLog(@"sent message %@ to server at %@", msg, ip);
 }
 
+//==================================================================
+#pragma mark - GCDAsyncUdpSocketDelegate
+//==================================================================
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didConnectToAddress:(NSData *)address
+{
+    NSLog(@"Connected to UDP address %@", address);
+}
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didSendDataWithTag:(long)tag
+{
+    NSLog(@"Sent UDP data with tag %ld", tag);
+}
+
+- (void)udpSocket:(GCDAsyncUdpSocket *)sock didReceiveData:(NSData *)data
+      fromAddress:(NSData *)address withFilterContext:(id)filterContext
+{
+    //Do something with receive data
+    NSLog(@"Received UDP data length=%ld from %@", data.length, address);
+}
 
 @end

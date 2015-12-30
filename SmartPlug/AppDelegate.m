@@ -56,6 +56,9 @@ NSMutableDictionary *g_AppInfo;
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];
     
+    // Setup CoreData with MagicalRecord
+    [MagicalRecord setupCoreDataStackWithStoreNamed:@"SmartPlugModel"];
+    
     return YES;
 }
 

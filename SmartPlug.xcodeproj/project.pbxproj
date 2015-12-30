@@ -26,7 +26,6 @@
 		7508AA731C326D2900EB88D1 /* ScheduleMainViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA711C326D2900EB88D1 /* ScheduleMainViewCell.m */; };
 		7508AA741C326D2900EB88D1 /* ScheduleMainViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7508AA721C326D2900EB88D1 /* ScheduleMainViewCell.xib */; };
 		7508AA771C32783A00EB88D1 /* JSDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA761C32783A00EB88D1 /* JSDevice.m */; };
-		7508AA7A1C32784200EB88D1 /* JSmartPlug.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA791C32784200EB88D1 /* JSmartPlug.m */; };
 		7508AA7D1C32786600EB88D1 /* JSAction.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA7C1C32786600EB88D1 /* JSAction.m */; };
 		7508AA801C3291CA00EB88D1 /* MultiSelectSegmentedControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA7F1C3291CA00EB88D1 /* MultiSelectSegmentedControl.m */; };
 		7512C1221C1BA3B900489091 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 7512C1211C1BA3B900489091 /* main.m */; };
@@ -59,7 +58,9 @@
 		751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510D11C22698C007772FE /* AddDeviceViewController.m */; };
 		751510D41C22698C007772FE /* AddDeviceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510D21C22698C007772FE /* AddDeviceViewController.xib */; };
 		75187EEF1C2D730000093642 /* UDPCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 75187EEE1C2D730000093642 /* UDPCommunication.m */; };
-		755268961C334B4600602B58 /* mDNSService.m in Sources */ = {isa = PBXBuildFile; fileRef = 755268951C334B4600602B58 /* mDNSService.m */; };
+		754ADE601C338179006F86B2 /* SmartPlugModel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE5E1C338179006F86B2 /* SmartPlugModel.xcdatamodeld */; };
+		754ADE711C338449006F86B2 /* JSmartPlug+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE6E1C338449006F86B2 /* JSmartPlug+CoreDataProperties.m */; };
+		754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE701C338449006F86B2 /* JSmartPlug.m */; };
 		755268991C334B5400602B58 /* SmartConfigService.m in Sources */ = {isa = PBXBuildFile; fileRef = 755268981C334B5400602B58 /* SmartConfigService.m */; };
 		7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7552689B1C334B6900602B58 /* UDPListenerService.m */; };
 		75667A591C1F864C001B30B2 /* bkgnd2@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679781C1F864B001B30B2 /* bkgnd2@1x.png */; };
@@ -346,8 +347,6 @@
 		7508AA721C326D2900EB88D1 /* ScheduleMainViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScheduleMainViewCell.xib; sourceTree = "<group>"; };
 		7508AA751C32783A00EB88D1 /* JSDevice.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSDevice.h; sourceTree = "<group>"; };
 		7508AA761C32783A00EB88D1 /* JSDevice.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSDevice.m; sourceTree = "<group>"; };
-		7508AA781C32784200EB88D1 /* JSmartPlug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSmartPlug.h; sourceTree = "<group>"; };
-		7508AA791C32784200EB88D1 /* JSmartPlug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSmartPlug.m; sourceTree = "<group>"; };
 		7508AA7B1C32786600EB88D1 /* JSAction.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSAction.h; sourceTree = "<group>"; };
 		7508AA7C1C32786600EB88D1 /* JSAction.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSAction.m; sourceTree = "<group>"; };
 		7508AA7E1C3291CA00EB88D1 /* MultiSelectSegmentedControl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MultiSelectSegmentedControl.h; sourceTree = "<group>"; };
@@ -410,8 +409,11 @@
 		751510D71C22B9E8007772FE /* smartplug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smartplug.h; sourceTree = "<group>"; };
 		75187EED1C2D730000093642 /* UDPCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPCommunication.h; sourceTree = "<group>"; };
 		75187EEE1C2D730000093642 /* UDPCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPCommunication.m; sourceTree = "<group>"; };
-		755268941C334B4600602B58 /* mDNSService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mDNSService.h; sourceTree = "<group>"; };
-		755268951C334B4600602B58 /* mDNSService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mDNSService.m; sourceTree = "<group>"; };
+		754ADE5F1C338179006F86B2 /* SmartPlugModel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = SmartPlugModel.xcdatamodel; sourceTree = "<group>"; };
+		754ADE6D1C338449006F86B2 /* JSmartPlug+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "JSmartPlug+CoreDataProperties.h"; sourceTree = "<group>"; };
+		754ADE6E1C338449006F86B2 /* JSmartPlug+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "JSmartPlug+CoreDataProperties.m"; sourceTree = "<group>"; };
+		754ADE6F1C338449006F86B2 /* JSmartPlug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSmartPlug.h; sourceTree = "<group>"; };
+		754ADE701C338449006F86B2 /* JSmartPlug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSmartPlug.m; sourceTree = "<group>"; };
 		755268971C334B5400602B58 /* SmartConfigService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartConfigService.h; sourceTree = "<group>"; };
 		755268981C334B5400602B58 /* SmartConfigService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartConfigService.m; sourceTree = "<group>"; };
 		7552689A1C334B6900602B58 /* UDPListenerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPListenerService.h; sourceTree = "<group>"; };
@@ -781,6 +783,7 @@
 			isa = PBXGroup;
 			children = (
 				751510D61C22908A007772FE /* PrefixHeader.pch */,
+				754ADE5E1C338179006F86B2 /* SmartPlugModel.xcdatamodeld */,
 				7512C1311C1BA3B900489091 /* Info.plist */,
 				7512C1211C1BA3B900489091 /* main.m */,
 				75E926841C2106EF004C476C /* Localizable.strings */,
@@ -826,8 +829,6 @@
 				75187EED1C2D730000093642 /* UDPCommunication.h */,
 				75187EEE1C2D730000093642 /* UDPCommunication.m */,
 				751510D71C22B9E8007772FE /* smartplug.h */,
-				755268941C334B4600602B58 /* mDNSService.h */,
-				755268951C334B4600602B58 /* mDNSService.m */,
 				755268971C334B5400602B58 /* SmartConfigService.h */,
 				755268981C334B5400602B58 /* SmartConfigService.m */,
 				7552689A1C334B6900602B58 /* UDPListenerService.h */,
@@ -931,8 +932,10 @@
 		75187EE91C2D67CF00093642 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				7508AA781C32784200EB88D1 /* JSmartPlug.h */,
-				7508AA791C32784200EB88D1 /* JSmartPlug.m */,
+				754ADE6D1C338449006F86B2 /* JSmartPlug+CoreDataProperties.h */,
+				754ADE6E1C338449006F86B2 /* JSmartPlug+CoreDataProperties.m */,
+				754ADE6F1C338449006F86B2 /* JSmartPlug.h */,
+				754ADE701C338449006F86B2 /* JSmartPlug.m */,
 				7508AA751C32783A00EB88D1 /* JSDevice.h */,
 				7508AA761C32783A00EB88D1 /* JSDevice.m */,
 				7508AA7B1C32786600EB88D1 /* JSAction.h */,
@@ -1623,11 +1626,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */,
+				754ADE711C338449006F86B2 /* JSmartPlug+CoreDataProperties.m in Sources */,
 				7512C1281C1BA3B900489091 /* ViewController.m in Sources */,
 				7512C1851C1BB3B700489091 /* CustomBadgeViewController.m in Sources */,
 				7512C1781C1BB3B700489091 /* BaseViewController.m in Sources */,
+				754ADE601C338179006F86B2 /* SmartPlugModel.xcdatamodeld in Sources */,
 				7512C1861C1BB3B700489091 /* PickerActionSheet.m in Sources */,
-				755268961C334B4600602B58 /* mDNSService.m in Sources */,
 				7512C1831C1BB3B700489091 /* CustomBadge.m in Sources */,
 				7512C1871C1BB3B700489091 /* PRPShadowedTableView.m in Sources */,
 				7508AA6E1C3262A000EB88D1 /* DeviceItemSettingsViewController.m in Sources */,
@@ -1656,7 +1661,6 @@
 				7512C1821C1BB3B700489091 /* BadgeStyle.m in Sources */,
 				7508AA771C32783A00EB88D1 /* JSDevice.m in Sources */,
 				7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */,
-				7508AA7A1C32784200EB88D1 /* JSmartPlug.m in Sources */,
 				7508AA521C323C5800EB88D1 /* CC3xAPManager.m in Sources */,
 				7508AA731C326D2900EB88D1 /* ScheduleMainViewCell.m in Sources */,
 				7508AA5A1C32525100EB88D1 /* Reachability.m in Sources */,
@@ -1928,6 +1932,19 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCVersionGroup section */
+		754ADE5E1C338179006F86B2 /* SmartPlugModel.xcdatamodeld */ = {
+			isa = XCVersionGroup;
+			children = (
+				754ADE5F1C338179006F86B2 /* SmartPlugModel.xcdatamodel */,
+			);
+			currentVersion = 754ADE5F1C338179006F86B2 /* SmartPlugModel.xcdatamodel */;
+			path = SmartPlugModel.xcdatamodeld;
+			sourceTree = "<group>";
+			versionGroupType = wrapper.xcdatamodel;
+		};
+/* End XCVersionGroup section */
 	};
 	rootObject = 7512C1151C1BA3B900489091 /* Project object */;
 }
