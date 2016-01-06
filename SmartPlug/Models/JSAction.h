@@ -10,4 +10,9 @@
 
 @interface JSAction : NSObject
 
+@property (nonatomic, strong) NSString *device;
+@property (nonatomic, strong) NSString *deviceIcon;
+@property (nonatomic, strong) NSString *type;
+@property (nonatomic, strong) NSString *typeIcon;
+
 @end

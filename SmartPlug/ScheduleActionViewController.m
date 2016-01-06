@@ -10,7 +10,7 @@
 #import "SelectActionViewController.h"
 #import "MultiSelectSegmentedControl.h"
 
-@interface ScheduleActionViewController () <MultiSelectSegmentedControlDelegate>
+@interface ScheduleActionViewController () <MultiSelectSegmentedControlDelegate, SelectActionDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
@@ -59,6 +59,7 @@
 - (IBAction)onBtnSelectAction:(id)sender
 {
     SelectActionViewController *selectActionVc = [[SelectActionViewController alloc] initWithNibName:@"SelectActionViewController" bundle:nil];
+    selectActionVc.delegate = self;
     [self.navigationController pushViewController:selectActionVc animated:YES];
 }
 
@@ -71,6 +72,17 @@
     }
     
     NSLog(@"selected: '%@'", [multiSelectSegmentedControl.selectedSegmentTitles componentsJoinedByString:@","]);
+}
+
+//==================================================================
+#pragma mark - SelectActionDelegate
+//==================================================================
+- (void)didSelectAction:(JSAction *)action {
+    NSLog(@"Selected action: Device=%@, type=%@", action.device, action.type);
+    
+    _lblDeviceName.text = action.device;
+    _imgDeviceIcon.image = [UIImage imageNamed:action.deviceIcon];
+    _imgDeviceAction.image = [UIImage imageNamed:action.typeIcon];
 }
 
 @end

@@ -7,7 +7,16 @@
 //
 
 #import "BaseViewController.h"
+#import "JSAction.h"
+
+@protocol SelectActionDelegate <NSObject>
+
+- (void)didSelectAction:(JSAction *)action;
+
+@end
 
 @interface SelectActionViewController : BaseViewController
+
+@property (nonatomic, assign) id<SelectActionDelegate> delegate;
 
 @end

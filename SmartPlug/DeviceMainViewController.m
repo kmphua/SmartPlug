@@ -9,6 +9,7 @@
 #import "DeviceMainViewController.h"
 #import "DeviceItemSettingsViewController.h"
 #import "UDPListenerService.h"
+#import "NoTimersViewController.h"
 
 @interface DeviceMainViewController ()<UDPListenerDelegate>
 
@@ -46,8 +47,10 @@
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
     self.imgDeviceIcon.image = [UIImage imageNamed:@"see_Table Lamps_1_white_bkgnd"];
-    self.lblDeviceName.text = _device.name;
-    self.title = _device.name;
+    //self.lblDeviceName.text = _device.name;
+    //self.title = _device.name;
+    self.lblDeviceName.text = [_device objectForKey:@"title"];
+    self.title = [_device objectForKey:@"title"];
     
     _udpListener = [UDPListenerService getInstance];
     _udpListener.delegate = self;
@@ -100,7 +103,7 @@
     NSArray *components = [dataStr componentsSeparatedByString:@"-"];
     if (components && components.count == 5) {
         NSString *devId = [components objectAtIndex:0];
-        NSString *currentDevId = [NSString stringWithFormat:@"%ld", [_device.devid integerValue]];
+        NSString *currentDevId = @"123";  //[NSString stringWithFormat:@"%ld", [_device.devid integerValue]];
         if ([devId compare:currentDevId] == NSOrderedSame) {
             // Match
             

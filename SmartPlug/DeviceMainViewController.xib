@@ -41,7 +41,7 @@
                                 <constraint firstAttribute="width" constant="42" id="xHD-Vv-vbe"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="32"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                             <variation key="default">
                                 <mask key="constraints">
@@ -337,7 +337,7 @@
                         <constraint firstItem="PEU-TO-aN6" firstAttribute="centerY" secondItem="WT5-Q0-caP" secondAttribute="centerY" id="vg6-PH-TmU"/>
                     </constraints>
                 </view>
-                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vYG-cf-QVu">
+                <view hidden="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vYG-cf-QVu">
                     <rect key="frame" x="0.0" y="528" width="320" height="40"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn.png" translatesAutoresizingMaskIntoConstraints="NO" id="P96-7L-qnq">
@@ -357,7 +357,7 @@
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cn-CU-zKc">
                             <rect key="frame" x="39" y="8" width="242" height="21"/>
                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>

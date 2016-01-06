@@ -18,7 +18,7 @@
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, UDPListenerDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSArray *devices;               // Added plugs
+@property (strong, nonatomic) NSMutableArray *devices;               // Added plugs
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @property (strong, nonatomic) NSMutableArray *services;
@@ -39,12 +39,13 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
+    self.devices = [NSMutableArray new];
+    
     // TODO: Update IP addresses with mDNS discovery
     
     
     // TODO: Start UDPListener and listen for broadcast packets from devices
     
-    /*
     NSMutableDictionary *device1 = [NSMutableDictionary new];
     [device1 setObject:@"Desk Lamp" forKey:@"title"];
     [device1 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
@@ -79,7 +80,9 @@
     [device5 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
     [device5 setObject:@"see_Wi-Fi sharing device_1_white_bkgnd" forKey:@"icon"];
     [self.devices addObject:device5];
-     */
+    
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -97,10 +100,12 @@
     _udpListener.delegate = self;
     [_udpListener startUdpBroadcastListener];
     
+    /*
     self.devices = [JSmartPlug MR_findAll];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     [self startBrowsing];
+    */
     
     /*
     WebService *ws = [[WebService alloc] init];
@@ -316,12 +321,19 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     }
     
+    /*
     JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
-    
     NSString *deviceName = device.name;
     BOOL hasTimer = YES;
     BOOL hasWarning = YES;
     NSString *deviceUrl = @"see_Table Lamps_1_white_bkgnd";
+     */
+    
+    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
+    NSString *deviceName = [device objectForKey:@"title"];
+    BOOL hasTimer = [[device objectForKey:@"hasTimer"] boolValue];
+    BOOL hasWarning = [[device objectForKey:@"hasWarning"] boolValue];
+    NSString *deviceUrl = [device objectForKey:@"icon"];
     
     cell.lblDeviceName.text = deviceName;
     [cell.btnTimer setHidden:!hasTimer];
@@ -350,7 +362,8 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
+    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
+    //JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
     DeviceMainViewController *devMainVc = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
     devMainVc.device = device;
     [self.navigationController pushViewController:devMainVc animated:YES];

@@ -23,6 +23,21 @@
 "msg_co_warning" = "CO Warning";
 "msg_ha_warning" = "Over current Warning";
 
+// Timers
+"NoTimersSet" = "No Timers Set";
+"AddTimer" = "Add Timer";
+"TimersSet" = "Timers Set";
+"ShowModifyTimer" = "Show/Modify Timer";
+"Snooze5Minutes" = "Snooze 5 minutes";
+"Snooze10Minutes" = "Snooze 10 minutes";
+"Snooze30Minutes" = "Snooze 30 minutes";
+"Snooze1Hour" = "Snooze 1 hour";
+"Snoozing" = "Snoozing";
+"Snooze5MoreMinutes" = "Snooze 5 More Min.";
+"Snooze10MoreMinutes" = "Snooze 10 More Min.";
+"Snooze30MoreMinutes" = "Snooze 30 More Min.";
+"Snooze1MoreHour" = "Snooze 1 More Hr.";
+"CancelSnooze" = "Cancel Snooze";
 
 "id_username" = "Username";
 "id_password" = "Password";

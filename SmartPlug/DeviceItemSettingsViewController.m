@@ -92,7 +92,7 @@
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
     [label setFont:[UIFont systemFontOfSize:32]];
     [label setTextColor:[UIColor whiteColor]];
-    [label setText:self.device.name];
+    [label setText:@"Desk Lamp"/*self.device.name*/];
     [label setTextAlignment:NSTextAlignmentCenter];
     [view addSubview:label];
     return view;
@@ -116,7 +116,7 @@
             break;
         case 2:
             cell.textLabel.text = NSLocalizedString(@"id_name", nil);
-            cell.detailTextLabel.text = self.device.name;
+            cell.detailTextLabel.text = @"Desk Lamp"; //self.device.name;
             break;
         case 3:
             cell.textLabel.text = NSLocalizedString(@"id_wifi", nil);

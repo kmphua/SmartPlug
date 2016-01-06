@@ -63,6 +63,8 @@
 		754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE701C338449006F86B2 /* JSmartPlug.m */; };
 		755268991C334B5400602B58 /* SmartConfigService.m in Sources */ = {isa = PBXBuildFile; fileRef = 755268981C334B5400602B58 /* SmartConfigService.m */; };
 		7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7552689B1C334B6900602B58 /* UDPListenerService.m */; };
+		7559ECC91C3CC03700AA994D /* NoTimersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7559ECC71C3CC03700AA994D /* NoTimersViewController.m */; };
+		7559ECCA1C3CC03700AA994D /* NoTimersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7559ECC81C3CC03700AA994D /* NoTimersViewController.xib */; };
 		75667A591C1F864C001B30B2 /* bkgnd2@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679781C1F864B001B30B2 /* bkgnd2@1x.png */; };
 		75667A5A1C1F864C001B30B2 /* bkgnd2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679791C1F864B001B30B2 /* bkgnd2@2x.png */; };
 		75667A5B1C1F864C001B30B2 /* btn_add@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7566797A1C1F864B001B30B2 /* btn_add@1x.png */; };
@@ -418,6 +420,9 @@
 		755268981C334B5400602B58 /* SmartConfigService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartConfigService.m; sourceTree = "<group>"; };
 		7552689A1C334B6900602B58 /* UDPListenerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPListenerService.h; sourceTree = "<group>"; };
 		7552689B1C334B6900602B58 /* UDPListenerService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPListenerService.m; sourceTree = "<group>"; };
+		7559ECC61C3CC03700AA994D /* NoTimersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTimersViewController.h; sourceTree = "<group>"; };
+		7559ECC71C3CC03700AA994D /* NoTimersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoTimersViewController.m; sourceTree = "<group>"; };
+		7559ECC81C3CC03700AA994D /* NoTimersViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoTimersViewController.xib; sourceTree = "<group>"; };
 		756679781C1F864B001B30B2 /* bkgnd2@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@1x.png"; sourceTree = "<group>"; };
 		756679791C1F864B001B30B2 /* bkgnd2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@2x.png"; sourceTree = "<group>"; };
 		7566797A1C1F864B001B30B2 /* btn_add@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_add@1x.png"; sourceTree = "<group>"; };
@@ -924,6 +929,7 @@
 				7512C1541C1BB3B700489091 /* BaseViewController.m */,
 				751510C31C225346007772FE /* Member */,
 				751510C91C2256E9007772FE /* Device */,
+				7559ECCB1C3CC13200AA994D /* Timers */,
 				7508AA5B1C325FA500EB88D1 /* Schedule */,
 			);
 			name = ViewControllers;
@@ -942,6 +948,16 @@
 				7508AA7C1C32786600EB88D1 /* JSAction.m */,
 			);
 			path = Models;
+			sourceTree = "<group>";
+		};
+		7559ECCB1C3CC13200AA994D /* Timers */ = {
+			isa = PBXGroup;
+			children = (
+				7559ECC61C3CC03700AA994D /* NoTimersViewController.h */,
+				7559ECC71C3CC03700AA994D /* NoTimersViewController.m */,
+				7559ECC81C3CC03700AA994D /* NoTimersViewController.xib */,
+			);
+			name = Timers;
 			sourceTree = "<group>";
 		};
 		756679761C1F864B001B30B2 /* Resources */ = {
@@ -1450,6 +1466,7 @@
 				75667AB11C1F864C001B30B2 /* ir_detect@1x.png in Resources */,
 				75667B231C1F864C001B30B2 /* title_bkgnd_red@2x.png in Resources */,
 				75667AFD1C1F864C001B30B2 /* Shadow@2x.png in Resources */,
+				7559ECCA1C3CC03700AA994D /* NoTimersViewController.xib in Resources */,
 				75667B2B1C1F864C001B30B2 /* wait_0@2x.png in Resources */,
 				75667AD41C1F864C001B30B2 /* marker_warn2@2x.png in Resources */,
 				75667B1B1C1F864C001B30B2 /* svc_3_small@2x.png in Resources */,
@@ -1660,6 +1677,7 @@
 				7508AA531C323C5800EB88D1 /* CC3xUtility.m in Sources */,
 				7512C1821C1BB3B700489091 /* BadgeStyle.m in Sources */,
 				7508AA771C32783A00EB88D1 /* JSDevice.m in Sources */,
+				7559ECC91C3CC03700AA994D /* NoTimersViewController.m in Sources */,
 				7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */,
 				7508AA521C323C5800EB88D1 /* CC3xAPManager.m in Sources */,
 				7508AA731C326D2900EB88D1 /* ScheduleMainViewCell.m in Sources */,

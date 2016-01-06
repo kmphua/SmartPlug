@@ -7,6 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SelectActionViewController">
             <connections>
+                <outlet property="tableView" destination="JHc-bf-BCg" id="JEk-Ie-ECY"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -14,7 +15,23 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="JHc-bf-BCg">
+                    <rect key="frame" x="20" y="50" width="560" height="530"/>
+                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="bhB-VL-sJA"/>
+                        <outlet property="delegate" destination="-1" id="XbG-Na-dmD"/>
+                    </connections>
+                </tableView>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="JHc-bf-BCg" secondAttribute="bottom" constant="20" id="GKG-Or-jHm"/>
+                <constraint firstAttribute="trailing" secondItem="JHc-bf-BCg" secondAttribute="trailing" constant="20" id="Ge6-uU-Igs"/>
+                <constraint firstItem="JHc-bf-BCg" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="gRC-UG-YNj"/>
+                <constraint firstItem="JHc-bf-BCg" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="sxV-c6-GeY"/>
+            </constraints>
         </view>
     </objects>
 </document>
