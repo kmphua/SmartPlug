@@ -7,6 +7,8 @@
 //
 
 #import "NoTimersViewController.h"
+#import "SetTimerViewController.h"
+#import "SetTimerSnoozeViewController.h"
 
 @interface NoTimersViewController ()
 
@@ -49,7 +51,18 @@
 }
 
 - (IBAction)onBtnAddTimer:(id)sender {
-    [self dismissViewControllerAnimated:YES completion:nil];
+#if 0
+    SetTimerViewController *setTimerVC = [[SetTimerViewController alloc] initWithNibName:@"SetTimerViewController" bundle:nil];
+    setTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    // Close self when next modal dialog closes
+    [self presentViewController:setTimerVC animated:YES completion:nil];
+#else
+    SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+    setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
+#endif
 }
 
 @end

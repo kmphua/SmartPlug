@@ -10,6 +10,7 @@
 #import "LoginViewController.h"
 #import "Global.h"
 #import "WebService.h"
+#import "DeviceMainViewController.h"
 
 @interface AppDelegate ()
 
@@ -50,8 +51,13 @@ NSMutableDictionary *g_AppInfo;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
 
     // Show initial view
+#if 1
+    DeviceMainViewController *startVC = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
+    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:startVC];
+#else
     LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginController];
+#endif
     
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];

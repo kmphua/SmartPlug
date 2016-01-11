@@ -17,16 +17,20 @@
 @property (nonatomic, weak) IBOutlet UIImageView *imgDeviceIcon;
 @property (nonatomic, weak) IBOutlet UILabel *lblDeviceName;
 
+@property (weak, nonatomic) IBOutlet UIView *viewOutlet;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletIcon;
-@property (weak, nonatomic) IBOutlet UIImageView *imgOutletAlarm;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletWarning;
+@property (weak, nonatomic) IBOutlet UIButton *btnOutletTimer;
 
+@property (weak, nonatomic) IBOutlet UIView *viewNightLight;
 @property (weak, nonatomic) IBOutlet UIImageView *imgNightLightIcon;
-@property (weak, nonatomic) IBOutlet UIImageView *imgNightLightAlarm;
+@property (weak, nonatomic) IBOutlet UIButton *btnNightLightTimer;
 
+@property (weak, nonatomic) IBOutlet UIView *viewIr;
 @property (weak, nonatomic) IBOutlet UIImageView *imgIrIcon;
-@property (weak, nonatomic) IBOutlet UIImageView *imgIrAlarm;
+@property (weak, nonatomic) IBOutlet UIButton *btnIrTimer;
 
+@property (weak, nonatomic) IBOutlet UIView *viewCo;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoWarning;
 
@@ -91,6 +95,19 @@
                      completion:^(BOOL finished){
                          // Do nothing
                      }];
+}
+
+- (IBAction)onBtnOutletTimer:(id)sender {
+    NoTimersViewController *noTimersVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
+    noTimersVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    noTimersVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    [self presentViewController:noTimersVC animated:YES completion:nil];
+}
+
+- (IBAction)onBtnNightLightTimer:(id)sender {
+}
+
+- (IBAction)onBtnIRTimer:(id)sender {
 }
 
 //==================================================================
