@@ -29,6 +29,12 @@
 
 #define WS_NEW_DEV                  @"newdev"
 
+#define WS_IR_LIST                  @"irlist"
+#define WS_MODEL_LIST               @"modellist"
+#define WS_MODEL_DETAILS            @"modeldetails"
+#define WS_DEV_IR_GET               @"devirget"
+#define WS_DEV_IR_SET               @"devirset"
+
 typedef enum {
     ICON_RES_1x = 0,
     ICON_RES_1_5x,
@@ -69,6 +75,14 @@ typedef enum {
 - (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
 
 - (void)newDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId iconRes:(IconResolution)iconRes title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger oriTitle:(NSString *)oriTitle ip:(NSString *)ip server:(NSString *)server snooze:(NSString *)snooze relay:(NSString *)relay;
+
+// IR
+- (void)irList:(NSString *)userToken lang:(NSString *)lang;
+- (void)modelList:(NSString *)userToken lang:(NSString *)lang brand:(int)brand;
+- (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model res:(int)res;
+- (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId res:(int)res;
+- (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang res:(int)res devId:(NSString *)devId serviceId:(NSString *)serviceId groupId:(NSString *)groupId name:(NSString *)name icon:(int)icon;
+- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang res:(int)res devId:(NSString *)devId serviceId:(NSString *)serviceId buttonId:(NSString *)buttonId name:(NSString *)name icon:(int)icon;
 
 @end
 

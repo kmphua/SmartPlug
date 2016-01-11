@@ -202,4 +202,52 @@
     [self postData:apiUrl params:params];
 }
 
+- (void)irList:(NSString *)userToken lang:(NSString *)lang
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_IR_LIST];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@", userToken, lang];
+    self.resultName = WS_IR_LIST;
+    [self postData:apiUrl params:params];
+}
+
+- (void)modelList:(NSString *)userToken lang:(NSString *)lang brand:(int)brand
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_MODEL_LIST];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&brand=%d", userToken, lang, brand];
+    self.resultName = WS_MODEL_LIST;
+    [self postData:apiUrl params:params];
+}
+
+- (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model res:(int)res
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_MODEL_DETAILS];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&model=%d&res=%d", userToken, lang, model, res];
+    self.resultName = WS_MODEL_DETAILS;
+    [self postData:apiUrl params:params];    
+}
+
+- (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId res:(int)res
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_GET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%@&res=%d", userToken, lang, devId, serviceId, res];
+    self.resultName = WS_DEV_IR_GET;
+    [self postData:apiUrl params:params];
+}
+
+- (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang res:(int)res devId:(NSString *)devId serviceId:(NSString *)serviceId groupId:(NSString *)groupId name:(NSString *)name icon:(int)icon
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d&devid=%@&serviceid=%@&res=%d&type=group&action=add&groupid=%@&name=%@&icon=%d", userToken, lang, res, devId, serviceId, res, groupId, name, icon];
+    self.resultName = WS_DEV_IR_SET;
+    [self postData:apiUrl params:params];
+}
+
+- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang res:(int)res devId:(NSString *)devId serviceId:(NSString *)serviceId buttonId:(NSString *)buttonId name:(NSString *)name icon:(int)icon
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d&devid=%@&serviceid=%@&res=%d&type=group&action=add&buttonid=%@&name=%@&icon=%d&code=base64string", userToken, lang, res, devId, serviceId, res, buttonId, name, icon];
+    self.resultName = WS_DEV_IR_SET;
+    [self postData:apiUrl params:params];
+}
+
 @end
