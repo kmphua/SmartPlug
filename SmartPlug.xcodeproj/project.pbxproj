@@ -292,6 +292,9 @@
 		757411BE1C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */; };
 		757411BF1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */; };
 		757411C01C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */; };
+		75C4CD861C731DA600E8C629 /* Alarm.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD831C731DA600E8C629 /* Alarm.m */; };
+		75C4CD871C731DA600E8C629 /* Alarm+CoreDataProperties.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD851C731DA600E8C629 /* Alarm+CoreDataProperties.m */; };
+		75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD891C731EDC00E8C629 /* BroadcastReply.m */; };
 		75C9A95C1C4469B900AE72E2 /* SetTimerSnoozeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C9A9571C4469B900AE72E2 /* SetTimerSnoozeViewController.m */; };
 		75C9A95D1C4469B900AE72E2 /* SetTimerSnoozeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75C9A9581C4469B900AE72E2 /* SetTimerSnoozeViewController.xib */; };
 		75C9A95E1C4469B900AE72E2 /* SetTimerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C9A95A1C4469B900AE72E2 /* SetTimerViewController.m */; };
@@ -655,6 +658,12 @@
 		757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_1_white_bkgnd.png"; sourceTree = "<group>"; };
 		7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
 		7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		75C4CD821C731DA600E8C629 /* Alarm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alarm.h; sourceTree = "<group>"; };
+		75C4CD831C731DA600E8C629 /* Alarm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alarm.m; sourceTree = "<group>"; };
+		75C4CD841C731DA600E8C629 /* Alarm+CoreDataProperties.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "Alarm+CoreDataProperties.h"; sourceTree = "<group>"; };
+		75C4CD851C731DA600E8C629 /* Alarm+CoreDataProperties.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "Alarm+CoreDataProperties.m"; sourceTree = "<group>"; };
+		75C4CD881C731EDC00E8C629 /* BroadcastReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BroadcastReply.h; sourceTree = "<group>"; };
+		75C4CD891C731EDC00E8C629 /* BroadcastReply.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BroadcastReply.m; sourceTree = "<group>"; };
 		75C9A9561C4469B900AE72E2 /* SetTimerSnoozeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetTimerSnoozeViewController.h; sourceTree = "<group>"; };
 		75C9A9571C4469B900AE72E2 /* SetTimerSnoozeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetTimerSnoozeViewController.m; sourceTree = "<group>"; };
 		75C9A9581C4469B900AE72E2 /* SetTimerSnoozeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SetTimerSnoozeViewController.xib; sourceTree = "<group>"; };
@@ -948,14 +957,20 @@
 		75187EE91C2D67CF00093642 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				754ADE6D1C338449006F86B2 /* JSmartPlug+CoreDataProperties.h */,
-				754ADE6E1C338449006F86B2 /* JSmartPlug+CoreDataProperties.m */,
+				75C4CD821C731DA600E8C629 /* Alarm.h */,
+				75C4CD831C731DA600E8C629 /* Alarm.m */,
+				75C4CD841C731DA600E8C629 /* Alarm+CoreDataProperties.h */,
+				75C4CD851C731DA600E8C629 /* Alarm+CoreDataProperties.m */,
 				754ADE6F1C338449006F86B2 /* JSmartPlug.h */,
 				754ADE701C338449006F86B2 /* JSmartPlug.m */,
+				754ADE6D1C338449006F86B2 /* JSmartPlug+CoreDataProperties.h */,
+				754ADE6E1C338449006F86B2 /* JSmartPlug+CoreDataProperties.m */,
 				7508AA751C32783A00EB88D1 /* JSDevice.h */,
 				7508AA761C32783A00EB88D1 /* JSDevice.m */,
 				7508AA7B1C32786600EB88D1 /* JSAction.h */,
 				7508AA7C1C32786600EB88D1 /* JSAction.m */,
+				75C4CD881C731EDC00E8C629 /* BroadcastReply.h */,
+				75C4CD891C731EDC00E8C629 /* BroadcastReply.m */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -1680,12 +1695,14 @@
 				7512C17B1C1BB3B700489091 /* LoginViewController.m in Sources */,
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
 				7508AA641C325FFC00EB88D1 /* ScheduleActionViewController.m in Sources */,
+				75C4CD861C731DA600E8C629 /* Alarm.m in Sources */,
 				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
 				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,
 				7508AA491C3229A800EB88D1 /* SPAlertView.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,
 				757411741C23ADC300CDCC2D /* DeviceMainViewController.m in Sources */,
 				755268991C334B5400602B58 /* SmartConfigService.m in Sources */,
+				75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
 				7512C1891C1BB3B700489091 /* UIWaitingView.m in Sources */,
 				7508AA691C32625A00EB88D1 /* SelectActionViewController.m in Sources */,
@@ -1706,6 +1723,7 @@
 				7512C1841C1BB3B700489091 /* CustomBadgeAppDelegate.m in Sources */,
 				7512C1221C1BA3B900489091 /* main.m in Sources */,
 				75C9A95C1C4469B900AE72E2 /* SetTimerSnoozeViewController.m in Sources */,
+				75C4CD871C731DA600E8C629 /* Alarm+CoreDataProperties.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

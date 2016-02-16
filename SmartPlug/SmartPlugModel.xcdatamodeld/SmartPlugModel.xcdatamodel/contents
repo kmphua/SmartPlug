@@ -1,12 +1,37 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="9525" systemVersion="14F1509" minimumToolsVersion="Xcode 7.0">
+    <entity name="Alarm" representedClassName="Alarm" syncable="YES">
+        <attribute name="alarm_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="device_id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="dow" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="end_hour" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="end_minute" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="initial_hour" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="initial_minute" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="service_id" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="snooze" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+    </entity>
     <entity name="JSmartPlug" representedClassName="JSmartPlug" syncable="YES">
-        <attribute name="devid" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="buildno" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="co_sensor" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="devid" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="flag" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="fw_date" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="fw_ver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="givenName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="hall_sensor" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="hw_ver" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="icon" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="ip" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="model" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="nightlight" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="prot_ver" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
+        <attribute name="relay" optional="YES" attributeType="Integer 32" defaultValueString="0" syncable="YES"/>
         <attribute name="server" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
     <elements>
-        <element name="JSmartPlug" positionX="-63" positionY="-18" width="128" height="105"/>
+        <element name="JSmartPlug" positionX="-63" positionY="-18" width="128" height="300"/>
+        <element name="Alarm" positionX="-63" positionY="108" width="128" height="180"/>
     </elements>
 </model>
