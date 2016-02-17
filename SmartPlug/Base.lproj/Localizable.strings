@@ -143,3 +143,8 @@
 "msg_recordIr" = "Please point your remote at the JSPlug and press the button you wish to record.\n\n1.Button recorded.";
 "btn_recordAgain" = "Record again";
 "btn_testCommand" = "Test command";
+
+// IR
+
+"ir_groups" = "IR Groups";
+"ir_control" = "IR Control";
