@@ -18,6 +18,7 @@
 
 @property (nonatomic, assign) id<UDPCommunicationDelegate> delegate;
 
++ (UDPCommunication *)getInstance;
 - (BOOL)runUdpServer;
 - (void)runUdpClient:(NSString *)ip msg:(NSString *)msg;
 

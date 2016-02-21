@@ -855,11 +855,11 @@
 			children = (
 				7512C1641C1BB3B700489091 /* WebService.h */,
 				7512C1651C1BB3B700489091 /* WebService.m */,
-				75187EED1C2D730000093642 /* UDPCommunication.h */,
-				75187EEE1C2D730000093642 /* UDPCommunication.m */,
 				751510D71C22B9E8007772FE /* smartplug.h */,
 				755268971C334B5400602B58 /* SmartConfigService.h */,
 				755268981C334B5400602B58 /* SmartConfigService.m */,
+				75187EED1C2D730000093642 /* UDPCommunication.h */,
+				75187EEE1C2D730000093642 /* UDPCommunication.m */,
 				7552689A1C334B6900602B58 /* UDPListenerService.h */,
 				7552689B1C334B6900602B58 /* UDPListenerService.m */,
 			);

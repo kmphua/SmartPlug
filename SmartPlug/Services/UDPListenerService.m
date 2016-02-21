@@ -9,11 +9,32 @@
 #import "UDPListenerService.h"
 #import "GCDAsyncUdpSocket.h"
 #include <arpa/inet.h>
+#import "JSmartPlug.h"
 
 #define MAX_UDP_DATAGRAM_LEN        64
 #define UDP_SERVER_PORT             2391
 
+#define UDP_BROADCAST_PORT          20004
+
 @interface UDPListenerService()<GCDAsyncUdpSocketDelegate>
+{
+    InetAddress broadcastIP;
+    uint8_t lMsg[512];
+    int previous_msgid = 0;
+    BOOL process_data = false;
+    short code = 1;
+    NetworkUtil networkUtil;
+    DatagramSocket ds = null;
+    DatagramPacket dp = new DatagramPacket(lMsg, lMsg.length);
+    BOOL shouldRestartSocketListen = false;
+    Thread UDPBroadcastThread;
+    short command;
+    JSmartPlug *js;
+    UDPCommunication con = new UDPCommunication();
+    private IBinder mBinder = new MyBinder();
+    int IRFlag = 0;
+    byte[] ir = new byte[2];
+}
 
 @property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
 @property (nonatomic) BOOL isRunning;
