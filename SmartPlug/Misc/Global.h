@@ -38,6 +38,7 @@ extern NSString *g_Password;
 extern NSString *g_UserToken;
 extern NSString *g_DevToken;
 extern NSMutableDictionary *g_AppInfo;
+extern NSString *g_DeviceIp;
 
 @interface Global : NSObject
 

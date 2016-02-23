@@ -7,6 +7,7 @@
 //
 
 #import <Foundation/Foundation.h>
+#import "JSmartPlug.h"
 
 @protocol UDPCommunicationDelegate <NSObject>
 
@@ -16,7 +17,12 @@
 
 @interface UDPCommunication : NSObject
 
+@property (nonatomic, strong) NSMutableArray *IRCodes;
+@property (nonatomic, strong) JSmartPlug *js;
+@property (nonatomic) short command;
+
 @property (nonatomic, assign) id<UDPCommunicationDelegate> delegate;
+
 
 + (UDPCommunication *)getInstance;
 - (BOOL)runUdpServer;

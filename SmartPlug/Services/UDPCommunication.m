@@ -9,7 +9,6 @@
 #import "UDPCommunication.h"
 #import "GCDAsyncUdpSocket.h"
 #include <arpa/inet.h>
-#import "JSmartPlug.h"
 
 #define MAX_UDP_DATAGRAM_LEN        128
 #define UDP_SERVER_PORT             20004
@@ -27,9 +26,6 @@
     uint8_t iMsg[22];
     uint8_t ir[128];
     uint8_t ir2[1];
-    NSMutableArray *IRCodes;
-    JSmartPlug *js;
-    short command;
     int previous_msgid;
     BOOL process_data;
     short code;
@@ -61,13 +57,14 @@ static UDPCommunication *instance;
 {
     self = [super init];
     if (self) {
-        IRCodes = [NSMutableArray new];
+        _IRCodes = [NSMutableArray new];
         previous_msgid = 0;
         process_data = false;
         code = 1;
         IRFlag = 0;
         IRSendFlag = 0;
         irCode = 0;
+        _js = [JSmartPlug new];
     }
     return self;
 }
@@ -137,8 +134,8 @@ static UDPCommunication *instance;
 
 - (BOOL)delayTimer:(int)seconds
 {
-    command = 0x000B;
-    NSString *ip = M1.ip;
+    _command = 0x000B;
+    NSString *ip = g_DeviceIp;
     if (ip != nil) {
         uint8_t delay[18];
         [self generate_header];
@@ -151,41 +148,21 @@ static UDPCommunication *instance;
         delay[16] = (uint8_t) ((seconds >> 16) & 0xff);
         delay[17] = (uint8_t) ((seconds >> 24) & 0xff);
         
-        DatagramSocket ds = null;
-        try {
-            ds = new DatagramSocket();
-            InetAddress serverAddr = InetAddress.getByName(ip);
-            DatagramPacket dp;
-            dp = new DatagramPacket(delay, delay.length, serverAddr, UDP_SERVER_PORT);
-            ds.send(dp);
-        } catch (SocketException e) {
-            e.printStackTrace();
-            return false;
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-            return false;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            if (ds != null) {
-                ds.close();
-                //runUdpServer();
-            }
+        if (!udpSocket) {
+            udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
         }
-        return true;
+        NSData *data = [NSData dataWithBytes:delay length:sizeof(delay)];
+        [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+        return YES;
     } else {
-        return false;
+        return NO;
     }
 }
 
 - (BOOL)listenForIRCodes
 {
-    DatagramPacket dp = new DatagramPacket(ir, ir.length);
-    DatagramSocket ds = null;
+    /*
+    NSData *data = [NSData dataWithBytes:ir length:sizeof(ir)];
     
     try {
         ds = new DatagramSocket(UDP_TESTING_PORT);
@@ -209,83 +186,54 @@ static UDPCommunication *instance;
     if(IRFlag == 1){
         listenForIRCodes();
     }
-    return true;
+     */
+    return YES;
 }
 
 - (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param
 {
-    command = udpMsg_param;
-    DatagramSocket ds = null;
-    try {
-        ds = new DatagramSocket();
-        InetAddress serverAddr = InetAddress.getByName(ip);
-        DatagramPacket dp;
-        generate_header();
-        for(int i=0; i<14;i++){
-            rMsg[i] = hMsg[i];
-        }
-        dp = new DatagramPacket(rMsg, rMsg.length, serverAddr, UDP_SERVER_PORT);
-        ds.send(dp);
-    } catch (SocketException e) {
-        e.printStackTrace();
-        return false;
-    }catch (UnknownHostException e) {
-        e.printStackTrace();
-        return false;
-    } catch (IOException e) {
-        e.printStackTrace();
-        return false;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
-    } finally {
-        if (ds != null) {
-            ds.close();
-            //runUdpServer();
-        }
+    _command = udpMsg_param;
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
-    return true;
+    
+    [self generate_header];
+    for(int i=0; i<14;i++){
+        rMsg[i] = hMsg[i];
+    }
+    
+    NSData *data = [NSData dataWithBytes:rMsg length:sizeof(rMsg)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    return YES;
 }
 
 - (BOOL)sendIRMode
 {
-    NSString * ip = M1.ip;
-    command = 0x000C;
-    DatagramSocket ds = null;
-    try {
-        ds = new DatagramSocket();
-        InetAddress serverAddr = InetAddress.getByName(ip);
-        DatagramPacket dp;
-        generate_header();
-        for (int i = 0; i < 14; i++){
-            iMsg[i] = hMsg[i];
-        }
-        int service_id = 0x1D000003;
-        iMsg[14] = (uint8_t)(service_id & 0xff);
-        iMsg[15] = (uint8_t)((service_id >> 8) & 0xff);
-        iMsg[16] = (uint8_t)((service_id >> 16) & 0xff);
-        iMsg[17] = (uint8_t)((service_id >> 24) & 0xff);
-        int flag = 0x00000000;
-        iMsg[18] = (uint8_t)(flag & 0xff);
-        iMsg[19] = (uint8_t)((flag >> 8) & 0xff);
-        iMsg[20] = (uint8_t)((flag >> 16) & 0xff);
-        iMsg[21] = (uint8_t)((flag >> 24) & 0xff);
-        dp = new DatagramPacket(iMsg, iMsg.length, serverAddr, UDP_SERVER_PORT);
-        ds.send(dp);
-    } catch (SocketException e) {
-        e.printStackTrace();
-    }catch (UnknownHostException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    } catch (Exception e) {
-        e.printStackTrace();
-    } finally {
-        if (ds != null) {
-            ds.close();
-            //runUdpServer();
-        }
+    NSString *ip = g_DeviceIp;
+    _command = 0x000C;
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
+
+    [self generate_header];
+    for (int i = 0; i < 14; i++){
+        iMsg[i] = hMsg[i];
+    }
+    int service_id = 0x1D000003;
+    iMsg[14] = (uint8_t)(service_id & 0xff);
+    iMsg[15] = (uint8_t)((service_id >> 8) & 0xff);
+    iMsg[16] = (uint8_t)((service_id >> 16) & 0xff);
+    iMsg[17] = (uint8_t)((service_id >> 24) & 0xff);
+    int flag = 0x00000000;
+    iMsg[18] = (uint8_t)(flag & 0xff);
+    iMsg[19] = (uint8_t)((flag >> 8) & 0xff);
+    iMsg[20] = (uint8_t)((flag >> 16) & 0xff);
+    iMsg[21] = (uint8_t)((flag >> 24) & 0xff);
+    
+    NSData *data = [NSData dataWithBytes:iMsg length:sizeof(iMsg)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
     return YES;
 }
 
@@ -297,80 +245,71 @@ static UDPCommunication *instance;
 
 - (void)sendIRHeader:(int)filename
 {
-    NSString * ip = M1.ip;
-    command = 0x000A;
-    generate_header();
-    for(int i = 0; i < hMsg.length; i++){
+    NSString * ip = g_DeviceIp;
+    _command = 0x000A;
+    [self generate_header];
+    for(int i = 0; i < sizeof(hMsg); i++){
         irHeader[i] = hMsg[i];
     }
     irHeader[14] = (uint8_t)filename;
-    DatagramSocket ds = null;
-    try {
-        ds = new DatagramSocket();
-        InetAddress serverAddr = InetAddress.getByName(ip);
-        DatagramPacket dp;
-        dp = new DatagramPacket(irHeader, irHeader.length, serverAddr, UDP_SERVER_PORT);
-        ds.send(dp);
-        System.out.println("IR HEADERS SENT");
-    } catch (Exception e){
-        e.printStackTrace();
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
-    ds.close();
-    //runUdpServer();
+
+    NSData *data = [NSData dataWithBytes:irHeader length:sizeof(irHeader)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    NSLog(@"IR HEADERS SENT");
 }
 
-- (BOOL)setDeviceTimers:(NSString *)ip Context a
+- (BOOL)setDeviceTimers:(NSString *)ip
 {
-    sendTimerHeaders(ip);
-    sendTimers(ip, a);
-    DatagramSocket ds = null;
-    //FINALLY SEND TERMINATOR
-    try {
-        int terminator = 0x00000000;
-        uint8_t[] end = new uint8_t[4];
-        end[0] = (uint8_t)(terminator & 0xff);
-        end[1] = (uint8_t)((terminator >> 8) & 0xff);
-        end[2] = (uint8_t)((terminator >> 16) & 0xff);
-        end[3] = (uint8_t)((terminator >> 24) & 0xff);
-        ds = new DatagramSocket();
-        InetAddress serverAddr = InetAddress.getByName(ip);
-        DatagramPacket dp;
-        dp = new DatagramPacket(end, end.length, serverAddr, UDP_SERVER_PORT);
-        ds.send(dp);
-        System.out.println("TIMERS TERMINATOR SENT");
-    } catch (Exception e){
-        e.printStackTrace();
+    [self sendTimerHeaders:ip];
+    [self sendTimers:ip];
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
-    return true;
+
+    //FINALLY SEND TERMINATOR
+    int terminator = 0x00000000;
+    uint8_t end[14];
+    end[0] = (uint8_t)(terminator & 0xff);
+    end[1] = (uint8_t)((terminator >> 8) & 0xff);
+    end[2] = (uint8_t)((terminator >> 16) & 0xff);
+    end[3] = (uint8_t)((terminator >> 24) & 0xff);
+    
+    NSData *data = [NSData dataWithBytes:end length:sizeof(end)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    NSLog(@"TIMERS TERMINATOR SENT");
+    return YES;
 }
 
 - (void)sendTimerHeaders:(NSString *)ip
 {
-    command = 0x0009;
-    generate_header();
-    for(int i = 0; i < hMsg.length; i++){
+    _command = 0x0009;
+    [self generate_header];
+    for(int i = 0; i < sizeof(hMsg); i++){
         timerHeader[i] = hMsg[i];
     }
-    int time = (int)(System.currentTimeMillis()/1000);
+    int time = (int)[[NSDate date] timeIntervalSince1970];
     timerHeader[14] = (uint8_t)(time & 0xff);
     timerHeader[15] = (uint8_t)((time >> 8) & 0xff);
     timerHeader[16] = (uint8_t)((time >> 16) & 0xff);
     timerHeader[17] = (uint8_t)((time >> 24) & 0xff);
-    DatagramSocket ds = null;
-    try {
-        ds = new DatagramSocket();
-        InetAddress serverAddr = InetAddress.getByName(ip);
-        DatagramPacket dp;
-        dp = new DatagramPacket(timerHeader, timerHeader.length, serverAddr, UDP_SERVER_PORT);
-        ds.send(dp);
-        System.out.println("TIMERS HEADERS SENT");
-    } catch (Exception e){
-        e.printStackTrace();
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
-    ds.close();
+    
+    NSData *data = [NSData dataWithBytes:timerHeader length:sizeof(timerHeader)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    NSLog(@"TIMERS HEADERS SENT");
 }
 
-- (void)sendTimers:(NSString *)ip  Context a ){
+- (void)sendTimers:(NSString *)ip
+{
+    /*
     sql = new MySQLHelper(a);
     Cursor c = sql.getAlarmData(ip);
     if(c.getCount() > 0){
@@ -402,7 +341,7 @@ static UDPCommunication *instance;
                 DatagramPacket dp;
                 dp = new DatagramPacket(timer, timer.length, serverAddr, UDP_SERVER_PORT);
                 ds.send(dp);
-                System.out.println("TIMER "+j+" SENT");
+                NSLog(@"TIMER "+j+" SENT");
                 ds.close();
             } catch (Exception e){
                 e.printStackTrace();
@@ -414,135 +353,118 @@ static UDPCommunication *instance;
         }
         c.close();
     }
+     */
 }
 
 - (BOOL)setDeviceStatus:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action
 {
-    command = 0x0008;     //to generate the header
-    generate_header();
-    DatagramSocket ds = null;
-    try {
-        ds = new DatagramSocket();
-        InetAddress serverAddr = InetAddress.getByName(ip);
-        DatagramPacket dp;
-        generate_header();
-        for(int i=0; i<14;i++){
-            sMsg[i] = hMsg[i];
-        }
-        
-        int service_id = serviceId;
-        sMsg[14] = (uint8_t)(service_id & 0xff);
-        sMsg[15] = (uint8_t)((service_id >> 8 ) & 0xff);
-        sMsg[16] = (uint8_t)((service_id >> 16 ) & 0xff);
-        sMsg[17] = (uint8_t)((service_id >> 24 ) & 0xff);
-        uint8_t datatype = 0x01;
-        sMsg[18] = datatype;
-        uint8_t data = action;
-        sMsg[19] = data;
-        int terminator = 0x00000000;
-        sMsg[20] = (uint8_t)(terminator & 0xff);
-        sMsg[21] = (uint8_t)((terminator >> 8 ) & 0xff);
-        sMsg[22] = (uint8_t)((terminator >> 16 ) & 0xff);
-        sMsg[23] = (uint8_t)((terminator >> 24 ) & 0xff);
-        
-        dp = new DatagramPacket(sMsg, sMsg.length, serverAddr, UDP_SERVER_PORT);
-        ds.send(dp);
-    } catch (SocketException e) {
-        e.printStackTrace();
-        return false;
-    }catch (UnknownHostException e) {
-        e.printStackTrace();
-        return false;
-    } catch (IOException e) {
-        e.printStackTrace();
-        return false;
-    } catch (Exception e) {
-        e.printStackTrace();
-        return false;
-    } finally {
-        if (ds != null) {
-            ds.close();
-            //        runUdpServer();
-        }
-        return true;
+    _command = 0x0008;     //to generate the header
+    //[self generate_header];
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
+    
+    [self generate_header];
+    for(int i=0; i<14;i++){
+        sMsg[i] = hMsg[i];
+    }
+    
+    int service_id = serviceId;
+    sMsg[14] = (uint8_t)(service_id & 0xff);
+    sMsg[15] = (uint8_t)((service_id >> 8 ) & 0xff);
+    sMsg[16] = (uint8_t)((service_id >> 16 ) & 0xff);
+    sMsg[17] = (uint8_t)((service_id >> 24 ) & 0xff);
+    uint8_t datatype = 0x01;
+    sMsg[18] = datatype;
+    uint8_t data = action;
+    sMsg[19] = data;
+    int terminator = 0x00000000;
+    sMsg[20] = (uint8_t)(terminator & 0xff);
+    sMsg[21] = (uint8_t)((terminator >> 8 ) & 0xff);
+    sMsg[22] = (uint8_t)((terminator >> 16 ) & 0xff);
+    sMsg[23] = (uint8_t)((terminator >> 24 ) & 0xff);
+    
+    NSData *udpData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
+    [udpSocket sendData:udpData toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    return YES;
 }
 
 - (void)process_headers
 {
     /**********************************************/
-    int header = Math.abs(process_long(lMsg[0],lMsg[1],lMsg[2],lMsg[3]));          //1397576276
+    int header = abs([self process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
     
     if (header != 1397576276) {
         process_data = true;
     }
-    System.out.println("HEADER: " + header);
+    NSLog(@"HEADER: %d", header);
     /**********************************************/
-    int msgid = Math.abs(process_long(lMsg[4],lMsg[5],lMsg[6],lMsg[7]));
+    int msgid = abs([self process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
     if (msgid != previous_msgid){
         previous_msgid = msgid;
         process_data = true;
     } else {
         process_data = false;
     }
-    System.out.println("MSGID: " + msgid);
+    NSLog(@"MSGID: %d", msgid);
     /**********************************************/
-    int seq = Math.abs(process_long(lMsg[8],lMsg[9],lMsg[10],lMsg[11]));
-    System.out.println("SEQ: " + seq);
+    int seq = abs([self process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
+    NSLog(@"SEQ: %d", seq);
     /**********************************************/
-    int size = process_long(lMsg[12], lMsg[13], lMsg[14], lMsg[15]);
-    System.out.println("SIZE: " + size);
+    int size = [self process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
+    NSLog(@"SIZE: %d", size);
     /**********************************************/
-    code = process_short(lMsg[16], lMsg[17]);
-    System.out.println("CODE: " + code);
+    code = [self process_short:lMsg[16] b:lMsg[17]];
+    NSLog(@"CODE: %d", code);
 }
 
 - (void)process_query_device_command
 {
     /**********************************************/
-    StringBuffer mac = new StringBuffer("");
+    NSMutableString *mac = [NSMutableString new];
     for (int i = 18; i < 24; i++) {
-        mac.append(String.format("%02x", lMsg[i]));
+        [mac appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
     }
-    js.setId(mac.toString());
-    System.out.println("MAC: " + mac);
+    _js.devid = mac;
+    NSLog(@"MAC: %@", mac);
     /**********************************************/
-    StringBuffer model = new StringBuffer("");
+    NSMutableString *model = [NSMutableString new];
     for (int i = 24; i < 40; i++) {
-        model.append(String.format("%c", lMsg[i]));
+        [model appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    js.setModel(model.toString());
-    System.out.println("MODEL:" + model);
+    _js.model = model;
+    NSLog(@"MODEL: %@", model);
     /**********************************************/
-    int buildno = process_long(lMsg[40], lMsg[41], lMsg[42], lMsg[43]);
-    js.setBuildno(buildno);
-    System.out.println("BUILD NO: " + buildno);
+    int buildno = [self process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
+    _js.buildno = [NSNumber numberWithInt:buildno];
+    NSLog(@"BUILD NO: %d", buildno);
     /**********************************************/
-    int prot_ver = process_long(lMsg[44], lMsg[45], lMsg[46], lMsg[47]);
-    js.setProt_ver(prot_ver);
-    System.out.println("PROTOCOL VER: " + prot_ver);
+    int prot_ver = [self process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
+    _js.prot_ver = [NSNumber numberWithInt:prot_ver];
+    NSLog(@"PROTOCOL VER: %d", prot_ver);
     /**********************************************/
-    StringBuffer hw_ver = new StringBuffer("");
+    NSMutableString *hw_ver = [NSMutableString new];
     for (int i = 48; i < 64; i++) {
-        hw_ver.append(String.format("%c", lMsg[i]));
+        [hw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    js.setHw_ver(hw_ver.toString());
-    System.out.println("HARDWARE VERSION:" + hw_ver);
+    _js.hw_ver = hw_ver;
+    NSLog(@"HARDWARE VERSION: %@", hw_ver);
     /**********************************************/
-    StringBuffer fw_ver = new StringBuffer("");
+    NSMutableString *fw_ver = [NSMutableString new];
     for (int i = 64; i < 80; i++) {
-        fw_ver.append(String.format("%c", lMsg[i]));
+        [fw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    js.setFw_ver(fw_ver.toString());
-    System.out.println("FIRMWARE VERSION:" + fw_ver);
+    _js.fw_ver = fw_ver;
+    NSLog(@"FIRMWARE VERSION: %@", fw_ver);
     /**********************************************/
-    int fw_date = process_long(lMsg[80], lMsg[81], lMsg[82], lMsg[83]);
-    js.setFw_date(fw_date);
-    System.out.println("FIRMWARE DATE: " + fw_date);
+    int fw_date = [self process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
+    _js.fw_date = [NSNumber numberWithInt:fw_date];
+    NSLog(@"FIRMWARE DATE: %d", fw_date);
     /**********************************************/
-    int flag = process_long(lMsg[84], lMsg[85], lMsg[86], lMsg[87]);
-    js.setFlag(flag);
-    System.out.println("FLAG: " + flag);
+    int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
+    _js.flag = [NSNumber numberWithInt:flag];
+    NSLog(@"FLAG: %d", flag);
 }
 
 - (void)process_get_device_status
@@ -565,18 +487,18 @@ static UDPCommunication *instance;
         NSLog(@"IS OUTLET SERVICE");
         int flag = [self process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
         if(flag == 0x00000010){
-            js.setHall_sensor(1);
+            _js.hall_sensor = [NSNumber numberWithInt:1];
             NSLog(@"Relay warning");
         } else {
-            js.setHall_sensor(0);
+            _js.hall_sensor = [NSNumber numberWithInt:0];
         }
         uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if(data == 0x01){
-            js.setRelay(1);
+            _js.relay = [NSNumber numberWithInt:1];
             NSLog(@"Relay is on");
         } else {
-            js.setRelay(0);
+            _js.relay = [NSNumber numberWithInt:0];
             NSLog(@"Relay is off");
         }
         
@@ -592,10 +514,10 @@ static UDPCommunication *instance;
         uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if(data == 0x01){
-            js.setNightlight(1);
+            _js.nightlight = [NSNumber numberWithInt:1];
             NSLog(@"Nighlight is on");
         } else {
-            js.setNightlight(0);
+            _js.nightlight = [NSNumber numberWithInt:0];
             NSLog(@"Nighlight is off");
         }
     }
@@ -603,15 +525,15 @@ static UDPCommunication *instance;
 
 - (void)get_co_status
 {
-    int service_id = process_long(lMsg[38], lMsg[39], lMsg[40], lMsg[41]);
-    if(service_id == 0xD1000002) {
-        int flag = process_long(lMsg[42], lMsg[43], lMsg[44], lMsg[45]);
+    int service_id = [self process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
+    if (service_id == 0xD1000002) {
+        int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
         if(flag == 0x00000010){
-            js.setCo_sensor(1);                                             //WARNING
+            _js.co_sensor = [NSNumber numberWithInt:1];                      //WARNING
         } else if (flag == 0x00000100){
-            js.setCo_sensor(3);                                             //NOT PLUGGED
+            _js.co_sensor = [NSNumber numberWithInt:3];                      //NOT PLUGGED
         } else {
-            js.setCo_sensor(0);                                             //NORMAL
+            _js.co_sensor = [NSNumber numberWithInt:0];                      //NORMAL
         }
         uint8_t datatype = lMsg[46];
         uint8_t data = lMsg[47];
@@ -659,8 +581,8 @@ static UDPCommunication *instance;
     hMsg[9] = (uint8_t) (seq >> 8);
     hMsg[10] = (uint8_t) (seq >> 16);
     hMsg[11] = (uint8_t) (seq >> 24);
-    hMsg[12] = (uint8_t) command;
-    hMsg[13] = (uint8_t) (command >> 8);
+    hMsg[12] = (uint8_t) _command;
+    hMsg[13] = (uint8_t) (_command >> 8);
 }
 
 @end

@@ -25,6 +25,7 @@ NSString *g_Password;
 NSString *g_UserToken;
 NSString *g_DevToken;
 NSMutableDictionary *g_AppInfo;
+NSString *g_DeviceIp;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     

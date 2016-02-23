@@ -18,22 +18,22 @@
 
 @interface UDPListenerService()<GCDAsyncUdpSocketDelegate>
 {
-    InetAddress broadcastIP;
+    NSString* broadcastIP;
     uint8_t lMsg[512];
-    int previous_msgid = 0;
-    BOOL process_data = false;
-    short code = 1;
-    NetworkUtil networkUtil;
-    DatagramSocket ds = null;
-    DatagramPacket dp = new DatagramPacket(lMsg, lMsg.length);
-    BOOL shouldRestartSocketListen = false;
-    Thread UDPBroadcastThread;
+    int previous_msgid;
+    BOOL process_data;
+    short code;
+    //NetworkUtil networkUtil;
+    //DatagramSocket ds = null;
+    //DatagramPacket dp = new DatagramPacket(lMsg, lMsg.length);
+    BOOL shouldRestartSocketListen;
+    //Thread UDPBroadcastThread;
     short command;
     JSmartPlug *js;
-    UDPCommunication con = new UDPCommunication();
-    private IBinder mBinder = new MyBinder();
-    int IRFlag = 0;
-    byte[] ir = new byte[2];
+    //UDPCommunication con = new UDPCommunication();
+    //private IBinder mBinder = new MyBinder();
+    int IRFlag;
+    uint8_t ir[2];
 }
 
 @property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
@@ -52,6 +52,20 @@ static UDPListenerService *instance;
             instance = [[self alloc] init];
     }
     return instance;
+}
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        previous_msgid = 0;
+        process_data = NO;
+        code = 1;
+        IRFlag = 0;
+        shouldRestartSocketListen = NO;
+        IRFlag = 0;
+    }
+    return self;
 }
 
 - (BOOL)startUdpBroadcastListener
