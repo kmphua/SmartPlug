@@ -8,7 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol NoTimersDelegate <NSObject>
+
+- (void)addTimer;
+
+@end
+
 @interface NoTimersViewController : UIViewController
 
+@property (nonatomic, assign) id<NoTimersDelegate> delegate;
 
 @end

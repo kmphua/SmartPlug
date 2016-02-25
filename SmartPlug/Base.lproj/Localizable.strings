@@ -6,9 +6,13 @@
   Copyright © 2015 Kevin Phua. All rights reserved.
 */
 
+// General
 "OK" = "OK";
 "Cancel" = "Cancel";
 "Error" = "Error";
+"No" = "No";
+"Yes" = "Yes";
+
 "EmailEmpty" = "Email field is empty";
 "UsernameEmpty" = "Username field is empty";
 "PasswordEmpty" = "Password field is empty";
@@ -38,6 +42,10 @@
 "Snooze30MoreMinutes" = "Snooze 30 More Min.";
 "Snooze1MoreHour" = "Snooze 1 More Hr.";
 "CancelSnooze" = "Cancel Snooze";
+
+// Schedule
+"RemoveAction" = "Remove Action";
+"RemoveActionMsg" = "Are you sure you want to remove this scheduled action?";
 
 "id_username" = "Username";
 "id_password" = "Password";

@@ -6,9 +6,13 @@
   Copyright © 2015 Kevin Phua. All rights reserved.
 */
 
+// General
 "OK" = "確定";
 "Cancel" = "取消";
 "Error" = "錯誤";
+"No" = "否";
+"Yes" = "是";
+
 "EmailEmpty" = "電子郵件地址未填";
 "UsernameEmpty" = "使用者未填";
 "PasswordEmpty" = "新密碼未填";
@@ -38,6 +42,10 @@
 "Snooze30MoreMinutes" = "Snooze 30 More Min.";
 "Snooze1MoreHour" = "Snooze 1 More Hr.";
 "CancelSnooze" = "Cancel Snooze";
+
+// Schedule
+"RemoveAction" = "Remove Action";
+"RemoveActionMsg" = "Are you sure you want to remove this scheduled action?";
 
 
 "id_username" = "使用者";

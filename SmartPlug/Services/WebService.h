@@ -8,7 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-#define SERVER_URL                  @"http://182.234.253.236:7001/api/"
+#define SERVER_URL                  @"http://flutehuang-001-site2.ctempurl.com/api/"
 
 #define WS_LONG_POLL                @"longpoll"
 

@@ -21,6 +21,10 @@
 #define UD_USER_TOKEN                   @"user_token"
 #define UD_DEVICE_TOKEN                 @"device_token"
 
+// Services
+#define ALARM_RELAY_SERVICE             0x1D000000
+#define ALARM_NIGHTLED_SERVICE          0x1D000001
+
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,
     COLOR_TYPE_DEFAULT_BG,

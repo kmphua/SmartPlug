@@ -10,8 +10,9 @@
 #import "DeviceItemSettingsViewController.h"
 #import "UDPListenerService.h"
 #import "NoTimersViewController.h"
+#import "ScheduleMainViewController.h"
 
-@interface DeviceMainViewController ()<UDPListenerDelegate>
+@interface DeviceMainViewController ()<UDPListenerDelegate, NoTimersDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (nonatomic, weak) IBOutlet UIImageView *imgDeviceIcon;
@@ -101,6 +102,7 @@
     NoTimersViewController *noTimersVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
     noTimersVC.modalPresentationStyle = UIModalPresentationCurrentContext;
     noTimersVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    noTimersVC.delegate = self;
     [self presentViewController:noTimersVC animated:YES completion:nil];
 }
 
@@ -173,6 +175,15 @@
             }
         }
     }
+}
+
+//==================================================================
+#pragma mark - NoTimersDelegate
+//==================================================================
+- (void)addTimer
+{
+    ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
+    [self.navigationController pushViewController:scheduleVC animated:YES];
 }
 
 @end

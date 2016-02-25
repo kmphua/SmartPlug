@@ -9,12 +9,14 @@
 #import "ScheduleMainViewController.h"
 #import "ScheduleActionViewController.h"
 #import "ScheduleMainViewCell.h"
+#import "SPAlertView.h"
+#import "Alarm.h"
 
-@interface ScheduleMainViewController () <UITableViewDataSource, UITableViewDelegate>
+@interface ScheduleMainViewController () <UITableViewDataSource, UITableViewDelegate, ScheduleMainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
-@property (strong, nonatomic) NSMutableArray *actions;
+@property (strong, nonatomic) NSMutableArray *alarms;
 
 @end
 
@@ -27,9 +29,7 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    self.actions = [[NSMutableArray alloc] init];
-
+    self.alarms = [[NSMutableArray alloc] init];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -69,7 +69,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 1; //[self.actions count];
+    return [self.alarms count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -105,12 +105,25 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     }
     
-    //NSDictionary *action = [self.actions objectAtIndex:[indexPath row]];
+    Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
     
+    int daysOfWeek = [alarm.dow intValue];
+    
+    int serviceId = [alarm.service_id intValue];
+    if (serviceId == ALARM_RELAY_SERVICE) {
     cell.lblDeviceName.text = @"Desk Lamp";
+
+
+    NSMutableString *dayString = [NSMutableString new];
+
+    
     cell.lblScheduleTime.text = @"Sun, Fri - 18:00 to 03:00";
+    
+    
+    
     cell.imgDeviceIcon.image = [UIImage imageNamed:@"see_Table Lamps_1_white_bkgnd"];
     cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_small"];
+    cell.delegate = self;
     
     /*
     NSString *deviceName = [device objectForKey:@"title"];
@@ -134,6 +147,25 @@
     scheduleActionVc.action = nil;
     [self.navigationController pushViewController:scheduleActionVc animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+//==================================================================
+#pragma ScheduleMainViewCellDelegate
+//==================================================================
+- (void)onClickBtnEdit
+{
+    ScheduleActionViewController *scheduleActionVc = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
+    scheduleActionVc.action = nil;
+    [self.navigationController pushViewController:scheduleActionVc animated:YES];
+}
+
+- (void)onClickBtnDelete
+{
+    SPAlertView *alertView = [[SPAlertView alloc] initWithTitle:NSLocalizedString(@"RemoveAction", nil)
+                                                        message:NSLocalizedString(@"RemoveActionMsg", nil)
+                                              cancelButtonTitle:NSLocalizedString(@"No", nil)
+                                               otherButtonTitle:NSLocalizedString(@"Yes", nil)];
+    [alertView show];
 }
 
 //==================================================================
