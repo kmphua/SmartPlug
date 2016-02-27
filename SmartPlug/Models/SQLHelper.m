@@ -7,6 +7,7 @@
 //
 
 #import "SQLHelper.h"
+#import "FMDB.h"
 
 // plugs information table
 #define TABLE_SMARTPLUGS        @"smartplugs"
@@ -69,7 +70,7 @@
 #define DATABASE_FILE           @"jsplugs.db"
 #define DATABASE_VERSION        1
 
-
+/*
 //create table for IR Codes
 private static final String TABLE_CREATE_IRCODE = "create table "
 + TABLE_IRCODES + "( "+COLUMN_ID+" integer primary key autoincrement, "
@@ -107,10 +108,11 @@ private static final String TABLE_CREATE_IRGROUPS = "create table "
 private static final String TABLE_CREATE_ICONS = "create table "
 + TABLE_ICONS + "(" + COLUMN_ID + " integer primary key autoincrement, "
 + COLUMN_URL + " text unique, " + COLUMN_SIZE + " integer)";
+*/
 
 @implementation SQLHelper
 {
-    sqlite3 *database;
+    FMDatabase *db;
 }
 
 static SQLHelper *instance;
@@ -138,7 +140,8 @@ static SQLHelper *instance;
             [self copyDbIfNeeded];
         }
         
-        if (sqlite3_open([dbPath UTF8String], &database) != SQLITE_OK) {
+        db = [FMDatabase databaseWithPath:dbPath];
+        if (!db) {
             NSLog(@"Failed to open database!");
         }
     }
@@ -162,460 +165,528 @@ static SQLHelper *instance;
     }
 }
 
-- (bool)executeQuery:(NSString *)sql statement:(sqlite3_stmt **)statement
+//==================================================================
+#pragma mark - Public methods
+//==================================================================
+- (BOOL)insertIcons:(NSString *)url size:(int)size
 {
-    const char *sql_stmt = [sql UTF8String];
-    return sqlite3_prepare_v2(database, sql_stmt,
-                              -1, statement, NULL) == SQLITE_OK;
+    return [db executeUpdate:@"INSERT INTO ? (?, ?) VALUES (?, ?)",
+            TABLE_ICONS, COLUMN_URL, COLUMN_SIZE, url, [NSNumber numberWithInt:size], nil];
 }
 
-- (bool)executeCommand:(NSString *)sql
+- (NSArray *)getIcons
 {
-    sqlite3_stmt *statement;
-    const char *sql_stmt = [sql UTF8String];
-    if(sqlite3_prepare_v2(database, sql_stmt,
-                          -1, &statement, NULL) == SQLITE_OK) {
-        bool done = sqlite3_step(statement) == SQLITE_DONE;
-        sqlite3_finalize(statement);
-        return done;
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_ICONS];
+    NSMutableArray *icons = [NSMutableArray new];
+    while ([results next]) {
+        Icon *icon = [Icon new];
+        icon.url = [results stringForColumn:COLUMN_URL];
+        icon.size = [results intForColumn:COLUMN_SIZE];
+        [icons addObject:icon];
     }
-    return false;
+    return icons;
 }
 
-
-public MySQLHelper(Context context) {
-    super(context, DATABASE_NAME, null, DATABASE_VERSION);
+- (BOOL)insertIRGroup:(NSString *)desc icon:(NSString *)icon position:(int)position
+{
+    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?) VALUES (?, ?, ?)",
+            TABLE_IRGROUPS, COLUMN_NAME, COLUMN_ICON, COLUMN_POSITION, desc, icon, [NSNumber numberWithInt:position], nil];
 }
 
-@Override
-public void onCreate(SQLiteDatabase database) {
-    database.execSQL(TABLE_CREATE_SMARTPLUG);
-    database.execSQL(TABLE_CREATE_ALARM);
-    database.execSQL(TABLE_CREATE_PARAMS);
-    database.execSQL(TABLE_CREATE_IRCODE);
-    database.execSQL(TABLE_CREATE_IRGROUPS);
-    database.execSQL(TABLE_CREATE_ICONS);
-}
-
-@Override
-public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    Log.w(MySQLHelper.class.getName(),
-          "Upgrading database from version " + oldVersion + " to "
-          + newVersion + ", which will destroy all old data");
-    db.execSQL("DROP TABLE IF EXISTS " + TABLE_SMARTPLUGS);
-    onCreate(db);
-}
-
-public boolean insertIcons(String url, int size){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_URL, url);
-    cv.put(COLUMN_SIZE, size);
-    try {
-        db.insert(TABLE_ICONS, null, cv);
-    } catch (Exception e){
-        Log.v("MySQLHelper", "DUPLICATED FIELD");
+- (NSArray *)getIRGroups
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_IRGROUPS];
+    NSMutableArray *irGroups = [NSMutableArray new];
+    while ([results next]) {
+        IrGroup *irGroup = [IrGroup new];
+        irGroup.name = [results stringForColumn:COLUMN_NAME];
+        irGroup.icon = [results stringForColumn:COLUMN_ICON];
+        irGroup.position = [results intForColumn:COLUMN_POSITION];
+        [irGroups addObject:irGroup];
     }
-    return true;
+    return irGroups;
 }
 
-public Cursor getIcons(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res = db.rawQuery("select * from "+ TABLE_ICONS, null);
-    return res;
-}
-
-public boolean insertIRGroup(String desc, String icon, int position){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_NAME, desc);
-    cv.put(COLUMN_ICON, icon);
-    cv.put(COLUMN_POSITION, position);
-    db.insert(TABLE_IRGROUPS, null, cv);
-    return true;
-}
-
-public Cursor getIRGroups(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_IRGROUPS, null);
-    return res;
-}
-
-public boolean deleteIRGroup(int id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    boolean toreturn = db.delete(TABLE_IRGROUPS, COLUMN_ID+" = "+id, null) > 0;
-    if (toreturn){
-        if(deleteIRCodes(id)){
-            toreturn = true;
+- (BOOL)deleteIRGroup:(int)id
+{
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRGROUPS, COLUMN_ID, id, nil];
+    if (toReturn){
+        if ([self deleteIRCodes:id]){
+            toReturn = true;
         } else {
-            toreturn = false;
+            toReturn = false;
         }
     }
-    return toreturn;
+    return toReturn;
 }
 
-public boolean deleteIRCodes(int groupid){
-    SQLiteDatabase db = this.getReadableDatabase();
-    boolean toreturn = db.delete(TABLE_IRCODES, COLUMN_GROUPID+" = "+groupid, null) > 0;
-    return toreturn;
-}
-
-public boolean deleteIRCode(int id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    boolean toreturn = db.delete(TABLE_IRCODES, COLUMN_ID+" = "+id, null) > 0;
-    return toreturn;
-}
-
-public Cursor getIRGroups(int id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_IRGROUPS + " where " + COLUMN_ID + " = " + id, null);
-    return res;
-}
-
-public boolean insertIRCodes(int gid, String name, int filename, String icon, String mac){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_GROUPID, gid);
-    cv.put(COLUMN_NAME, name);
-    cv.put(COLUMN_FILENAME, filename);
-    cv.put(COLUMN_ICON, icon);
-    cv.put(COLUMN_MAC, mac);
-    db.insert(TABLE_IRCODES, null, cv);
-    return true;
-}
-
-public Cursor getIRCodes(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_IRCODES, null);
-    return res;
-}
-
-public Cursor getIRCodesByGroup(int id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_IRCODES +" where "+COLUMN_GROUPID+" = "+id, null);
-    return res;
-}
-
-public boolean insertPlug (String name, String sid, String ip)
+- (BOOL)deleteIRCodes:(int)groupid
 {
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(COLUMN_NAME, name);
-    contentValues.put(COLUMN_SID, sid);
-    contentValues.put(COLUMN_IP, ip);
-    contentValues.put(COLUMN_SERVER, "undefined");
-    contentValues.put(COLUMN_ACTIVE, 1);
-    db.insert(TABLE_SMARTPLUGS, null, contentValues);
-    return true;
+    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_GROUPID, [NSNumber numberWithInt:groupid], nil];
 }
 
-public boolean insertPlug (JSmartPlug js, int active)
+- (BOOL)deleteIRCode:(int)id
 {
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(COLUMN_NAME, js.getName());
-    contentValues.put(COLUMN_SID, js.getId());
-    contentValues.put(COLUMN_IP, js.getIp());
-    contentValues.put(COLUMN_MODEL, js.getModel());
-    contentValues.put(COLUMN_BUILD_NO, js.getBuildno());
-    contentValues.put(COLUMN_PROT_VER, js.getProt_ver());
-    contentValues.put(COLUMN_HW_VER, js.getHw_ver());
-    contentValues.put(COLUMN_FW_VER, js.getFw_ver());
-    contentValues.put(COLUMN_FW_DATE, js.getFw_date());
-    contentValues.put(COLUMN_FLAG, js.getFlag());
-    contentValues.put(COLUMN_RELAY, js.getRelay());
-    contentValues.put(COLUMN_HSENSOR, js.getHall_sensor());
-    contentValues.put(COLUMN_CSENSOR, js.getCo_sensor());
-    contentValues.put(COLUMN_NIGHTLIGHT, js.getNightlight());
-    contentValues.put(COLUMN_ACTIVE, active);
-    db.insert(TABLE_SMARTPLUGS, null, contentValues);
-    return true;
+    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_ID, [NSNumber numberWithInt:id], nil];
 }
 
-public boolean updatePlugID(String mac, String ip){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_SID, mac);
-    String filter = COLUMN_IP+"='"+ip+"'";
-    db.update(TABLE_SMARTPLUGS, cv, filter, null);
-    return true;
-}
-
-public boolean updatePlugName(String data, String id){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_GIVEN_NAME, data);
-    String filter = COLUMN_SID+" = '"+id+"'";
-    db.update(TABLE_SMARTPLUGS, cv, filter, null);
-    return true;
-}
-
-public boolean updatePlugNightlightService(int data, String id){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_NIGHTLIGHT, data);
-    String filter = COLUMN_SID+" = '"+id+"'";
-    db.update(TABLE_SMARTPLUGS, cv, filter, null);
-    return true;
-}
-
-public boolean updatePlugCoSensorService(int data, String id){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_CSENSOR, data);
-    String filter = COLUMN_SID+" = '"+id+"'";
-    db.update(TABLE_SMARTPLUGS, cv, filter, null);
-    return true;
-}
-
-public boolean updatePlugHallSensorService(int data, String id){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_HSENSOR, data);
-    String filter = COLUMN_SID+" = '"+id+"'";
-    db.update(TABLE_SMARTPLUGS, cv, filter, null);
-    return true;
-}
-
-public boolean updatePlugRelayService(int data, String id){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_RELAY, data);
-    String filter = COLUMN_SID+" = '"+id+"'";
-    db.update(TABLE_SMARTPLUGS, cv, filter, null);
-    return true;
-}
-
-public boolean updatePlugServicesByIP(JSmartPlug js){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues args = new ContentValues();
-    args.put(COLUMN_RELAY, js.getRelay());
-    args.put(COLUMN_HSENSOR, js.getHall_sensor());
-    args.put(COLUMN_CSENSOR, js.getCo_sensor());
-    args.put(COLUMN_NIGHTLIGHT, js.getNightlight());
-    args.put(COLUMN_HW_VER, js.getHw_ver());
-    args.put(COLUMN_FW_VER, js.getFw_ver());
-    String strFilter = COLUMN_IP + " = '" + js.getIp() + "'";
-    db.update(TABLE_SMARTPLUGS, args, strFilter, null);
-    return true;
-}
-
-public boolean updatePlugServicesByID(JSmartPlug js){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues args = new ContentValues();
-    args.put(COLUMN_RELAY, js.getRelay());
-    args.put(COLUMN_HSENSOR, js.getHall_sensor());
-    args.put(COLUMN_CSENSOR, js.getCo_sensor());
-    args.put(COLUMN_NIGHTLIGHT, js.getNightlight());
-    args.put(COLUMN_HW_VER, js.getHw_ver());
-    args.put(COLUMN_FW_VER, js.getFw_ver());
-    String strFilter = COLUMN_SID + " = '" + js.getId() + "'";
-    if(db.update(TABLE_SMARTPLUGS, args, strFilter, null)==1){
-        System.out.println("SERVICE UPDATED SUCCESSFULLY");
-    }
-    return true;
-}
-
-public boolean updatePlugIP(String name, String ip, String mac){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_IP, ip);
-    db.update(TABLE_SMARTPLUGS, cv, COLUMN_NAME+"='"+name+"'", null);
-    return true;
-}
-
-public boolean updatePlugRelay(String id, int relay){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues args = new ContentValues();
-    args.put(COLUMN_RELAY, relay);
-    String strFilter = COLUMN_SID+" = '" + id +"'";
-    db.update(TABLE_SMARTPLUGS, args, strFilter, null);
-    return true;
-}
-
-public boolean updatePlugNightlight(String id, int nl){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues args = new ContentValues();
-    args.put(COLUMN_NIGHTLIGHT, nl);
-    String strFilter = COLUMN_SID+" = '" + id +"'";
-    db.update(TABLE_SMARTPLUGS, args, strFilter, null);
-    return true;
-}
-
-public boolean activatePlug(String sid){
-    SQLiteDatabase db = this.getWritableDatabase();
-    String strFilter = COLUMN_SID+" = '" + sid +"'";
-    ContentValues args = new ContentValues();
-    args.put(COLUMN_ACTIVE, 1);
-    db.update(TABLE_SMARTPLUGS, args, strFilter, null);
-    return true;
-}
-
-public boolean insertToken (String token){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(COLUMN_TOKEN, token);
-    if(db.insert(TABLE_PARAMS, null, contentValues) == 1){
-        return true;
-    } else {
-        return false;
-    }
-}
-
-public Cursor getToken(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_PARAMS, null);
-    return res;
-}
-
-public boolean removePlugsIP(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_IP, "");
-    db.update(TABLE_SMARTPLUGS, cv , null, null);
-    return true;
-}
-
-public boolean removePlugIP(String serviceName){
-    SQLiteDatabase db = this.getReadableDatabase();
-    db.rawQuery("update " + TABLE_SMARTPLUGS + " set " + COLUMN_IP + " = '0'", null);
-    return true;
-}
-
-public boolean updatePlugIP(String name, String ip){
-    SQLiteDatabase db = this.getReadableDatabase();
-    String whereclause = COLUMN_NAME+"='"+name+"'";
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_IP, ip);
-    db.update(TABLE_SMARTPLUGS, cv, whereclause, null);
-    return true;
-}
-
-public Cursor getPlugData(String ip){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_SMARTPLUGS + " where " + COLUMN_IP + " = '" + ip + "' and active = 1", null);
-    return res;
-}
-
-public Cursor getPlugDataByID(String id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_SMARTPLUGS + " where " + COLUMN_SID + " = '" + id + "' and active = 1", null);
-    return res;
-}
-
-public Cursor getPlugDataByName(String name){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_SMARTPLUGS + " where "+COLUMN_NAME+" = '" + name + "' and active = 1", null);
-    return res;
-}
-
-public Cursor getPlugData(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_SMARTPLUGS + " where active = 1", null);
-    return res;
-}
-
-public Cursor getNonActivePlugData(){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_SMARTPLUGS + " where active = 0", null);
-    return res;
-}
-
-public boolean deletePlugData(String ip){
-    SQLiteDatabase db = this.getWritableDatabase();
-    boolean toreturn = db.delete(TABLE_SMARTPLUGS, COLUMN_IP+"='"+ip+"'", null) > 0;
-    return toreturn;
-}
-
-public boolean deletePlugDataByID(String mac){
-    SQLiteDatabase db = this.getWritableDatabase();
-    boolean toreturn = db.delete(TABLE_SMARTPLUGS, COLUMN_SID+"='"+mac+"'", null) > 0;
-    return toreturn;
-}
-
-public boolean updatePlugNameNotify(String mac, String name, int notify_on_power_outage, int notify_on_co_warning, int notify_on_timer_activated, String icon){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues cv = new ContentValues();
-    cv.put(COLUMN_NOTIFY_POWER, notify_on_power_outage);
-    cv.put(COLUMN_NOTIFY_CO, notify_on_co_warning);
-    cv.put(COLUMN_NOTIFY_TIMER, notify_on_timer_activated);
-    cv.put(COLUMN_GIVEN_NAME, name);
-    cv.put(COLUMN_ICON, icon);
-    if(mac != null) {
-        db.update(TABLE_SMARTPLUGS, cv, COLUMN_SID + "='" + mac + "'", null);
-        return true;
-    } else {
-        return false;
-    }
-}
-
-public boolean deleteNonActivePlug(String name){
-    SQLiteDatabase db = this.getWritableDatabase();
-    if(name.equals("all")){
-        db.delete(TABLE_SMARTPLUGS, COLUMN_ACTIVE + " = 0", null);
-    } else {
-        db.delete(TABLE_SMARTPLUGS, COLUMN_NAME + " = '" + name + "' AND " + COLUMN_ACTIVE + " = 0", null);
-    }
-    return true;
-}
-
-public boolean deleteAlarmData(int id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    boolean toreturn = db.delete(TABLE_ALARMS, COLUMN_ID+" = "+id, null) > 0;
-    return toreturn;
-}
-
-public boolean insertAlarm (Alarm a)
+- (NSArray *)getIRGroups:(int)id
 {
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(COLUMN_DEVICE_ID, a.getDevice_id());
-    contentValues.put(COLUMN_SERVICE_ID, a.getService_id());
-    contentValues.put(COLUMN_DOW, a.getDow());
-    contentValues.put(COLUMN_INIT_HOUR, a.getInit_hour());
-    contentValues.put(COLUMN_INIT_MINUTES, a.getInit_minute());
-    contentValues.put(COLUMN_END_HOUR, a.getEnd_hour());
-    contentValues.put(COLUMN_END_MINUTES, a.getEnd_minute());
-    contentValues.put(COLUMN_SNOOZE, a.getSnooze());
-    db.insert(TABLE_ALARMS, null, contentValues);
-    return true;
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_IRGROUPS, COLUMN_ID, id, nil];
+    NSMutableArray *irGroups = [NSMutableArray new];
+    while ([results next]) {
+        IrGroup *irGroup = [IrGroup new];
+        irGroup.name = [results stringForColumn:COLUMN_NAME];
+        irGroup.icon = [results stringForColumn:COLUMN_ICON];
+        irGroup.position = [results intForColumn:COLUMN_POSITION];
+        [irGroups addObject:irGroup];
+    }
+    return irGroups;
 }
 
-public boolean updateAlarm(Alarm a){
-    SQLiteDatabase db = this.getWritableDatabase();
-    ContentValues contentValues = new ContentValues();
-    contentValues.put(COLUMN_DEVICE_ID, a.getDevice_id());
-    contentValues.put(COLUMN_SERVICE_ID, a.getService_id());
-    contentValues.put(COLUMN_DOW, a.getDow());
-    contentValues.put(COLUMN_INIT_HOUR, a.getInit_hour());
-    contentValues.put(COLUMN_INIT_MINUTES, a.getInit_minute());
-    contentValues.put(COLUMN_END_HOUR, a.getEnd_hour());
-    contentValues.put(COLUMN_END_MINUTES, a.getEnd_minute());
-    contentValues.put(COLUMN_SNOOZE, a.getSnooze());
-    db.update(TABLE_ALARMS, contentValues, COLUMN_ID + " = "+ a.getAlarm_id(), null);
-    return true;
+- (BOOL)insertIRCodes:(int)gid name:(NSString *)name filename:(int)filename
+                 icon:(NSString *)icon mac:(NSString *)mac
+{
+    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
+            TABLE_IRCODES, COLUMN_GROUPID, COLUMN_NAME, COLUMN_FILENAME, COLUMN_ICON, COLUMN_MAC,
+            gid, name, [NSNumber numberWithInt:filename], icon, mac, nil];
 }
 
-public Cursor getAlarmData(int alarm_id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_ALARMS + " where "+COLUMN_ID+" ='" + alarm_id + "'", null);
-    return res;
+- (NSArray *)getIRCodes
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_IRCODES];
+    NSMutableArray *irCodes = [NSMutableArray new];
+    while ([results next]) {
+        IrCode *irCode = [IrCode new];
+        irCode.group_id = [results intForColumn:COLUMN_GROUPID];
+        irCode.name = [results stringForColumn:COLUMN_NAME];
+        irCode.filename = [results intForColumn:COLUMN_FILENAME];
+        irCode.icon = [results stringForColumn:COLUMN_ICON];
+        irCode.mac = [results stringForColumn:COLUMN_MAC];
+        irCode.position = [results intForColumn:COLUMN_POSITION];
+        irCode.brand = [results stringForColumn:COLUMN_IRBRAND];
+        irCode.model = [results stringForColumn:COLUMN_IRMODEL];
+        [irCodes addObject:irCode];
+    }
+    return irCodes;
 }
 
-public Cursor getAlarmData(String device_id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_ALARMS + " where "+COLUMN_DEVICE_ID+" ='" + device_id + "'", null);
-    return res;
+- (NSArray *)getIRCodesByGroup:(int)id
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_GROUPID, id];
+    NSMutableArray *irCodes = [NSMutableArray new];
+    while ([results next]) {
+        IrCode *irCode = [IrCode new];
+        irCode.group_id = [results intForColumn:COLUMN_GROUPID];
+        irCode.name = [results stringForColumn:COLUMN_NAME];
+        irCode.filename = [results intForColumn:COLUMN_FILENAME];
+        irCode.icon = [results stringForColumn:COLUMN_ICON];
+        irCode.mac = [results stringForColumn:COLUMN_MAC];
+        irCode.position = [results intForColumn:COLUMN_POSITION];
+        irCode.brand = [results stringForColumn:COLUMN_IRBRAND];
+        irCode.model = [results stringForColumn:COLUMN_IRMODEL];
+        [irCodes addObject:irCode];
+    }
+    return irCodes;
 }
 
-public Cursor getAlarmData(String device_id, int service_id){
-    SQLiteDatabase db = this.getReadableDatabase();
-    Cursor res =  db.rawQuery("select * from " + TABLE_ALARMS + " where "+COLUMN_DEVICE_ID+" = '" + device_id + "' and "+COLUMN_SERVICE_ID+" = "+service_id, null);
-    return res;
+- (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip
+{
+    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
+            TABLE_SMARTPLUGS, COLUMN_NAME, COLUMN_SID, COLUMN_IP, COLUMN_SERVER, COLUMN_ACTIVE,
+            name, sid, ip, @"undefined", [NSNumber numberWithInt:1], nil];
 }
 
+- (BOOL)insertPlug:(JSmartPlug *)js active:(int)active
+{
+    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            TABLE_SMARTPLUGS, COLUMN_NAME, COLUMN_SID, COLUMN_IP, COLUMN_MODEL, COLUMN_BUILD_NO, COLUMN_PROT_VER, COLUMN_HW_VER, COLUMN_FW_VER, COLUMN_FW_DATE, COLUMN_FLAG, COLUMN_RELAY, COLUMN_HSENSOR, COLUMN_CSENSOR, COLUMN_NIGHTLIGHT, COLUMN_ACTIVE,
+            js.name, js.sid, js.ip, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active], nil];
+}
 
+- (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_SID, mac, COLUMN_IP, ip, nil];
+}
 
+- (BOOL)updatePlugName:(NSString *)data sid:(NSString *)sid
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_GIVEN_NAME, data, COLUMN_SID, sid, nil];
+}
 
+- (BOOL)updatePlugNightlightService:(int)data sid:(NSString *)sid
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_NIGHTLIGHT, data, COLUMN_SID, sid, nil];
+}
+
+- (BOOL)updatePlugCoSensorService:(int)data sid:(NSString *)sid
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_CSENSOR, data, COLUMN_SID, sid, nil];
+}
+
+- (BOOL)updatePlugHallSensorService:(int)data sid:(NSString *)sid
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_HSENSOR, data, COLUMN_SID, sid, nil];
+}
+
+- (BOOL)updatePlugRelayService:(int)data sid:(NSString *)sid
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_RELAY, data, COLUMN_SID, sid, nil];
+}
+
+- (BOOL)updatePlugServicesByIP:(JSmartPlug *)js
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS,
+            COLUMN_RELAY, [NSNumber numberWithInt:js.relay],
+            COLUMN_HSENSOR, [NSNumber numberWithInt:js.hall_sensor],
+            COLUMN_CSENSOR, [NSNumber numberWithInt:js.co_sensor],
+            COLUMN_NIGHTLIGHT, [NSNumber numberWithInt:js.nightlight],
+            COLUMN_HW_VER, js.hw_ver,
+            COLUMN_FW_VER, js.fw_ver,
+            COLUMN_IP, js.ip, nil];
+}
+
+- (BOOL)updatePlugServicesByID:(JSmartPlug *)js
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS,
+            COLUMN_RELAY, [NSNumber numberWithInt:js.relay],
+            COLUMN_HSENSOR, [NSNumber numberWithInt:js.hall_sensor],
+            COLUMN_CSENSOR, [NSNumber numberWithInt:js.co_sensor],
+            COLUMN_NIGHTLIGHT, [NSNumber numberWithInt:js.nightlight],
+            COLUMN_HW_VER, js.hw_ver,
+            COLUMN_FW_VER, js.fw_ver,
+            COLUMN_SID, js.sid, nil];
+}
+
+- (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_IP, ip, COLUMN_NAME, name, nil];
+}
+
+- (BOOL)updatePlugRelay:(NSString *)sid relay:(int)relay
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_RELAY, [NSNumber numberWithInt:relay], COLUMN_SID, sid, nil];
+}
+
+- (BOOL)updatePlugNightlight:(NSString *)sid nl:(int)nl
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_NIGHTLIGHT, [NSNumber numberWithInt:nl], COLUMN_SID, sid, nil];
+}
+
+- (BOOL)activatePlug:(NSString *)sid
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_ACTIVE, [NSNumber numberWithInt:1], COLUMN_SID, sid, nil];
+}
+
+- (BOOL)insertToken:(NSString *)token
+{
+    return [db executeUpdate:@"INSERT INTO ? (?) VALUES (?)",
+            TABLE_PARAMS, COLUMN_TOKEN, token, nil];
+}
+
+- (NSArray *)getToken
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_PARAMS];
+    NSMutableArray *tokens = [NSMutableArray new];
+    while ([results next]) {
+        NSString *token = [results stringForColumn:COLUMN_TOKEN];
+        [tokens addObject:token];
+    }
+    return tokens;
+}
+
+- (BOOL)removePlugsIP
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_IP, @"", nil];
+}
+
+- (BOOL)removePlugIP:(NSString *)serviceName
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_IP, @"0", nil];
+}
+
+- (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS, COLUMN_IP, ip, COLUMN_NAME, name, nil];
+}
+
+- (NSArray *)getPlugData:(NSString *)ip
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ? AND active = 1", TABLE_SMARTPLUGS, COLUMN_IP, ip];
+    NSMutableArray *plugs = [NSMutableArray new];
+    while ([results next]) {
+        JSmartPlug *plug = [JSmartPlug new];
+        plug.name = [results stringForColumn:COLUMN_NAME];
+        plug.sid = [results stringForColumn:COLUMN_SID];
+        plug.ip = [results stringForColumn:COLUMN_IP];
+        plug.model = [results stringForColumn:COLUMN_MODEL];
+        plug.buildno = [results intForColumn:COLUMN_BUILD_NO];
+        plug.prot_ver = [results intForColumn:COLUMN_PROT_VER];
+        plug.hw_ver = [results stringForColumn:COLUMN_HW_VER];
+        plug.fw_ver = [results stringForColumn:COLUMN_FW_VER];
+        plug.fw_date = [results intForColumn:COLUMN_FW_DATE];
+        plug.flag = [results intForColumn:COLUMN_FLAG];
+        plug.relay = [results intForColumn:COLUMN_RELAY];
+        plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
+        plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
+        plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.active = [results intForColumn:COLUMN_ACTIVE];
+        plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
+        plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
+        plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        [plugs addObject:plug];
+    }
+    return plugs;
+}
+
+- (NSArray *)getPlugDataByID:(NSString *)sid
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?xs", TABLE_SMARTPLUGS, COLUMN_SID, sid];
+    NSMutableArray *plugs = [NSMutableArray new];
+    while ([results next]) {
+        JSmartPlug *plug = [JSmartPlug new];
+        plug.name = [results stringForColumn:COLUMN_NAME];
+        plug.sid = [results stringForColumn:COLUMN_SID];
+        plug.ip = [results stringForColumn:COLUMN_IP];
+        plug.model = [results stringForColumn:COLUMN_MODEL];
+        plug.buildno = [results intForColumn:COLUMN_BUILD_NO];
+        plug.prot_ver = [results intForColumn:COLUMN_PROT_VER];
+        plug.hw_ver = [results stringForColumn:COLUMN_HW_VER];
+        plug.fw_ver = [results stringForColumn:COLUMN_FW_VER];
+        plug.fw_date = [results intForColumn:COLUMN_FW_DATE];
+        plug.flag = [results intForColumn:COLUMN_FLAG];
+        plug.relay = [results intForColumn:COLUMN_RELAY];
+        plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
+        plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
+        plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.active = [results intForColumn:COLUMN_ACTIVE];
+        plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
+        plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
+        plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        [plugs addObject:plug];
+    }
+    return plugs;
+}
+
+- (NSArray *)getPlugDataByName:(NSString *)name
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_NAME, name];
+    NSMutableArray *plugs = [NSMutableArray new];
+    while ([results next]) {
+        JSmartPlug *plug = [JSmartPlug new];
+        plug.name = [results stringForColumn:COLUMN_NAME];
+        plug.sid = [results stringForColumn:COLUMN_SID];
+        plug.ip = [results stringForColumn:COLUMN_IP];
+        plug.model = [results stringForColumn:COLUMN_MODEL];
+        plug.buildno = [results intForColumn:COLUMN_BUILD_NO];
+        plug.prot_ver = [results intForColumn:COLUMN_PROT_VER];
+        plug.hw_ver = [results stringForColumn:COLUMN_HW_VER];
+        plug.fw_ver = [results stringForColumn:COLUMN_FW_VER];
+        plug.fw_date = [results intForColumn:COLUMN_FW_DATE];
+        plug.flag = [results intForColumn:COLUMN_FLAG];
+        plug.relay = [results intForColumn:COLUMN_RELAY];
+        plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
+        plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
+        plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.active = [results intForColumn:COLUMN_ACTIVE];
+        plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
+        plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
+        plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        [plugs addObject:plug];
+    }
+    return plugs;
+}
+
+- (NSArray *)getPlugData
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE active = 1", TABLE_SMARTPLUGS];
+    NSMutableArray *plugs = [NSMutableArray new];
+    while ([results next]) {
+        JSmartPlug *plug = [JSmartPlug new];
+        plug.name = [results stringForColumn:COLUMN_NAME];
+        plug.sid = [results stringForColumn:COLUMN_SID];
+        plug.ip = [results stringForColumn:COLUMN_IP];
+        plug.model = [results stringForColumn:COLUMN_MODEL];
+        plug.buildno = [results intForColumn:COLUMN_BUILD_NO];
+        plug.prot_ver = [results intForColumn:COLUMN_PROT_VER];
+        plug.hw_ver = [results stringForColumn:COLUMN_HW_VER];
+        plug.fw_ver = [results stringForColumn:COLUMN_FW_VER];
+        plug.fw_date = [results intForColumn:COLUMN_FW_DATE];
+        plug.flag = [results intForColumn:COLUMN_FLAG];
+        plug.relay = [results intForColumn:COLUMN_RELAY];
+        plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
+        plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
+        plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.active = [results intForColumn:COLUMN_ACTIVE];
+        plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
+        plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
+        plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        [plugs addObject:plug];
+    }
+    return plugs;
+}
+
+- (NSArray *)getNonActivePlugData
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE active = 0", TABLE_SMARTPLUGS];
+    NSMutableArray *plugs = [NSMutableArray new];
+    while ([results next]) {
+        JSmartPlug *plug = [JSmartPlug new];
+        plug.name = [results stringForColumn:COLUMN_NAME];
+        plug.sid = [results stringForColumn:COLUMN_SID];
+        plug.ip = [results stringForColumn:COLUMN_IP];
+        plug.model = [results stringForColumn:COLUMN_MODEL];
+        plug.buildno = [results intForColumn:COLUMN_BUILD_NO];
+        plug.prot_ver = [results intForColumn:COLUMN_PROT_VER];
+        plug.hw_ver = [results stringForColumn:COLUMN_HW_VER];
+        plug.fw_ver = [results stringForColumn:COLUMN_FW_VER];
+        plug.fw_date = [results intForColumn:COLUMN_FW_DATE];
+        plug.flag = [results intForColumn:COLUMN_FLAG];
+        plug.relay = [results intForColumn:COLUMN_RELAY];
+        plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
+        plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
+        plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.active = [results intForColumn:COLUMN_ACTIVE];
+        plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
+        plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
+        plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        [plugs addObject:plug];
+    }
+    return plugs;
+}
+
+- (BOOL)deletePlugData:(NSString *)ip
+{
+    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_IP, ip, nil];
+}
+
+- (BOOL)deletePlugDataByID:(NSString *)mac
+{
+    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_SID, mac, nil];
+}
+
+- (BOOL)updatePlugNameNotify:(NSString *)mac name:(NSString *)name notifyOnPowerOutage:(int)notifyOnPowerOutage notifyOnCoWarning:(int)notifyOnCoWarning notifyOnTimerActivated:(int)notifyOnTimerActivated icon:(NSString *)icon
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+            TABLE_SMARTPLUGS,
+            COLUMN_NOTIFY_POWER, [NSNumber numberWithInt:notifyOnPowerOutage],
+            COLUMN_NOTIFY_CO, [NSNumber numberWithInt:notifyOnCoWarning],
+            COLUMN_NOTIFY_TIMER, [NSNumber numberWithInt:notifyOnTimerActivated],
+            COLUMN_GIVEN_NAME, name,
+            COLUMN_ICON, icon,
+            COLUMN_SID, mac, nil];
+}
+
+- (BOOL)deleteNonActivePlug:(NSString *)name
+{
+    if ([name isEqualToString:@"all"]) {
+        return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
+    } else {
+        return [db executeUpdate:@"DELETE FROM ? WHERE ? = ? AND ? = ?", TABLE_SMARTPLUGS, COLUMN_NAME, name,  COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
+    }
+}
+
+- (BOOL)deleteAlarmData:(int)id
+{
+    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, [NSNumber numberWithInt:id], nil];
+}
+
+- (BOOL)insertAlarm:(Alarm *)a
+{
+    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            TABLE_ALARMS, COLUMN_DEVICE_ID, COLUMN_SERVICE_ID, COLUMN_DOW, COLUMN_INIT_HOUR,
+            COLUMN_INIT_MINUTES, COLUMN_END_HOUR, COLUMN_END_MINUTES, COLUMN_SNOOZE,
+            a.device_id, [NSNumber numberWithInt:a.service_id], [NSNumber numberWithInt:a.dow], [NSNumber numberWithInt:a.initial_hour], [NSNumber numberWithInt:a.initial_minute], [NSNumber numberWithInt:a.end_hour], [NSNumber numberWithInt:a.end_minute], [NSNumber numberWithInt:a.snooze], nil];
+}
+
+- (BOOL)updateAlarm:(Alarm *)a
+{
+    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+            TABLE_ALARMS,
+            COLUMN_DEVICE_ID, a.device_id,
+            COLUMN_SERVICE_ID, [NSNumber numberWithInt:a.service_id],
+            COLUMN_DOW, [NSNumber numberWithInt:a.dow],
+            COLUMN_INIT_HOUR, [NSNumber numberWithInt:a.initial_hour],
+            COLUMN_INIT_MINUTES, [NSNumber numberWithInt:a.initial_minute],
+            COLUMN_END_HOUR, [NSNumber numberWithInt:a.end_hour],
+            COLUMN_END_MINUTES, [NSNumber numberWithInt:a.end_minute],
+            COLUMN_SNOOZE, [NSNumber numberWithInt:a.snooze],
+            COLUMN_ID, [NSNumber numberWithInt:a.alarm_id], nil];
+}
+
+- (NSArray *)getAlarmData:(int)alarmId
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, alarmId];
+    NSMutableArray *alarms = [NSMutableArray new];
+    while ([results next]) {
+        Alarm *alarm = [Alarm new];
+        alarm.alarm_id = [results intForColumn:COLUMN_ID];
+        alarm.device_id = [results stringForColumn:COLUMN_DEVICE_ID];
+        alarm.service_id = [results intForColumn:COLUMN_SERVICE_ID];
+        alarm.dow = [results intForColumn:COLUMN_DOW];
+        alarm.initial_hour = [results intForColumn:COLUMN_INIT_HOUR];
+        alarm.initial_minute = [results intForColumn:COLUMN_INIT_MINUTES];
+        alarm.end_hour = [results intForColumn:COLUMN_END_HOUR];
+        alarm.end_minute = [results intForColumn:COLUMN_END_MINUTES];
+        alarm.snooze = [results intForColumn:COLUMN_SNOOZE];
+        [alarms addObject:alarm];
+    }
+    return alarms;
+}
+
+- (NSArray *)getAlarmDataByData:(NSString *)deviceId
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_DEVICE_ID, deviceId];
+    NSMutableArray *alarms = [NSMutableArray new];
+    while ([results next]) {
+        Alarm *alarm = [Alarm new];
+        alarm.alarm_id = [results intForColumn:COLUMN_ID];
+        alarm.device_id = [results stringForColumn:COLUMN_DEVICE_ID];
+        alarm.service_id = [results intForColumn:COLUMN_SERVICE_ID];
+        alarm.dow = [results intForColumn:COLUMN_DOW];
+        alarm.initial_hour = [results intForColumn:COLUMN_INIT_HOUR];
+        alarm.initial_minute = [results intForColumn:COLUMN_INIT_MINUTES];
+        alarm.end_hour = [results intForColumn:COLUMN_END_HOUR];
+        alarm.end_minute = [results intForColumn:COLUMN_END_MINUTES];
+        alarm.snooze = [results intForColumn:COLUMN_SNOOZE];
+        [alarms addObject:alarm];
+    }
+    return alarms;
+}
+
+- (NSArray *)getAlarmDataByDataAndService:(NSString *)deviceId serviceId:(int)serviceId
+{
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ? AND ? = ?", TABLE_ALARMS, COLUMN_DEVICE_ID, deviceId, COLUMN_SERVICE_ID, serviceId];
+    NSMutableArray *alarms = [NSMutableArray new];
+    while ([results next]) {
+        Alarm *alarm = [Alarm new];
+        alarm.alarm_id = [results intForColumn:COLUMN_ID];
+        alarm.device_id = [results stringForColumn:COLUMN_DEVICE_ID];
+        alarm.service_id = [results intForColumn:COLUMN_SERVICE_ID];
+        alarm.dow = [results intForColumn:COLUMN_DOW];
+        alarm.initial_hour = [results intForColumn:COLUMN_INIT_HOUR];
+        alarm.initial_minute = [results intForColumn:COLUMN_INIT_MINUTES];
+        alarm.end_hour = [results intForColumn:COLUMN_END_HOUR];
+        alarm.end_minute = [results intForColumn:COLUMN_END_MINUTES];
+        alarm.snooze = [results intForColumn:COLUMN_SNOOZE];
+        [alarms addObject:alarm];
+    }
+    return alarms;
+}
 
 @end

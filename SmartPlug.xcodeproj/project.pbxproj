@@ -56,6 +56,10 @@
 		751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510D11C22698C007772FE /* AddDeviceViewController.m */; };
 		751510D41C22698C007772FE /* AddDeviceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510D21C22698C007772FE /* AddDeviceViewController.xib */; };
 		75187EEF1C2D730000093642 /* UDPCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 75187EEE1C2D730000093642 /* UDPCommunication.m */; };
+		75229A421C815B61002FCAEB /* jsplugs.db in Resources */ = {isa = PBXBuildFile; fileRef = 75229A411C815B61002FCAEB /* jsplugs.db */; };
+		75229A451C816BB7002FCAEB /* Icon.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A441C816BB7002FCAEB /* Icon.m */; };
+		75229A481C816C07002FCAEB /* IrCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A471C816C07002FCAEB /* IrCode.m */; };
+		75229A4B1C816F34002FCAEB /* IrGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A4A1C816F34002FCAEB /* IrGroup.m */; };
 		754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE701C338449006F86B2 /* JSmartPlug.m */; };
 		755268991C334B5400602B58 /* SmartConfigService.m in Sources */ = {isa = PBXBuildFile; fileRef = 755268981C334B5400602B58 /* SmartConfigService.m */; };
 		7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7552689B1C334B6900602B58 /* UDPListenerService.m */; };
@@ -414,6 +418,13 @@
 		751510D71C22B9E8007772FE /* smartplug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smartplug.h; sourceTree = "<group>"; };
 		75187EED1C2D730000093642 /* UDPCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPCommunication.h; sourceTree = "<group>"; };
 		75187EEE1C2D730000093642 /* UDPCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPCommunication.m; sourceTree = "<group>"; };
+		75229A411C815B61002FCAEB /* jsplugs.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = jsplugs.db; sourceTree = "<group>"; };
+		75229A431C816BB7002FCAEB /* Icon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Icon.h; sourceTree = "<group>"; };
+		75229A441C816BB7002FCAEB /* Icon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Icon.m; sourceTree = "<group>"; };
+		75229A461C816C07002FCAEB /* IrCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrCode.h; sourceTree = "<group>"; };
+		75229A471C816C07002FCAEB /* IrCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrCode.m; sourceTree = "<group>"; };
+		75229A491C816F34002FCAEB /* IrGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrGroup.h; sourceTree = "<group>"; };
+		75229A4A1C816F34002FCAEB /* IrGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrGroup.m; sourceTree = "<group>"; };
 		754ADE6F1C338449006F86B2 /* JSmartPlug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSmartPlug.h; sourceTree = "<group>"; };
 		754ADE701C338449006F86B2 /* JSmartPlug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSmartPlug.m; sourceTree = "<group>"; };
 		755268971C334B5400602B58 /* SmartConfigService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartConfigService.h; sourceTree = "<group>"; };
@@ -808,6 +819,7 @@
 			children = (
 				751510D61C22908A007772FE /* PrefixHeader.pch */,
 				7512C1311C1BA3B900489091 /* Info.plist */,
+				75229A411C815B61002FCAEB /* jsplugs.db */,
 				7512C1211C1BA3B900489091 /* main.m */,
 				75E926841C2106EF004C476C /* Localizable.strings */,
 			);
@@ -965,6 +977,12 @@
 				754ADE701C338449006F86B2 /* JSmartPlug.m */,
 				75C4CD881C731EDC00E8C629 /* BroadcastReply.h */,
 				75C4CD891C731EDC00E8C629 /* BroadcastReply.m */,
+				75229A431C816BB7002FCAEB /* Icon.h */,
+				75229A441C816BB7002FCAEB /* Icon.m */,
+				75229A461C816C07002FCAEB /* IrCode.h */,
+				75229A471C816C07002FCAEB /* IrCode.m */,
+				75229A491C816F34002FCAEB /* IrGroup.h */,
+				75229A4A1C816F34002FCAEB /* IrGroup.m */,
 				75DC2D011C8148FF00F108EE /* SQLHelper.h */,
 				75DC2D021C8148FF00F108EE /* SQLHelper.m */,
 			);
@@ -1267,6 +1285,7 @@
 				7512C11B1C1BA3B900489091 /* Resources */,
 				3C60663754F1A931AE1BD504 /* Copy Pods Resources */,
 				7581AD9F1C21817300DF8BD2 /* ShellScript */,
+				5A822F70B4E7F6CAC576C9CB /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1548,6 +1567,7 @@
 				75C9A95F1C4469B900AE72E2 /* SetTimerViewController.xib in Resources */,
 				75667A6F1C1F864C001B30B2 /* btn_big_bkgnd_2_off@1x.png in Resources */,
 				75667AA21C1F864C001B30B2 /* ic_edit@2x.png in Resources */,
+				75229A421C815B61002FCAEB /* jsplugs.db in Resources */,
 				75667AAF1C1F864C001B30B2 /* ir_choose@1x.png in Resources */,
 				757411B61C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd.png in Resources */,
 				75667AA31C1F864C001B30B2 /* ic_edit_pressed@1x.png in Resources */,
@@ -1649,6 +1669,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		5A822F70B4E7F6CAC576C9CB /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7581AD9F1C21817300DF8BD2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1704,10 +1739,13 @@
 				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
 				75DC2D001C81484C00F108EE /* AlarmList.m in Sources */,
 				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,
+				75229A451C816BB7002FCAEB /* Icon.m in Sources */,
 				7508AA491C3229A800EB88D1 /* SPAlertView.m in Sources */,
 				75DC2D031C8148FF00F108EE /* SQLHelper.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,
 				757411741C23ADC300CDCC2D /* DeviceMainViewController.m in Sources */,
+				75229A4B1C816F34002FCAEB /* IrGroup.m in Sources */,
+				75229A481C816C07002FCAEB /* IrCode.m in Sources */,
 				755268991C334B5400602B58 /* SmartConfigService.m in Sources */,
 				75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,

@@ -14,6 +14,7 @@
 #import "UDPListenerService.h"
 #import "MainViewCell.h"
 #import "JSmartPlug.h"
+#import "SQLHelper.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, UDPListenerDelegate>
 
@@ -259,16 +260,15 @@
     
     if ([service.name compare:SMARTCONFIG_IDENTIFIER] == NSOrderedSame) {
         // Update IP address
-        NSArray *plugs = [JSmartPlug MR_findAll];
+        NSArray *plugs = [[SQLHelper getInstance] getPlugData];
         for (JSmartPlug *plug in plugs) {
             // Check if plug exists
-            if ([plug.server compare:service.hostName] == NSOrderedSame) {
+            if ([plug.server isEqualToString:service.hostName]) {
                 NSArray *addresses = [[service addresses] mutableCopy];
                 NSData *address = [addresses objectAtIndex:0];
                 NSString *ip = [Global convertIpAddressToString:address];        
                 if ([plug.ip compare:ip] != NSOrderedSame) {
-                    plug.ip = ip;
-                    [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+                    [[SQLHelper getInstance] updatePlugIP:plug.name ip:ip];
                     [self.view makeToast:NSLocalizedString(@"DeviceAddressUpdated", nil)
                                 duration:3.0
                                 position:CSToastPositionCenter];

@@ -108,7 +108,7 @@
     Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
     
     NSMutableString *name = [NSMutableString new];
-    int dow = [alarm.dow intValue];
+    int dow = alarm.dow;
     if (((dow >> 1) & 1) == 1){
         [name appendString:@"Sun,"];
     }
@@ -131,11 +131,11 @@
         [name appendString:@"Sat,"];
     }
     
-    [name appendString:[NSString stringWithFormat:@" %2d:%2d to %2d:%2d", [alarm.initial_hour intValue],
-                        [alarm.initial_minute intValue], [alarm.end_hour intValue], [alarm.end_minute intValue]]];
+    [name appendString:[NSString stringWithFormat:@" %2d:%2d to %2d:%2d", alarm.initial_hour,
+                        alarm.initial_minute, alarm.end_hour, alarm.end_minute]];
     cell.lblScheduleTime.text = name;
     
-    int serviceId = [alarm.service_id intValue];
+    int serviceId = alarm.service_id;
     if (serviceId == ALARM_RELAY_SERVICE) {
         cell.lblDeviceName.text = @"Plug";
         cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_small"];

@@ -14,7 +14,7 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '014D3F14731350EDB0270ED3'
+               BlueprintIdentifier = '00F0B63ABB31D3F2C2CB9BD4'
                BlueprintName = 'DQAlertView'
                ReferencedContainer = 'container:Pods.xcodeproj'
                BuildableName = 'libDQAlertView.a'>

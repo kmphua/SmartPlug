@@ -14,12 +14,12 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>KLCPopup.xcscheme</key>
+		<key>FMDB.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>MagicalRecord.xcscheme</key>
+		<key>KLCPopup.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -42,12 +42,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>296C87E6B3C2645099E5CFECDBF97F78</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>43D8FB06325563398B793F22FA223E6F</key>
+		<key>1E4A5F837C3655C301B64C0D8DA49BA2</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -62,7 +57,12 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>9D51EDD13ED511F325F73A793FE89B0F</key>
+		<key>84130E2D6A85E1B67BBCF5834B2D4CB7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>9F12FB4A63E20F601CFB2E64A65B57C1</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -72,7 +72,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>D54AB3ECEB9A8FBA15D4F73CBE326692</key>
+		<key>C51B8568547A17E541C997DAB9D55578</key>
 		<dict>
 			<key>primary</key>
 			<true/>

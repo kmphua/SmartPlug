@@ -10,9 +10,9 @@
 
 @interface JSmartPlug : NSObject
 
-@property (nonatomic, copy) NSString *devid;
-@property (nonatomic, copy) NSString *ip;
 @property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *sid;
+@property (nonatomic, copy) NSString *ip;
 @property (nonatomic, copy) NSString *server;
 @property (nonatomic, copy) NSString *model;
 @property (nonatomic, assign) int buildno;
@@ -27,5 +27,9 @@
 @property (nonatomic, assign) int co_sensor;
 @property (nonatomic, copy) NSString *givenName;
 @property (nonatomic, copy) NSString *icon;
+@property (nonatomic, assign) int active;
+@property (nonatomic, assign) int notify_power;
+@property (nonatomic, assign) int notify_co;
+@property (nonatomic, assign) int notify_timer;
 
 @end
