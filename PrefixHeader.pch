@@ -16,7 +16,6 @@
 #import "Global.h"
 #import "WebService.h"
 #import "GCDAsyncSocket.h"
-#import <MagicalRecord/MagicalRecord.h>
 #import "UIView+Toast.h"
 
 #endif

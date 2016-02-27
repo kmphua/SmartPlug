@@ -10,10 +10,10 @@
 
 @interface BroadcastReply : NSObject
 
-@property (nonatomic) int broadcast_id;
-@property (nonatomic) int relay;
-@property (nonatomic) int nightled;
-@property (nonatomic) int co;
-@property (nonatomic) int ha;
+@property (nonatomic, assign) int broadcast_id;
+@property (nonatomic, assign) int relay;
+@property (nonatomic, assign) int nightled;
+@property (nonatomic, assign) int co;
+@property (nonatomic, assign) int ha;
 
 @end

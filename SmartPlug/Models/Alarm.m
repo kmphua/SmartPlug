@@ -1,15 +1,14 @@
 //
 //  Alarm.m
-//  
+//  SmartPlug
 //
-//  Created by Kevin Phua on 2/16/16.
-//
+//  Created by Kevin Phua on 12/29/15.
+//  Copyright © 2015 Kevin Phua. All rights reserved.
 //
 
 #import "Alarm.h"
 
 @implementation Alarm
 
-// Insert code here to add functionality to your managed object subclass
 
 @end

@@ -1,22 +1,23 @@
 //
 //  Alarm.h
-//  
+//  SmartPlug
 //
-//  Created by Kevin Phua on 2/16/16.
-//
+//  Created by Kevin Phua on 12/29/15.
+//  Copyright © 2015 Kevin Phua. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
-#import <CoreData/CoreData.h>
 
-NS_ASSUME_NONNULL_BEGIN
+@interface Alarm : NSObject
 
-@interface Alarm : NSManagedObject
-
-// Insert code here to declare functionality of your managed object subclass
+@property (nonatomic, assign) int alarm_id;
+@property (nonatomic, copy) NSString *device_id;
+@property (nonatomic, assign) int service_id;
+@property (nonatomic, assign) int dow;
+@property (nonatomic, assign) int initial_hour;
+@property (nonatomic, assign) int initial_minute;
+@property (nonatomic, assign) int end_hour;
+@property (nonatomic, assign) int end_minute;
+@property (nonatomic, assign) int snooze;
 
 @end
-
-NS_ASSUME_NONNULL_END
-
-#import "Alarm+CoreDataProperties.h"
