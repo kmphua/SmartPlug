@@ -107,36 +107,46 @@
     
     Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
     
-    int daysOfWeek = [alarm.dow intValue];
+    NSMutableString *name = [NSMutableString new];
+    int dow = [alarm.dow intValue];
+    if (((dow >> 1) & 1) == 1){
+        [name appendString:@"Sun,"];
+    }
+    if (((dow >> 2) & 1) == 1){
+        [name appendString:@"Mon,"];
+    }
+    if (((dow >> 3) & 1) == 1){
+        [name appendString:@"Tue,"];
+    }
+    if (((dow >> 4) & 1) == 1){
+        [name appendString:@"Wed,"];
+    }
+    if (((dow >> 5) & 1) == 1){
+        [name appendString:@"Thu,"];
+    }
+    if (((dow >> 6) & 1) == 1){
+        [name appendString:@"Fri,"];
+    }
+    if (((dow >> 7) & 1) == 1){
+        [name appendString:@"Sat,"];
+    }
+    
+    [name appendString:[NSString stringWithFormat:@" %2d:%2d to %2d:%2d", [alarm.initial_hour intValue],
+                        [alarm.initial_minute intValue], [alarm.end_hour intValue], [alarm.end_minute intValue]]];
+    cell.lblScheduleTime.text = name;
     
     int serviceId = [alarm.service_id intValue];
     if (serviceId == ALARM_RELAY_SERVICE) {
-    cell.lblDeviceName.text = @"Desk Lamp";
+        cell.lblDeviceName.text = @"Plug";
+        cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_small"];
+    } else if (serviceId == ALARM_NIGHTLED_SERVICE) {
+        cell.lblDeviceName.text = @"Nightlight";
+        cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_1_small"];
+    }
 
-
-    NSMutableString *dayString = [NSMutableString new];
-
-    
-    cell.lblScheduleTime.text = @"Sun, Fri - 18:00 to 03:00";
-    
-    
-    
     cell.imgDeviceIcon.image = [UIImage imageNamed:@"see_Table Lamps_1_white_bkgnd"];
-    cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_small"];
     cell.delegate = self;
-    
-    /*
-    NSString *deviceName = [device objectForKey:@"title"];
-    BOOL hasTimer = [[device objectForKey:@"hasTimer"] boolValue];
-    BOOL hasWarning = [[device objectForKey:@"hasWarning"] boolValue];
-    NSString *deviceUrl = [device objectForKey:@"icon"];
-    
-    cell.lblDeviceName.text = deviceName;
-    [cell.btnTimer setHidden:!hasTimer];
-    [cell.btnWarn setHidden:!hasWarning];
-    cell.imgDeviceIcon.image = [UIImage imageNamed:deviceUrl];
-    */
-    
+        
     return cell;
 }
 
@@ -197,7 +207,7 @@
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld actions", devices.count);
-                    [self.actions setArray:devices];
+                    [self.alarms setArray:devices];
                 }
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
