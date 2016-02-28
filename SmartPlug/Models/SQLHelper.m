@@ -40,9 +40,9 @@
 #define COLUMN_SERVICE_ID       @"service_id"               // 1 = relay, 2 nightled
 #define COLUMN_DOW              @"dow"
 #define COLUMN_INIT_HOUR        @"init_hour"
-#define COLUMN_INIT_MINUTES     @"init_minute"
+#define COLUMN_INIT_MINUTES     @"init_minutes"
 #define COLUMN_END_HOUR         @"end_hour"
-#define COLUMN_END_MINUTES      @"end_minute"
+#define COLUMN_END_MINUTES      @"end_minutes"
 
 // IR CODES
 #define TABLE_IRCODES           @"ircodes"
@@ -320,9 +320,8 @@ static SQLHelper *instance;
 - (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
-            TABLE_SMARTPLUGS, COLUMN_NAME, COLUMN_SID, COLUMN_IP, COLUMN_SERVER, COLUMN_ACTIVE,
-            name, sid, ip, @"undefined", [NSNumber numberWithInt:1], nil];
+    BOOL result = [db executeUpdate:@"INSERT INTO smartplugs (name, sid, ip, server, active) VALUES (?, ?, ?, ?, ?)",
+                   name, sid, ip, @"undefined", [NSNumber numberWithInt:1], nil];
     [db close];
     return result;
 }
@@ -330,9 +329,8 @@ static SQLHelper *instance;
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-            TABLE_SMARTPLUGS, COLUMN_NAME, COLUMN_SID, COLUMN_IP, COLUMN_MODEL, COLUMN_BUILD_NO, COLUMN_PROT_VER, COLUMN_HW_VER, COLUMN_FW_VER, COLUMN_FW_DATE, COLUMN_FLAG, COLUMN_RELAY, COLUMN_HSENSOR, COLUMN_CSENSOR, COLUMN_NIGHTLIGHT, COLUMN_ACTIVE,
-            js.name, js.sid, js.ip, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active], nil];
+    BOOL result = [db executeUpdate:@"INSERT INTO smartplugs (name, sid, ip, model, build_no, prot_ver, hw_ver, fw_ver, fw_date, flag, relay, hsensor, csensor, nightlight, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            js.name, js.sid, js.ip, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active]];
     [db close];
     return result;
 }
@@ -340,8 +338,7 @@ static SQLHelper *instance;
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
-            TABLE_SMARTPLUGS, COLUMN_SID, mac, COLUMN_IP, ip, nil];
+    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET sid = ? WHERE ip = ?", mac, ip];
     [db close];
     return result;
 }
@@ -349,8 +346,7 @@ static SQLHelper *instance;
 - (BOOL)updatePlugName:(NSString *)data sid:(NSString *)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
-            TABLE_SMARTPLUGS, COLUMN_GIVEN_NAME, data, COLUMN_SID, sid, nil];
+    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET given_name = ? WHERE sid = ?", data, sid];
     [db close];
     return result;
 }
@@ -710,9 +706,9 @@ static SQLHelper *instance;
     BOOL result;
     [db open];
     if ([name isEqualToString:@"all"]) {
-        result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
+        result = [db executeUpdate:@"DELETE FROM smartplugs WHERE active = ?", [NSNumber numberWithInt:0]];
     } else {
-        result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ? AND ? = ?", TABLE_SMARTPLUGS, COLUMN_NAME, name,  COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
+        result = [db executeUpdate:@"DELETE FROM smartplugs WHERE name = ? AND active = ?", name, [NSNumber numberWithInt:0]];
     }
     [db close];
     return result;
@@ -721,7 +717,7 @@ static SQLHelper *instance;
 - (BOOL)deleteAlarmData:(int)id
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, [NSNumber numberWithInt:id], nil];
+    BOOL result = [db executeUpdate:@"DELETE FROM alarms WHERE _id = ?", [NSNumber numberWithInt:id]];
     [db close];
     return result;
 }
@@ -729,9 +725,7 @@ static SQLHelper *instance;
 - (BOOL)insertAlarm:(Alarm *)a
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            TABLE_ALARMS, COLUMN_DEVICE_ID, COLUMN_SERVICE_ID, COLUMN_DOW, COLUMN_INIT_HOUR,
-            COLUMN_INIT_MINUTES, COLUMN_END_HOUR, COLUMN_END_MINUTES, COLUMN_SNOOZE,
+    BOOL result = [db executeUpdate:@"INSERT INTO alarms (device_id, service_id, dow, init_hour, init_minutes, end_hour, end_minutes, snooze) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             a.device_id, [NSNumber numberWithInt:a.service_id], [NSNumber numberWithInt:a.dow], [NSNumber numberWithInt:a.initial_hour], [NSNumber numberWithInt:a.initial_minute], [NSNumber numberWithInt:a.end_hour], [NSNumber numberWithInt:a.end_minute], [NSNumber numberWithInt:a.snooze], nil];
     [db close];
     return result;
@@ -740,17 +734,16 @@ static SQLHelper *instance;
 - (BOOL)updateAlarm:(Alarm *)a
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
-            TABLE_ALARMS,
-            COLUMN_DEVICE_ID, a.device_id,
-            COLUMN_SERVICE_ID, [NSNumber numberWithInt:a.service_id],
-            COLUMN_DOW, [NSNumber numberWithInt:a.dow],
-            COLUMN_INIT_HOUR, [NSNumber numberWithInt:a.initial_hour],
-            COLUMN_INIT_MINUTES, [NSNumber numberWithInt:a.initial_minute],
-            COLUMN_END_HOUR, [NSNumber numberWithInt:a.end_hour],
-            COLUMN_END_MINUTES, [NSNumber numberWithInt:a.end_minute],
-            COLUMN_SNOOZE, [NSNumber numberWithInt:a.snooze],
-            COLUMN_ID, [NSNumber numberWithInt:a.alarm_id], nil];
+    BOOL result = [db executeUpdate:@"UPDATE alarms SET device_id = ?, service_id = ?, dow = ?, init_hour = ?, init_minutes = ?, end_hour = ?, end_minutes = ?, snooze = ? WHERE _id = ?",
+            a.device_id,
+            [NSNumber numberWithInt:a.service_id],
+            [NSNumber numberWithInt:a.dow],
+            [NSNumber numberWithInt:a.initial_hour],
+            [NSNumber numberWithInt:a.initial_minute],
+            [NSNumber numberWithInt:a.end_hour],
+            [NSNumber numberWithInt:a.end_minute],
+            [NSNumber numberWithInt:a.snooze],
+            [NSNumber numberWithInt:a.alarm_id]];
     [db close];
     return result;
 }
@@ -758,7 +751,7 @@ static SQLHelper *instance;
 - (NSArray *)getAlarmData:(int)alarmId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, alarmId];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM alarms WHERE _id = ?", [NSNumber numberWithInt:alarmId]];
     NSMutableArray *alarms = [NSMutableArray new];
     while ([results next]) {
         Alarm *alarm = [Alarm new];
@@ -780,7 +773,7 @@ static SQLHelper *instance;
 - (NSArray *)getAlarmDataByDevice:(NSString *)deviceId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_DEVICE_ID, deviceId];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM alarms WHERE device_id = ?", deviceId];
     NSMutableArray *alarms = [NSMutableArray new];
     while ([results next]) {
         Alarm *alarm = [Alarm new];
@@ -802,7 +795,7 @@ static SQLHelper *instance;
 - (NSArray *)getAlarmDataByDeviceAndService:(NSString *)deviceId serviceId:(int)serviceId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ? AND ? = ?", TABLE_ALARMS, COLUMN_DEVICE_ID, deviceId, COLUMN_SERVICE_ID, serviceId];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM alarms WHERE device_id = ? AND service_id = ?", deviceId, [NSNumber numberWithInt:serviceId]];
     NSMutableArray *alarms = [NSMutableArray new];
     while ([results next]) {
         Alarm *alarm = [Alarm new];

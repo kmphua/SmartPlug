@@ -16,7 +16,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
-@property (strong, nonatomic) NSMutableArray *alarms;
+@property (strong, nonatomic) NSArray *alarms;
 
 @end
 
@@ -29,7 +29,13 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    self.alarms = [[NSMutableArray alloc] init];
+    
+    // Add navigation buttons
+    UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_new"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
+    self.navigationItem.rightBarButtonItem = rightBarBtn;
+    
+    self.alarms = [[SQLHelper getInstance] getAlarmDataByDevice:_device.sid];
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -37,24 +43,11 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)adjustHeightOfTableview
-{
-    CGFloat height = self.tableView.contentSize.height;
-    CGFloat maxHeight = 0.85 * self.tableView.superview.frame.size.height;
-    
-    // if the height of the content is greater than the maxHeight of
-    // total space on the screen, limit the height to the size of the
-    // superview.
-    
-    if (height > maxHeight)
-        height = maxHeight;
-    
-    // now set the height constraint accordingly
-    
-    [UIView animateWithDuration:0.25 animations:^{
-        self.tableViewHeightConstraint.constant = height;
-        [self.view setNeedsUpdateConstraints];
-    }];
+- (void)onRightBarButton:(id)sender {
+    ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
+    scheduleActionVC.deviceId = self.device.sid;
+    scheduleActionVC.serviceId = ALARM_RELAY_SERVICE;
+    [self.navigationController pushViewController:scheduleActionVC animated:YES];
 }
 
 //==================================================================
@@ -131,7 +124,7 @@
         [name appendString:@"Sat,"];
     }
     
-    [name appendString:[NSString stringWithFormat:@" %2d:%2d to %2d:%2d", alarm.initial_hour,
+    [name appendString:[NSString stringWithFormat:@" %.2d:%.2d to %.2d:%.2d", alarm.initial_hour,
                         alarm.initial_minute, alarm.end_hour, alarm.end_minute]];
     cell.lblScheduleTime.text = name;
     
@@ -152,24 +145,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    //NSDictionary *action = [self.actions objectAtIndex:[indexPath row]];
-    ScheduleActionViewController *scheduleActionVc = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-    scheduleActionVc.action = nil;
-    [self.navigationController pushViewController:scheduleActionVc animated:YES];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 //==================================================================
 #pragma ScheduleMainViewCellDelegate
 //==================================================================
-- (void)onClickBtnEdit
+- (void)onClickBtnEdit:(NSIndexPath *)indexPath
 {
     ScheduleActionViewController *scheduleActionVc = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-    scheduleActionVc.action = nil;
+    scheduleActionVc.deviceId = self.device.sid;
+    scheduleActionVc.serviceId = ALARM_RELAY_SERVICE;
+    
+    Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
+    scheduleActionVc.alarmId = alarm.alarm_id;
     [self.navigationController pushViewController:scheduleActionVc animated:YES];
 }
 
-- (void)onClickBtnDelete
+- (void)onClickBtnDelete:(NSIndexPath *)indexPath
 {
     SPAlertView *alertView = [[SPAlertView alloc] initWithTitle:NSLocalizedString(@"RemoveAction", nil)
                                                         message:NSLocalizedString(@"RemoveActionMsg", nil)
@@ -207,10 +200,9 @@
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld actions", devices.count);
-                    [self.alarms setArray:devices];
+                    //[self.alarms setArray:devices];
                 }
                 [self.tableView reloadData];
-                [self adjustHeightOfTableview];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];

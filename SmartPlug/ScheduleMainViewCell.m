@@ -21,11 +21,15 @@
 }
 
 - (IBAction)onBtnEdit:(id)sender {
-    [self.delegate onClickBtnEdit];
+    UITableView *tableView = (UITableView *)self.superview.superview;
+    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
+    [self.delegate onClickBtnEdit:indexPath];
 }
 
 - (IBAction)onBtnDelete:(id)sender {
-    [self.delegate onClickBtnDelete];
+    UITableView *tableView = (UITableView *)self.superview.superview;
+    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
+    [self.delegate onClickBtnDelete:indexPath];
 }
 
 @end

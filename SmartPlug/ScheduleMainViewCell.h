@@ -10,8 +10,8 @@
 
 @protocol ScheduleMainViewCellDelegate <NSObject>
 
-- (void)onClickBtnEdit;
-- (void)onClickBtnDelete;
+- (void)onClickBtnEdit:(NSIndexPath *)indexPath;
+- (void)onClickBtnDelete:(NSIndexPath *)indexPath;
 
 @end
 

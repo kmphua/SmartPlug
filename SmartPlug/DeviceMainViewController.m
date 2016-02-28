@@ -84,6 +84,9 @@
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
+    
+    UITapGestureRecognizer *tapGestureIRButton = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapIRButton:)];
+    [self.viewIr addGestureRecognizer:tapGestureIRButton];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -148,6 +151,10 @@
     noTimersVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     noTimersVC.delegate = self;
     [self presentViewController:noTimersVC animated:YES completion:nil];
+}
+
+- (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
+    
 }
 
 //==================================================================

@@ -10,6 +10,8 @@
 
 @interface ScheduleActionViewController : BaseViewController
 
-@property (nonatomic, assign) NSDictionary *action;
+@property (nonatomic, assign) NSString *deviceId;
+@property (nonatomic) int serviceId;
+@property (nonatomic) int alarmId;
 
 @end
