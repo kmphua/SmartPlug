@@ -13,6 +13,7 @@
 #import "SetTimerViewController.h"
 #import "SetTimerSnoozeViewController.h"
 #import "ScheduleMainViewController.h"
+#import "IRMainViewController.h"
 
 @interface DeviceMainViewController ()<UDPListenerDelegate, NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
 
@@ -87,6 +88,7 @@
     
     UITapGestureRecognizer *tapGestureIRButton = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapIRButton:)];
     [self.viewIr addGestureRecognizer:tapGestureIRButton];
+    [self.viewIr setUserInteractionEnabled:YES];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -154,7 +156,8 @@
 }
 
 - (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
-    
+    IRMainViewController *irVC = [[IRMainViewController alloc] initWithNibName:@"IRMainViewController" bundle:nil];
+    [self.navigationController pushViewController:irVC animated:YES];
 }
 
 //==================================================================

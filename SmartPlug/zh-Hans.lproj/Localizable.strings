@@ -152,3 +152,7 @@
 "msg_recordIr" = "请指向远程的JSPlug并按要录制按钮。\n\n1.按钮录制。";
 "btn_recordAgain" = "再次记录";
 "btn_testCommand" = "测试命令";
+
+// IR
+"ir_groups" = "IR Groups";
+"ir_control" = "IR Control";

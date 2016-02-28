@@ -15,7 +15,6 @@
 @interface ScheduleMainViewController () <UITableViewDataSource, UITableViewDelegate, ScheduleMainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 @property (strong, nonatomic) NSArray *alarms;
 
 @end
