@@ -35,14 +35,6 @@
 #define WS_DEV_IR_GET               @"devirget"
 #define WS_DEV_IR_SET               @"devirset"
 
-typedef enum {
-    ICON_RES_1x = 0,
-    ICON_RES_1_5x,
-    ICON_RES_2x,
-    ICON_RES_3x,
-    ICON_RES_4x
-} IconResolution;
-
 @protocol WebServiceDelegate <NSObject>
 
 @required
@@ -69,7 +61,7 @@ typedef enum {
 
 - (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId isReply:(BOOL)isReply;
 - (void)devList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
-- (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
+- (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes devId:(NSString *)devId;
 - (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger;
 - (void)devLog:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 - (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;

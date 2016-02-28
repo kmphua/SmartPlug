@@ -162,10 +162,10 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes
+- (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes devId:(NSString *)devId
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_GET];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d", userToken, lang, iconRes];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d&devid=%@", userToken, lang, iconRes, devId];
     self.resultName = WS_DEV_GET;
     [self postData:apiUrl params:params];
 }

@@ -8,6 +8,20 @@
 
 #import <Foundation/Foundation.h>
 
+#define IS_IPAD (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad)
+#define IS_IPHONE (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPhone)
+#define IS_RETINA ([[UIScreen mainScreen] scale] >= 2.0)
+
+#define SCREEN_WIDTH ([[UIScreen mainScreen] bounds].size.width)
+#define SCREEN_HEIGHT ([[UIScreen mainScreen] bounds].size.height)
+#define SCREEN_MAX_LENGTH (MAX(SCREEN_WIDTH, SCREEN_HEIGHT))
+#define SCREEN_MIN_LENGTH (MIN(SCREEN_WIDTH, SCREEN_HEIGHT))
+
+#define IS_IPHONE_4_OR_LESS (IS_IPHONE && SCREEN_MAX_LENGTH < 568.0)
+#define IS_IPHONE_5 (IS_IPHONE && SCREEN_MAX_LENGTH == 568.0)
+#define IS_IPHONE_6 (IS_IPHONE && SCREEN_MAX_LENGTH == 667.0)
+#define IS_IPHONE_6P (IS_IPHONE && SCREEN_MAX_LENGTH == 736.0)
+
 #define CORNER_RADIUS                   12
 
 #define SERVICE_TYPE                    @"_http._tcp."
@@ -35,19 +49,34 @@ typedef enum {
     COLOR_TYPE_TITLE_BG_YELLOW
 } ColorType;
 
+typedef enum {
+    ICON_RES_1x = 0,
+    ICON_RES_1_5x,
+    ICON_RES_2x,
+    ICON_RES_3x,
+    ICON_RES_4x
+} IconResolution;
+
 extern BOOL g_IsLogin;
 extern BOOL g_IsOnline;
 extern NSString *g_Username;
 extern NSString *g_Password;
 extern NSString *g_UserToken;
 extern NSString *g_DevToken;
-extern NSMutableDictionary *g_AppInfo;
+extern NSArray *g_DeviceIcons;
+
+// Current device
+extern NSString *g_DeviceId;
 extern NSString *g_DeviceIp;
+extern NSString *g_DeviceName;
+extern NSString *g_DeviceGivenName;
+extern NSString *g_DeviceMac;
 
 @interface Global : NSObject
 
 + (UIColor *)colorWithType:(ColorType)type;
 + (NSString *)getCurrentLang;
++ (IconResolution)getIconResolution;
 + (NSString *)convertIpAddressToString:(NSData *)data;
 
 @end

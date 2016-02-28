@@ -17,6 +17,8 @@
 #import "WebService.h"
 #import "GCDAsyncSocket.h"
 #import "UIView+Toast.h"
+#import "SQLHelper.h"
+#import "UIImageView+WebCache.h"
 
 #endif
 

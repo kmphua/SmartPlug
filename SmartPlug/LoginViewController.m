@@ -56,6 +56,12 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)getGalleryList {
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws galleryList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
+}
+
 - (BOOL)checkInputFields
 {
     if (self.txtLogin.text.length == 0) {
@@ -151,7 +157,7 @@
                 
                 g_Username = _txtLogin.text;
                 g_Password = _txtPassword.text;
-                g_UserToken = [jsonObject objectForKey:@"token"];
+                g_UserToken = userToken;
                 
                 NSString *dateString = [NSDateFormatter localizedStringFromDate:[NSDate date]
                                                                       dateStyle:NSDateFormatterShortStyle
@@ -162,9 +168,7 @@
                 // Go to main view
                 g_IsLogin = YES;
                 
-                MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
-                [self.navigationController pushViewController:mainController animated:YES];
-                
+                [self getGalleryList];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
@@ -175,6 +179,21 @@
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
             }
+        } else if ([resultName isEqualToString:WS_GALLERY_LIST]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSArray *icons = (NSArray *)[jsonObject objectForKey:@"icons"];
+                if (icons) {
+                    NSLog(@"Total %ld icons", icons.count);
+                    g_DeviceIcons = icons;
+                }
+            }
+            
+            // Go to main view
+            MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
+            [self.navigationController pushViewController:mainController animated:YES];
         }
     }
 }

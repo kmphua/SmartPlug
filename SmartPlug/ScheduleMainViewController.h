@@ -10,4 +10,6 @@
 
 @interface ScheduleMainViewController : BaseViewController
 
+@property (nonatomic, assign) JSmartPlug *device;
+
 @end

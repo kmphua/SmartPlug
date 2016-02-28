@@ -14,12 +14,11 @@
 #import "UDPListenerService.h"
 #import "MainViewCell.h"
 #import "JSmartPlug.h"
-#import "SQLHelper.h"
 
-@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, UDPListenerDelegate>
+@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, UDPListenerDelegate, MainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSMutableArray *devices;               // Added plugs
+@property (strong, nonatomic) NSArray *plugs;               // Added plugs
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @property (strong, nonatomic) NSMutableArray *services;
@@ -40,50 +39,11 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    self.devices = [NSMutableArray new];
-    
     // TODO: Update IP addresses with mDNS discovery
     
     
     // TODO: Start UDPListener and listen for broadcast packets from devices
     
-    NSMutableDictionary *device1 = [NSMutableDictionary new];
-    [device1 setObject:@"Desk Lamp" forKey:@"title"];
-    [device1 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
-    [device1 setObject:[NSNumber numberWithBool:NO] forKey:@"hasWarning"];
-    [device1 setObject:@"see_Table Lamps_1_white_bkgnd" forKey:@"icon"];
-    [self.devices addObject:device1];
-    
-    NSMutableDictionary *device2 = [NSMutableDictionary new];
-    [device2 setObject:@"Bedroom" forKey:@"title"];
-    [device2 setObject:[NSNumber numberWithBool:NO] forKey:@"hasTimer"];
-    [device2 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
-    [device2 setObject:@"see_bedroom_1_white_bkgnd" forKey:@"icon"];
-    [self.devices addObject:device2];
-    
-    NSMutableDictionary *device3 = [NSMutableDictionary new];
-    [device3 setObject:@"TV" forKey:@"title"];
-    [device3 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
-    [device3 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
-    [device3 setObject:@"see_TV_1_white_bkgnd" forKey:@"icon"];
-    [self.devices addObject:device3];
-
-    NSMutableDictionary *device4 = [NSMutableDictionary new];
-    [device4 setObject:@"Kitchen" forKey:@"title"];
-    [device4 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
-    [device4 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
-    [device4 setObject:@"see_Datong Electric Pans_1_white_bkgnd" forKey:@"icon"];
-    [self.devices addObject:device4];
-
-    NSMutableDictionary *device5 = [NSMutableDictionary new];
-    [device5 setObject:@"Wi-Fi" forKey:@"title"];
-    [device5 setObject:[NSNumber numberWithBool:YES] forKey:@"hasTimer"];
-    [device5 setObject:[NSNumber numberWithBool:YES] forKey:@"hasWarning"];
-    [device5 setObject:@"see_Wi-Fi sharing device_1_white_bkgnd" forKey:@"icon"];
-    [self.devices addObject:device5];
-    
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -101,19 +61,15 @@
     _udpListener.delegate = self;
     [_udpListener startUdpBroadcastListener];
     
-    /*
-    self.devices = [JSmartPlug MR_findAll];
+    self.plugs = [[SQLHelper getInstance] getPlugData];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     [self startBrowsing];
-    */
     
-    /*
-    WebService *ws = [[WebService alloc] init];
-    ws.delegate = self;
-    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_2x];
-    [ws showWaitingView:self.view];
-     */
+    //WebService *ws = [[WebService alloc] init];
+    //ws.delegate = self;
+    //[ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_2x];
+    //[ws showWaitingView:self.view];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -304,7 +260,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.devices count];
+    return [self.plugs count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -321,27 +277,25 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     }
     
-    /*
-    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
-    NSString *deviceName = device.name;
-    BOOL hasTimer = YES;
-    BOOL hasWarning = YES;
-    NSString *deviceUrl = @"see_Table Lamps_1_white_bkgnd";
-     */
+    JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
     
-    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
-    NSString *deviceName = [device objectForKey:@"title"];
-    BOOL hasTimer = [[device objectForKey:@"hasTimer"] boolValue];
-    BOOL hasWarning = [[device objectForKey:@"hasWarning"] boolValue];
-    NSString *deviceUrl = [device objectForKey:@"icon"];
+    if (plug.givenName && plug.givenName.length>0){
+        cell.lblDeviceName.text = plug.givenName;
+    } else {
+        cell.lblDeviceName.text = plug.name;
+    }
     
-    cell.lblDeviceName.text = deviceName;
-    [cell.btnTimer setHidden:!hasTimer];
-    [cell.btnWarn setHidden:!hasWarning];
-    cell.imgDeviceIcon.image = [UIImage imageNamed:deviceUrl];
+    if (plug.icon && plug.icon.length>0) {
+        int iconId = [plug.icon intValue];
+        if (g_DeviceIcons) {
+            NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
+            NSString *imagePath = [icon objectForKey:@"url"];
+            [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+        }
+    }
     
     // Modify cell background according to row position
-    NSInteger rowCount = [self.devices count];
+    NSInteger rowCount = [self.plugs count];
     NSInteger row = indexPath.row;
     if (row == rowCount-1) {
         // Last row
@@ -362,11 +316,49 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *device = [self.devices objectAtIndex:[indexPath row]];
-    //JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
+    NSDictionary *device = [self.plugs objectAtIndex:[indexPath row]];
     DeviceMainViewController *devMainVc = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
     devMainVc.device = device;
     [self.navigationController pushViewController:devMainVc animated:YES];
+}
+
+//==================================================================
+#pragma MainViewCellDelegate
+//==================================================================
+- (void)onClickBtnWarn:(NSIndexPath *)indexPath
+{
+    JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
+    if ([[SQLHelper getInstance] deletePlugData:plug.ip]) {
+        //SmartPlugsList = getSmartPlugsList();
+        //notifyDataSetChanged();
+    }
+}
+
+- (void)onClickBtnTimer:(NSIndexPath *)indexPath
+{
+    
+}
+
+- (void)onClickBtnPower:(NSIndexPath *)indexPath
+{
+    JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
+    if ([plug.ip isEqualToString:@"0"]) {
+        int action;
+        int serviceId = 0xD1000000;
+        int relay = plug.relay;
+        
+        if (relay == 0) {
+            action = 0x01;
+        } else {
+            action = 0x00;
+        }
+        
+        //if (UDPBinding.setDeviceStatusProcess(plug.ip, serviceId, action)){
+        //    NSLog(@"SET DEVICE STATUS PROCESS");
+        //}
+        
+        relay = ~relay;
+    }
 }
 
 //==================================================================
@@ -398,7 +390,7 @@
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld devices", devices.count);
-                    self.devices = [NSArray arrayWithArray:devices];
+                    self.plugs = [NSArray arrayWithArray:devices];
                 }
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];

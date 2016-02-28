@@ -261,7 +261,7 @@
         // Add new plug
         BOOL addPlug = YES;
         
-        NSArray *plugs = [JSmartPlug MR_findAll];
+        NSArray *plugs = [[SQLHelper getInstance] getPlugData];
         for (JSmartPlug *plug in plugs) {
             // Check if plug exists
             if ([plug.server compare:service.hostName] == NSOrderedSame) {
@@ -276,18 +276,17 @@
         
         if (addPlug) {
             // Add plug to db
-            JSmartPlug *smartPlug = [JSmartPlug MR_createEntity];
-            smartPlug.name = service.name;
-            smartPlug.server = service.hostName;
+            JSmartPlug *plug = [JSmartPlug new];
+            plug.name = service.name;
+            plug.server = service.hostName;
             
             NSArray *addresses = [[service addresses] mutableCopy];
             NSData *address = [addresses objectAtIndex:0];
             NSString *ip = [Global convertIpAddressToString:address];
-            smartPlug.ip = ip;
+            plug.ip = ip;
             [_udp runUdpClient:service.hostName msg:@"ID?"];  // this need to be change to Chin's protocol
             
-            // Save first, then update when device ID is returned
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+            [[SQLHelper getInstance] insertPlug:plug active:1];
             
             [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
                         duration:3.0
@@ -308,8 +307,7 @@
     NSLog(@"Received data %@ from %@", data, address);
     
     // Check added devices
-    NSPredicate *predicate = [NSPredicate predicateWithFormat:@"%K==%@", @"ip", address];
-    NSArray *plugs = [JSmartPlug MR_findAllWithPredicate:predicate];
+    NSArray *plugs = [[SQLHelper getInstance] getPlugData:address];
     if (plugs) {
         JSmartPlug *plug = [plugs objectAtIndex:0];
         NSString *devIdStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
@@ -317,15 +315,15 @@
         f.numberStyle = NSNumberFormatterDecimalStyle;
         NSNumber *devId = [f numberFromString:devIdStr];
         if (devId) {
-            plug.devid = devId;
-            [[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
+            //plug.sid = devId intValue;
+            //[[NSManagedObjectContext MR_defaultContext] MR_saveToPersistentStoreWithCompletion:nil];
             
             // Update to web service
             WebService *ws = [WebService new];
             ws.delegate = self;
             
-            NSString *devId = [NSString stringWithFormat:@"%d", [plug.devid intValue]];
-            [ws newDev:g_UserToken lang:[Global getCurrentLang] devId:devId iconRes:ICON_RES_1x title:@"" notifyPower:@"0" notifyTimer:@"" notifyDanger:@"" oriTitle:plug.name ip:plug.ip server:plug.server snooze:@"" relay:@""];
+            //NSString *devId = [NSString stringWithFormat:@"%d", [plug.devid intValue]];
+            //[ws newDev:g_UserToken lang:[Global getCurrentLang] devId:devId iconRes:ICON_RES_1x title:@"" notifyPower:@"0" notifyTimer:@"" notifyDanger:@"" oriTitle:plug.name ip:plug.ip server:plug.server snooze:@"" relay:@""];
         } else {
             NSLog(@"Error converting device ID!");
         }

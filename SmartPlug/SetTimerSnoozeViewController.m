@@ -64,26 +64,32 @@
 }
 
 - (IBAction)onBtnShowModifyTimer:(id)sender {
+    [self.delegate modifySnoozeTimer];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze5MoreMins:(id)sender {
+    [self.delegate snooze5MoreMins];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze10MoreMins:(id)sender {
+    [self.delegate snooze10MoreMins];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze30MoreMins:(id)sender {
+    [self.delegate snooze30MoreMins];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze1MoreHour:(id)sender {
+    [self.delegate snooze1MoreHour];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnCancelSnooze:(id)sender {
+    [self.delegate cancelSnooze];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

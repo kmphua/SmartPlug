@@ -426,7 +426,7 @@ static UDPCommunication *instance;
     for (int i = 18; i < 24; i++) {
         [mac appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
     }
-    _js.devid = mac;
+    _js.sid = mac;
     NSLog(@"MAC: %@", mac);
     /**********************************************/
     NSMutableString *model = [NSMutableString new];

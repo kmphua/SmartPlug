@@ -307,6 +307,8 @@
 		75DC2CFD1C81451500F108EE /* libsqlite3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = 75DC2CFC1C81451500F108EE /* libsqlite3.tbd */; };
 		75DC2D001C81484C00F108EE /* AlarmList.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DC2CFF1C81484C00F108EE /* AlarmList.m */; };
 		75DC2D031C8148FF00F108EE /* SQLHelper.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DC2D021C8148FF00F108EE /* SQLHelper.m */; };
+		75DC2D071C82EFC100F108EE /* DeviceIconViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75DC2D051C82EFC100F108EE /* DeviceIconViewController.m */; };
+		75DC2D081C82EFC100F108EE /* DeviceIconViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75DC2D061C82EFC100F108EE /* DeviceIconViewController.xib */; };
 		75E926821C2106EF004C476C /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 75E926841C2106EF004C476C /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
@@ -686,6 +688,9 @@
 		75DC2CFF1C81484C00F108EE /* AlarmList.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AlarmList.m; sourceTree = "<group>"; };
 		75DC2D011C8148FF00F108EE /* SQLHelper.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SQLHelper.h; sourceTree = "<group>"; };
 		75DC2D021C8148FF00F108EE /* SQLHelper.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SQLHelper.m; sourceTree = "<group>"; };
+		75DC2D041C82EFC100F108EE /* DeviceIconViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DeviceIconViewController.h; sourceTree = "<group>"; };
+		75DC2D051C82EFC100F108EE /* DeviceIconViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DeviceIconViewController.m; sourceTree = "<group>"; };
+		75DC2D061C82EFC100F108EE /* DeviceIconViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = DeviceIconViewController.xib; sourceTree = "<group>"; };
 		75E926831C2106EF004C476C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		75E926851C210716004C476C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		75E926861C210722004C476C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
@@ -945,6 +950,9 @@
 				7508AA6B1C3262A000EB88D1 /* DeviceItemSettingsViewController.h */,
 				7508AA6C1C3262A000EB88D1 /* DeviceItemSettingsViewController.m */,
 				7508AA6D1C3262A000EB88D1 /* DeviceItemSettingsViewController.xib */,
+				75DC2D041C82EFC100F108EE /* DeviceIconViewController.h */,
+				75DC2D051C82EFC100F108EE /* DeviceIconViewController.m */,
+				75DC2D061C82EFC100F108EE /* DeviceIconViewController.xib */,
 				751510CB1C225D71007772FE /* MainViewCell.h */,
 				751510CC1C225D71007772FE /* MainViewCell.m */,
 				751510CD1C225D71007772FE /* MainViewCell.xib */,
@@ -1285,7 +1293,6 @@
 				7512C11B1C1BA3B900489091 /* Resources */,
 				3C60663754F1A931AE1BD504 /* Copy Pods Resources */,
 				7581AD9F1C21817300DF8BD2 /* ShellScript */,
-				5A822F70B4E7F6CAC576C9CB /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1520,6 +1527,7 @@
 				75667AB71C1F864C001B30B2 /* main_item_0_a@1x.png in Resources */,
 				75667A8A1C1F864C001B30B2 /* btn_timer_off@2x.png in Resources */,
 				75667A5D1C1F864C001B30B2 /* btn_add_pressed@1x.png in Resources */,
+				75DC2D081C82EFC100F108EE /* DeviceIconViewController.xib in Resources */,
 				75667B251C1F864C001B30B2 /* title_bkgnd_yellow@2x.png in Resources */,
 				75667A9E1C1F864C001B30B2 /* ic_delete@2x.png in Resources */,
 				75667AB11C1F864C001B30B2 /* ir_detect@1x.png in Resources */,
@@ -1669,21 +1677,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		5A822F70B4E7F6CAC576C9CB /* Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		7581AD9F1C21817300DF8BD2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1740,6 +1733,7 @@
 				75DC2D001C81484C00F108EE /* AlarmList.m in Sources */,
 				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,
 				75229A451C816BB7002FCAEB /* Icon.m in Sources */,
+				75DC2D071C82EFC100F108EE /* DeviceIconViewController.m in Sources */,
 				7508AA491C3229A800EB88D1 /* SPAlertView.m in Sources */,
 				75DC2D031C8148FF00F108EE /* SQLHelper.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,

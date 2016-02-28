@@ -8,6 +8,14 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol MainViewCellDelegate <NSObject>
+
+- (void)onClickBtnWarn:(NSIndexPath *)indexPath;
+- (void)onClickBtnTimer:(NSIndexPath *)indexPath;
+- (void)onClickBtnPower:(NSIndexPath *)indexPath;
+
+@end
+
 @interface MainViewCell : UITableViewCell
 
 @property (weak, nonatomic) IBOutlet UIImageView *imgCellBg;
@@ -16,5 +24,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnWarn;
 @property (weak, nonatomic) IBOutlet UIButton *btnTimer;
 @property (weak, nonatomic) IBOutlet UIButton *btnPower;
+
+@property (nonatomic, assign) id<MainViewCellDelegate> delegate;
 
 @end

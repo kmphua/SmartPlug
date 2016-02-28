@@ -68,6 +68,17 @@
     return @"en";
 }
 
++ (IconResolution)getIconResolution {
+    if (IS_IPHONE_4_OR_LESS) {
+        return ICON_RES_1x;
+    } else if (IS_IPHONE_5 || IS_IPHONE_6) {
+        return ICON_RES_2x;
+    } else if (IS_IPHONE_6P) {
+        return ICON_RES_3x;
+    }
+    return ICON_RES_1_5x;
+}
+
 + (NSString *)convertIpAddressToString:(NSData *)data {
     // Copy data to a "sockaddr_storage" structure.
     struct sockaddr_storage sa;

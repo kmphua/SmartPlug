@@ -8,7 +8,6 @@
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="DeviceItemSettingsViewController">
             <connections>
                 <outlet property="tableView" destination="s8I-jR-2r3" id="pab-j2-giT"/>
-                <outlet property="tableViewHeightConstraint" destination="W4g-Em-4JC" id="qUB-hk-0Pi"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -18,11 +17,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="s8I-jR-2r3">
-                    <rect key="frame" x="20" y="80" width="560" height="200"/>
-                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <rect key="frame" x="20" y="30" width="560" height="520"/>
+                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="width" constant="240" id="HaL-pI-4A0"/>
-                        <constraint firstAttribute="height" constant="200" id="W4g-Em-4JC"/>
                     </constraints>
                     <variation key="default">
                         <mask key="constraints">
@@ -38,9 +36,16 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="s8I-jR-2r3" secondAttribute="trailing" constant="20" id="1J1-Bl-yIm"/>
-                <constraint firstItem="s8I-jR-2r3" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="aGC-92-y3w"/>
+                <constraint firstAttribute="bottom" secondItem="s8I-jR-2r3" secondAttribute="bottom" constant="50" id="YpF-oE-C27"/>
+                <constraint firstItem="s8I-jR-2r3" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="30" id="aGC-92-y3w"/>
+                <constraint firstItem="s8I-jR-2r3" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="lQq-Hc-KfE"/>
                 <constraint firstItem="s8I-jR-2r3" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="owk-TQ-8Rh"/>
             </constraints>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="lQq-Hc-KfE"/>
+                </mask>
+            </variation>
         </view>
     </objects>
 </document>

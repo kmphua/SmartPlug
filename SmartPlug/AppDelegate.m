@@ -10,7 +10,7 @@
 #import "LoginViewController.h"
 #import "Global.h"
 #import "WebService.h"
-#import "DeviceMainViewController.h"
+#import "MainViewController.h"
 
 @interface AppDelegate ()
 
@@ -24,10 +24,18 @@ NSString *g_Username;
 NSString *g_Password;
 NSString *g_UserToken;
 NSString *g_DevToken;
-NSMutableDictionary *g_AppInfo;
+NSArray *g_DeviceIcons;
+
+NSString *g_DeviceId;
 NSString *g_DeviceIp;
+NSString *g_DeviceName;
+NSString *g_DeviceGivenName;
+NSString *g_DeviceMac;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+    
+    // Init database
+    [SQLHelper getInstance];
     
     // Init push notifications
     if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
@@ -37,8 +45,6 @@ NSString *g_DeviceIp;
         UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound;
         [application registerForRemoteNotificationTypes:myTypes];
     }
-    
-    g_AppInfo = [NSMutableDictionary new];
     
     UIWindow *window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
     self.window = window;
@@ -52,19 +58,11 @@ NSString *g_DeviceIp;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
 
     // Show initial view
-#if 1
-    DeviceMainViewController *startVC = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:startVC];
-#else
     LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginController];
-#endif
     
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];
-    
-    // Setup CoreData with MagicalRecord
-    [MagicalRecord setupCoreDataStackWithStoreNamed:@"SmartPlugModel"];
     
     return YES;
 }

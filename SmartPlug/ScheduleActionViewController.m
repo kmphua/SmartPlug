@@ -77,12 +77,15 @@
 //==================================================================
 #pragma mark - SelectActionDelegate
 //==================================================================
+/*
 - (void)didSelectAction:(JSAction *)action {
     NSLog(@"Selected action: Device=%@, type=%@", action.device, action.type);
     
     _lblDeviceName.text = action.device;
     _imgDeviceIcon.image = [UIImage imageNamed:action.deviceIcon];
     _imgDeviceAction.image = [UIImage imageNamed:action.typeIcon];
+ 
 }
+ */
 
 @end

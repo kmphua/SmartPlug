@@ -8,7 +8,18 @@
 
 #import <UIKit/UIKit.h>
 
+@protocol SetTimerDelegate <NSObject>
+
+- (void)modifyTimer;
+- (void)snooze5Mins;
+- (void)snooze10Mins;
+- (void)snooze30Mins;
+- (void)snooze1Hour;
+
+@end
+
 @interface SetTimerViewController : UIViewController
 
+@property (nonatomic, assign) id<SetTimerDelegate> delegate;
 
 @end

@@ -10,6 +10,7 @@ PODS:
   - FMDB (2.6):
     - FMDB/standard (= 2.6)
   - FMDB/standard (2.6)
+  - GMGridView (1.1.1)
   - KLCPopup (1.0)
   - SDWebImage+ExtensionSupport (3.7.1.2):
     - SDWebImage+ExtensionSupport/Core (= 3.7.1.2)
@@ -20,6 +21,7 @@ DEPENDENCIES:
   - CocoaAsyncSocket
   - DQAlertView (~> 1.2.1)
   - FMDB (~> 2.6)
+  - GMGridView (~> 1.1)
   - KLCPopup (~> 1.0)
   - SDWebImage+ExtensionSupport (~> 3.7)
   - Toast (~> 3.0)
@@ -28,8 +30,9 @@ SPEC CHECKSUMS:
   CocoaAsyncSocket: a18c75dca4b08723628a0bacca6e94803d90be91
   DQAlertView: 438c2799ae5437f2f9683f8a627314aa91eb5032
   FMDB: c1968bab3ab0aed38f66cb778ae1e7fa9a652b6e
+  GMGridView: 0e91e818e8b4768cfa1132ff3fdff24391ee230c
   KLCPopup: 76c5a19227977f1e53d85236f9ef42257c168d98
   SDWebImage+ExtensionSupport: 72b57456f83ccd7996b258912c749a8275309b74
   Toast: 32c59229abfcf41850162b83bb9259dc84372473
 
-COCOAPODS: 0.39.0
+COCOAPODS: 0.38.2

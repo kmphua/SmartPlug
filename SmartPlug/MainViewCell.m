@@ -20,4 +20,22 @@
     // Configure the view for the selected state
 }
 
+- (IBAction)onBtnWarn:(id)sender {
+    UITableView *tableView = (UITableView *)self.superview;
+    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
+    [self.delegate onClickBtnWarn:indexPath];
+}
+
+- (IBAction)onBtnTimer:(id)sender {
+    UITableView *tableView = (UITableView *)self.superview;
+    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
+    [self.delegate onClickBtnTimer:indexPath];
+}
+
+- (IBAction)onBtnPower:(id)sender {
+    UITableView *tableView = (UITableView *)self.superview;
+    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
+    [self.delegate onClickBtnPower:indexPath];
+}
+
 @end

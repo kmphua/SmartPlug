@@ -10,10 +10,11 @@
 
 @interface JSmartPlug : NSObject
 
+@property (nonatomic, assign) int dbid;
 @property (nonatomic, copy) NSString *name;
+@property (nonatomic, copy) NSString *server;
 @property (nonatomic, copy) NSString *sid;
 @property (nonatomic, copy) NSString *ip;
-@property (nonatomic, copy) NSString *server;
 @property (nonatomic, copy) NSString *model;
 @property (nonatomic, assign) int buildno;
 @property (nonatomic, assign) int prot_ver;

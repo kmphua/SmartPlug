@@ -130,10 +130,9 @@ static SQLHelper *instance;
 {
     self = [super init];
     if (self) {
-        NSString *cacheDir = [NSSearchPathForDirectoriesInDomains
-                              (NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-        NSString *dbPath = [cacheDir
-                            stringByAppendingPathComponent:DATABASE_FILE];
+        NSString *documentsDir = [NSSearchPathForDirectoriesInDomains
+                              (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+        NSString *dbPath = [documentsDir stringByAppendingPathComponent:DATABASE_FILE];
         
         // Copy database from bundle if not found
         if (![[NSFileManager defaultManager] fileExistsAtPath:dbPath]) {
@@ -151,9 +150,9 @@ static SQLHelper *instance;
 - (void)copyDbIfNeeded
 {
     NSFileManager *fileManager = [NSFileManager defaultManager];
-    NSString *cacheDir = [NSSearchPathForDirectoriesInDomains
-                          (NSCachesDirectory, NSUserDomainMask, YES) objectAtIndex:0];
-    NSString *path = [cacheDir stringByAppendingPathComponent:DATABASE_FILE];
+    NSString *documentsDir = [NSSearchPathForDirectoriesInDomains
+                          (NSDocumentDirectory, NSUserDomainMask, YES) objectAtIndex:0];
+    NSString *path = [documentsDir stringByAppendingPathComponent:DATABASE_FILE];
 
     BOOL isDir;
     if(![fileManager fileExistsAtPath:path isDirectory:&isDir]) {
@@ -170,12 +169,16 @@ static SQLHelper *instance;
 //==================================================================
 - (BOOL)insertIcons:(NSString *)url size:(int)size
 {
-    return [db executeUpdate:@"INSERT INTO ? (?, ?) VALUES (?, ?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?) VALUES (?, ?)",
             TABLE_ICONS, COLUMN_URL, COLUMN_SIZE, url, [NSNumber numberWithInt:size], nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getIcons
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_ICONS];
     NSMutableArray *icons = [NSMutableArray new];
     while ([results next]) {
@@ -184,17 +187,22 @@ static SQLHelper *instance;
         icon.size = [results intForColumn:COLUMN_SIZE];
         [icons addObject:icon];
     }
+    [db close];
     return icons;
 }
 
 - (BOOL)insertIRGroup:(NSString *)desc icon:(NSString *)icon position:(int)position
 {
-    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?) VALUES (?, ?, ?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?) VALUES (?, ?, ?)",
             TABLE_IRGROUPS, COLUMN_NAME, COLUMN_ICON, COLUMN_POSITION, desc, icon, [NSNumber numberWithInt:position], nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getIRGroups
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_IRGROUPS];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
@@ -204,11 +212,13 @@ static SQLHelper *instance;
         irGroup.position = [results intForColumn:COLUMN_POSITION];
         [irGroups addObject:irGroup];
     }
+    [db close];
     return irGroups;
 }
 
 - (BOOL)deleteIRGroup:(int)id
 {
+    [db open];
     BOOL toReturn = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRGROUPS, COLUMN_ID, id, nil];
     if (toReturn){
         if ([self deleteIRCodes:id]){
@@ -217,21 +227,30 @@ static SQLHelper *instance;
             toReturn = false;
         }
     }
+    [db close];
     return toReturn;
 }
 
 - (BOOL)deleteIRCodes:(int)groupid
 {
-    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_GROUPID, [NSNumber numberWithInt:groupid], nil];
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_GROUPID, [NSNumber numberWithInt:groupid], nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)deleteIRCode:(int)id
 {
-    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_ID, [NSNumber numberWithInt:id], nil];
+    BOOL result;
+    [db open];
+    result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_ID, [NSNumber numberWithInt:id], nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getIRGroups:(int)id
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_IRGROUPS, COLUMN_ID, id, nil];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
@@ -241,19 +260,24 @@ static SQLHelper *instance;
         irGroup.position = [results intForColumn:COLUMN_POSITION];
         [irGroups addObject:irGroup];
     }
+    [db close];
     return irGroups;
 }
 
 - (BOOL)insertIRCodes:(int)gid name:(NSString *)name filename:(int)filename
                  icon:(NSString *)icon mac:(NSString *)mac
 {
-    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
             TABLE_IRCODES, COLUMN_GROUPID, COLUMN_NAME, COLUMN_FILENAME, COLUMN_ICON, COLUMN_MAC,
             gid, name, [NSNumber numberWithInt:filename], icon, mac, nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getIRCodes
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_IRCODES];
     NSMutableArray *irCodes = [NSMutableArray new];
     while ([results next]) {
@@ -268,11 +292,13 @@ static SQLHelper *instance;
         irCode.model = [results stringForColumn:COLUMN_IRMODEL];
         [irCodes addObject:irCode];
     }
+    [db close];
     return irCodes;
 }
 
 - (NSArray *)getIRCodesByGroup:(int)id
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_IRCODES, COLUMN_GROUPID, id];
     NSMutableArray *irCodes = [NSMutableArray new];
     while ([results next]) {
@@ -287,62 +313,88 @@ static SQLHelper *instance;
         irCode.model = [results stringForColumn:COLUMN_IRMODEL];
         [irCodes addObject:irCode];
     }
+    [db close];
     return irCodes;
 }
 
 - (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip
 {
-    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?)",
             TABLE_SMARTPLUGS, COLUMN_NAME, COLUMN_SID, COLUMN_IP, COLUMN_SERVER, COLUMN_ACTIVE,
             name, sid, ip, @"undefined", [NSNumber numberWithInt:1], nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active
 {
-    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
             TABLE_SMARTPLUGS, COLUMN_NAME, COLUMN_SID, COLUMN_IP, COLUMN_MODEL, COLUMN_BUILD_NO, COLUMN_PROT_VER, COLUMN_HW_VER, COLUMN_FW_VER, COLUMN_FW_DATE, COLUMN_FLAG, COLUMN_RELAY, COLUMN_HSENSOR, COLUMN_CSENSOR, COLUMN_NIGHTLIGHT, COLUMN_ACTIVE,
             js.name, js.sid, js.ip, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active], nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_SID, mac, COLUMN_IP, ip, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugName:(NSString *)data sid:(NSString *)sid
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_GIVEN_NAME, data, COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugNightlightService:(int)data sid:(NSString *)sid
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_NIGHTLIGHT, data, COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugCoSensorService:(int)data sid:(NSString *)sid
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_CSENSOR, data, COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugHallSensorService:(int)data sid:(NSString *)sid
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_HSENSOR, data, COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugRelayService:(int)data sid:(NSString *)sid
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_RELAY, data, COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugServicesByIP:(JSmartPlug *)js
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS,
             COLUMN_RELAY, [NSNumber numberWithInt:js.relay],
             COLUMN_HSENSOR, [NSNumber numberWithInt:js.hall_sensor],
@@ -351,11 +403,14 @@ static SQLHelper *instance;
             COLUMN_HW_VER, js.hw_ver,
             COLUMN_FW_VER, js.fw_ver,
             COLUMN_IP, js.ip, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugServicesByID:(JSmartPlug *)js
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS,
             COLUMN_RELAY, [NSNumber numberWithInt:js.relay],
             COLUMN_HSENSOR, [NSNumber numberWithInt:js.hall_sensor],
@@ -364,69 +419,97 @@ static SQLHelper *instance;
             COLUMN_HW_VER, js.hw_ver,
             COLUMN_FW_VER, js.fw_ver,
             COLUMN_SID, js.sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_IP, ip, COLUMN_NAME, name, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugRelay:(NSString *)sid relay:(int)relay
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_RELAY, [NSNumber numberWithInt:relay], COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugNightlight:(NSString *)sid nl:(int)nl
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_NIGHTLIGHT, [NSNumber numberWithInt:nl], COLUMN_SID, sid, nil];
+    [db close];
+    return result;
+}
+
+- (BOOL)updatePlugIcon:(NSString *)sid icon:(NSString *)icon
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET icon = ? WHERE sid = ?", icon, sid];
+    [db close];
+    return result;
 }
 
 - (BOOL)activatePlug:(NSString *)sid
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS, COLUMN_ACTIVE, [NSNumber numberWithInt:1], COLUMN_SID, sid, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)insertToken:(NSString *)token
 {
-    return [db executeUpdate:@"INSERT INTO ? (?) VALUES (?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?) VALUES (?)",
             TABLE_PARAMS, COLUMN_TOKEN, token, nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getToken
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ?", TABLE_PARAMS];
     NSMutableArray *tokens = [NSMutableArray new];
     while ([results next]) {
         NSString *token = [results stringForColumn:COLUMN_TOKEN];
         [tokens addObject:token];
     }
+    [db close];
     return tokens;
 }
 
 - (BOOL)removePlugsIP
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?",
             TABLE_SMARTPLUGS, COLUMN_IP, @"", nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)removePlugIP:(NSString *)serviceName
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?",
             TABLE_SMARTPLUGS, COLUMN_IP, @"0", nil];
-}
-
-- (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip
-{
-    return [db executeUpdate:@"UPDATE ? SET ? = ? WHERE ? = ?",
-            TABLE_SMARTPLUGS, COLUMN_IP, ip, COLUMN_NAME, name, nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getPlugData:(NSString *)ip
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ? AND active = 1", TABLE_SMARTPLUGS, COLUMN_IP, ip];
     NSMutableArray *plugs = [NSMutableArray new];
     while ([results next]) {
@@ -445,21 +528,26 @@ static SQLHelper *instance;
         plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
         plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
         plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.icon = [results stringForColumn:COLUMN_ICON];
+        plug.givenName = [results stringForColumn:COLUMN_GIVEN_NAME];
         plug.active = [results intForColumn:COLUMN_ACTIVE];
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         [plugs addObject:plug];
     }
+    [db close];
     return plugs;
 }
 
 - (NSArray *)getPlugDataByID:(NSString *)sid
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?xs", TABLE_SMARTPLUGS, COLUMN_SID, sid];
     NSMutableArray *plugs = [NSMutableArray new];
     while ([results next]) {
         JSmartPlug *plug = [JSmartPlug new];
+        plug.dbid = [results intForColumn:COLUMN_ID];
         plug.name = [results stringForColumn:COLUMN_NAME];
         plug.sid = [results stringForColumn:COLUMN_SID];
         plug.ip = [results stringForColumn:COLUMN_IP];
@@ -474,17 +562,21 @@ static SQLHelper *instance;
         plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
         plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
         plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.icon = [results stringForColumn:COLUMN_ICON];
+        plug.givenName = [results stringForColumn:COLUMN_GIVEN_NAME];
         plug.active = [results intForColumn:COLUMN_ACTIVE];
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         [plugs addObject:plug];
     }
+    [db close];
     return plugs;
 }
 
 - (NSArray *)getPlugDataByName:(NSString *)name
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_NAME, name];
     NSMutableArray *plugs = [NSMutableArray new];
     while ([results next]) {
@@ -503,21 +595,26 @@ static SQLHelper *instance;
         plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
         plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
         plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.icon = [results stringForColumn:COLUMN_ICON];
+        plug.givenName = [results stringForColumn:COLUMN_GIVEN_NAME];
         plug.active = [results intForColumn:COLUMN_ACTIVE];
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         [plugs addObject:plug];
     }
+    [db close];
     return plugs;
 }
 
 - (NSArray *)getPlugData
 {
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE active = 1", TABLE_SMARTPLUGS];
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE active = 1"];
     NSMutableArray *plugs = [NSMutableArray new];
     while ([results next]) {
         JSmartPlug *plug = [JSmartPlug new];
+        plug.dbid = [results intForColumn:COLUMN_ID];
         plug.name = [results stringForColumn:COLUMN_NAME];
         plug.sid = [results stringForColumn:COLUMN_SID];
         plug.ip = [results stringForColumn:COLUMN_IP];
@@ -532,18 +629,22 @@ static SQLHelper *instance;
         plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
         plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
         plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.icon = [results stringForColumn:COLUMN_ICON];
+        plug.givenName = [results stringForColumn:COLUMN_GIVEN_NAME];
         plug.active = [results intForColumn:COLUMN_ACTIVE];
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         [plugs addObject:plug];
     }
+    [db close];
     return plugs;
 }
 
 - (NSArray *)getNonActivePlugData
 {
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE active = 0", TABLE_SMARTPLUGS];
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE active = 0"];
     NSMutableArray *plugs = [NSMutableArray new];
     while ([results next]) {
         JSmartPlug *plug = [JSmartPlug new];
@@ -561,28 +662,38 @@ static SQLHelper *instance;
         plug.hall_sensor = [results intForColumn:COLUMN_HSENSOR];
         plug.co_sensor = [results intForColumn:COLUMN_CSENSOR];
         plug.nightlight = [results intForColumn:COLUMN_NIGHTLIGHT];
+        plug.icon = [results stringForColumn:COLUMN_ICON];
+        plug.givenName = [results stringForColumn:COLUMN_GIVEN_NAME];
         plug.active = [results intForColumn:COLUMN_ACTIVE];
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         [plugs addObject:plug];
     }
+    [db close];
     return plugs;
 }
 
 - (BOOL)deletePlugData:(NSString *)ip
 {
-    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_IP, ip, nil];
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_IP, ip, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)deletePlugDataByID:(NSString *)mac
 {
-    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_SID, mac, nil];
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_SID, mac, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updatePlugNameNotify:(NSString *)mac name:(NSString *)name notifyOnPowerOutage:(int)notifyOnPowerOutage notifyOnCoWarning:(int)notifyOnCoWarning notifyOnTimerActivated:(int)notifyOnTimerActivated icon:(NSString *)icon
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
             TABLE_SMARTPLUGS,
             COLUMN_NOTIFY_POWER, [NSNumber numberWithInt:notifyOnPowerOutage],
             COLUMN_NOTIFY_CO, [NSNumber numberWithInt:notifyOnCoWarning],
@@ -590,33 +701,46 @@ static SQLHelper *instance;
             COLUMN_GIVEN_NAME, name,
             COLUMN_ICON, icon,
             COLUMN_SID, mac, nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)deleteNonActivePlug:(NSString *)name
 {
+    BOOL result;
+    [db open];
     if ([name isEqualToString:@"all"]) {
-        return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
+        result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_SMARTPLUGS, COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
     } else {
-        return [db executeUpdate:@"DELETE FROM ? WHERE ? = ? AND ? = ?", TABLE_SMARTPLUGS, COLUMN_NAME, name,  COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
+        result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ? AND ? = ?", TABLE_SMARTPLUGS, COLUMN_NAME, name,  COLUMN_ACTIVE, [NSNumber numberWithInt:0], nil];
     }
+    [db close];
+    return result;
 }
 
 - (BOOL)deleteAlarmData:(int)id
 {
-    return [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, [NSNumber numberWithInt:id], nil];
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, [NSNumber numberWithInt:id], nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)insertAlarm:(Alarm *)a
 {
-    return [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+    [db open];
+    BOOL result = [db executeUpdate:@"INSERT INTO ? (?, ?, ?, ?, ?, ?, ?, ?) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
             TABLE_ALARMS, COLUMN_DEVICE_ID, COLUMN_SERVICE_ID, COLUMN_DOW, COLUMN_INIT_HOUR,
             COLUMN_INIT_MINUTES, COLUMN_END_HOUR, COLUMN_END_MINUTES, COLUMN_SNOOZE,
             a.device_id, [NSNumber numberWithInt:a.service_id], [NSNumber numberWithInt:a.dow], [NSNumber numberWithInt:a.initial_hour], [NSNumber numberWithInt:a.initial_minute], [NSNumber numberWithInt:a.end_hour], [NSNumber numberWithInt:a.end_minute], [NSNumber numberWithInt:a.snooze], nil];
+    [db close];
+    return result;
 }
 
 - (BOOL)updateAlarm:(Alarm *)a
 {
-    return [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ? SET ? = ?, ? = ?, ? = ?, ? = ?, ? = ? WHERE ? = ?",
             TABLE_ALARMS,
             COLUMN_DEVICE_ID, a.device_id,
             COLUMN_SERVICE_ID, [NSNumber numberWithInt:a.service_id],
@@ -627,10 +751,13 @@ static SQLHelper *instance;
             COLUMN_END_MINUTES, [NSNumber numberWithInt:a.end_minute],
             COLUMN_SNOOZE, [NSNumber numberWithInt:a.snooze],
             COLUMN_ID, [NSNumber numberWithInt:a.alarm_id], nil];
+    [db close];
+    return result;
 }
 
 - (NSArray *)getAlarmData:(int)alarmId
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_ID, alarmId];
     NSMutableArray *alarms = [NSMutableArray new];
     while ([results next]) {
@@ -646,11 +773,13 @@ static SQLHelper *instance;
         alarm.snooze = [results intForColumn:COLUMN_SNOOZE];
         [alarms addObject:alarm];
     }
+    [db close];
     return alarms;
 }
 
-- (NSArray *)getAlarmDataByData:(NSString *)deviceId
+- (NSArray *)getAlarmDataByDevice:(NSString *)deviceId
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ?", TABLE_ALARMS, COLUMN_DEVICE_ID, deviceId];
     NSMutableArray *alarms = [NSMutableArray new];
     while ([results next]) {
@@ -666,11 +795,13 @@ static SQLHelper *instance;
         alarm.snooze = [results intForColumn:COLUMN_SNOOZE];
         [alarms addObject:alarm];
     }
+    [db close];
     return alarms;
 }
 
-- (NSArray *)getAlarmDataByDataAndService:(NSString *)deviceId serviceId:(int)serviceId
+- (NSArray *)getAlarmDataByDeviceAndService:(NSString *)deviceId serviceId:(int)serviceId
 {
+    [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ? WHERE ? = ? AND ? = ?", TABLE_ALARMS, COLUMN_DEVICE_ID, deviceId, COLUMN_SERVICE_ID, serviceId];
     NSMutableArray *alarms = [NSMutableArray new];
     while ([results next]) {
@@ -686,6 +817,7 @@ static SQLHelper *instance;
         alarm.snooze = [results intForColumn:COLUMN_SNOOZE];
         [alarms addObject:alarm];
     }
+    [db close];
     return alarms;
 }
 

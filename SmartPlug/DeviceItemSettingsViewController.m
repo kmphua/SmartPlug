@@ -7,12 +7,12 @@
 //
 
 #import "DeviceItemSettingsViewController.h"
+#import "DeviceIconViewController.h"
 
-@interface DeviceItemSettingsViewController ()
+@interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
-
+@property (nonatomic) BOOL deviceInRange;
 
 @end
 
@@ -24,6 +24,12 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    if (self.device.ip && self.device.ip.length>0) {
+        _deviceInRange = YES;
+    } else {
+        _deviceInRange = NO;
+    }
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -31,32 +37,11 @@
     // TODO: Get Device Status
     
     [self.tableView reloadData];
-    [self adjustHeightOfTableview];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
-}
-
-- (void)adjustHeightOfTableview
-{
-    CGFloat height = self.tableView.contentSize.height;
-    CGFloat maxHeight = 0.85 * self.tableView.superview.frame.size.height;
-    
-    // if the height of the content is greater than the maxHeight of
-    // total space on the screen, limit the height to the size of the
-    // superview.
-    
-    if (height > maxHeight)
-        height = maxHeight;
-    
-    // now set the height constraint accordingly
-    
-    [UIView animateWithDuration:0.25 animations:^{
-        self.tableViewHeightConstraint.constant = height;
-        [self.view setNeedsUpdateConstraints];
-    }];
 }
 
 //==================================================================
@@ -71,7 +56,11 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return 7;
+    if (_deviceInRange) {
+        return 9;
+    } else {
+        return 10;
+    }
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -81,7 +70,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 44;
+    return 55;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -92,7 +81,12 @@
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
     [label setFont:[UIFont systemFontOfSize:32]];
     [label setTextColor:[UIColor whiteColor]];
-    [label setText:@"Desk Lamp"/*self.device.name*/];
+    
+    if (self.device.givenName && self.device.givenName.length > 0) {
+        label.text = self.device.givenName;
+    } else {
+        label.text = self.device.name;
+    }
     [label setTextAlignment:NSTextAlignmentCenter];
     [view addSubview:label];
     return view;
@@ -107,29 +101,79 @@
     switch (row) {
         case 0:
             cell.textLabel.text = NSLocalizedString(@"id_sevice", nil);
-            cell.detailTextLabel.text = @"Smart Plug";
+            cell.detailTextLabel.text = @"JSPlug";
             break;
         case 1:
+        {
             cell.textLabel.text = NSLocalizedString(@"id_icon", nil);
             cell.detailTextLabel.text = @"";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+            
+            if (self.device.icon && self.device.icon.length>0) {
+                UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+                
+                int iconId = [self.device.icon intValue];
+                if (g_DeviceIcons) {
+                    NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
+                    NSString *imagePath = [icon objectForKey:@"url"];
+                    [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+                }
+                cell.accessoryView = imageView;
+            }
+        }
             break;
         case 2:
             cell.textLabel.text = NSLocalizedString(@"id_name", nil);
-            cell.detailTextLabel.text = @"Desk Lamp"; //self.device.name;
+            if (self.device.givenName && self.device.givenName.length > 0) {
+                cell.detailTextLabel.text = self.device.givenName;
+            } else {
+                cell.detailTextLabel.text = self.device.name;
+            }
             break;
         case 3:
             cell.textLabel.text = NSLocalizedString(@"id_wifi", nil);
-            cell.detailTextLabel.text = @"MyHomeWIFI";
+            cell.detailTextLabel.text = self.device.server;
             break;
         case 4:
-            cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
-            cell.detailTextLabel.text = @"00:00:00:00:00:00";
+            if (_deviceInRange) {
+                cell.textLabel.text = @"CO sensor";
+            } else {
+                cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
+                cell.detailTextLabel.text = self.device.sid;
+            }
             break;
         case 5:
-            cell.textLabel.text = NSLocalizedString(@"msg_deskLampBtn", nil);
+            if (_deviceInRange) {
+                cell.textLabel.text = @"Hardware";
+                cell.detailTextLabel.text = self.device.hw_ver;
+            } else {
+                cell.textLabel.text = @"Notify on power outage";
+            }
             break;
         case 6:
+            if (_deviceInRange) {
+                cell.textLabel.text = @"Firmware";
+                cell.detailTextLabel.text = self.device.fw_ver;
+            } else {
+                cell.textLabel.text = @"Notify on CO warning";
+            }
+            break;
+        case 7:
+            if (_deviceInRange) {
+                cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
+                cell.detailTextLabel.text = self.device.sid;
+            } else {
+                cell.textLabel.text = @"Notify on timer activated";
+            }
+            break;
+        case 8:
+            if (_deviceInRange) {
+                cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
+            } else {
+                cell.textLabel.text = NSLocalizedString(@"msg_deskLampBtn", nil);
+            }
+            break;
+        case 9:
             cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
             break;
     }
@@ -138,13 +182,24 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    /*
-    //NSDictionary *action = [self.actions objectAtIndex:[indexPath row]];
-    ScheduleActionViewController *scheduleActionVc = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-    scheduleActionVc.action = nil;
-    [self.navigationController pushViewController:scheduleActionVc animated:YES];
+    if (indexPath.row == 1) {
+        // Get device icons
+        DeviceIconViewController *iconVC = [[DeviceIconViewController alloc] initWithNibName:@"DeviceIconViewController" bundle:nil];
+        iconVC.delegate = self;
+        [self.navigationController pushViewController:iconVC animated:YES];
+    }
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
-     */
+}
+
+//==================================================================
+#pragma DeviceIconDelegate
+//==================================================================
+- (void)selectedIcon:(int)iconId
+{
+    // Update device icon
+    _device.icon = [NSString stringWithFormat:@"%d", iconId];
+    [[SQLHelper getInstance] updatePlugIcon:_device.sid icon:[NSString stringWithFormat:@"%d", iconId]];
+    [self.tableView reloadData];
 }
 
 //==================================================================
@@ -168,7 +223,7 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName compare:WS_DEV_LIST] == NSOrderedSame) {
+        if ([resultName isEqualToString:WS_DEV_LIST]) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
@@ -178,7 +233,6 @@
                     NSLog(@"Total %ld actions", devices.count);
                 }
                 [self.tableView reloadData];
-                [self adjustHeightOfTableview];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
@@ -189,7 +243,7 @@
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
             }
-        }
+        } 
     }
 }
 

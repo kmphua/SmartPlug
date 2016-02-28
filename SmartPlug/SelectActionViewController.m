@@ -141,12 +141,14 @@
         typeIcon = @"svc_3_small";
     }
     
+    /*
     JSAction *action = [JSAction new];
     action.device = device;
     action.deviceIcon = deviceIcon;
     action.type = type;
     action.typeIcon = typeIcon;
     [self.delegate didSelectAction:action];
+    */
     
     [self.navigationController popViewControllerAnimated:YES];
 }

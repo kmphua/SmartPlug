@@ -10,9 +10,11 @@
 #import "DeviceItemSettingsViewController.h"
 #import "UDPListenerService.h"
 #import "NoTimersViewController.h"
+#import "SetTimerViewController.h"
+#import "SetTimerSnoozeViewController.h"
 #import "ScheduleMainViewController.h"
 
-@interface DeviceMainViewController ()<UDPListenerDelegate, NoTimersDelegate>
+@interface DeviceMainViewController ()<UDPListenerDelegate, NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (nonatomic, weak) IBOutlet UIImageView *imgDeviceIcon;
@@ -51,11 +53,29 @@
     
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
-    self.imgDeviceIcon.image = [UIImage imageNamed:@"see_Table Lamps_1_white_bkgnd"];
-    //self.lblDeviceName.text = _device.name;
-    //self.title = _device.name;
-    self.lblDeviceName.text = [_device objectForKey:@"title"];
-    self.title = [_device objectForKey:@"title"];
+    
+    // See current device info
+    g_DeviceName = _device.name;
+    g_DeviceGivenName = _device.givenName;
+    g_DeviceIp = _device.ip;
+    g_DeviceMac = _device.sid;
+    
+    if (self.device.icon && self.device.icon.length > 0) {
+        int iconId = [self.device.icon intValue];
+        if (g_DeviceIcons) {
+            NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
+            NSString *imagePath = [icon objectForKey:@"url"];
+            [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+        }
+    }
+    
+    if (self.device.givenName && self.device.givenName.length > 0) {
+        self.lblDeviceName.text = self.device.givenName;
+        self.title = self.device.givenName;
+    } else {
+        self.lblDeviceName.text = self.device.name;
+        self.title = self.device.name;
+    }
     
     _udpListener = [UDPListenerService getInstance];
     _udpListener.delegate = self;
@@ -69,6 +89,11 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    // Get device status
+    //WebService *ws = [WebService new];
+    //ws.delegate = self;
+    //[ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_1x devId:_device.sid];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -99,17 +124,30 @@
 }
 
 - (IBAction)onBtnOutletTimer:(id)sender {
+    // Snooze
+    SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+    setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    setTimerSnoozeVC.delegate = self;
+    [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
+}
+
+- (IBAction)onBtnNightLightTimer:(id)sender {
+    // Timer set, no snooze
+    SetTimerViewController *setTimerVC = [[SetTimerViewController alloc] initWithNibName:@"SetTimerViewController" bundle:nil];
+    setTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    setTimerVC.delegate = self;
+    [self presentViewController:setTimerVC animated:YES completion:nil];
+}
+
+- (IBAction)onBtnIRTimer:(id)sender {
+    // Timer not set
     NoTimersViewController *noTimersVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
     noTimersVC.modalPresentationStyle = UIModalPresentationCurrentContext;
     noTimersVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     noTimersVC.delegate = self;
     [self presentViewController:noTimersVC animated:YES completion:nil];
-}
-
-- (IBAction)onBtnNightLightTimer:(id)sender {
-}
-
-- (IBAction)onBtnIRTimer:(id)sender {
 }
 
 //==================================================================
@@ -183,7 +221,124 @@
 - (void)addTimer
 {
     ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
+    scheduleVC.device = self.device;
     [self.navigationController pushViewController:scheduleVC animated:YES];
 }
+
+//==================================================================
+#pragma mark - SetTimersDelegate
+//==================================================================
+- (void)modifyTimer
+{
+    ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
+    scheduleVC.device = self.device;
+    [self.navigationController pushViewController:scheduleVC animated:YES];
+}
+
+- (void)snooze5Mins
+{
+    
+}
+
+- (void)snooze10Mins
+{
+    
+}
+
+- (void)snooze30Mins
+{
+    
+}
+
+- (void)snooze1Hour
+{
+    
+}
+
+//==================================================================
+#pragma mark - SetSnoozeTimersDelegate
+//==================================================================
+- (void)modifySnoozeTimer
+{
+    ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
+    scheduleVC.device = self.device;
+    [self.navigationController pushViewController:scheduleVC animated:YES];
+}
+
+- (void)snooze5MoreMins
+{
+    
+}
+
+- (void)snooze10MoreMins
+{
+    
+}
+
+- (void)snooze30MoreMins
+{
+    
+}
+
+- (void)snooze1MoreHour
+{
+    
+}
+
+- (void)cancelSnooze
+{
+    
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error) {
+        NSLog(@"Error received: %@", [error localizedDescription]);
+    }
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName compare:WS_DEV_GET] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSString *icon = (NSString *)[jsonObject objectForKey:@"icon"];
+                NSString *iconId = (NSString *)[jsonObject objectForKey:@"iconid"];
+                NSString *title = (NSString *)[jsonObject objectForKey:@"title"];
+                NSString *notifyPower = (NSString *)[jsonObject objectForKey:@"notify_power"];
+                NSString *notifyTimer = (NSString *)[jsonObject objectForKey:@"notify_timer"];
+                NSString *notifyDanger = (NSString *)[jsonObject objectForKey:@"notify_danger"];
+                
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
+}
+
 
 @end

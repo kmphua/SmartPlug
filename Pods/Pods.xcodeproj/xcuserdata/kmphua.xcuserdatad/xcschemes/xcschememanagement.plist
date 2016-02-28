@@ -14,6 +14,16 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
+		<key>FMDB.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>GMGridView.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
 		<key>KLCPopup.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -37,7 +47,12 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>08A0828C042ECEBD4827F9EB30710440</key>
+		<key>238053D698FBDC69A03575AAFA70DCAF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>260D23BD5913C64608480DC142F91A70</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -47,12 +62,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>6CF5D02167293B03F91B96AF5FEA4CD2</key>
+		<key>3426D5F97866CE3CEC3BF7275C7DA554</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C9729BB867C0E1D7CFF257BC06D67C06</key>
+		<key>8955447505F9CCFFBB03E27452725387</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>C4B7346ECEFEC8189960E600DB9201C0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -62,7 +82,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>DF29FF24FC74289A59B50A8A2E63D366</key>
+		<key>EBCC11D125FA7301D87AD57004B1DC06</key>
 		<dict>
 			<key>primary</key>
 			<true/>

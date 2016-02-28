@@ -34,11 +34,12 @@
 - (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip;
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active;
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip;
-- (BOOL)updatePlugName:(NSString *)data id:(NSString *)id;
-- (BOOL)updatePlugNightlightService:(int)data id:(NSString *)id;
-- (BOOL)updatePlugCoSensorService:(int)data id:(NSString *)id;
-- (BOOL)updatePlugHallSensorService:(int)data id:(NSString *)id;
-- (BOOL)updatePlugRelayService:(int)data id:(NSString *)id;
+- (BOOL)updatePlugName:(NSString *)data sid:(NSString *)sid;
+- (BOOL)updatePlugIcon:(NSString *)sid icon:(NSString *)icon;
+- (BOOL)updatePlugNightlightService:(int)data sid:(NSString *)sid;
+- (BOOL)updatePlugCoSensorService:(int)data sid:(NSString *)sid;
+- (BOOL)updatePlugHallSensorService:(int)data sid:(NSString *)sid;
+- (BOOL)updatePlugRelayService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugServicesByIP:(JSmartPlug *)js;
 - (BOOL)updatePlugServicesByID:(JSmartPlug *)js;
 - (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip;
@@ -49,7 +50,6 @@
 - (NSArray *)getToken;
 - (BOOL)removePlugsIP;
 - (BOOL)removePlugIP:(NSString *)serviceName;
-- (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip;
 - (NSArray *)getPlugData:(NSString *)ip;
 - (NSArray *)getPlugDataByID:(NSString *)id;
 - (NSArray *)getPlugDataByName:(NSString *)name;
