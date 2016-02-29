@@ -71,16 +71,10 @@
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="7Gf-Ut-QPu" secondAttribute="bottom" constant="50" id="4Pv-dm-a4k"/>
                 <constraint firstItem="7Gf-Ut-QPu" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.85" constant="1" id="7Ku-2y-K1X"/>
-                <constraint firstItem="7Gf-Ut-QPu" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="Iu9-T8-zDl"/>
                 <constraint firstItem="7Gf-Ut-QPu" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="eXm-Bo-g1F"/>
                 <constraint firstItem="7Gf-Ut-QPu" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="juR-dx-gVf"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
-            <variation key="default">
-                <mask key="constraints">
-                    <exclude reference="Iu9-T8-zDl"/>
-                </mask>
-            </variation>
         </view>
     </objects>
 </document>

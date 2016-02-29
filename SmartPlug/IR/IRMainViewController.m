@@ -11,6 +11,7 @@
 #import "UDPListenerService.h"
 #import "NoTimersViewController.h"
 #import "GMGridView.h"
+#import "IRAddNewViewController.h"
 
 @interface IRMainViewController ()<GMGridViewDataSource>
 
@@ -53,6 +54,11 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)onBtnAdd:(id)sender {
+    IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
+    [self.navigationController pushViewController:irAddNewVC animated:YES];
+}
+
 //////////////////////////////////////////////////////////////
 #pragma mark GMGridViewDataSource
 //////////////////////////////////////////////////////////////
@@ -91,7 +97,9 @@
             UIButton *btnAdd = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
             btnAdd.backgroundColor = [UIColor clearColor];
             btnAdd.layer.masksToBounds = NO;
-            btnAdd.imageView.image = [UIImage imageNamed:@"btn_add"];
+            [btnAdd setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
+            [btnAdd setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
+            [btnAdd addTarget:self action:@selector(onBtnAdd:) forControlEvents:UIControlEventTouchUpInside];
             
             cell.contentView = btnAdd;
         }
