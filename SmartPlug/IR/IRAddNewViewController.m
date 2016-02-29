@@ -7,6 +7,8 @@
 //
 
 #import "IRAddNewViewController.h"
+#import "IRDetectIRViewController.h"
+#import "IREditItemViewController.h"
 
 @interface IRAddNewViewController ()
 
@@ -32,6 +34,15 @@
     self.viewChoose.layer.cornerRadius = CORNER_RADIUS;
     self.viewDetect.layer.cornerRadius = CORNER_RADIUS;
     self.viewCreate.layer.cornerRadius = CORNER_RADIUS;
+    
+    UITapGestureRecognizer *tapViewChoose = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewChoose:)];
+    [self.view addGestureRecognizer:tapViewChoose];
+
+    UITapGestureRecognizer *tapViewDetect = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewDetect:)];
+    [self.view addGestureRecognizer:tapViewDetect];
+
+    UITapGestureRecognizer *tapViewCreate = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewCreate:)];
+    [self.view addGestureRecognizer:tapViewCreate];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -39,14 +50,18 @@
     // Dispose of any resources that can be recreated.
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+- (void)onTapViewChoose:(UITapGestureRecognizer *)tapGestureRecognizer {
+    
 }
-*/
+
+- (void)onTapViewDetect:(UITapGestureRecognizer *)tapGestureRecognizer {
+    IRDetectIRViewController *irDetectVC = [[IRDetectIRViewController alloc] initWithNibName:@"IRDetectIRViewController" bundle:nil];
+    [self.navigationController pushViewController:irDetectVC animated:YES];
+}
+
+- (void)onTapViewCreate:(UITapGestureRecognizer *)tapGestureRecognizer {
+    IREditItemViewController *irEditVC = [[IREditItemViewController alloc] initWithNibName:@"IREditItemViewController" bundle:nil];
+    [self.navigationController pushViewController:irEditVC animated:YES];
+}
 
 @end

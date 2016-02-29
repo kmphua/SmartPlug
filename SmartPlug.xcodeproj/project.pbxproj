@@ -56,6 +56,14 @@
 		751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510D11C22698C007772FE /* AddDeviceViewController.m */; };
 		751510D41C22698C007772FE /* AddDeviceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510D21C22698C007772FE /* AddDeviceViewController.xib */; };
 		75187EEF1C2D730000093642 /* UDPCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 75187EEE1C2D730000093642 /* UDPCommunication.m */; };
+		751ECFB71C8509750058A403 /* IREditItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751ECFB51C8509750058A403 /* IREditItemViewController.m */; };
+		751ECFB81C8509750058A403 /* IREditItemViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751ECFB61C8509750058A403 /* IREditItemViewController.xib */; };
+		751ECFBC1C850A270058A403 /* IRDetectIRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751ECFBA1C850A270058A403 /* IRDetectIRViewController.m */; };
+		751ECFBD1C850A270058A403 /* IRDetectIRViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751ECFBB1C850A270058A403 /* IRDetectIRViewController.xib */; };
+		751ECFC11C850A7B0058A403 /* IRCustomViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751ECFBF1C850A7B0058A403 /* IRCustomViewController.m */; };
+		751ECFC21C850A7B0058A403 /* IRCustomViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751ECFC01C850A7B0058A403 /* IRCustomViewController.xib */; };
+		751ECFC61C850A9B0058A403 /* IRRecordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751ECFC41C850A9B0058A403 /* IRRecordViewController.m */; };
+		751ECFC71C850A9B0058A403 /* IRRecordViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751ECFC51C850A9B0058A403 /* IRRecordViewController.xib */; };
 		75229A421C815B61002FCAEB /* jsplugs.db in Resources */ = {isa = PBXBuildFile; fileRef = 75229A411C815B61002FCAEB /* jsplugs.db */; };
 		75229A451C816BB7002FCAEB /* Icon.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A441C816BB7002FCAEB /* Icon.m */; };
 		75229A481C816C07002FCAEB /* IrCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A471C816C07002FCAEB /* IrCode.m */; };
@@ -422,6 +430,18 @@
 		751510D71C22B9E8007772FE /* smartplug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smartplug.h; sourceTree = "<group>"; };
 		75187EED1C2D730000093642 /* UDPCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPCommunication.h; sourceTree = "<group>"; };
 		75187EEE1C2D730000093642 /* UDPCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPCommunication.m; sourceTree = "<group>"; };
+		751ECFB41C8509750058A403 /* IREditItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IREditItemViewController.h; sourceTree = "<group>"; };
+		751ECFB51C8509750058A403 /* IREditItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IREditItemViewController.m; sourceTree = "<group>"; };
+		751ECFB61C8509750058A403 /* IREditItemViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IREditItemViewController.xib; sourceTree = "<group>"; };
+		751ECFB91C850A270058A403 /* IRDetectIRViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRDetectIRViewController.h; sourceTree = "<group>"; };
+		751ECFBA1C850A270058A403 /* IRDetectIRViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRDetectIRViewController.m; sourceTree = "<group>"; };
+		751ECFBB1C850A270058A403 /* IRDetectIRViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRDetectIRViewController.xib; sourceTree = "<group>"; };
+		751ECFBE1C850A7B0058A403 /* IRCustomViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRCustomViewController.h; sourceTree = "<group>"; };
+		751ECFBF1C850A7B0058A403 /* IRCustomViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRCustomViewController.m; sourceTree = "<group>"; };
+		751ECFC01C850A7B0058A403 /* IRCustomViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRCustomViewController.xib; sourceTree = "<group>"; };
+		751ECFC31C850A9B0058A403 /* IRRecordViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRRecordViewController.h; sourceTree = "<group>"; };
+		751ECFC41C850A9B0058A403 /* IRRecordViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRRecordViewController.m; sourceTree = "<group>"; };
+		751ECFC51C850A9B0058A403 /* IRRecordViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRRecordViewController.xib; sourceTree = "<group>"; };
 		75229A411C815B61002FCAEB /* jsplugs.db */ = {isa = PBXFileReference; lastKnownFileType = file; path = jsplugs.db; sourceTree = "<group>"; };
 		75229A431C816BB7002FCAEB /* Icon.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Icon.h; sourceTree = "<group>"; };
 		75229A441C816BB7002FCAEB /* Icon.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Icon.m; sourceTree = "<group>"; };
@@ -1275,6 +1295,18 @@
 				75D0D3331C848FA000D72E47 /* IRAddNewViewController.h */,
 				75D0D3341C848FA000D72E47 /* IRAddNewViewController.m */,
 				75D0D3351C848FA000D72E47 /* IRAddNewViewController.xib */,
+				751ECFB41C8509750058A403 /* IREditItemViewController.h */,
+				751ECFB51C8509750058A403 /* IREditItemViewController.m */,
+				751ECFB61C8509750058A403 /* IREditItemViewController.xib */,
+				751ECFB91C850A270058A403 /* IRDetectIRViewController.h */,
+				751ECFBA1C850A270058A403 /* IRDetectIRViewController.m */,
+				751ECFBB1C850A270058A403 /* IRDetectIRViewController.xib */,
+				751ECFBE1C850A7B0058A403 /* IRCustomViewController.h */,
+				751ECFBF1C850A7B0058A403 /* IRCustomViewController.m */,
+				751ECFC01C850A7B0058A403 /* IRCustomViewController.xib */,
+				751ECFC31C850A9B0058A403 /* IRRecordViewController.h */,
+				751ECFC41C850A9B0058A403 /* IRRecordViewController.m */,
+				751ECFC51C850A9B0058A403 /* IRRecordViewController.xib */,
 			);
 			path = IR;
 			sourceTree = "<group>";
@@ -1430,11 +1462,13 @@
 				75667A6C1C1F864C001B30B2 /* btn_big_bkgnd_1_pressed@2x.png in Resources */,
 				75667AFE1C1F864C001B30B2 /* svc_0_big@1x.png in Resources */,
 				75667A691C1F864C001B30B2 /* btn_big_bkgnd_1_off@1x.png in Resources */,
+				751ECFBD1C850A270058A403 /* IRDetectIRViewController.xib in Resources */,
 				757411AD1C23AEE600CDCC2D /* see_Electric fan_ 2_white_transparent.png in Resources */,
 				75667A5A1C1F864C001B30B2 /* bkgnd2@2x.png in Resources */,
 				75667AC11C1F864C001B30B2 /* main_item_1_c@1x.png in Resources */,
 				75667A771C1F864C001B30B2 /* btn_big_bkgnd_3_pressed@1x.png in Resources */,
 				75667AA01C1F864C001B30B2 /* ic_delete_pressed@2x.png in Resources */,
+				751ECFC71C850A9B0058A403 /* IRRecordViewController.xib in Resources */,
 				75667B2E1C1F864C001B30B2 /* wait_2@1x.png in Resources */,
 				75667AC81C1F864C001B30B2 /* main_item_2_c@2x.png in Resources */,
 				75667A5F1C1F864C001B30B2 /* btn_big_bkgnd_0@1x.png in Resources */,
@@ -1524,6 +1558,7 @@
 				757411B01C23AEE600CDCC2D /* see_Electric light_2_transparent_bkgnd.png in Resources */,
 				75667A761C1F864C001B30B2 /* btn_big_bkgnd_3_off@2x.png in Resources */,
 				757411BB1C23AEE600CDCC2D /* see_TV_1_white_bkgnd.png in Resources */,
+				751ECFB81C8509750058A403 /* IREditItemViewController.xib in Resources */,
 				757411A81C23AEE600CDCC2D /* see_Coffee machine_2_transparent_bkgnd_small.png in Resources */,
 				75667B301C1F864C001B30B2 /* wait_3@1x.png in Resources */,
 				75667ACC1C1F864C001B30B2 /* main_item_3_b@2x.png in Resources */,
@@ -1596,6 +1631,7 @@
 				75667AAB1C1F864C001B30B2 /* ic_menu_settings@1x.png in Resources */,
 				75667B1C1C1F864C001B30B2 /* svc_3_small_off@1x.png in Resources */,
 				757411BF1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png in Resources */,
+				751ECFC21C850A7B0058A403 /* IRCustomViewController.xib in Resources */,
 				75667A881C1F864C001B30B2 /* btn_timer_delay_pressed@2x.png in Resources */,
 				75667A901C1F864C001B30B2 /* btn_timer_on_pressed@2x.png in Resources */,
 				75667AAE1C1F864C001B30B2 /* ic_wpa@2x.png in Resources */,
@@ -1723,6 +1759,7 @@
 			files = (
 				754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */,
 				7512C1281C1BA3B900489091 /* ViewController.m in Sources */,
+				751ECFC11C850A7B0058A403 /* IRCustomViewController.m in Sources */,
 				7512C1851C1BB3B700489091 /* CustomBadgeViewController.m in Sources */,
 				7512C1781C1BB3B700489091 /* BaseViewController.m in Sources */,
 				7512C1861C1BB3B700489091 /* PickerActionSheet.m in Sources */,
@@ -1733,6 +1770,8 @@
 				751510C71C225369007772FE /* MainViewController.m in Sources */,
 				7508AA421C32195100EB88D1 /* InitDevicesViewController.m in Sources */,
 				7508AA5F1C325FE300EB88D1 /* ScheduleMainViewController.m in Sources */,
+				751ECFBC1C850A270058A403 /* IRDetectIRViewController.m in Sources */,
+				751ECFB71C8509750058A403 /* IREditItemViewController.m in Sources */,
 				7512C1811C1BB3B700489091 /* WebService.m in Sources */,
 				7512C17B1C1BB3B700489091 /* LoginViewController.m in Sources */,
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
@@ -1751,6 +1790,7 @@
 				75229A4B1C816F34002FCAEB /* IrGroup.m in Sources */,
 				75229A481C816C07002FCAEB /* IrCode.m in Sources */,
 				755268991C334B5400602B58 /* SmartConfigService.m in Sources */,
+				751ECFC61C850A9B0058A403 /* IRRecordViewController.m in Sources */,
 				75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
 				7512C1891C1BB3B700489091 /* UIWaitingView.m in Sources */,
