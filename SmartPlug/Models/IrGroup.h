@@ -10,6 +10,7 @@
 
 @interface IrGroup : NSObject
 
+@property (nonatomic, assign) int group_id;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, copy) NSString *icon;
 @property (nonatomic, assign) int position;

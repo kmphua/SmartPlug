@@ -302,6 +302,8 @@
 		757411C01C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */; };
 		758ABDD41C7500AD00980EDE /* IRMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 758ABDD21C7500AD00980EDE /* IRMainViewController.m */; };
 		758ABDD51C7500AD00980EDE /* IRMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 758ABDD31C7500AD00980EDE /* IRMainViewController.xib */; };
+		75B2BACE1C878C9900B59779 /* IREditModeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2BACC1C878C9900B59779 /* IREditModeViewController.m */; };
+		75B2BACF1C878C9900B59779 /* IREditModeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75B2BACD1C878C9900B59779 /* IREditModeViewController.xib */; };
 		75C4CD861C731DA600E8C629 /* Alarm.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD831C731DA600E8C629 /* Alarm.m */; };
 		75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD891C731EDC00E8C629 /* BroadcastReply.m */; };
 		75C9A95C1C4469B900AE72E2 /* SetTimerSnoozeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C9A9571C4469B900AE72E2 /* SetTimerSnoozeViewController.m */; };
@@ -689,6 +691,9 @@
 		758ABDD11C7500AD00980EDE /* IRMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRMainViewController.h; sourceTree = "<group>"; };
 		758ABDD21C7500AD00980EDE /* IRMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRMainViewController.m; sourceTree = "<group>"; };
 		758ABDD31C7500AD00980EDE /* IRMainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRMainViewController.xib; sourceTree = "<group>"; };
+		75B2BACB1C878C9900B59779 /* IREditModeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IREditModeViewController.h; sourceTree = "<group>"; };
+		75B2BACC1C878C9900B59779 /* IREditModeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IREditModeViewController.m; sourceTree = "<group>"; };
+		75B2BACD1C878C9900B59779 /* IREditModeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IREditModeViewController.xib; sourceTree = "<group>"; };
 		75C4CD821C731DA600E8C629 /* Alarm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alarm.h; sourceTree = "<group>"; };
 		75C4CD831C731DA600E8C629 /* Alarm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alarm.m; sourceTree = "<group>"; };
 		75C4CD881C731EDC00E8C629 /* BroadcastReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BroadcastReply.h; sourceTree = "<group>"; };
@@ -795,9 +800,6 @@
 				7508AA661C32625A00EB88D1 /* SelectActionViewController.h */,
 				7508AA671C32625A00EB88D1 /* SelectActionViewController.m */,
 				7508AA681C32625A00EB88D1 /* SelectActionViewController.xib */,
-				7508AA701C326D2900EB88D1 /* ScheduleMainViewCell.h */,
-				7508AA711C326D2900EB88D1 /* ScheduleMainViewCell.m */,
-				7508AA721C326D2900EB88D1 /* ScheduleMainViewCell.xib */,
 			);
 			name = Schedule;
 			sourceTree = "<group>";
@@ -832,6 +834,7 @@
 				7512C1261C1BA3B900489091 /* ViewController.h */,
 				7512C1271C1BA3B900489091 /* ViewController.m */,
 				751510CA1C2256FB007772FE /* ViewControllers */,
+				75B2BAC51C87845C00B59779 /* CellViews */,
 				75187EE91C2D67CF00093642 /* Models */,
 				7512C1661C1BB3B700489091 /* Widgets */,
 				7512C1631C1BB3B700489091 /* Services */,
@@ -978,9 +981,6 @@
 				75DC2D041C82EFC100F108EE /* DeviceIconViewController.h */,
 				75DC2D051C82EFC100F108EE /* DeviceIconViewController.m */,
 				75DC2D061C82EFC100F108EE /* DeviceIconViewController.xib */,
-				751510CB1C225D71007772FE /* MainViewCell.h */,
-				751510CC1C225D71007772FE /* MainViewCell.m */,
-				751510CD1C225D71007772FE /* MainViewCell.xib */,
 			);
 			name = Device;
 			sourceTree = "<group>";
@@ -1298,6 +1298,9 @@
 				751ECFB41C8509750058A403 /* IREditItemViewController.h */,
 				751ECFB51C8509750058A403 /* IREditItemViewController.m */,
 				751ECFB61C8509750058A403 /* IREditItemViewController.xib */,
+				75B2BACB1C878C9900B59779 /* IREditModeViewController.h */,
+				75B2BACC1C878C9900B59779 /* IREditModeViewController.m */,
+				75B2BACD1C878C9900B59779 /* IREditModeViewController.xib */,
 				751ECFB91C850A270058A403 /* IRDetectIRViewController.h */,
 				751ECFBA1C850A270058A403 /* IRDetectIRViewController.m */,
 				751ECFBB1C850A270058A403 /* IRDetectIRViewController.xib */,
@@ -1309,6 +1312,19 @@
 				751ECFC51C850A9B0058A403 /* IRRecordViewController.xib */,
 			);
 			path = IR;
+			sourceTree = "<group>";
+		};
+		75B2BAC51C87845C00B59779 /* CellViews */ = {
+			isa = PBXGroup;
+			children = (
+				751510CB1C225D71007772FE /* MainViewCell.h */,
+				751510CC1C225D71007772FE /* MainViewCell.m */,
+				751510CD1C225D71007772FE /* MainViewCell.xib */,
+				7508AA701C326D2900EB88D1 /* ScheduleMainViewCell.h */,
+				7508AA711C326D2900EB88D1 /* ScheduleMainViewCell.m */,
+				7508AA721C326D2900EB88D1 /* ScheduleMainViewCell.xib */,
+			);
+			name = CellViews;
 			sourceTree = "<group>";
 		};
 		B86E301AB5C7D2EDFCD3B268 /* Frameworks */ = {
@@ -1610,6 +1626,7 @@
 				75667ACE1C1F864C001B30B2 /* main_item_3_c@2x.png in Resources */,
 				75667A711C1F864C001B30B2 /* btn_big_bkgnd_2_pressed@1x.png in Resources */,
 				75667B061C1F864C001B30B2 /* svc_1_big@1x.png in Resources */,
+				75B2BACF1C878C9900B59779 /* IREditModeViewController.xib in Resources */,
 				75667B081C1F864C001B30B2 /* svc_1_big_off@1x.png in Resources */,
 				757411B71C23AEE600CDCC2D /* see_Kettle_2_transparent_bkgnd_small.png in Resources */,
 				75667A911C1F864C001B30B2 /* btn_warn_close@1x.png in Resources */,
@@ -1783,6 +1800,7 @@
 				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,
 				75229A451C816BB7002FCAEB /* Icon.m in Sources */,
 				75DC2D071C82EFC100F108EE /* DeviceIconViewController.m in Sources */,
+				75B2BACE1C878C9900B59779 /* IREditModeViewController.m in Sources */,
 				7508AA491C3229A800EB88D1 /* SPAlertView.m in Sources */,
 				75DC2D031C8148FF00F108EE /* SQLHelper.m in Sources */,
 				7512C1791C1BB3B700489091 /* CreateAccountViewController.m in Sources */,

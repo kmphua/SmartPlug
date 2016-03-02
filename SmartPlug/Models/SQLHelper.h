@@ -23,8 +23,8 @@
 - (NSArray *)getIcons;
 - (BOOL)insertIRGroup:(NSString *)desc icon:(NSString *)icon position:(int)position;
 - (NSArray *)getIRGroups;
-- (BOOL)deleteIRGroup:(int)id;
 - (BOOL)deleteIRCodes:(int)groupid;
+- (BOOL)deleteIRGroupById:(int)groupId;
 - (BOOL)deleteIRCode:(int)id;
 - (NSArray *)getIRGroups:(int)id;
 - (BOOL)insertIRCodes:(int)gid name:(NSString *)name filename:(int)filename

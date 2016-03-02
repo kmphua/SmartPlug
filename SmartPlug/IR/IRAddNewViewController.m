@@ -16,7 +16,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
 @property (weak, nonatomic) IBOutlet UIView *viewChoose;
 @property (weak, nonatomic) IBOutlet UIView *viewDetect;
-@property (weak, nonatomic) IBOutlet UIView *viewCreate;
+@property (weak, nonatomic) IBOutlet UIView *viewRecord;
+@property (weak, nonatomic) IBOutlet UILabel *lblChoose;
+@property (weak, nonatomic) IBOutlet UILabel *lblDetect;
+@property (weak, nonatomic) IBOutlet UILabel *lblRecord;
+
 
 @end
 
@@ -33,7 +37,11 @@
     
     self.viewChoose.layer.cornerRadius = CORNER_RADIUS;
     self.viewDetect.layer.cornerRadius = CORNER_RADIUS;
-    self.viewCreate.layer.cornerRadius = CORNER_RADIUS;
+    self.viewRecord.layer.cornerRadius = CORNER_RADIUS;
+    
+    self.lblChoose.text = NSLocalizedString(@"btn_chooseBrand", nil);
+    self.lblDetect.text = NSLocalizedString(@"btn_detectBrand", nil);
+    self.lblRecord.text = NSLocalizedString(@"btn_recordCustom", nil);
     
     UITapGestureRecognizer *tapViewChoose = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewChoose:)];
     [self.viewChoose addGestureRecognizer:tapViewChoose];
@@ -41,8 +49,8 @@
     UITapGestureRecognizer *tapViewDetect = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewDetect:)];
     [self.viewDetect addGestureRecognizer:tapViewDetect];
 
-    UITapGestureRecognizer *tapViewCreate = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewCreate:)];
-    [self.viewCreate addGestureRecognizer:tapViewCreate];
+    UITapGestureRecognizer *tapViewRecord = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewRecord:)];
+    [self.viewRecord addGestureRecognizer:tapViewRecord];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -59,7 +67,7 @@
     [self.navigationController pushViewController:irDetectVC animated:YES];
 }
 
-- (void)onTapViewCreate:(UITapGestureRecognizer *)tapGestureRecognizer {
+- (void)onTapViewRecord:(UITapGestureRecognizer *)tapGestureRecognizer {
     IREditItemViewController *irEditVC = [[IREditItemViewController alloc] initWithNibName:@"IREditItemViewController" bundle:nil];
     [self.navigationController pushViewController:irEditVC animated:YES];
 }

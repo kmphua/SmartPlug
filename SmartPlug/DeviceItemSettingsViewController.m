@@ -112,7 +112,7 @@
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
             if (self.device.icon && self.device.icon.length>0) {
-                UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, 40, 40)];
+                UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
                 
                 int iconId = [self.device.icon intValue];
                 if (g_DeviceIcons) {
@@ -120,7 +120,7 @@
                     NSString *imagePath = [icon objectForKey:@"url"];
                     [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
                 }
-                cell.accessoryView = imageView;
+                [cell addSubview:imageView];
             }
         }
             break;

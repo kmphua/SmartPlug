@@ -207,6 +207,7 @@ static SQLHelper *instance;
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
         IrGroup *irGroup = [IrGroup new];
+        irGroup.group_id = [results intForColumn:COLUMN_ID];
         irGroup.name = [results stringForColumn:COLUMN_NAME];
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
@@ -216,12 +217,12 @@ static SQLHelper *instance;
     return irGroups;
 }
 
-- (BOOL)deleteIRGroup:(int)id
+- (BOOL)deleteIRGroupById:(int)groupId
 {
     [db open];
-    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE _id = ?", id];
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE _id = ?", groupId];
     if (toReturn){
-        if ([self deleteIRCodes:id]){
+        if ([self deleteIRCodes:groupId]){
             toReturn = true;
         } else {
             toReturn = false;

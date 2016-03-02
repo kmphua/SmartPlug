@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1509" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IRCustomViewController">
             <connections>
+                <outlet property="tableView" destination="Jcw-Qe-Cd9" id="yDU-7U-1iv"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -13,7 +15,47 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" style="grouped" separatorStyle="default" rowHeight="45" sectionHeaderHeight="75" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="Jcw-Qe-Cd9">
+                    <rect key="frame" x="20" y="50" width="560" height="500"/>
+                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="128" id="JsD-2s-Imk"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="rD8-l4-bcx"/>
+                        <constraint firstAttribute="height" constant="165" id="w64-2j-lfK"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="w64-2j-lfK"/>
+                            <exclude reference="rD8-l4-bcx"/>
+                            <exclude reference="JsD-2s-Imk"/>
+                        </mask>
+                    </variation>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="8Ac-Ym-HGt"/>
+                        <outlet property="delegate" destination="-1" id="bgv-pU-tew"/>
+                    </connections>
+                </tableView>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstItem="Jcw-Qe-Cd9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="5lt-Xy-idq"/>
+                <constraint firstItem="Jcw-Qe-Cd9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="MjP-VV-g4K"/>
+                <constraint firstAttribute="bottom" secondItem="Jcw-Qe-Cd9" secondAttribute="bottom" constant="50" id="OPq-TX-PeL"/>
+                <constraint firstAttribute="trailing" secondItem="Jcw-Qe-Cd9" secondAttribute="trailing" constant="20" id="RNK-uS-fAL"/>
+                <constraint firstItem="Jcw-Qe-Cd9" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="77" id="Taz-GG-vuU"/>
+                <constraint firstItem="Jcw-Qe-Cd9" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="-59" id="Urt-QG-3vc"/>
+                <constraint firstAttribute="trailing" secondItem="Jcw-Qe-Cd9" secondAttribute="trailing" constant="99" id="gXJ-Aj-ee6"/>
+                <constraint firstAttribute="bottom" secondItem="Jcw-Qe-Cd9" secondAttribute="bottom" constant="23" id="og9-Pe-lTw"/>
+            </constraints>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="Taz-GG-vuU"/>
+                    <exclude reference="Urt-QG-3vc"/>
+                    <exclude reference="gXJ-Aj-ee6"/>
+                    <exclude reference="og9-Pe-lTw"/>
+                </mask>
+            </variation>
         </view>
     </objects>
 </document>

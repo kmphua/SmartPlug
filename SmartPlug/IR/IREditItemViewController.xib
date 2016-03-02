@@ -17,8 +17,8 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" style="grouped" separatorStyle="default" rowHeight="45" sectionHeaderHeight="75" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="Dc9-QQ-fLx">
-                    <rect key="frame" x="20" y="80" width="560" height="470"/>
-                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <rect key="frame" x="20" y="50" width="560" height="500"/>
+                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="165" id="1hb-lC-ta0"/>
                         <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="XSB-eu-LB9"/>
@@ -40,7 +40,7 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstAttribute="bottom" secondItem="Dc9-QQ-fLx" secondAttribute="bottom" constant="50" id="6ni-ji-O7N"/>
-                <constraint firstItem="Dc9-QQ-fLx" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="8ua-9O-BqA"/>
+                <constraint firstItem="Dc9-QQ-fLx" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="8ua-9O-BqA"/>
                 <constraint firstItem="Dc9-QQ-fLx" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="heD-i0-KsI"/>
                 <constraint firstAttribute="trailing" secondItem="Dc9-QQ-fLx" secondAttribute="trailing" constant="20" id="l6o-53-gof"/>
             </constraints>
