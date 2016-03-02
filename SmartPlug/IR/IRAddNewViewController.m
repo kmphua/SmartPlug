@@ -36,13 +36,13 @@
     self.viewCreate.layer.cornerRadius = CORNER_RADIUS;
     
     UITapGestureRecognizer *tapViewChoose = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewChoose:)];
-    [self.view addGestureRecognizer:tapViewChoose];
+    [self.viewChoose addGestureRecognizer:tapViewChoose];
 
     UITapGestureRecognizer *tapViewDetect = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewDetect:)];
-    [self.view addGestureRecognizer:tapViewDetect];
+    [self.viewDetect addGestureRecognizer:tapViewDetect];
 
     UITapGestureRecognizer *tapViewCreate = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewCreate:)];
-    [self.view addGestureRecognizer:tapViewCreate];
+    [self.viewCreate addGestureRecognizer:tapViewCreate];
 }
 
 - (void)didReceiveMemoryWarning {

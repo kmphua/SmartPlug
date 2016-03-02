@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="6211" systemVersion="14A298i" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9531" systemVersion="14F1509" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="6204"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9529"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IREditItemViewController">
             <connections>
+                <outlet property="tableView" destination="Dc9-QQ-fLx" id="FkS-Fg-QWN"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -13,7 +15,35 @@
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" style="grouped" separatorStyle="default" rowHeight="45" sectionHeaderHeight="75" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="Dc9-QQ-fLx">
+                    <rect key="frame" x="20" y="80" width="560" height="470"/>
+                    <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="165" id="1hb-lC-ta0"/>
+                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="XSB-eu-LB9"/>
+                        <constraint firstAttribute="height" constant="128" id="oTr-sA-OlJ"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="1hb-lC-ta0"/>
+                            <exclude reference="XSB-eu-LB9"/>
+                            <exclude reference="oTr-sA-OlJ"/>
+                        </mask>
+                    </variation>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="U7a-Pl-nXN"/>
+                        <outlet property="delegate" destination="-1" id="rrC-oO-Gl7"/>
+                    </connections>
+                </tableView>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="bottom" secondItem="Dc9-QQ-fLx" secondAttribute="bottom" constant="50" id="6ni-ji-O7N"/>
+                <constraint firstItem="Dc9-QQ-fLx" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="8ua-9O-BqA"/>
+                <constraint firstItem="Dc9-QQ-fLx" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="heD-i0-KsI"/>
+                <constraint firstAttribute="trailing" secondItem="Dc9-QQ-fLx" secondAttribute="trailing" constant="20" id="l6o-53-gof"/>
+            </constraints>
         </view>
     </objects>
 </document>
