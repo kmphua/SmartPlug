@@ -309,6 +309,8 @@ static UDPCommunication *instance;
 
 - (void)sendTimers:(NSString *)ip
 {
+    //[SQLHelper getInstance] getAlarmData:<#(int)#>
+    
     /*
     sql = new MySQLHelper(a);
     Cursor c = sql.getAlarmData(ip);
@@ -359,7 +361,7 @@ static UDPCommunication *instance;
 - (BOOL)setDeviceStatus:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action
 {
     _command = 0x0008;     //to generate the header
-    //[self generate_header];
+    [self generate_header];
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -437,11 +439,11 @@ static UDPCommunication *instance;
     NSLog(@"MODEL: %@", model);
     /**********************************************/
     int buildno = [self process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
-    _js.buildno = [NSNumber numberWithInt:buildno];
+    _js.buildno = buildno;
     NSLog(@"BUILD NO: %d", buildno);
     /**********************************************/
     int prot_ver = [self process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
-    _js.prot_ver = [NSNumber numberWithInt:prot_ver];
+    _js.prot_ver = prot_ver;
     NSLog(@"PROTOCOL VER: %d", prot_ver);
     /**********************************************/
     NSMutableString *hw_ver = [NSMutableString new];
@@ -459,11 +461,11 @@ static UDPCommunication *instance;
     NSLog(@"FIRMWARE VERSION: %@", fw_ver);
     /**********************************************/
     int fw_date = [self process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
-    _js.fw_date = [NSNumber numberWithInt:fw_date];
+    _js.fw_date = fw_date;
     NSLog(@"FIRMWARE DATE: %d", fw_date);
     /**********************************************/
     int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
-    _js.flag = [NSNumber numberWithInt:flag];
+    _js.flag = flag;
     NSLog(@"FLAG: %d", flag);
 }
 
@@ -487,18 +489,18 @@ static UDPCommunication *instance;
         NSLog(@"IS OUTLET SERVICE");
         int flag = [self process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
         if(flag == 0x00000010){
-            _js.hall_sensor = [NSNumber numberWithInt:1];
+            _js.hall_sensor = 1;
             NSLog(@"Relay warning");
         } else {
-            _js.hall_sensor = [NSNumber numberWithInt:0];
+            _js.hall_sensor = 0;
         }
         uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if(data == 0x01){
-            _js.relay = [NSNumber numberWithInt:1];
+            _js.relay = 1;
             NSLog(@"Relay is on");
         } else {
-            _js.relay = [NSNumber numberWithInt:0];
+            _js.relay = 0;
             NSLog(@"Relay is off");
         }
         
@@ -514,10 +516,10 @@ static UDPCommunication *instance;
         uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if(data == 0x01){
-            _js.nightlight = [NSNumber numberWithInt:1];
+            _js.nightlight = 1;
             NSLog(@"Nighlight is on");
         } else {
-            _js.nightlight = [NSNumber numberWithInt:0];
+            _js.nightlight = 0;
             NSLog(@"Nighlight is off");
         }
     }
@@ -529,11 +531,11 @@ static UDPCommunication *instance;
     if (service_id == 0xD1000002) {
         int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
         if(flag == 0x00000010){
-            _js.co_sensor = [NSNumber numberWithInt:1];                      //WARNING
+            _js.co_sensor = 1;                      //WARNING
         } else if (flag == 0x00000100){
-            _js.co_sensor = [NSNumber numberWithInt:3];                      //NOT PLUGGED
+            _js.co_sensor = 3;                      //NOT PLUGGED
         } else {
-            _js.co_sensor = [NSNumber numberWithInt:0];                      //NORMAL
+            _js.co_sensor = 0;                      //NORMAL
         }
         uint8_t datatype = lMsg[46];
         uint8_t data = lMsg[47];

@@ -50,14 +50,16 @@
 - (void)showWaitingView:(UIView*)parentView;
 - (void)dismissWaitingView;
 
+// User methods
 - (void)longPoll:(NSString *)deviceId;
-
 - (void)newUser:(NSString *)username password:(NSString *)password email:(NSString *)email lang:(NSString *)lang;
 - (void)verifyAcct:(NSString *)username verificationKey:(NSString *)verificationKey lang:(NSString *)lang;
 - (void)login:(NSString *)username password:(NSString *)password lang:(NSString *)lang;
 - (void)changePassword:(NSString *)username oldPassword:(NSString *)oldPassword newPassword:(NSString *)newPassword lang:(NSString *)lang;
 - (void)regPush:(NSString *)userToken lang:(NSString *)lang devToken:(NSString *)devToken;
-- (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
+
+// Device methods
+- (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId title:(NSString *)title model:(NSString *)model;
 
 - (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId isReply:(BOOL)isReply;
 - (void)devList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
@@ -68,7 +70,7 @@
 
 - (void)newDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId iconRes:(IconResolution)iconRes title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger oriTitle:(NSString *)oriTitle ip:(NSString *)ip server:(NSString *)server snooze:(NSString *)snooze relay:(NSString *)relay;
 
-// IR
+// IR methods
 - (void)irList:(NSString *)userToken lang:(NSString *)lang;
 - (void)modelList:(NSString *)userToken lang:(NSString *)lang brand:(int)brand;
 - (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model res:(int)res;

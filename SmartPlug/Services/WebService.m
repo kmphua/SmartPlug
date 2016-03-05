@@ -90,6 +90,10 @@
 
 #pragma mark - WebService functions
 
+/*=========================================================================
+ * User methods
+ *========================================================================*/
+
 - (void)longPoll:(NSString *)deviceId
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_LONG_POLL];
@@ -138,10 +142,14 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
+/*=========================================================================
+ * Device methods
+ *========================================================================*/
+
+- (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId title:(NSString *)title model:(NSString *)model
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ACT_DEV];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&title=%@&model=%@", userToken, lang, devId, title, model];
     self.resultName = WS_ACT_DEV;
     [self postData:apiUrl params:params];
 }
@@ -201,6 +209,10 @@
     self.resultName = WS_NEW_DEV;
     [self postData:apiUrl params:params];
 }
+
+/*=========================================================================
+ * IR methods
+ *========================================================================*/
 
 - (void)irList:(NSString *)userToken lang:(NSString *)lang
 {
