@@ -748,7 +748,7 @@ static SQLHelper *instance;
     return result;
 }
 
-- (NSArray *)getAlarmData:(int)alarmId
+- (NSArray *)getAlarmDataById:(int)alarmId
 {
     [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM alarms WHERE _id = ?", [NSNumber numberWithInt:alarmId]];

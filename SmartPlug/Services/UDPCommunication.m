@@ -9,27 +9,32 @@
 #import "UDPCommunication.h"
 #import "GCDAsyncUdpSocket.h"
 #include <arpa/inet.h>
+#import "SQLHelper.h"
 
 #define MAX_UDP_DATAGRAM_LEN        128
 #define UDP_SERVER_PORT             20004
 #define UDP_TESTING_PORT            20005
 
-@interface UDPCommunication()<GCDAsyncUdpSocketDelegate>
+#define PROTOCOL_HTTP               0
+#define PROTOCOL_UDP                1
+
+@interface UDPCommunication()<GCDAsyncUdpSocketDelegate, WebServiceDelegate>
 {
     uint8_t lMsg[MAX_UDP_DATAGRAM_LEN];
     uint8_t hMsg[14];
     uint8_t irHeader[15];
     uint8_t timerHeader[20];
-    uint8_t timer[12];
+    uint8_t timer[26];
     uint8_t rMsg[14];
     uint8_t sMsg[24];
     uint8_t iMsg[22];
+    uint8_t kMsg[46];
     uint8_t ir[128];
+    uint8_t delatT[18];
     uint8_t ir2[1];
     int previous_msgid;
     BOOL process_data;
     short code;
-    //MySQLHelper sql;
     int IRFlag;
     int IRSendFlag;
     int irCode;
@@ -262,100 +267,191 @@ static UDPCommunication *instance;
     NSLog(@"IR HEADERS SENT");
 }
 
-- (BOOL)setDeviceTimers:(NSString *)ip
+- (BOOL)setDeviceTimers:(NSString *)devId
 {
-    [self sendTimerHeaders:ip];
-    [self sendTimers:ip];
-    
-    if (!udpSocket) {
-        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    BOOL result = true;
+    NSString *ip = g_DeviceIp;
+    BOOL header = [self sendTimerHeaders:ip protocol:PROTOCOL_HTTP];
+    BOOL timer = [self sendTimers:devId protocol:PROTOCOL_HTTP];
+    BOOL termi = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
+    if(!header || !timer || !termi) {
+        [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
+        [self sendTimers:devId protocol:PROTOCOL_UDP];
+        [self sendTimerTerminator:ip protocol:PROTOCOL_UDP];
     }
-
-    //FINALLY SEND TERMINATOR
-    int terminator = 0x00000000;
-    uint8_t end[14];
-    end[0] = (uint8_t)(terminator & 0xff);
-    end[1] = (uint8_t)((terminator >> 8) & 0xff);
-    end[2] = (uint8_t)((terminator >> 16) & 0xff);
-    end[3] = (uint8_t)((terminator >> 24) & 0xff);
-    
-    NSData *data = [NSData dataWithBytes:end length:sizeof(end)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
-    NSLog(@"TIMERS TERMINATOR SENT");
-    return YES;
+    return result;
 }
 
-- (void)sendTimerHeaders:(NSString *)ip
+- (BOOL)sendTimerTerminator:(NSString *)ip protocol:(int)protocol
 {
-    _command = 0x0009;
-    [self generate_header];
+    BOOL toReturn = false;
+    self.command = 0x0009;
+    
+    if (protocol == PROTOCOL_HTTP) {
+        [self generate_header_http];
+    } else {
+        [self generate_header];
+    }
+    for (int i = 0; i < sizeof(hMsg); i++) {
+        timerHeader[i] = hMsg[i];
+    }
+         
+    int end = 0x00000000;
+    if (protocol == PROTOCOL_HTTP) {
+        timerHeader[14] = (uint8_t) (end & 0xff);
+        timerHeader[15] = (uint8_t) ((end >> 8) & 0xff);
+        timerHeader[16] = (uint8_t) ((end >> 16) & 0xff);
+        timerHeader[17] = (uint8_t) ((end >> 24) & 0xff);
+    }
+    if (protocol == PROTOCOL_UDP) {
+        timerHeader[14] = (uint8_t) (end & 0xff);
+        timerHeader[15] = (uint8_t) ((end >> 8) & 0xff);
+        timerHeader[16] = (uint8_t) ((end >> 16) & 0xff);
+        timerHeader[17] = (uint8_t) ((end >> 24) & 0xff);
+    }
+    if(protocol == PROTOCOL_HTTP) {
+        try {
+            toReturn = http.setDeviceTimers(timerHeader);
+        } catch (Exception e) {
+            toReturn = false;
+        }
+    } else if(protocol == 1){
+        sendUDP(timerHeader, ip);
+    }
+    return toReturn;
+}
+ 
+- (BOOL)sendTimerHeaders:(NSString *)ip protocol:(int)protocol
+{
+    BOOL toReturn = false;
+    self.command = 0x0009;
+    
+    if (protocol == PROTOCOL_HTTP) {
+        [self generate_header_http];
+    } else {
+        [self generate_header];
+    }
+
     for(int i = 0; i < sizeof(hMsg); i++){
         timerHeader[i] = hMsg[i];
     }
-    int time = (int)[[NSDate date] timeIntervalSince1970];
-    timerHeader[14] = (uint8_t)(time & 0xff);
-    timerHeader[15] = (uint8_t)((time >> 8) & 0xff);
-    timerHeader[16] = (uint8_t)((time >> 16) & 0xff);
-    timerHeader[17] = (uint8_t)((time >> 24) & 0xff);
     
-    if (!udpSocket) {
-        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    int time = (int)[[NSDate date] timeIntervalSince1970];
+    if (protocol == PROTOCOL_HTTP) {
+        timerHeader[17] = (uint8_t) (time & 0xff);
+        timerHeader[16] = (uint8_t) ((time >> 8) & 0xff);
+        timerHeader[15] = (uint8_t) ((time >> 16) & 0xff);
+        timerHeader[14] = (uint8_t) ((time >> 24) & 0xff);
+    }
+    if (protocol == PROTOCOL_UDP) {
+        timerHeader[14] = (uint8_t) (time & 0xff);
+        timerHeader[15] = (uint8_t) ((time >> 8) & 0xff);
+        timerHeader[16] = (uint8_t) ((time >> 16) & 0xff);
+        timerHeader[17] = (uint8_t) ((time >> 24) & 0xff);
     }
     
-    NSData *data = [NSData dataWithBytes:timerHeader length:sizeof(timerHeader)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
-    NSLog(@"TIMERS HEADERS SENT");
+    if (protocol == PROTOCOL_HTTP) {
+        try {
+            toReturn = http.setDeviceTimers(timerHeader);
+        } catch (Exception e) {
+            toReturn = false;
+        }
+    } else if (protocol == PROTOCOL_UDP) {
+        sendUDP(timerHeader, ip);
+    }
+    return toReturn;
 }
 
-- (void)sendTimers:(NSString *)ip
+- (void)sendUDP:(NSData *)data ip:(NSString *)ip
 {
-    //[SQLHelper getInstance] getAlarmData:<#(int)#>
+    DatagramSocket ds = null;
+    try {
+    ds = new DatagramSocket();
+    InetAddress serverAddr = InetAddress.getByName(ip);
+    DatagramPacket dp;
+    dp = new DatagramPacket(array, array.length, serverAddr, UDP_SERVER_PORT);
+    ds.send(dp);
+    System.out.println("UDP PACKET SENT");
+    } catch (Exception e){
+    e.printStackTrace();
+    }
+    ds.close();
+}
+
+- (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol
+{
+    BOOL toReturn = false;
+    self.command = 0x0009;
     
-    /*
-    sql = new MySQLHelper(a);
-    Cursor c = sql.getAlarmData(ip);
-    if(c.getCount() > 0){
-        c.moveToFirst();
-        for(int j = 0; j < c.getCount(); j++){
-            int serviceId = c.getInt(2);
-            timer[0] = (uint8_t)(serviceId & 0xff);
-            timer[1] = (uint8_t)((serviceId >> 8) & 0xff);
-            timer[2] = (uint8_t)((serviceId >> 16) & 0xff);
-            timer[3] = (uint8_t)((serviceId >> 24) & 0xff);
-            timer[4] = 0x01;
-            timer[5] = 0x01;
-            timer[6] = 0x00;
-            int dow = c.getInt(3);
-            timer[7] = (uint8_t)(dow & 0xff);
-            int initHour = c.getInt(4);
-            timer[8] = (uint8_t)(initHour & 0xff);
-            int initMin = c.getInt(5);
-            timer[9] = (uint8_t)(initMin & 0xff);
-            int endHour = c.getInt(6);
-            timer[10] = (uint8_t)(endHour & 0xff);
-            int endMinu = c.getInt(7);
-            timer[11] = (uint8_t)(endMinu & 0xff);
-            
-            DatagramSocket ds = null;
-            try {
-                ds = new DatagramSocket();
-                InetAddress serverAddr = InetAddress.getByName(ip);
-                DatagramPacket dp;
-                dp = new DatagramPacket(timer, timer.length, serverAddr, UDP_SERVER_PORT);
-                ds.send(dp);
-                NSLog(@"TIMER "+j+" SENT");
-                ds.close();
-            } catch (Exception e){
-                e.printStackTrace();
+    if (protocol == PROTOCOL_HTTP) {
+        [self generate_header_http];
+    } else {
+        [self generate_header];
+    }
+
+    for(int i = 0; i < sizeof(hMsg); i++){
+        timer[i] = hMsg[i];
+    }
+    
+    NSString *ip = g_DeviceIp;
+    
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
+    if (alarms && alarms.count>0) {
+        for (Alarm *alarm in alarms) {
+            int serviceId = alarm.service_id;
+            if(protocol == PROTOCOL_HTTP){
+                timer[14] = (uint8_t) (serviceId & 0xff);
+                timer[15] = (uint8_t) ((serviceId >> 8) & 0xff);
+                timer[16] = (uint8_t) ((serviceId >> 16) & 0xff);
+                timer[17] = (uint8_t) ((serviceId >> 24) & 0xff);
+                timer[18] = 0x01;
+                timer[19] = 0x01;
+                timer[20] = 0x00;
+                int dow = alarm.dow;
+                timer[21] = (uint8_t) (dow & 0xff);
+                int initHour = alarm.initial_hour;
+                timer[22] = (uint8_t) (initHour & 0xff);
+                int initMin = alarm.initial_minute;
+                timer[23] = (uint8_t) (initMin & 0xff);
+                int endHour = alarm.end_hour;
+                timer[24] = (uint8_t) (endHour & 0xff);
+                int endMinu = alarm.end_minute;
+                timer[25] = (uint8_t) (endMinu & 0xff);
             }
             
-            if(!c.isLast()) {
-                c.moveToNext();
+            if(protocol == PROTOCOL_UDP) {
+                timer[14] = (uint8_t) (serviceId & 0xff);
+                timer[15] = (uint8_t) ((serviceId >> 8) & 0xff);
+                timer[16] = (uint8_t) ((serviceId >> 16) & 0xff);
+                timer[17] = (uint8_t) ((serviceId >> 24) & 0xff);
+                timer[18] = 0x01;
+                timer[19] = 0x01;
+                timer[20] = 0x00;
+                int dow = alarm.dow;
+                timer[21] = (uint8_t) (dow & 0xff);
+                int initHour = alarm.initial_hour;
+                timer[22] = (uint8_t) (initHour & 0xff);
+                int initMin = alarm.initial_minute;
+                timer[23] = (uint8_t) (initMin & 0xff);
+                int endHour = alarm.end_hour;
+                timer[24] = (uint8_t) (endHour & 0xff);
+                int endMinu = alarm.end_minute;
+                timer[25] = (uint8_t) (endMinu & 0xff);
+            }
+            
+            if(protocol == PROTOCOL_HTTP) {
+                try {
+                    toReturn = http.setDeviceTimers(timer);
+                } catch (Exception e) {
+                    toReturn = false;
+                }
+            } else if(protocol == PROTOCOL_UDP) {
+                sendUDP(timer, ip);
             }
         }
-        c.close();
     }
-     */
+
+    return toReturn;
 }
 
 - (BOOL)setDeviceStatus:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action
@@ -585,6 +681,28 @@ static UDPCommunication *instance;
     hMsg[11] = (uint8_t) (seq >> 24);
     hMsg[12] = (uint8_t) _command;
     hMsg[13] = (uint8_t) (_command >> 8);
+}
+         
+- (void)generate_header_http
+{
+    int header = 0x534D5254;
+    hMsg[3] = (uint8_t)(header);
+    hMsg[2] = (uint8_t)((header >> 8 ));
+    hMsg[1] = (uint8_t)((header >> 16 ));
+    hMsg[0] = (uint8_t)((header >> 24 ));
+    int msid = (int)(random()*4294967+1);
+    hMsg[7] = (uint8_t)(msid);
+    hMsg[6] = (uint8_t)((msid >> 8 ));
+    hMsg[5] = (uint8_t)((msid >> 16 ));
+    hMsg[4] = (uint8_t)((msid >> 24 ));
+    int seq = 0x80000000;
+    hMsg[11] = (uint8_t)(seq);
+    hMsg[10] = (uint8_t)((seq >> 8 ));
+    hMsg[9] = (uint8_t)((seq >> 16 ));
+    hMsg[8] = (uint8_t)((seq >> 24 ));
+    short command = self.command;
+    hMsg[13] = (uint8_t)(command);
+    hMsg[12] = (uint8_t)((command >> 8 ));
 }
 
 @end

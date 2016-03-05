@@ -62,7 +62,7 @@
 - (BOOL)deleteAlarmData:(int)id;
 - (BOOL)insertAlarm:(Alarm *)a;
 - (BOOL)updateAlarm:(Alarm *)a;
-- (NSArray *)getAlarmData:(int)alarmId;
+- (NSArray *)getAlarmDataById:(int)alarmId;
 - (NSArray *)getAlarmDataByDevice:(NSString *)deviceId;
 - (NSArray *)getAlarmDataByDeviceAndService:(NSString *)deviceId serviceId:(int)serviceId;
 

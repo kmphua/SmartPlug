@@ -62,7 +62,7 @@
     
     // Init action
     if (_alarmId > 0) {
-        NSArray *alarms = [[SQLHelper getInstance] getAlarmData:_alarmId];
+        NSArray *alarms = [[SQLHelper getInstance] getAlarmDataById:_alarmId];
         if (alarms && alarms.count > 0) {
             Alarm *a = [alarms firstObject];
             dow = a.dow;
