@@ -45,6 +45,22 @@
     }
 }
 
+- (void)postDataWithBody:(NSString *)serverUrl params:(NSString *)params body:(NSData *)body
+{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@?%@", serverUrl, params];
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrl]];
+    [request setHTTPMethod:@"POST"];
+    [request setTimeoutInterval:20.0];
+    [request setHTTPBody:body];
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    if (connection) {
+        self.webData = [NSMutableData data];
+    } else {
+        NSLog(@"Connection is NULL");
+    }
+}
+
 - (void)connection:(NSURLConnection *)connection didReceiveResponse:(NSURLResponse *)response
 {
     [self.webData setLength: 0];
@@ -154,12 +170,12 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId isReply:(BOOL)isReply
+- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&isReply=%d", userToken, lang, devId, isReply];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
     self.resultName = WS_DEV_CTRL;
-    [self postData:apiUrl params:params];
+    [self postDataWithBody:apiUrl params:params body:data];
 }
 
 - (void)devList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes

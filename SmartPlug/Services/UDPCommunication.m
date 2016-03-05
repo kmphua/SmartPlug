@@ -109,6 +109,16 @@ static UDPCommunication *instance;
     [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
 }
 
+- (void)sendUDP:(NSData *)data ip:(NSString *)ip
+{
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
+    NSLog(@"UDP PACKET SENT");
+}
+
 //==================================================================
 #pragma mark - GCDAsyncUdpSocketDelegate
 //==================================================================
@@ -271,10 +281,10 @@ static UDPCommunication *instance;
 {
     BOOL result = true;
     NSString *ip = g_DeviceIp;
-    BOOL header = [self sendTimerHeaders:ip protocol:PROTOCOL_HTTP];
-    BOOL timer = [self sendTimers:devId protocol:PROTOCOL_HTTP];
-    BOOL termi = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
-    if(!header || !timer || !termi) {
+    BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_HTTP];
+    BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_HTTP];
+    BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
+    if (!headerOK || !timerOK || !termiOK) {
         [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
         [self sendTimers:devId protocol:PROTOCOL_UDP];
         [self sendTimerTerminator:ip protocol:PROTOCOL_UDP];
@@ -309,14 +319,14 @@ static UDPCommunication *instance;
         timerHeader[16] = (uint8_t) ((end >> 16) & 0xff);
         timerHeader[17] = (uint8_t) ((end >> 24) & 0xff);
     }
+
+    NSData *data = [NSData dataWithBytes:timerHeader length:sizeof(timerHeader)];
     if(protocol == PROTOCOL_HTTP) {
-        try {
-            toReturn = http.setDeviceTimers(timerHeader);
-        } catch (Exception e) {
-            toReturn = false;
-        }
-    } else if(protocol == 1){
-        sendUDP(timerHeader, ip);
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
+    } else if(protocol == PROTOCOL_UDP) {
+        [self sendUDP:data ip:ip];
     }
     return toReturn;
 }
@@ -350,32 +360,15 @@ static UDPCommunication *instance;
         timerHeader[17] = (uint8_t) ((time >> 24) & 0xff);
     }
     
-    if (protocol == PROTOCOL_HTTP) {
-        try {
-            toReturn = http.setDeviceTimers(timerHeader);
-        } catch (Exception e) {
-            toReturn = false;
-        }
-    } else if (protocol == PROTOCOL_UDP) {
-        sendUDP(timerHeader, ip);
+    NSData *data = [NSData dataWithBytes:timerHeader length:sizeof(timerHeader)];
+    if(protocol == PROTOCOL_HTTP) {
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
+    } else if(protocol == PROTOCOL_UDP) {
+        [self sendUDP:data ip:ip];
     }
     return toReturn;
-}
-
-- (void)sendUDP:(NSData *)data ip:(NSString *)ip
-{
-    DatagramSocket ds = null;
-    try {
-    ds = new DatagramSocket();
-    InetAddress serverAddr = InetAddress.getByName(ip);
-    DatagramPacket dp;
-    dp = new DatagramPacket(array, array.length, serverAddr, UDP_SERVER_PORT);
-    ds.send(dp);
-    System.out.println("UDP PACKET SENT");
-    } catch (Exception e){
-    e.printStackTrace();
-    }
-    ds.close();
 }
 
 - (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol
@@ -439,14 +432,13 @@ static UDPCommunication *instance;
                 timer[25] = (uint8_t) (endMinu & 0xff);
             }
             
+            NSData *data = [NSData dataWithBytes:timer length:sizeof(timer)];
             if(protocol == PROTOCOL_HTTP) {
-                try {
-                    toReturn = http.setDeviceTimers(timer);
-                } catch (Exception e) {
-                    toReturn = false;
-                }
+                WebService *ws = [WebService new];
+                ws.delegate = self;
+                [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
             } else if(protocol == PROTOCOL_UDP) {
-                sendUDP(timer, ip);
+                [self sendUDP:data ip:ip];
             }
         }
     }
@@ -592,7 +584,7 @@ static UDPCommunication *instance;
         }
         uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
-        if(data == 0x01){
+        if (data == 0x01){
             _js.relay = 1;
             NSLog(@"Relay is on");
         } else {
@@ -611,7 +603,7 @@ static UDPCommunication *instance;
         int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
         uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
-        if(data == 0x01){
+        if (data == 0x01){
             _js.nightlight = 1;
             NSLog(@"Nighlight is on");
         } else {
@@ -703,6 +695,41 @@ static UDPCommunication *instance;
     short command = self.command;
     hMsg[13] = (uint8_t)(command);
     hMsg[12] = (uint8_t)((command >> 8 ));
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName compare:WS_DEV_CTRL] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"Devctrl success!");
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Devctrl failed: %@", message);
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
 }
 
 @end
