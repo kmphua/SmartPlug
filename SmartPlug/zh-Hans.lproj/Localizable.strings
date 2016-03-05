@@ -154,6 +154,5 @@
 "btn_testCommand" = "测试命令";
 
 // IR
-"ir_groups" = "IR Groups";
-"ir_control" = "IR Control";
-"ir_add_new" = "Add new";
+"ir_group" = "IR群組";
+"ir_add_new" = "新增";

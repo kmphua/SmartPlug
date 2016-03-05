@@ -26,9 +26,9 @@
                     </constraints>
                     <variation key="default">
                         <mask key="constraints">
-                            <exclude reference="w64-2j-lfK"/>
-                            <exclude reference="rD8-l4-bcx"/>
                             <exclude reference="JsD-2s-Imk"/>
+                            <exclude reference="rD8-l4-bcx"/>
+                            <exclude reference="w64-2j-lfK"/>
                         </mask>
                     </variation>
                     <connections>

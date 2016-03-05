@@ -10,14 +10,13 @@
 #import "DeviceItemSettingsViewController.h"
 #import "UDPListenerService.h"
 #import "NoTimersViewController.h"
-#import "GMGridView.h"
 #import "IRAddNewViewController.h"
+#import "IrGroupViewCell.h"
+#import "IREditModeViewController.h"
 
-@interface IRMainViewController ()<GMGridViewDataSource>
+@interface IRMainViewController ()<UITableViewDataSource, UITableViewDelegate>
 
-@property (weak, nonatomic) IBOutlet UIView *bgView;
-@property (weak, nonatomic) IBOutlet UILabel *lblTitle;
-@property (nonatomic, assign) IBOutlet GMGridView *gmGridView;
+@property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *irGroups;
 
 @end
@@ -28,20 +27,12 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view from its nib.
-    self.bgView.layer.cornerRadius = CORNER_RADIUS;
-    self.lblTitle.text = NSLocalizedString(@"ir_control", nil);
-    self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
-    self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
-    
-    NSInteger spacing = 10;
-    _gmGridView.style = GMGridViewStyleSwap;
-    _gmGridView.itemSpacing = spacing;
-    _gmGridView.minEdgeInsets = UIEdgeInsetsMake(spacing, spacing, spacing, spacing);
-    _gmGridView.centerGrid = YES;
-    _gmGridView.dataSource = self;
+    self.tableView.backgroundColor = [UIColor clearColor];
+    self.tableView.layer.cornerRadius = CORNER_RADIUS;
+    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     self.irGroups = [[SQLHelper getInstance] getIRGroups];
-    [_gmGridView reloadData];
+    [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -54,112 +45,127 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)onBtnAdd:(id)sender {
+- (void)onBtnAddNew:(id)sender {
     IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
     [self.navigationController pushViewController:irAddNewVC animated:YES];
 }
 
-//////////////////////////////////////////////////////////////
-#pragma mark GMGridViewDataSource
-//////////////////////////////////////////////////////////////
+//==================================================================
+#pragma mark - Table view delegate
+//==================================================================
 
-- (NSInteger)numberOfItemsInGMGridView:(GMGridView *)gridView
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-    return [_irGroups count]+1;
+    // Return the number of sections.
+    return 1;
 }
 
-- (CGSize)GMGridView:(GMGridView *)gridView sizeForItemsInInterfaceOrientation:(UIInterfaceOrientation)orientation
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (IS_IPHONE) {
-        if (UIInterfaceOrientationIsLandscape(orientation)) {
-            return CGSizeMake(170, 170);
-        } else {
-            return CGSizeMake(140, 140);
-        }
+    if (_irGroups) {
+        return _irGroups.count+1;
     } else {
-        if (UIInterfaceOrientationIsLandscape(orientation)) {
-            return CGSizeMake(285, 285);
-        } else {
-            return CGSizeMake(230, 230);
-        }
+        return 1;
     }
 }
 
-- (GMGridViewCell *)GMGridView:(GMGridView *)gridView cellForItemAtIndex:(NSInteger)index
+- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
 {
-    CGSize size = [self GMGridView:gridView sizeForItemsInInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
+    return 75;
+}
 
-    if (index == 0) {
-        GMGridViewCell *cell = [gridView dequeueReusableCell];
-        if (!cell) {
-            cell = [[GMGridViewCell alloc] init];
-            
-            UIButton *btnAdd = [[UIButton alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
-            btnAdd.backgroundColor = [UIColor clearColor];
-            btnAdd.layer.masksToBounds = NO;
-            [btnAdd setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
-            [btnAdd setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
-            [btnAdd addTarget:self action:@selector(onBtnAdd:) forControlEvents:UIControlEventTouchUpInside];
-            
-            cell.contentView = btnAdd;
+- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    return 72;
+}
+
+- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
+{
+    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
+    [view setBackgroundColor:[Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN]];
+    
+    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
+    [label setFont:[UIFont systemFontOfSize:32]];
+    [label setTextColor:[UIColor whiteColor]];
+    [label setText:NSLocalizedString(@"ir_group", nil)];
+    [label setTextAlignment:NSTextAlignmentCenter];
+    [view addSubview:label];
+    return view;
+}
+
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
+{
+    if (indexPath.row == 0) {
+        // Add new ir group
+        static NSString *CellIdentifier = @"TableViewCell";
+        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
-        return cell;
-    } else {
-        NSDictionary *icon = [_irGroups objectAtIndex:index-1];
         
-        GMGridViewCell *cell = [gridView dequeueReusableCell];
-        if (!cell) {
-            cell = [[GMGridViewCell alloc] init];
-            
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(0, 0, size.width, size.height)];
-            imageView.backgroundColor = [UIColor clearColor];
-            imageView.layer.masksToBounds = NO;
-            
-            NSString *iconImagePath = [icon objectForKey:@"url"];
-            [imageView sd_setImageWithURL:[NSURL URLWithString:iconImagePath] placeholderImage:nil];
-            
-            cell.contentView = imageView;
+        UIButton *btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
+        [btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
+        [btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
+        [btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];
+
+        [cell addSubview:btnAddNew];
+        return cell;
+        
+    } else {
+        static NSString *CellIdentifier = @"IrGroupViewCell";
+        IrGroupViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
+        if (cell == nil) {
+            [tableView registerNib:[UINib nibWithNibName:@"IrGroupViewCell" bundle:nil] forCellReuseIdentifier:CellIdentifier];
+            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
         }
+        
+        IrGroup *irGroup = [self.irGroups objectAtIndex:[indexPath row]-1];
+        cell.lblDeviceName.text = irGroup.name;
+        
+        if (irGroup.icon && irGroup.icon.length>0) {
+            int iconId = [irGroup.icon intValue];
+            if (g_DeviceIcons) {
+                NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
+                NSString *imagePath = [icon objectForKey:@"url"];
+                [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+            }
+        }
+        
+        // Modify cell background according to row position
+        NSInteger rowCount = [self.irGroups count];
+        NSInteger row = indexPath.row-1;
+        if (row == rowCount-1) {
+            // Last row
+            NSString *cellBgImg = [NSString stringWithFormat:@"main_item_%ld_c", row%4];
+            cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
+        } else if (row == 0) {
+            // First row
+            NSString *cellBgImg = [NSString stringWithFormat:@"main_item_%ld_a", row%4];
+            cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
+        } else {
+            // Middle row
+            NSString *cellBgImg = [NSString stringWithFormat:@"main_item_%ld_b", row%4];
+            cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
+        }
+        
         return cell;
     }
 }
 
-
-- (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
+- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return NO;
-}
-
-//////////////////////////////////////////////////////////////
-#pragma mark GMGridViewActionDelegate
-//////////////////////////////////////////////////////////////
-
-- (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
-{
-    // TODO: Add New IR Group
-}
-
-- (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView
-{
-    NSLog(@"Tap on empty space");
-}
-
-- (void)GMGridView:(GMGridView *)gridView processDeleteActionForItemAtIndex:(NSInteger)index
-{
-    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm" message:@"Are you sure you want to delete this item?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
-    
-    [alert show];
-    
-    //_lastDeleteItemIndexAsked = index;
-}
-
-- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
-{
-    if (buttonIndex == 1)
-    {
-        //[_currentData removeObjectAtIndex:_lastDeleteItemIndexAsked];
-        //[_gmGridView removeObjectAtIndex:_lastDeleteItemIndexAsked withAnimation:GMGridViewItemAnimationFade];
+    if (indexPath.row == 0) {
+        IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
+        [self.navigationController pushViewController:irAddNewVC animated:YES];
+    } else {
+        IREditModeViewController *irEditModeVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
+        irEditModeVC.irGroup = (IrGroup *)[self.irGroups objectAtIndex:[indexPath row]-1];
+        [self.navigationController pushViewController:irEditModeVC animated:YES];
     }
+
+    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
+
+
 
 @end

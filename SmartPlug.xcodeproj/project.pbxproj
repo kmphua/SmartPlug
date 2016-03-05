@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		5C4250D80E775A77BC40B8DE /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D82ED1822711BD8405B3DF /* libPods.a */; };
+		75084A781C8A7082002F456A /* IrGroupViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 75084A761C8A7082002F456A /* IrGroupViewCell.m */; };
+		75084A791C8A7082002F456A /* IrGroupViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75084A771C8A7082002F456A /* IrGroupViewCell.xib */; };
 		7508AA421C32195100EB88D1 /* InitDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA401C32195100EB88D1 /* InitDevicesViewController.m */; };
 		7508AA431C32195100EB88D1 /* InitDevicesViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7508AA411C32195100EB88D1 /* InitDevicesViewController.xib */; };
 		7508AA491C3229A800EB88D1 /* SPAlertView.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA481C3229A800EB88D1 /* SPAlertView.m */; };
@@ -343,6 +345,9 @@
 
 /* Begin PBXFileReference section */
 		62D82ED1822711BD8405B3DF /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		75084A751C8A7082002F456A /* IrGroupViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrGroupViewCell.h; sourceTree = "<group>"; };
+		75084A761C8A7082002F456A /* IrGroupViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrGroupViewCell.m; sourceTree = "<group>"; };
+		75084A771C8A7082002F456A /* IrGroupViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IrGroupViewCell.xib; sourceTree = "<group>"; };
 		7508AA3F1C32195100EB88D1 /* InitDevicesViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = InitDevicesViewController.h; sourceTree = "<group>"; };
 		7508AA401C32195100EB88D1 /* InitDevicesViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = InitDevicesViewController.m; sourceTree = "<group>"; };
 		7508AA411C32195100EB88D1 /* InitDevicesViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = InitDevicesViewController.xib; sourceTree = "<group>"; };
@@ -1323,6 +1328,9 @@
 				7508AA701C326D2900EB88D1 /* ScheduleMainViewCell.h */,
 				7508AA711C326D2900EB88D1 /* ScheduleMainViewCell.m */,
 				7508AA721C326D2900EB88D1 /* ScheduleMainViewCell.xib */,
+				75084A751C8A7082002F456A /* IrGroupViewCell.h */,
+				75084A761C8A7082002F456A /* IrGroupViewCell.m */,
+				75084A771C8A7082002F456A /* IrGroupViewCell.xib */,
 			);
 			name = CellViews;
 			sourceTree = "<group>";
@@ -1662,6 +1670,7 @@
 				75667AFF1C1F864C001B30B2 /* svc_0_big@2x.png in Resources */,
 				757411BE1C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png in Resources */,
 				75667ABB1C1F864C001B30B2 /* main_item_0_c@1x.png in Resources */,
+				75084A791C8A7082002F456A /* IrGroupViewCell.xib in Resources */,
 				75667B2D1C1F864C001B30B2 /* wait_1@2x.png in Resources */,
 				75667AC71C1F864C001B30B2 /* main_item_2_c@1x.png in Resources */,
 				75667B091C1F864C001B30B2 /* svc_1_big_off@2x.png in Resources */,
@@ -1797,6 +1806,7 @@
 				75D0D3361C848FA000D72E47 /* IRAddNewViewController.m in Sources */,
 				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
 				75DC2D001C81484C00F108EE /* AlarmList.m in Sources */,
+				75084A781C8A7082002F456A /* IrGroupViewCell.m in Sources */,
 				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,
 				75229A451C816BB7002FCAEB /* Icon.m in Sources */,
 				75DC2D071C82EFC100F108EE /* DeviceIconViewController.m in Sources */,

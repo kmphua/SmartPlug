@@ -11,6 +11,8 @@
 #import "DeviceIconViewController.h"
 #import "DQAlertView.h"
 
+#import "IRRecordViewController.h"
+
 @interface IREditItemViewController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -44,12 +46,17 @@
 }
 
 - (void)onRightBarButton:(id)sender {
+    IRRecordViewController *irRecordVC = [[IRRecordViewController alloc] initWithNibName:@"IRRecordViewController" bundle:nil];
+    [self.navigationController pushViewController:irRecordVC animated:YES];
+    
+    /*
     // Save IR group
     NSString *irGroupName = (_txtName && _txtName.text.length>0) ? _txtName.text : @"TV on/off";
     [[SQLHelper getInstance] insertIRGroup:irGroupName icon:0 position:0];
     
     IREditModeViewController *irEditVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
     [self.navigationController pushViewController:irEditVC animated:YES];
+     */
 }
 
 //==================================================================
