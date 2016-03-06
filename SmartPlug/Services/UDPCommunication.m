@@ -70,11 +70,12 @@ static UDPCommunication *instance;
         IRSendFlag = 0;
         irCode = 0;
         _js = [JSmartPlug new];
-        [self runUdpServer];
+        //[self runUdpServer];
     }
     return self;
 }
 
+/*
 - (BOOL)runUdpServer {
     if (isRunning) {
         NSLog(@"Server already running!");
@@ -109,7 +110,8 @@ static UDPCommunication *instance;
     NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
     [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
 }
-
+*/
+ 
 - (void)sendUDP:(NSString *)ip data:(NSData *)data
 {
     if (!udpSocket) {
@@ -150,7 +152,7 @@ static UDPCommunication *instance;
 
 - (BOOL)delayTimer:(int)seconds
 {
-    _command = 0x000B;
+    g_UdpCommand = UDP_CMD_DELAY_TIMER;
     NSString *ip = g_DeviceIp;
     if (ip != nil) {
         uint8_t delay[18];
@@ -208,7 +210,7 @@ static UDPCommunication *instance;
 
 - (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param
 {
-    _command = udpMsg_param;
+    g_UdpCommand = udpMsg_param;
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -227,7 +229,7 @@ static UDPCommunication *instance;
 - (BOOL)sendIRMode
 {
     NSString *ip = g_DeviceIp;
-    _command = 0x000C;
+    g_UdpCommand = UDP_CMD_ADV_DEVICE_SETTINGS;
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -262,7 +264,7 @@ static UDPCommunication *instance;
 - (void)sendIRHeader:(int)filename
 {
     NSString * ip = g_DeviceIp;
-    _command = 0x000A;
+    g_UdpCommand = UDP_CMD_GET_DEVICE_TIMERS;
     [self generate_header];
     for(int i = 0; i < sizeof(hMsg); i++){
         irHeader[i] = hMsg[i];
@@ -296,7 +298,7 @@ static UDPCommunication *instance;
 - (BOOL)sendTimerTerminator:(NSString *)ip protocol:(int)protocol
 {
     BOOL toReturn = false;
-    self.command = 0x0009;
+    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
     
     if (protocol == PROTOCOL_HTTP) {
         [self generate_header_http];
@@ -335,7 +337,7 @@ static UDPCommunication *instance;
 - (BOOL)sendTimerHeaders:(NSString *)ip protocol:(int)protocol
 {
     BOOL toReturn = false;
-    self.command = 0x0009;
+    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
     
     if (protocol == PROTOCOL_HTTP) {
         [self generate_header_http];
@@ -375,7 +377,7 @@ static UDPCommunication *instance;
 - (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol
 {
     BOOL toReturn = false;
-    self.command = 0x0009;
+    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
     
     if (protocol == PROTOCOL_HTTP) {
         [self generate_header_http];
@@ -449,7 +451,7 @@ static UDPCommunication *instance;
 
 - (BOOL)setDeviceStatus:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action
 {
-    _command = 0x0008;     //to generate the header
+    g_UdpCommand = UDP_CMD_SET_DEVICE_STATUS;     //to generate the header
     [self generate_header];
     
     if (!udpSocket) {
@@ -672,8 +674,8 @@ static UDPCommunication *instance;
     hMsg[9] = (uint8_t) (seq >> 8);
     hMsg[10] = (uint8_t) (seq >> 16);
     hMsg[11] = (uint8_t) (seq >> 24);
-    hMsg[12] = (uint8_t) _command;
-    hMsg[13] = (uint8_t) (_command >> 8);
+    hMsg[12] = (uint8_t) g_UdpCommand;
+    hMsg[13] = (uint8_t) (g_UdpCommand >> 8);
 }
          
 - (void)generate_header_http
@@ -693,7 +695,7 @@ static UDPCommunication *instance;
     hMsg[10] = (uint8_t)((seq >> 8 ));
     hMsg[9] = (uint8_t)((seq >> 16 ));
     hMsg[8] = (uint8_t)((seq >> 24 ));
-    short command = self.command;
+    short command = g_UdpCommand;
     hMsg[13] = (uint8_t)(command);
     hMsg[12] = (uint8_t)((command >> 8 ));
 }

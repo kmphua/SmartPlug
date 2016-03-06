@@ -59,10 +59,10 @@
     [self adjustHeightOfTableview];
     [self startBrowsing];
     
-    //WebService *ws = [[WebService alloc] init];
-    //ws.delegate = self;
-    //[ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_2x];
-    //[ws showWaitingView:self.view];
+    WebService *ws = [[WebService alloc] init];
+    ws.delegate = self;
+    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
+    [ws showWaitingView:self.view];
 }
 
 - (void)didReceiveMemoryWarning {

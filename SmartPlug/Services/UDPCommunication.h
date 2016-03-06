@@ -19,7 +19,6 @@
 
 @property (nonatomic, strong) NSMutableArray *IRCodes;
 @property (nonatomic, strong) JSmartPlug *js;
-@property (nonatomic) short command;
 
 @property (nonatomic, assign) id<UDPCommunicationDelegate> delegate;
 

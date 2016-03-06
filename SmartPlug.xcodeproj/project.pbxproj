@@ -57,7 +57,6 @@
 		751510CF1C225D71007772FE /* MainViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510CD1C225D71007772FE /* MainViewCell.xib */; };
 		751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751510D11C22698C007772FE /* AddDeviceViewController.m */; };
 		751510D41C22698C007772FE /* AddDeviceViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751510D21C22698C007772FE /* AddDeviceViewController.xib */; };
-		75187EEF1C2D730000093642 /* UDPCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 75187EEE1C2D730000093642 /* UDPCommunication.m */; };
 		751ECFB71C8509750058A403 /* IREditItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751ECFB51C8509750058A403 /* IREditItemViewController.m */; };
 		751ECFB81C8509750058A403 /* IREditItemViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 751ECFB61C8509750058A403 /* IREditItemViewController.xib */; };
 		751ECFBC1C850A270058A403 /* IRDetectIRViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 751ECFBA1C850A270058A403 /* IRDetectIRViewController.m */; };
@@ -75,6 +74,7 @@
 		7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7552689B1C334B6900602B58 /* UDPListenerService.m */; };
 		7559ECC91C3CC03700AA994D /* NoTimersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7559ECC71C3CC03700AA994D /* NoTimersViewController.m */; };
 		7559ECCA1C3CC03700AA994D /* NoTimersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7559ECC81C3CC03700AA994D /* NoTimersViewController.xib */; };
+		75634AB11C8CDB3A003ECC35 /* UDPCommunication.m in Sources */ = {isa = PBXBuildFile; fileRef = 75634AB01C8CDB3A003ECC35 /* UDPCommunication.m */; };
 		75667A591C1F864C001B30B2 /* bkgnd2@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679781C1F864B001B30B2 /* bkgnd2@1x.png */; };
 		75667A5A1C1F864C001B30B2 /* bkgnd2@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 756679791C1F864B001B30B2 /* bkgnd2@2x.png */; };
 		75667A5B1C1F864C001B30B2 /* btn_add@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 7566797A1C1F864B001B30B2 /* btn_add@1x.png */; };
@@ -435,8 +435,6 @@
 		751510D21C22698C007772FE /* AddDeviceViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = AddDeviceViewController.xib; sourceTree = "<group>"; };
 		751510D61C22908A007772FE /* PrefixHeader.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PrefixHeader.pch; sourceTree = SOURCE_ROOT; };
 		751510D71C22B9E8007772FE /* smartplug.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = smartplug.h; sourceTree = "<group>"; };
-		75187EED1C2D730000093642 /* UDPCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPCommunication.h; sourceTree = "<group>"; };
-		75187EEE1C2D730000093642 /* UDPCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPCommunication.m; sourceTree = "<group>"; };
 		751ECFB41C8509750058A403 /* IREditItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IREditItemViewController.h; sourceTree = "<group>"; };
 		751ECFB51C8509750058A403 /* IREditItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IREditItemViewController.m; sourceTree = "<group>"; };
 		751ECFB61C8509750058A403 /* IREditItemViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IREditItemViewController.xib; sourceTree = "<group>"; };
@@ -465,6 +463,8 @@
 		7559ECC61C3CC03700AA994D /* NoTimersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTimersViewController.h; sourceTree = "<group>"; };
 		7559ECC71C3CC03700AA994D /* NoTimersViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NoTimersViewController.m; sourceTree = "<group>"; };
 		7559ECC81C3CC03700AA994D /* NoTimersViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = NoTimersViewController.xib; sourceTree = "<group>"; };
+		75634AAF1C8CDB3A003ECC35 /* UDPCommunication.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPCommunication.h; sourceTree = "<group>"; };
+		75634AB01C8CDB3A003ECC35 /* UDPCommunication.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPCommunication.m; sourceTree = "<group>"; };
 		756679781C1F864B001B30B2 /* bkgnd2@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@1x.png"; sourceTree = "<group>"; };
 		756679791C1F864B001B30B2 /* bkgnd2@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "bkgnd2@2x.png"; sourceTree = "<group>"; };
 		7566797A1C1F864B001B30B2 /* btn_add@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "btn_add@1x.png"; sourceTree = "<group>"; };
@@ -902,8 +902,8 @@
 				751510D71C22B9E8007772FE /* smartplug.h */,
 				755268971C334B5400602B58 /* SmartConfigService.h */,
 				755268981C334B5400602B58 /* SmartConfigService.m */,
-				75187EED1C2D730000093642 /* UDPCommunication.h */,
-				75187EEE1C2D730000093642 /* UDPCommunication.m */,
+				75634AAF1C8CDB3A003ECC35 /* UDPCommunication.h */,
+				75634AB01C8CDB3A003ECC35 /* UDPCommunication.m */,
 				7552689A1C334B6900602B58 /* UDPListenerService.h */,
 				7552689B1C334B6900602B58 /* UDPListenerService.m */,
 			);
@@ -1821,6 +1821,7 @@
 				751ECFC61C850A9B0058A403 /* IRRecordViewController.m in Sources */,
 				75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
+				75634AB11C8CDB3A003ECC35 /* UDPCommunication.m in Sources */,
 				7512C1891C1BB3B700489091 /* UIWaitingView.m in Sources */,
 				7508AA691C32625A00EB88D1 /* SelectActionViewController.m in Sources */,
 				7512C17E1C1BB3B700489091 /* ISO8601DateFormatter.m in Sources */,
@@ -1835,7 +1836,6 @@
 				7508AA731C326D2900EB88D1 /* ScheduleMainViewCell.m in Sources */,
 				7508AA5A1C32525100EB88D1 /* Reachability.m in Sources */,
 				758ABDD41C7500AD00980EDE /* IRMainViewController.m in Sources */,
-				75187EEF1C2D730000093642 /* UDPCommunication.m in Sources */,
 				75D9D1501C2BF5CE0032F96E /* ChangePasswordViewController.m in Sources */,
 				7512C1841C1BB3B700489091 /* CustomBadgeAppDelegate.m in Sources */,
 				7512C1221C1BA3B900489091 /* main.m in Sources */,

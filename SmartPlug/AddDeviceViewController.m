@@ -14,7 +14,7 @@
 #import "UDPCommunication.h"
 #include <arpa/inet.h>
 
-@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, InitDevicesDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, UDPCommunicationDelegate>
+@interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, InitDevicesDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *titleBgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
@@ -36,7 +36,6 @@
 @property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
 @property (nonatomic) BOOL searching;
 
-@property (strong, nonatomic) UDPCommunication *udp;
 @property (strong, nonatomic) GCDAsyncSocket *socket;
 
 @end
@@ -93,17 +92,29 @@
     }
     
     self.services = [NSMutableArray new];
-
-    //// stoping the process in app backgroud state
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInforground:) name:UIApplicationWillEnterForegroundNotification object:nil];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    // stopping the process in app backgroud state
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInforground:) name:UIApplicationWillEnterForegroundNotification object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceInfo:) name:NOTIFICATION_DEVICE_INFO object:nil];
+    
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     [self startBrowsing];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:UIApplicationDidEnterBackgroundNotification];
+    [[NSNotificationCenter defaultCenter] removeObserver:UIApplicationWillEnterForegroundNotification];
+    [[NSNotificationCenter defaultCenter] removeObserver:NOTIFICATION_DEVICE_INFO];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -153,6 +164,20 @@
     else {
         [self.imgWait stopAnimating];
     }
+}
+
+- (void)handleDeviceInfo:(NSNotification*)notification {
+    NSLog(@"%s", __func__);
+    
+    NSDictionary *userInfo = notification.userInfo;
+    NSString *ip = [userInfo objectForKey:@"ip"];
+    NSString *devId = [userInfo objectForKey:@"id"];
+    NSString *model = [userInfo objectForKey:@"model"];
+    
+    // Activate device
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:devId title:g_DeviceName model:model];
 }
 
 //==================================================================
@@ -274,11 +299,10 @@
         
         if (addPlug) {
             // Add plug to db
-            JSmartPlug *plug = [JSmartPlug new];
-            plug.name = service.name;
-            plug.server = serverIp;
+            g_DeviceName = service.name;
+            g_DeviceIp = serverIp;
             
-            [[UDPCommunication getInstance] queryDevices:serverIp udpMsg_param:0x0001];
+            [[UDPCommunication getInstance] queryDevices:serverIp udpMsg_param:UDP_CMD_DEVICE_QUERY];
             
             
             //[[SQLHelper getInstance] insertPlug:plug active:1];
@@ -684,7 +708,7 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName compare:WS_NEW_DEV] == NSOrderedSame) {
+        if ([resultName compare:WS_ACT_DEV] == NSOrderedSame) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success

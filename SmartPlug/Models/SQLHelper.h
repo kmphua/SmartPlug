@@ -40,8 +40,7 @@
 - (BOOL)updatePlugCoSensorService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugHallSensorService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugRelayService:(int)data sid:(NSString *)sid;
-- (BOOL)updatePlugServicesByIP:(JSmartPlug *)js;
-- (BOOL)updatePlugServicesByID:(JSmartPlug *)js;
+- (BOOL)updatePlugServices:(JSmartPlug *)js;
 - (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip;
 - (BOOL)updatePlugRelay:(NSString *)id relay:(int)relay;
 - (BOOL)updatePlugNightlight:(NSString *)id nl:(int)nl;

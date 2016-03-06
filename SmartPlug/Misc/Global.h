@@ -39,6 +39,20 @@
 #define ALARM_RELAY_SERVICE             0x1D000000
 #define ALARM_NIGHTLED_SERVICE          0x1D000001
 
+// UDP commands
+#define UDP_CMD_DEVICE_QUERY            0x0001
+#define UDP_CMD_DEVICE_ACTIVATION       0x0002
+#define UDP_CMD_WIFI_SCAN               0x0003
+#define UDP_CMD_WIFI_SCAN_STOP          0x0004
+#define UDP_CMD_SET_WIFI_AP             0x0005
+#define UDP_CMD_DEVICE_CAPABILITY       0x0006
+#define UDP_CMD_GET_DEVICE_STATUS       0x0007
+#define UDP_CMD_SET_DEVICE_STATUS       0x0008
+#define UDP_CMD_SET_DEVICE_TIMERS       0x0009
+#define UDP_CMD_GET_DEVICE_TIMERS       0x000A
+#define UDP_CMD_DELAY_TIMER             0x000B
+#define UDP_CMD_ADV_DEVICE_SETTINGS     0x000C
+
 // UDP notifications
 #define NOTIFICATION_DEVICE_INFO                @"device_info"
 #define NOTIFICATION_SET_TIMER_DELAY            @"set_timer_delay"
