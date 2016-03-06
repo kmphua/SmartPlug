@@ -11,8 +11,11 @@
 #import "Global.h"
 #import "WebService.h"
 #import "MainViewController.h"
+#import "UDPListenerService.h"
 
 @interface AppDelegate ()
+
+@property (nonatomic, strong) UDPListenerService *udpListener;
 
 @end
 
@@ -66,6 +69,10 @@ int g_UdpCommand;
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];
     
+    // Start UDP listener service
+    _udpListener = [UDPListenerService getInstance];
+    [_udpListener startUdpBroadcastListener];
+    
     return YES;
 }
 
@@ -77,6 +84,7 @@ int g_UdpCommand;
 - (void)applicationDidEnterBackground:(UIApplication *)application {
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+    [_udpListener stopUdpBroadcastListener];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -85,6 +93,7 @@ int g_UdpCommand;
 
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+    [_udpListener startUdpBroadcastListener];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

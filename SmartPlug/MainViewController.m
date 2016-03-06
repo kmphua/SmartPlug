@@ -11,7 +11,6 @@
 #import "DeviceMainViewController.h"
 #import "SettingsViewController.h"
 #import "ScheduleMainViewController.h"
-#import "UDPListenerService.h"
 #import "MainViewCell.h"
 #import "JSmartPlug.h"
 
@@ -24,8 +23,6 @@
 @property (strong, nonatomic) NSMutableArray *services;
 @property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
 @property (nonatomic) BOOL searching;
-
-@property (strong, nonatomic) UDPListenerService *udpListener;
 
 @end
 
@@ -57,9 +54,6 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
-    _udpListener = [UDPListenerService getInstance];
-    [_udpListener startUdpBroadcastListener];
-    
     self.plugs = [[SQLHelper getInstance] getPlugData];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
@@ -69,13 +63,6 @@
     //ws.delegate = self;
     //[ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_2x];
     //[ws showWaitingView:self.view];
-}
-
-- (void)viewWillDisappear:(BOOL)animated
-{
-    if (_udpListener) {
-        [_udpListener stopUdpBroadcastListener];
-    }
 }
 
 - (void)didReceiveMemoryWarning {

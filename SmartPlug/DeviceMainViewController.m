@@ -8,7 +8,6 @@
 
 #import "DeviceMainViewController.h"
 #import "DeviceItemSettingsViewController.h"
-#import "UDPListenerService.h"
 #import "NoTimersViewController.h"
 #import "SetTimerViewController.h"
 #import "SetTimerSnoozeViewController.h"
@@ -43,8 +42,6 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblWarning;
 @property (weak, nonatomic) IBOutlet UIImageView *imgRightWarning;
 
-@property (strong, nonatomic) UDPListenerService *udpListener;
-
 @end
 
 @implementation DeviceMainViewController
@@ -77,10 +74,7 @@
         self.lblDeviceName.text = self.device.name;
         self.title = self.device.name;
     }
-    
-    _udpListener = [UDPListenerService getInstance];
-    [_udpListener startUdpBroadcastListener];
-    
+        
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;

@@ -8,7 +8,6 @@
 
 #import "IRMainViewController.h"
 #import "DeviceItemSettingsViewController.h"
-#import "UDPListenerService.h"
 #import "NoTimersViewController.h"
 #import "IRAddNewViewController.h"
 #import "IrGroupViewCell.h"
