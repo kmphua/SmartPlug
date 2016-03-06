@@ -15,7 +15,7 @@
 #import "MainViewCell.h"
 #import "JSmartPlug.h"
 
-@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, UDPListenerDelegate, MainViewCellDelegate>
+@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, MainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *plugs;               // Added plugs
@@ -58,7 +58,6 @@
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
     _udpListener = [UDPListenerService getInstance];
-    _udpListener.delegate = self;
     [_udpListener startUdpBroadcastListener];
     
     self.plugs = [[SQLHelper getInstance] getPlugData];

@@ -15,7 +15,7 @@
 #import "ScheduleMainViewController.h"
 #import "IRMainViewController.h"
 
-@interface DeviceMainViewController ()<UDPListenerDelegate, NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
+@interface DeviceMainViewController ()<NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (nonatomic, weak) IBOutlet UIImageView *imgDeviceIcon;
@@ -79,7 +79,6 @@
     }
     
     _udpListener = [UDPListenerService getInstance];
-    _udpListener.delegate = self;
     [_udpListener startUdpBroadcastListener];
     
     // Add navigation buttons

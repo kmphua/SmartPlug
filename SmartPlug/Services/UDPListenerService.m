@@ -62,6 +62,7 @@ static UDPListenerService *instance;
         IRFlag = 0;
         shouldRestartSocketListen = NO;
         IRFlag = 0;
+        js = [JSmartPlug new];
     }
     return self;
 }
@@ -140,7 +141,8 @@ static UDPListenerService *instance;
         if(code == 0){
             [self process_query_device_command];
             
-            NSDictionary *userInfo = 
+            /*
+            NSDictionary *userInfo = NSDictionary dictionaryWithObjects:<#(const id  _Nonnull __unsafe_unretained *)#> forKeys:<#(const id<NSCopying>  _Nonnull __unsafe_unretained *)#> count:<#(NSUInteger)#>
             
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_INFO
                                                                 object:self
@@ -151,6 +153,7 @@ static UDPListenerService *instance;
             i.putExtra("id", js.getId());
             i.putExtra("model", js.getModel());
             sendBroadcast(i);
+             */
             code = 1;
         }
     }
@@ -202,10 +205,11 @@ static UDPListenerService *instance;
         IRFlag = 0;
         int name = lMsg[18];
         if(name >= 0) {
-            Intent i = new Intent("ir_filename");
-            i.putExtra("filename", name);
-            sendBroadcast(i);
-        }
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:name] forKey:@"filename"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_IR_FILENAME
+                                                                object:self
+                                                              userInfo:userInfo];
+       }
         
     }
     return true;
@@ -247,45 +251,118 @@ static UDPListenerService *instance;
     for (int i = 18; i < 24; i++) {
         [mac appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
     }
-    _js.sid = mac;
+    js.sid = mac;
     NSLog(@"MAC: %@", mac);
     /**********************************************/
     NSMutableString *model = [NSMutableString new];
     for (int i = 24; i < 40; i++) {
         [model appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    _js.model = model;
+    js.model = model;
     NSLog(@"MODEL: %@", model);
     /**********************************************/
     int buildno = [self process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
-    _js.buildno = buildno;
+    js.buildno = buildno;
     NSLog(@"BUILD NO: %d", buildno);
     /**********************************************/
     int prot_ver = [self process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
-    _js.prot_ver = prot_ver;
+    js.prot_ver = prot_ver;
     NSLog(@"PROTOCOL VER: %d", prot_ver);
     /**********************************************/
     NSMutableString *hw_ver = [NSMutableString new];
     for (int i = 48; i < 64; i++) {
         [hw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    _js.hw_ver = hw_ver;
+    js.hw_ver = hw_ver;
     NSLog(@"HARDWARE VERSION: %@", hw_ver);
     /**********************************************/
     NSMutableString *fw_ver = [NSMutableString new];
     for (int i = 64; i < 80; i++) {
         [fw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    _js.fw_ver = fw_ver;
+    js.fw_ver = fw_ver;
     NSLog(@"FIRMWARE VERSION: %@", fw_ver);
     /**********************************************/
     int fw_date = [self process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
-    _js.fw_date = fw_date;
+    js.fw_date = fw_date;
     NSLog(@"FIRMWARE DATE: %d", fw_date);
     /**********************************************/
     int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
-    _js.flag = flag;
+    js.flag = flag;
     NSLog(@"FLAG: %d", flag);
+}
+
+- (void)process_get_device_status
+{
+    [self get_relay_status];
+    [self get_nightlight_status];
+    [self get_co_status];
+    /**************TERMINATOR**************/
+    int terminator = [self process_long:lMsg[48] b:lMsg[49] c:lMsg[50] d:lMsg[51]];
+    NSLog(@"TERMINATOR: %d", terminator);
+}
+
+//==================================================================
+#pragma mark - Private methods
+//==================================================================
+- (void)get_relay_status
+{
+    int service_id = [self process_long:lMsg[18] b:lMsg[19] c:lMsg[20] d:lMsg[21]];
+    if (service_id == 0xD1000000) {
+        NSLog(@"IS OUTLET SERVICE");
+        int flag = [self process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
+        if(flag == 0x00000010){
+            js.hall_sensor = 1;
+            NSLog(@"Relay warning");
+        } else {
+            js.hall_sensor = 0;
+        }
+        uint8_t datatype = lMsg[26];
+        uint8_t data = lMsg[27];
+        if (data == 0x01){
+            js.relay = 1;
+            NSLog(@"Relay is on");
+        } else {
+            js.relay = 0;
+            NSLog(@"Relay is off");
+        }
+        
+    }
+}
+
+- (void)get_nightlight_status
+{
+    int service_id = [self process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
+    if(service_id == 0xD1000001) {
+        NSLog(@"NIGHT LIGHT SERVICE");
+        int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        uint8_t datatype = lMsg[36];                                                    //always the same 0x01
+        uint8_t data = lMsg[37];
+        if (data == 0x01){
+            js.nightlight = 1;
+            NSLog(@"Nighlight is on");
+        } else {
+            js.nightlight = 0;
+            NSLog(@"Nighlight is off");
+        }
+    }
+}
+
+- (void)get_co_status
+{
+    int service_id = [self process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
+    if (service_id == 0xD1000002) {
+        int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
+        if(flag == 0x00000010){
+            js.co_sensor = 1;                      //WARNING
+        } else if (flag == 0x00000100){
+            js.co_sensor = 3;                      //NOT PLUGGED
+        } else {
+            js.co_sensor = 0;                      //NORMAL
+        }
+        uint8_t datatype = lMsg[46];
+        uint8_t data = lMsg[47];
+    }
 }
 
 - (int)process_long:(uint8_t)a b:(uint8_t)b c:(uint8_t)c d:(uint8_t)d
