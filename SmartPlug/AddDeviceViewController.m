@@ -12,6 +12,7 @@
 #import "Reachability.h"
 #import "JSmartPlug.h"
 #import "UDPCommunication.h"
+#include <arpa/inet.h>
 
 @interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, InitDevicesDelegate, NSNetServiceDelegate, NSNetServiceBrowserDelegate, UDPCommunicationDelegate>
 
@@ -92,10 +93,7 @@
     }
     
     self.services = [NSMutableArray new];
-    _udp = [UDPCommunication new];
-    _udp.delegate = self;
-    [_udp runUdpServer];
-    
+
     //// stoping the process in app backgroud state
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(appEnterInBackground:) name:UIApplicationDidEnterBackgroundNotification object:nil];
     
@@ -256,17 +254,17 @@
 //==================================================================
 
 - (void)netServiceDidResolveAddress:(NSNetService *)service {
-    
-    if ([service.name compare:SMARTCONFIG_IDENTIFIER] == NSOrderedSame) {
+    NSString *serverIp = [self getNetServiceAddress:service.addresses];
+    if (serverIp) {
+        NSLog(@"Resolved address for service %@, server %@", service.name, serverIp);
+        
         // Add new plug
         BOOL addPlug = YES;
-        
         NSArray *plugs = [[SQLHelper getInstance] getPlugData];
         for (JSmartPlug *plug in plugs) {
             // Check if plug exists
-            if ([plug.server compare:service.hostName] == NSOrderedSame) {
+            if (plug.server && [plug.server isEqualToString:serverIp]) {
                 addPlug = NO;
-                
                 [self.view makeToast:NSLocalizedString(@"DeviceAlreadyAdded", nil)
                             duration:3.0
                             position:CSToastPositionCenter];
@@ -278,15 +276,12 @@
             // Add plug to db
             JSmartPlug *plug = [JSmartPlug new];
             plug.name = service.name;
-            plug.server = service.hostName;
+            plug.server = serverIp;
             
-            NSArray *addresses = [[service addresses] mutableCopy];
-            NSData *address = [addresses objectAtIndex:0];
-            NSString *ip = [Global convertIpAddressToString:address];
-            plug.ip = ip;
-            [_udp runUdpClient:service.hostName msg:@"ID?"];  // this need to be change to Chin's protocol
+            [[UDPCommunication getInstance] queryDevices:serverIp udpMsg_param:0x0001];
             
-            [[SQLHelper getInstance] insertPlug:plug active:1];
+            
+            //[[SQLHelper getInstance] insertPlug:plug active:1];
             
             [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
                         duration:3.0
@@ -297,6 +292,48 @@
 
 - (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
     [service setDelegate:nil];
+}
+
+- (NSString *)getNetServiceAddress:(NSArray *)addresses
+{
+    NSData *myData = nil;
+    myData = [addresses objectAtIndex:0];
+    
+    NSString *addressString;
+    int port=0;
+    struct sockaddr *addressGeneric;
+    struct sockaddr_in addressClient;
+    
+    addressGeneric = (struct sockaddr *) [myData bytes];
+    
+    switch( addressGeneric->sa_family ) {
+        case AF_INET:
+            {
+                struct sockaddr_in *ip4;
+                char dest[INET_ADDRSTRLEN];
+                ip4 = (struct sockaddr_in *) [myData bytes];
+                port = ntohs(ip4->sin_port);
+                addressString = [NSString stringWithFormat:@"%s", inet_ntop(AF_INET, &ip4->sin_addr, dest, sizeof dest)];
+                //addressString = [NSString stringWithFormat: @"IP4: %s Port: %d", inet_ntop(AF_INET, &ip4->sin_addr, dest, sizeof dest),port];
+            }
+            break;
+            
+        case AF_INET6:
+            {
+                struct sockaddr_in6 *ip6;
+                char dest[INET6_ADDRSTRLEN];
+                ip6 = (struct sockaddr_in6 *) [myData bytes];
+                port = ntohs(ip6->sin6_port);
+                addressString = [NSString stringWithFormat:@"%s", inet_ntop(AF_INET6, &ip6->sin6_addr, dest, sizeof dest)];
+                //addressString = [NSString stringWithFormat: @"IP6: %s Port: %d",  inet_ntop(AF_INET6, &ip6->sin6_addr, dest, sizeof dest),port];
+            }
+            break;
+        default:
+            addressString = nil;
+            break;
+    }
+    
+    return addressString;
 }
 
 //==================================================================

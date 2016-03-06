@@ -245,7 +245,7 @@
 
 - (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
     NSString *dataStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
-    NSLog(@"Received data from address %@: %@", address, dataStr);
+    NSLog(@"Received data length %ld from address %@: %@", data.length, address);
 }
 
 //==================================================================

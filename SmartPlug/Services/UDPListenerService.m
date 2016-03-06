@@ -12,8 +12,6 @@
 #import "JSmartPlug.h"
 
 #define MAX_UDP_DATAGRAM_LEN        64
-#define UDP_SERVER_PORT             2391
-
 #define UDP_BROADCAST_PORT          20004
 
 @interface UDPListenerService()<GCDAsyncUdpSocketDelegate>
@@ -80,7 +78,7 @@ static UDPListenerService *instance;
     }
     
     NSError *error = nil;
-    if (![_udpSocket bindToPort:UDP_SERVER_PORT error:&error]) {
+    if (![_udpSocket bindToPort:UDP_BROADCAST_PORT error:&error]) {
         NSLog(@"Error starting server (bind): %@", error);
         return NO;
     }
@@ -123,9 +121,195 @@ static UDPListenerService *instance;
 {
     // Do something with receive data
     NSString *ipAddress = [Global convertIpAddressToString:address];
-    if (self.delegate) {
-        [self.delegate didReceiveData:data fromAddress:ipAddress];
+    NSLog(@"Received data %ld from address %@", data.length, ipAddress);
+    
+    // TODO: Use NSNotification to broadcast packets received
+    memcpy(lMsg, [data bytes], data.length);
+    
+    [self process_headers];
+    
+    if(g_UdpCommand == 0x000C){
+        NSLog(@"Entering IR Mode");
+        if(code == 0) {
+            [self listenForIRFileName];
+            code = 1;
+        }
     }
+    
+    if(g_UdpCommand == 0x0001){
+        if(code == 0){
+            [self process_query_device_command];
+            
+            NSDictionary *userInfo = 
+            
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_INFO
+                                                                object:self
+                                                              userInfo:userInfo];
+            
+            Intent i = new Intent("device_info");
+            i.putExtra("ip",dp.getAddress().toString().substring(1));
+            i.putExtra("id", js.getId());
+            i.putExtra("model", js.getModel());
+            sendBroadcast(i);
+            code = 1;
+        }
+    }
+    
+    if(g_UdpCommand == 0x000B){
+        if(code == 0){
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:@"code"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SET_TIMER_DELAY
+                                                                object:self
+                                                              userInfo:userInfo];
+            code = 1;
+        }
+    }
+    
+    if(g_UdpCommand == 0x0008){
+        if(code == 0){
+            code = 1;
+            NSLog(@"DEVICE STATUS CHANGED");
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_STATUS_CHANGED
+                                                                object:self
+                                                              userInfo:nil];
+        }
+    }
+    
+    if(g_UdpCommand == 0x0007){
+        if(code == 0){
+            code = 1;
+            [self process_get_device_status];
+            [[SQLHelper getInstance] updatePlugServicesByID:js];
+            //sql.updatePlugServicesByID(js);
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
+                                                                object:self
+                                                              userInfo:nil];
+        }
+    }
+    
+    if(code == 0x1000 && process_data == true){
+        NSLog(@"I GOT A BROADCAST");
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
+                                                            object:self
+                                                          userInfo:nil];
+        code = 1;
+    }
+}
+
+- (BOOL)listenForIRFileName
+{
+    if (process_data == true) {
+        IRFlag = 0;
+        int name = lMsg[18];
+        if(name >= 0) {
+            Intent i = new Intent("ir_filename");
+            i.putExtra("filename", name);
+            sendBroadcast(i);
+        }
+        
+    }
+    return true;
+}
+
+- (void)process_headers
+{
+    /**********************************************/
+    int header = abs([self process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
+    
+    if (header != 1397576276) {
+        process_data = true;
+    }
+    NSLog(@"HEADER: %d", header);
+    /**********************************************/
+    int msgid = abs([self process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
+    if (msgid != previous_msgid){
+        previous_msgid = msgid;
+        process_data = true;
+    } else {
+        process_data = false;
+    }
+    NSLog(@"MSGID: %d", msgid);
+    /**********************************************/
+    int seq = abs([self process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
+    NSLog(@"SEQ: %d", seq);
+    /**********************************************/
+    int size = [self process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
+    NSLog(@"SIZE: %d", size);
+    /**********************************************/
+    code = [self process_short:lMsg[16] b:lMsg[17]];
+    NSLog(@"CODE: %d", code);
+}
+
+- (void)process_query_device_command
+{
+    /**********************************************/
+    NSMutableString *mac = [NSMutableString new];
+    for (int i = 18; i < 24; i++) {
+        [mac appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
+    }
+    _js.sid = mac;
+    NSLog(@"MAC: %@", mac);
+    /**********************************************/
+    NSMutableString *model = [NSMutableString new];
+    for (int i = 24; i < 40; i++) {
+        [model appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
+    }
+    _js.model = model;
+    NSLog(@"MODEL: %@", model);
+    /**********************************************/
+    int buildno = [self process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
+    _js.buildno = buildno;
+    NSLog(@"BUILD NO: %d", buildno);
+    /**********************************************/
+    int prot_ver = [self process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
+    _js.prot_ver = prot_ver;
+    NSLog(@"PROTOCOL VER: %d", prot_ver);
+    /**********************************************/
+    NSMutableString *hw_ver = [NSMutableString new];
+    for (int i = 48; i < 64; i++) {
+        [hw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
+    }
+    _js.hw_ver = hw_ver;
+    NSLog(@"HARDWARE VERSION: %@", hw_ver);
+    /**********************************************/
+    NSMutableString *fw_ver = [NSMutableString new];
+    for (int i = 64; i < 80; i++) {
+        [fw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
+    }
+    _js.fw_ver = fw_ver;
+    NSLog(@"FIRMWARE VERSION: %@", fw_ver);
+    /**********************************************/
+    int fw_date = [self process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
+    _js.fw_date = fw_date;
+    NSLog(@"FIRMWARE DATE: %d", fw_date);
+    /**********************************************/
+    int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
+    _js.flag = flag;
+    NSLog(@"FLAG: %d", flag);
+}
+
+- (int)process_long:(uint8_t)a b:(uint8_t)b c:(uint8_t)c d:(uint8_t)d
+{
+    NSMutableData *buffer = [NSMutableData dataWithCapacity:4];
+    [buffer appendBytes:&d length:1];
+    [buffer appendBytes:&c length:1];
+    [buffer appendBytes:&b length:1];
+    [buffer appendBytes:&a length:1];
+    
+    int result;
+    [buffer getBytes:&result length:sizeof(result)];
+    return result;
+}
+
+- (short)process_short:(uint8_t)a b:(uint8_t)b
+{
+    NSMutableData *buffer = [NSMutableData dataWithCapacity:2];
+    [buffer appendBytes:&b length:1];
+    [buffer appendBytes:&a length:1];
+    
+    short result;
+    [buffer getBytes:&result length:sizeof(result)];
+    return result;
 }
 
 @end

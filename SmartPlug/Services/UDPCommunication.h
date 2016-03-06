@@ -23,9 +23,21 @@
 
 @property (nonatomic, assign) id<UDPCommunicationDelegate> delegate;
 
-
 + (UDPCommunication *)getInstance;
-- (BOOL)runUdpServer;
-- (void)runUdpClient:(NSString *)ip msg:(NSString *)msg;
+
+- (BOOL)delayTimer:(int)seconds;
+- (BOOL)listenForIRCodes;
+- (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param;
+- (BOOL)sendIRMode;
+- (BOOL)sendIRFileName:(int)filename;
+- (void)sendIRHeader:(int)filename;
+- (BOOL)setDeviceTimers:(NSString *)devId;
+- (BOOL)sendTimerTerminator:(NSString *)ip protocol:(int)protocol;
+- (BOOL)sendTimerHeaders:(NSString *)ip protocol:(int)protocol;
+- (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol;
+- (BOOL)setDeviceStatus:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action;
+- (void)process_headers;
+- (void)process_query_device_command;
+- (void)process_get_device_status;
 
 @end

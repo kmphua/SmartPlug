@@ -8,15 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
-@protocol UDPListenerDelegate <NSObject>
-
-- (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address;
-
-@end
-
 @interface UDPListenerService : NSObject
-
-@property (nonatomic, assign) id<UDPListenerDelegate> delegate;
 
 + (UDPListenerService *)getInstance;
 - (BOOL)startUdpBroadcastListener;

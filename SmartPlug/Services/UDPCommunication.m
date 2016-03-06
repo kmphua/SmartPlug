@@ -70,6 +70,7 @@ static UDPCommunication *instance;
         IRSendFlag = 0;
         irCode = 0;
         _js = [JSmartPlug new];
+        [self runUdpServer];
     }
     return self;
 }
@@ -109,7 +110,7 @@ static UDPCommunication *instance;
     [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
 }
 
-- (void)sendUDP:(NSData *)data ip:(NSString *)ip
+- (void)sendUDP:(NSString *)ip data:(NSData *)data
 {
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -326,7 +327,7 @@ static UDPCommunication *instance;
         ws.delegate = self;
         [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
     } else if(protocol == PROTOCOL_UDP) {
-        [self sendUDP:data ip:ip];
+        [self sendUDP:ip data:data];
     }
     return toReturn;
 }
@@ -366,7 +367,7 @@ static UDPCommunication *instance;
         ws.delegate = self;
         [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
     } else if(protocol == PROTOCOL_UDP) {
-        [self sendUDP:data ip:ip];
+        [self sendUDP:ip data:data];
     }
     return toReturn;
 }
@@ -438,7 +439,7 @@ static UDPCommunication *instance;
                 ws.delegate = self;
                 [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
             } else if(protocol == PROTOCOL_UDP) {
-                [self sendUDP:data ip:ip];
+                [self sendUDP:ip data:data];
             }
         }
     }

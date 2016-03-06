@@ -39,6 +39,14 @@
 #define ALARM_RELAY_SERVICE             0x1D000000
 #define ALARM_NIGHTLED_SERVICE          0x1D000001
 
+// UDP notifications
+#define NOTIFICATION_DEVICE_INFO                @"device_info"
+#define NOTIFICATION_SET_TIMER_DELAY            @"set_timer_delay"
+#define NOTIFICATION_DEVICE_STATUS_CHANGED      @"device_status_changed"
+#define NOTIFICATION_STATUS_CHANGED_UPDATE_UI   @"status_changed_update_ui"
+#define NOTIFICATION_M1_UPDATE_UI               @"m1updateui"
+#define NOTIFICATION_IR_FILENAME                @"ir_filename"
+
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,
     COLOR_TYPE_DEFAULT_BG,
@@ -71,6 +79,9 @@ extern NSString *g_DeviceIp;
 extern NSString *g_DeviceName;
 extern NSString *g_DeviceGivenName;
 extern NSString *g_DeviceMac;
+
+// UDP command
+extern int g_UdpCommand;
 
 @interface Global : NSObject
 
