@@ -173,6 +173,7 @@
     NSString *ip = [userInfo objectForKey:@"ip"];
     NSString *devId = [userInfo objectForKey:@"id"];
     NSString *model = [userInfo objectForKey:@"model"];
+    model = [model stringByReplacingOccurrencesOfString:@" " withString:@""];
     
     // Activate device
     WebService *ws = [WebService new];

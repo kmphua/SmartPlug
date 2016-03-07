@@ -59,12 +59,8 @@
     g_DeviceMac = _device.sid;
     
     if (self.device.icon && self.device.icon.length > 0) {
-        int iconId = [self.device.icon intValue];
-        if (g_DeviceIcons) {
-            NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
-            NSString *imagePath = [icon objectForKey:@"url"];
-            [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-        }
+        NSString *imagePath = self.device.icon;
+        [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
     
     if (self.device.givenName && self.device.givenName.length > 0) {

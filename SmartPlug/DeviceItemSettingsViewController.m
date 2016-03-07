@@ -113,13 +113,8 @@
             
             if (self.device.icon && self.device.icon.length>0) {
                 UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
-                
-                int iconId = [self.device.icon intValue];
-                if (g_DeviceIcons) {
-                    NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
-                    NSString *imagePath = [icon objectForKey:@"url"];
-                    [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-                }
+                NSString *imagePath = self.device.icon;
+                [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
                 [cell addSubview:imageView];
             }
         }

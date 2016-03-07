@@ -17,7 +17,7 @@
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, MainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSArray *plugs;               // Added plugs
+@property (strong, nonatomic) NSMutableArray *devices;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @property (strong, nonatomic) NSMutableArray *services;
@@ -35,12 +35,8 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    // TODO: Update IP addresses with mDNS discovery
-    
-    
-    // TODO: Start UDPListener and listen for broadcast packets from devices
-    
+
+    self.devices = [NSMutableArray new];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -54,7 +50,6 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
-    self.plugs = [[SQLHelper getInstance] getPlugData];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     [self startBrowsing];
@@ -246,7 +241,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.plugs count];
+    return [self.devices count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -263,7 +258,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     }
     
-    JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
+    JSmartPlug *plug = [self.devices objectAtIndex:[indexPath row]];
     
     if (plug.givenName && plug.givenName.length>0){
         cell.lblDeviceName.text = plug.givenName;
@@ -272,16 +267,12 @@
     }
     
     if (plug.icon && plug.icon.length>0) {
-        int iconId = [plug.icon intValue];
-        if (g_DeviceIcons) {
-            NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
-            NSString *imagePath = [icon objectForKey:@"url"];
-            [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-        }
+        NSString *imagePath = plug.icon;
+        [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
     
     // Modify cell background according to row position
-    NSInteger rowCount = [self.plugs count];
+    NSInteger rowCount = [self.devices count];
     NSInteger row = indexPath.row;
     if (row == rowCount-1) {
         // Last row
@@ -302,7 +293,7 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    NSDictionary *device = [self.plugs objectAtIndex:[indexPath row]];
+    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
     DeviceMainViewController *devMainVc = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
     devMainVc.device = device;
     [self.navigationController pushViewController:devMainVc animated:YES];
@@ -313,7 +304,7 @@
 //==================================================================
 - (void)onClickBtnWarn:(NSIndexPath *)indexPath
 {
-    JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
+    JSmartPlug *plug = [self.devices objectAtIndex:indexPath.row];
     if ([[SQLHelper getInstance] deletePlugData:plug.ip]) {
         //SmartPlugsList = getSmartPlugsList();
         //notifyDataSetChanged();
@@ -327,7 +318,7 @@
 
 - (void)onClickBtnPower:(NSIndexPath *)indexPath
 {
-    JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
+    JSmartPlug *plug = [self.devices objectAtIndex:indexPath.row];
     if ([plug.ip isEqualToString:@"0"]) {
         int action;
         int serviceId = 0xD1000000;
@@ -376,7 +367,15 @@
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld devices", devices.count);
-                    self.plugs = [NSArray arrayWithArray:devices];
+                    [self.devices removeAllObjects];
+                    
+                    for (NSDictionary *device in devices) {
+                        JSmartPlug *plug = [JSmartPlug new];
+                        plug.name = [device objectForKey:@"title_origin"];
+                        plug.sid = [device objectForKey:@"id"];
+                        plug.icon = [device objectForKey:@"icon"];
+                        [self.devices addObject:plug];
+                    }
                 }
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];

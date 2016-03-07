@@ -33,7 +33,9 @@
 - (void)postData:(NSString *)serverUrl params:(NSString *)params
 {
     NSString *requestUrl = [NSString stringWithFormat:@"%@?%@", serverUrl, params];
-    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:requestUrl]];
+    NSString *encodedUrl = [requestUrl stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:encodedUrl]];
     [request setHTTPMethod:@"POST"];
     [request setTimeoutInterval:20.0];
     
