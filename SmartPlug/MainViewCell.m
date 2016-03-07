@@ -21,21 +21,15 @@
 }
 
 - (IBAction)onBtnWarn:(id)sender {
-    UITableView *tableView = (UITableView *)self.superview;
-    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
-    [self.delegate onClickBtnWarn:indexPath];
+    [self.delegate onClickBtnWarn:sender];
 }
 
 - (IBAction)onBtnTimer:(id)sender {
-    UITableView *tableView = (UITableView *)self.superview;
-    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
-    [self.delegate onClickBtnTimer:indexPath];
+    [self.delegate onClickBtnTimer:sender];
 }
 
 - (IBAction)onBtnPower:(id)sender {
-    UITableView *tableView = (UITableView *)self.superview;
-    NSIndexPath *indexPath = [tableView indexPathForRowAtPoint:self.center];
-    [self.delegate onClickBtnPower:indexPath];
+    [self.delegate onClickBtnPower:sender];
 }
 
 @end

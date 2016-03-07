@@ -21,6 +21,7 @@
 
 - (BOOL)insertIcons:(NSString *)url size:(int)size;
 - (NSArray *)getIcons;
+
 - (BOOL)insertIRGroup:(NSString *)desc icon:(NSString *)icon position:(int)position;
 - (NSArray *)getIRGroups;
 - (BOOL)deleteIRCodes:(int)groupid;
@@ -31,6 +32,7 @@
                  icon:(NSString *)icon mac:(NSString *)mac;
 - (NSArray *)getIRCodes;
 - (NSArray *)getIRCodesByGroup:(int)id;
+
 - (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip;
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active;
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip;
@@ -39,6 +41,7 @@
 - (BOOL)updatePlugNightlightService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugCoSensorService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugHallSensorService:(int)data sid:(NSString *)sid;
+- (BOOL)updateSnooze:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugRelayService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugServices:(JSmartPlug *)js;
 - (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip;
@@ -58,7 +61,9 @@
 - (BOOL)deletePlugDataByID:(NSString *)mac;
 - (BOOL)updatePlugNameNotify:(NSString *)mac name:(NSString *)name notifyOnPowerOutage:(int)notifyOnPowerOutage notifyOnCoWarning:(int)notifyOnCoWarning notifyOnTimerActivated:(int)notifyOnTimerActivated icon:(NSString *)icon;
 - (BOOL)deleteNonActivePlug:(NSString *)name;
+
 - (BOOL)deleteAlarmData:(int)id;
+- (BOOL)removeAlarms:(NSString *)mac;
 - (BOOL)insertAlarm:(Alarm *)a;
 - (BOOL)updateAlarm:(Alarm *)a;
 - (NSArray *)getAlarmDataById:(int)alarmId;

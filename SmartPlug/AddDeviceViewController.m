@@ -714,13 +714,7 @@
             if (result == 0) {
                 // Success
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
-               // if (devices) {
-                   // NSLog(@"Total %ld devices", devices.count);
-                 //   [self.devices setArray:devices];
-                //}
-                [self.tableView reloadData];
-                [self adjustHeightOfTableview];
+                [self.navigationController popViewControllerAnimated:YES];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];

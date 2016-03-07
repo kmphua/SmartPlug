@@ -10,9 +10,9 @@
 
 @protocol MainViewCellDelegate <NSObject>
 
-- (void)onClickBtnWarn:(NSIndexPath *)indexPath;
-- (void)onClickBtnTimer:(NSIndexPath *)indexPath;
-- (void)onClickBtnPower:(NSIndexPath *)indexPath;
+- (void)onClickBtnWarn:(id)sender;
+- (void)onClickBtnTimer:(id)sender;
+- (void)onClickBtnPower:(id)sender;
 
 @end
 

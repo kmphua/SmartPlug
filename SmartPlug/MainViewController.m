@@ -13,11 +13,12 @@
 #import "ScheduleMainViewController.h"
 #import "MainViewCell.h"
 #import "JSmartPlug.h"
+#import "UDPCommunication.h"
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, MainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSMutableArray *devices;
+@property (strong, nonatomic) NSArray *devices;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @property (strong, nonatomic) NSMutableArray *services;
@@ -35,8 +36,6 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-
-    self.devices = [NSMutableArray new];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -58,6 +57,20 @@
     ws.delegate = self;
     [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
     [ws showWaitingView:self.view];
+    
+    // Register notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getDeviceStatus:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Deregister notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -98,6 +111,14 @@
 - (void)onRightBarButton:(id)sender {
     SettingsViewController *settingsVc = [[SettingsViewController alloc] initWithNibName:@"SettingsViewController" bundle:nil];
     [self.navigationController pushViewController:settingsVc animated:YES];
+}
+
+- (void)getDeviceStatus:(NSNotification *)notification {
+    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+}
+
+- (void)updateUI:(NSNotification *)notification {
+    [self.tableView reloadData];
 }
 
 //==================================================================
@@ -265,7 +286,7 @@
     } else {
         cell.lblDeviceName.text = plug.name;
     }
-    
+
     if (plug.icon && plug.icon.length>0) {
         NSString *imagePath = plug.icon;
         [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
@@ -288,6 +309,7 @@
         cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
     }
     
+    cell.delegate = self;
     return cell;
 }
 
@@ -302,23 +324,34 @@
 //==================================================================
 #pragma MainViewCellDelegate
 //==================================================================
-- (void)onClickBtnWarn:(NSIndexPath *)indexPath
+- (void)onClickBtnWarn:(id)sender
 {
-    JSmartPlug *plug = [self.devices objectAtIndex:indexPath.row];
-    if ([[SQLHelper getInstance] deletePlugData:plug.ip]) {
-        //SmartPlugsList = getSmartPlugsList();
-        //notifyDataSetChanged();
+    MainViewCell *clickedCell = (MainViewCell*)[[sender superview] superview];
+    NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
+    
+    JSmartPlug *plug = [self.devices objectAtIndex:indexPathCell.row];
+    if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        [ws devDel:g_UserToken lang:[Global getCurrentLang] devId:plug.sid];
+        
+        self.devices = [[SQLHelper getInstance] getPlugData];
+        [self.tableView reloadData];
+        [self adjustHeightOfTableview];
     }
 }
 
-- (void)onClickBtnTimer:(NSIndexPath *)indexPath
+- (void)onClickBtnTimer:(id)sender
 {
     
 }
 
-- (void)onClickBtnPower:(NSIndexPath *)indexPath
+- (void)onClickBtnPower:(id)sender
 {
-    JSmartPlug *plug = [self.devices objectAtIndex:indexPath.row];
+    MainViewCell *clickedCell = (MainViewCell*)[[sender superview] superview];
+    NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
+
+    JSmartPlug *plug = [self.devices objectAtIndex:indexPathCell.row];
     if ([plug.ip isEqualToString:@"0"]) {
         int action;
         int serviceId = 0xD1000000;
@@ -330,9 +363,9 @@
             action = 0x00;
         }
         
-        //if (UDPBinding.setDeviceStatusProcess(plug.ip, serviceId, action)){
-        //    NSLog(@"SET DEVICE STATUS PROCESS");
-        //}
+        if ([[UDPCommunication getInstance] setDeviceStatus:plug.ip serviceId:serviceId action:action]) {
+            NSLog(@"SET DEVICE STATUS PROCESS");
+        }
         
         relay = ~relay;
     }
@@ -367,16 +400,49 @@
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld devices", devices.count);
-                    [self.devices removeAllObjects];
                     
                     for (NSDictionary *device in devices) {
                         JSmartPlug *plug = [JSmartPlug new];
                         plug.name = [device objectForKey:@"title_origin"];
-                        plug.sid = [device objectForKey:@"id"];
+                        plug.givenName = [device objectForKey:@"title"];
+                        plug.sid = [device objectForKey:@"devid"];
                         plug.icon = [device objectForKey:@"icon"];
-                        [self.devices addObject:plug];
+
+                        NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:plug.sid];
+                        if (!plugs || plugs.count == 0) {
+                            // Insert new plug to database
+                            [[SQLHelper getInstance] insertPlug:plug active:1];
+                            NSLog(@"Inserted new plug %@ devId %@", plug.name, plug.sid);
+                        } else {
+                            // Update plug
+                            [[SQLHelper getInstance] updatePlugServices:plug];
+                        }
                     }
                 }
+                
+                // Get devices from database
+                self.devices = [[SQLHelper getInstance] getPlugData];
+                [self.tableView reloadData];
+                [self adjustHeightOfTableview];
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        } else if ([resultName compare:WS_DEV_DEL] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Deleted device success - %@", message);
+                
+                // Get devices from database
+                self.devices = [[SQLHelper getInstance] getPlugData];
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
             } else {

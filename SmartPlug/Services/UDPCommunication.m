@@ -30,7 +30,7 @@
     uint8_t iMsg[22];
     uint8_t kMsg[46];
     uint8_t ir[128];
-    uint8_t delatT[18];
+    uint8_t delayT[18];
     uint8_t ir2[1];
     int previous_msgid;
     BOOL process_data;
@@ -62,55 +62,17 @@ static UDPCommunication *instance;
 {
     self = [super init];
     if (self) {
-        _IRCodes = [NSMutableArray new];
         previous_msgid = 0;
         process_data = false;
         code = 1;
         IRFlag = 0;
         IRSendFlag = 0;
         irCode = 0;
+        _IRCodes = [NSMutableArray new];
         _js = [JSmartPlug new];
-        //[self runUdpServer];
     }
     return self;
 }
-
-/*
-- (BOOL)runUdpServer {
-    if (isRunning) {
-        NSLog(@"Server already running!");
-        return NO;
-    }
-    
-    if (!udpSocket) {
-        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    }
-    
-    NSError *error = nil;
-    if (![udpSocket bindToPort:UDP_SERVER_PORT error:&error]) {
-        NSLog(@"Error starting server (bind): %@", error);
-        return NO;
-    }
-    if (![udpSocket beginReceiving:&error]) {
-        [udpSocket close];
-        NSLog(@"Error starting server (recv): %@", error);
-        return NO;
-    }
-    
-    NSLog(@"UDP server started on %@:%i",[udpSocket localHost_IPv4],[udpSocket localPort]);
-    isRunning = YES;
-    return YES;
-}
-
-- (void)runUdpClient:(NSString *)ip msg:(NSString *)msg {
-    if (!udpSocket) {
-        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-    }
-
-    NSData *data = [msg dataUsingEncoding:NSUTF8StringEncoding];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
-}
-*/
  
 - (void)sendUDP:(NSString *)ip data:(NSData *)data
 {
@@ -150,27 +112,38 @@ static UDPCommunication *instance;
 #pragma mark - Public methods
 //==================================================================
 
-- (BOOL)delayTimer:(int)seconds
+- (BOOL)delayTimer:(int)seconds protocol:(int)protocol
 {
     g_UdpCommand = UDP_CMD_DELAY_TIMER;
     NSString *ip = g_DeviceIp;
     if (ip != nil) {
-        uint8_t delay[18];
-        [self generate_header];
+        if (protocol == PROTOCOL_HTTP) {
+            [self generate_header_http];
+        } else {
+            [self generate_header];
+        }
+        
         for (int i = 0; i < 14; i++) {
-            delay[i] = hMsg[i];
+            delayT[i] = hMsg[i];
         }
         
-        delay[14] = (uint8_t) (seconds & 0xff);
-        delay[15] = (uint8_t) ((seconds >> 8) & 0xff);
-        delay[16] = (uint8_t) ((seconds >> 16) & 0xff);
-        delay[17] = (uint8_t) ((seconds >> 24) & 0xff);
+        delayT[17] = (uint8_t) (seconds & 0xff);
+        delayT[16] = (uint8_t) ((seconds >> 8) & 0xff);
+        delayT[15] = (uint8_t) ((seconds >> 16) & 0xff);
+        delayT[14] = (uint8_t) ((seconds >> 24) & 0xff);
         
-        if (!udpSocket) {
-            udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+        if (protocol == PROTOCOL_HTTP) {
+            WebService *ws = [WebService new];
+            ws.delegate = self;
+            NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
+            [ws setTimerDelay:data];
+        } else if (protocol == PROTOCOL_UDP) {
+            if (!udpSocket) {
+                udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+            }
+            NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
+            [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
         }
-        NSData *data = [NSData dataWithBytes:delay length:sizeof(delay)];
-        [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
         return YES;
     } else {
         return NO;
@@ -255,6 +228,21 @@ static UDPCommunication *instance;
     return YES;
 }
 
+- (BOOL)sendOTACommand:(NSString *)ip
+{
+    g_UdpCommand = 0x000F;
+    [self generate_header];
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+
+    NSData *data = [NSData dataWithBytes:hMsg length:sizeof(hMsg)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    NSLog(@"OTA COMMAND SENT");
+    return YES;
+}
+
 - (BOOL)sendIRFileName:(int)filename
 {
     [self sendIRHeader:filename];
@@ -287,6 +275,9 @@ static UDPCommunication *instance;
     BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_HTTP];
     BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_HTTP];
     BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
+    
+    sleep(500);
+    
     if (!headerOK || !timerOK || !termiOK) {
         [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
         [self sendTimers:devId protocol:PROTOCOL_UDP];
@@ -396,10 +387,10 @@ static UDPCommunication *instance;
         for (Alarm *alarm in alarms) {
             int serviceId = alarm.service_id;
             if(protocol == PROTOCOL_HTTP){
-                timer[14] = (uint8_t) (serviceId & 0xff);
-                timer[15] = (uint8_t) ((serviceId >> 8) & 0xff);
-                timer[16] = (uint8_t) ((serviceId >> 16) & 0xff);
-                timer[17] = (uint8_t) ((serviceId >> 24) & 0xff);
+                timer[17] = (uint8_t) (serviceId & 0xff);
+                timer[16] = (uint8_t) ((serviceId >> 8) & 0xff);
+                timer[15] = (uint8_t) ((serviceId >> 16) & 0xff);
+                timer[14] = (uint8_t) ((serviceId >> 24) & 0xff);
                 timer[18] = 0x01;
                 timer[19] = 0x01;
                 timer[20] = 0x00;

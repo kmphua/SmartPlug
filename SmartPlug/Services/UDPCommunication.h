@@ -24,10 +24,11 @@
 
 + (UDPCommunication *)getInstance;
 
-- (BOOL)delayTimer:(int)seconds;
+- (BOOL)delayTimer:(int)seconds protocol:(int)protocol;
 - (BOOL)listenForIRCodes;
 - (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param;
 - (BOOL)sendIRMode;
+- (BOOL)sendOTACommand:(NSString *)ip;
 - (BOOL)sendIRFileName:(int)filename;
 - (void)sendIRHeader:(int)filename;
 - (BOOL)setDeviceTimers:(NSString *)devId;

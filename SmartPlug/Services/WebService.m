@@ -228,6 +228,26 @@
     [self postData:apiUrl params:params];
 }
 
+- (void)devDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_DEL];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    self.resultName = WS_DEV_DEL;
+    [self postData:apiUrl params:params];
+}
+
+/*=========================================================================
+ * Timer methods
+ *========================================================================*/
+
+- (void)setTimerDelay:(NSData *)data
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", g_UserToken, [Global getCurrentLang], g_DeviceMac];
+    self.resultName = WS_DEV_CTRL;
+    [self postDataWithBody:apiUrl params:params body:data];
+}
+
 /*=========================================================================
  * IR methods
  *========================================================================*/

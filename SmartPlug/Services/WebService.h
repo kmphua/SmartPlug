@@ -24,6 +24,7 @@
 #define WS_DEV_GET                  @"devget"
 #define WS_DEV_SET                  @"devset"
 #define WS_DEV_LOG                  @"devlog"
+#define WS_DEV_DEL                  @"devdel"
 
 #define WS_GALLERY_LIST             @"gallery"
 
@@ -68,6 +69,11 @@
 - (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
 
 - (void)newDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId iconRes:(IconResolution)iconRes title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger oriTitle:(NSString *)oriTitle ip:(NSString *)ip server:(NSString *)server snooze:(NSString *)snooze relay:(NSString *)relay;
+
+- (void)devDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
+
+// Timer methods
+- (void)setTimerDelay:(NSData *)data;
 
 // IR methods
 - (void)irList:(NSString *)userToken lang:(NSString *)lang;
