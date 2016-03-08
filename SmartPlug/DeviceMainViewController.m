@@ -16,6 +16,11 @@
 #import "UDPCommunication.h"
 
 @interface DeviceMainViewController ()<NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
+{
+    int relay;
+    int nightlight;
+    int action;
+}
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (nonatomic, weak) IBOutlet UIImageView *imgDeviceIcon;
@@ -77,6 +82,14 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
+    UITapGestureRecognizer *tapGestureOutletButton = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapOutletButton:)];
+    [self.viewOutlet addGestureRecognizer:tapGestureOutletButton];
+    [self.viewOutlet setUserInteractionEnabled:YES];
+
+    UITapGestureRecognizer *tapGestureNightlightButton = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapNightlightButton:)];
+    [self.viewNightLight addGestureRecognizer:tapGestureNightlightButton];
+    [self.viewNightLight setUserInteractionEnabled:YES];
+    
     UITapGestureRecognizer *tapGestureIRButton = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapIRButton:)];
     [self.viewIr addGestureRecognizer:tapGestureIRButton];
     [self.viewIr setUserInteractionEnabled:YES];
@@ -125,7 +138,6 @@
     }
     
     JSmartPlug *device = [devices firstObject];
-    int relay, nightlight;
     
     if (device.givenName && device.givenName.length>0) {
         _lblDeviceName.text = device.givenName;
@@ -212,6 +224,82 @@
     [_imgRightWarning setHidden:YES];
 }
 
+- (void)sendService:(int)serviceId
+{
+    //progressBar.setVisibility(View.VISIBLE);
+    if (serviceId == ALARM_RELAY_SERVICE) {
+        if (relay == 0) {
+            action = 0x01;
+        } else {
+            action = 0x00;
+        }
+    }
+    
+    if (serviceId == ALARM_NIGHTLED_SERVICE) {
+        if (nightlight == 0) {
+            action = 0x01;
+            //                nightlight = 1;
+            //                nightled_icon.setImageResource(R.drawable.svc_1_big);
+        } else {
+            action = 0x00;
+        }
+    }
+    
+    [_imgLeftWarning setHidden:NO];
+    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
+    [_lblWarning setHidden:NO];
+    [_imgRightWarning setHidden:NO];
+    
+    [_viewOutlet setUserInteractionEnabled:NO];
+    [_viewNightLight setUserInteractionEnabled:NO];
+
+    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:action];
+
+    // Set device status
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    
+    int header = 0x534D5254;
+    uint8_t sMsg[24];
+    sMsg[3] = (uint8_t)(header);
+    sMsg[2] = (uint8_t)((header >> 8 ));
+    sMsg[1] = (uint8_t)((header >> 16 ));
+    sMsg[0] = (uint8_t)((header >> 24 ));
+    
+    int msid = (int)(random()*4294967+1);
+    sMsg[7] = (uint8_t)(msid);
+    sMsg[6] = (uint8_t)((msid >> 8 ));
+    sMsg[5] = (uint8_t)((msid >> 16 ));
+    sMsg[4] = (uint8_t)((msid >> 24 ));
+    int seq = 0x80000000;
+    sMsg[11] = (uint8_t)(seq);
+    sMsg[10] = (uint8_t)((seq >> 8 ));
+    sMsg[9] = (uint8_t)((seq >> 16 ));
+    sMsg[8] = (uint8_t)((seq >> 24 ));
+    short command = 0x0008;
+    sMsg[13] = (uint8_t)(command);
+    sMsg[12] = (uint8_t)((command >> 8 ));
+    //int serviceId = 0xD1000000;
+    sMsg[17] = (uint8_t)(serviceId);
+    sMsg[16] = (uint8_t)((serviceId >> 8 ));
+    sMsg[15] = (uint8_t)((serviceId >> 16 ));
+    sMsg[14] = (uint8_t)((serviceId >> 24 ));
+    
+    uint8_t datatype = 0x01;
+    sMsg[18] = datatype;
+    uint8_t data = action;
+    sMsg[19] = data;
+    int terminator = 0x00000000;
+    sMsg[23] = (uint8_t)(terminator & 0xff);
+    sMsg[22] = (uint8_t)((terminator >> 8 ) & 0xff);
+    sMsg[21] = (uint8_t)((terminator >> 16 ) & 0xff);
+    sMsg[20] = (uint8_t)((terminator >> 24 ) & 0xff);
+    
+    NSData *deviceData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
+    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid data:deviceData];
+    //progressBar.setVisibility(View.GONE);
+}
+
 - (void)onRightBarButton:(id)sender {
     DeviceItemSettingsViewController *itemSettingsVc = [[DeviceItemSettingsViewController alloc] initWithNibName:@"DeviceItemSettingsViewController" bundle:nil];
     itemSettingsVc.device = self.device;
@@ -243,6 +331,10 @@
     [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
 }
 
+- (IBAction)onTapOutletButton:(id)sender {
+    [self sendService:ALARM_RELAY_SERVICE];
+}
+
 - (IBAction)onBtnNightLightTimer:(id)sender {
     // Timer set, no snooze
     SetTimerViewController *setTimerVC = [[SetTimerViewController alloc] initWithNibName:@"SetTimerViewController" bundle:nil];
@@ -250,6 +342,10 @@
     setTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     setTimerVC.delegate = self;
     [self presentViewController:setTimerVC animated:YES completion:nil];
+}
+
+- (IBAction)onTapNightlightButton:(id)sender {
+    [self sendService:ALARM_NIGHTLED_SERVICE];
 }
 
 - (IBAction)onBtnIRTimer:(id)sender {
@@ -447,6 +543,15 @@
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
+            }
+        } else if ([resultName compare:WS_DEV_CTRL] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"Set device status success");
+            } else {
+                // Failure
+                NSLog(@"Set device status failed");
             }
         }
     }
