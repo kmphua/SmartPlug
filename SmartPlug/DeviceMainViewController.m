@@ -13,6 +13,7 @@
 #import "SetTimerSnoozeViewController.h"
 #import "ScheduleMainViewController.h"
 #import "IRMainViewController.h"
+#import "UDPCommunication.h"
 
 @interface DeviceMainViewController ()<NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
 
@@ -88,11 +89,125 @@
     //WebService *ws = [WebService new];
     //ws.delegate = self;
     //[ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_1x devId:_device.sid];
+    
+    // Register notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getDeviceStatus:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Deregister notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)getDeviceStatus:(NSNotification *)notification {
+    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+}
+
+- (void)updateUI:(NSNotification *)notification {
+    
+    NSArray *devices = [[SQLHelper getInstance] getPlugDataByID:self.device.sid];
+    if (!devices || devices.count == 0) {
+        NSLog(@"updateUI: No devices!");
+        return;
+    }
+    
+    JSmartPlug *device = [devices firstObject];
+    int relay, nightlight;
+    
+    if (device.givenName && device.givenName.length>0) {
+        _lblDeviceName.text = device.givenName;
+    } else {
+        _lblDeviceName.text = device.name;
+    }
+    
+    // Relay
+    if (device.relay == 0) {
+        relay = 0;
+        [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big_off"]];
+    } else if (device.relay == 1) {
+        relay = 1;
+        [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big"]];
+    }
+    
+    // Hall effect sensor
+    if (device.hall_sensor == 0) {
+        [_imgOutletWarning setHidden:YES];
+        [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn"]];
+        [_imgOutletWarning stopAnimating];
+        [_lblWarning setText:@""];
+        [_imgLeftWarning setHidden:YES];
+        [_imgRightWarning setHidden:YES];
+    } else if (device.hall_sensor == 1) {
+        [_imgOutletWarning setHidden:NO];
+        [_lblWarning setHidden:NO];
+        [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
+        [_imgOutletWarning startAnimating];
+        [_imgLeftWarning setHidden:NO];
+        [_imgRightWarning setHidden:NO];
+        [_lblWarning setText:NSLocalizedString(@"msg_ha_warning", nil)];
+    }
+    
+    // CO sensor
+    if (device.co_sensor == 0) {
+        [_imgCoWarning setHidden:YES];
+        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
+        [_imgCoWarning stopAnimating];
+        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
+    } else if (device.co_sensor == 1) {
+        [_imgCoWarning setHidden:YES];
+        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
+        [_imgCoWarning startAnimating];
+        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
+        [_imgLeftWarning setHidden:NO];
+        [_imgRightWarning setHidden:NO];
+        [_lblWarning setText:NSLocalizedString(@"msg_co_warning", nil)];
+    } else if (device.co_sensor == 3) {
+        [_viewCo setHidden:NO];
+        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big_off"]];
+        [_imgLeftWarning setHidden:NO];
+        [_imgRightWarning setHidden:NO];
+        [_lblWarning setText:NSLocalizedString(@"USB_not_plugged_in", nil)];
+    }
+    
+    // Night light
+    if (device.nightlight == 0) {
+        nightlight = 0;
+        [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big_off"]];
+    } else if (device.nightlight == 1) {
+        nightlight = 1;
+        [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
+    }
+    
+    if (device.notify_timer == 0) {
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+    } else if (device.notify_timer == 1) {
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+    }
+    
+    if (device.icon && device.icon.length>0) {
+        NSString *imagePath = self.device.icon;
+        [_imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+    }
+    
+    //nightled_icon.setEnabled(true);
+    //plug_icon.setEnabled(true);
+    [_imgLeftWarning setHidden:YES];
+    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
+    [_lblWarning setHidden:YES];
+    [_imgRightWarning setHidden:YES];
 }
 
 - (void)onRightBarButton:(id)sender {
