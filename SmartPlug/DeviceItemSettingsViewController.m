@@ -9,6 +9,7 @@
 #import "DeviceItemSettingsViewController.h"
 #import "DeviceIconViewController.h"
 #import "DQAlertView.h"
+#import "FirstTimeConfig.h"
 
 @interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
 
@@ -103,7 +104,11 @@
     switch (row) {
         case 0:
             cell.textLabel.text = NSLocalizedString(@"id_sevice", nil);
-            cell.detailTextLabel.text = @"JSPlug";
+            if (self.device.model) {
+                cell.detailTextLabel.text = self.device.model;
+            } else {
+                cell.detailTextLabel.text = @"JSPlug";
+            }
             break;
         case 1:
         {
@@ -129,14 +134,30 @@
             break;
         case 3:
             cell.textLabel.text = NSLocalizedString(@"id_wifi", nil);
-            cell.detailTextLabel.text = self.device.server;
+            cell.detailTextLabel.text = [FirstTimeConfig getSSID];
             break;
         case 4:
             if (_deviceInRange) {
                 cell.textLabel.text = @"CO sensor";
+                if (self.device.co_sensor) {
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
+                }
             } else {
                 cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
-                cell.detailTextLabel.text = self.device.sid;
+                
+                // Add colons to mac address
+                if (self.device.sid && self.device.sid.length == 12) {
+                    NSString *mac = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",
+                                     [_device.sid substringWithRange:NSMakeRange(0, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(2, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(4, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(6, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(8, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(10, 2)]];
+                    cell.detailTextLabel.text = mac;
+                } else {
+                    cell.detailTextLabel.text = self.device.sid;
+                }
             }
             break;
         case 5:
@@ -145,6 +166,9 @@
                 cell.detailTextLabel.text = self.device.hw_ver;
             } else {
                 cell.textLabel.text = @"Notify on power outage";
+                if (self.device.notify_power) {
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
+                }
             }
             break;
         case 6:
@@ -153,14 +177,33 @@
                 cell.detailTextLabel.text = self.device.fw_ver;
             } else {
                 cell.textLabel.text = @"Notify on CO warning";
+                if (self.device.notify_co) {
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
+                }
             }
             break;
         case 7:
             if (_deviceInRange) {
                 cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
-                cell.detailTextLabel.text = self.device.sid;
+                
+                // Add colons to mac address
+                if (self.device.sid && self.device.sid.length == 12) {
+                    NSString *mac = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",
+                                     [_device.sid substringWithRange:NSMakeRange(0, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(2, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(4, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(6, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(8, 2)],
+                                     [_device.sid substringWithRange:NSMakeRange(10, 2)]];
+                    cell.detailTextLabel.text = mac;
+                } else {
+                    cell.detailTextLabel.text = self.device.sid;
+                }
             } else {
                 cell.textLabel.text = @"Notify on timer activated";
+                if (self.device.notify_timer) {
+                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
+                }
             }
             break;
         case 8:

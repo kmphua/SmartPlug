@@ -318,6 +318,10 @@ static UDPListenerService *instance;
     int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
     js.flag = flag;
     NSLog(@"FLAG: %d", flag);
+    
+    // Update to database
+    js.ip = g_DeviceIp;
+    [[SQLHelper getInstance] updatePlugServices:js];
 }
 
 - (void)process_get_device_status
@@ -345,7 +349,7 @@ static UDPListenerService *instance;
         } else {
             js.hall_sensor = 0;
         }
-        uint8_t datatype = lMsg[26];
+        //uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if (data == 0x01){
             js.relay = 1;
@@ -363,8 +367,8 @@ static UDPListenerService *instance;
     int service_id = [self process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
     if(service_id == 0xD1000001) {
         NSLog(@"NIGHT LIGHT SERVICE");
-        int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
-        uint8_t datatype = lMsg[36];                                                    //always the same 0x01
+        //int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        //uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
             js.nightlight = 1;
@@ -388,8 +392,8 @@ static UDPListenerService *instance;
         } else {
             js.co_sensor = 0;                      //NORMAL
         }
-        uint8_t datatype = lMsg[46];
-        uint8_t data = lMsg[47];
+        //uint8_t datatype = lMsg[46];
+        //uint8_t data = lMsg[47];
     }
 }
 
@@ -455,9 +459,9 @@ static UDPListenerService *instance;
     hMsg[10] = (uint8_t)((seq >> 8 ));
     hMsg[9] = (uint8_t)((seq >> 16 ));
     hMsg[8] = (uint8_t)((seq >> 24 ));
-    short command = g_UdpCommand;
-    hMsg[13] = (uint8_t)(command);
-    hMsg[12] = (uint8_t)((command >> 8 ));
+    short cmd = g_UdpCommand;
+    hMsg[13] = (uint8_t)(cmd);
+    hMsg[12] = (uint8_t)((cmd >> 8 ));
 }
 
 //==================================================================

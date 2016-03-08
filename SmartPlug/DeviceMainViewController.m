@@ -58,6 +58,8 @@
     g_DeviceIp = _device.ip;
     g_DeviceMac = _device.sid;
     
+    [[UDPCommunication getInstance] queryDevices:_device.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
+    
     if (self.device.icon && self.device.icon.length > 0) {
         NSString *imagePath = self.device.icon;
         [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
