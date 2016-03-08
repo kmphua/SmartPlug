@@ -10,7 +10,7 @@
 
 @protocol DeviceIconDelegate <NSObject>
 
-- (void)selectedIcon:(int)iconId;
+- (void)selectedIcon:(NSString *)icon;
 
 @end
 

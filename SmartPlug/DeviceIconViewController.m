@@ -107,9 +107,9 @@
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
     NSDictionary *icon = [_icons objectAtIndex:position];
-    int selectedIconId = [[icon objectForKey:@"id"] intValue];
-    NSLog(@"Selected icon id=%d", selectedIconId);
-    [self.delegate selectedIcon:selectedIconId];
+    NSString *selectedIconUrl = [icon objectForKey:@"url"];
+    NSLog(@"Selected icon id=%@", selectedIconUrl);
+    [self.delegate selectedIcon:selectedIconUrl];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

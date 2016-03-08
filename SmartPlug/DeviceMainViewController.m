@@ -17,9 +17,9 @@
 
 @interface DeviceMainViewController ()<NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
 {
-    int relay;
-    int nightlight;
-    int action;
+    int _relay;
+    int _nightlight;
+    int _action;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
@@ -27,19 +27,23 @@
 @property (nonatomic, weak) IBOutlet UILabel *lblDeviceName;
 
 @property (weak, nonatomic) IBOutlet UIView *viewOutlet;
+@property (weak, nonatomic) IBOutlet UIImageView *imgOutletBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletWarning;
 @property (weak, nonatomic) IBOutlet UIButton *btnOutletTimer;
 
 @property (weak, nonatomic) IBOutlet UIView *viewNightLight;
+@property (weak, nonatomic) IBOutlet UIImageView *imgNightLightBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgNightLightIcon;
 @property (weak, nonatomic) IBOutlet UIButton *btnNightLightTimer;
 
 @property (weak, nonatomic) IBOutlet UIView *viewIr;
+@property (weak, nonatomic) IBOutlet UIImageView *imgIrBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgIrIcon;
 @property (weak, nonatomic) IBOutlet UIButton *btnIrTimer;
 
 @property (weak, nonatomic) IBOutlet UIView *viewCo;
+@property (weak, nonatomic) IBOutlet UIImageView *imgCoBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoWarning;
 
@@ -99,15 +103,15 @@
 {
     [super viewWillAppear:animated];
     
-    // Get device status
-    //WebService *ws = [WebService new];
-    //ws.delegate = self;
-    //[ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_1x devId:_device.sid];
+    // Update device status
+    [self updateDeviceStatusFromServer];
     
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getDeviceStatus:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -117,11 +121,24 @@
     // Deregister notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)updateDeviceStatusFromServer {
+    // Get device status
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_1x devId:_device.sid];
+}
+
+- (void)handleDeviceStatusChanged:(NSNotification *)notification {
+    NSLog(@"Device status changed");
+    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
 }
 
 - (void)getDeviceStatus:(NSNotification *)notification {
@@ -147,10 +164,10 @@
     
     // Relay
     if (device.relay == 0) {
-        relay = 0;
+        _relay = 0;
         [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big_off"]];
     } else if (device.relay == 1) {
-        relay = 1;
+        _relay = 1;
         [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big"]];
     }
     
@@ -196,10 +213,10 @@
     
     // Night light
     if (device.nightlight == 0) {
-        nightlight = 0;
+        _nightlight = 0;
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big_off"]];
     } else if (device.nightlight == 1) {
-        nightlight = 1;
+        _nightlight = 1;
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
     
@@ -216,8 +233,8 @@
         [_imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
     
-    //nightled_icon.setEnabled(true);
-    //plug_icon.setEnabled(true);
+    [_viewOutlet setUserInteractionEnabled:YES];
+    [_viewNightLight setUserInteractionEnabled:YES];
     [_imgLeftWarning setHidden:YES];
     [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
     [_lblWarning setHidden:YES];
@@ -228,20 +245,20 @@
 {
     //progressBar.setVisibility(View.VISIBLE);
     if (serviceId == ALARM_RELAY_SERVICE) {
-        if (relay == 0) {
-            action = 0x01;
+        if (_relay == 0) {
+            _action = 0x01;
         } else {
-            action = 0x00;
+            _action = 0x00;
         }
     }
     
     if (serviceId == ALARM_NIGHTLED_SERVICE) {
-        if (nightlight == 0) {
-            action = 0x01;
+        if (_nightlight == 0) {
+            _action = 0x01;
             //                nightlight = 1;
             //                nightled_icon.setImageResource(R.drawable.svc_1_big);
         } else {
-            action = 0x00;
+            _action = 0x00;
         }
     }
     
@@ -253,7 +270,7 @@
     [_viewOutlet setUserInteractionEnabled:NO];
     [_viewNightLight setUserInteractionEnabled:NO];
 
-    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:action];
+    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action];
 
     // Set device status
     WebService *ws = [WebService new];
@@ -287,7 +304,7 @@
     
     uint8_t datatype = 0x01;
     sMsg[18] = datatype;
-    uint8_t data = action;
+    uint8_t data = _action;
     sMsg[19] = data;
     int terminator = 0x00000000;
     sMsg[23] = (uint8_t)(terminator & 0xff);
@@ -527,12 +544,39 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                NSString *icon = (NSString *)[jsonObject objectForKey:@"icon"];
-                NSString *iconId = (NSString *)[jsonObject objectForKey:@"iconid"];
-                NSString *title = (NSString *)[jsonObject objectForKey:@"title"];
-                NSString *notifyPower = (NSString *)[jsonObject objectForKey:@"notify_power"];
-                NSString *notifyTimer = (NSString *)[jsonObject objectForKey:@"notify_timer"];
-                NSString *notifyDanger = (NSString *)[jsonObject objectForKey:@"notify_danger"];
+                NSString *relay = [jsonObject objectForKey:@"relay"];
+                NSString *nightlight = [jsonObject objectForKey:@"nightlight"];
+                NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
+                NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
+                NSString *snooze = [jsonObject objectForKey:@"snooze"];
+                
+                if(![relay isKindOfClass:[NSNull class]] && relay != nil && relay.length>0) {
+                    [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:_device.sid];
+                }
+                if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil && nightlight.length>0) {
+                    [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:_device.sid];
+                }
+                if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil && co_sensor.length>0) {
+                    [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:_device.sid];
+                }
+                if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil && hall_sensor.length>0) {
+                    [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:_device.sid];
+                }
+                if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
+                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updateSnooze:0 sid:_device.sid];
+                }
+                
+                [self updateUI:nil];
                 
             } else {
                 // Failure
@@ -549,6 +593,10 @@
             if (result == 0) {
                 // Success
                 NSLog(@"Set device status success");
+                
+                // Update device status
+                [self updateDeviceStatusFromServer];
+
             } else {
                 // Failure
                 NSLog(@"Set device status failed");

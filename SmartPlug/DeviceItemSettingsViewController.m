@@ -282,11 +282,11 @@
 //==================================================================
 #pragma DeviceIconDelegate
 //==================================================================
-- (void)selectedIcon:(int)iconId
+- (void)selectedIcon:(NSString *)icon
 {
     // Update device icon
-    _device.icon = [NSString stringWithFormat:@"%d", iconId];
-    [[SQLHelper getInstance] updatePlugIcon:_device.sid icon:[NSString stringWithFormat:@"%d", iconId]];
+    _device.icon = icon;
+    [[SQLHelper getInstance] updatePlugIcon:_device.sid icon:icon];
     [self.tableView reloadData];
 }
 

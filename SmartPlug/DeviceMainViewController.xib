@@ -12,23 +12,27 @@
                 <outlet property="btnIrTimer" destination="CEm-cg-GLv" id="W4G-XJ-J4B"/>
                 <outlet property="btnNightLightTimer" destination="lbU-L3-Fec" id="m8f-LZ-ZZz"/>
                 <outlet property="btnOutletTimer" destination="Bku-I3-aTb" id="mu1-24-A3L"/>
+                <outlet property="imgCoBg" destination="0xt-HO-rul" id="EtM-j3-IzX"/>
                 <outlet property="imgCoIcon" destination="cj1-Fd-bq7" id="pfg-xd-vzI"/>
                 <outlet property="imgCoWarning" destination="jnI-2Z-JWs" id="9vD-4s-Jzv"/>
                 <outlet property="imgDeviceIcon" destination="l8L-aH-hb8" id="ECe-4m-0jb"/>
+                <outlet property="imgIrBg" destination="Wqr-Zp-1j9" id="LIB-QJ-Fa2"/>
                 <outlet property="imgIrIcon" destination="wos-OY-of3" id="dKn-CD-1uv"/>
                 <outlet property="imgLeftWarning" destination="P96-7L-qnq" id="bnw-QH-Vve"/>
+                <outlet property="imgNightLightBg" destination="jle-Xb-r2N" id="oZU-en-DTD"/>
                 <outlet property="imgNightLightIcon" destination="2uj-Oj-6EL" id="HD3-hE-oBk"/>
+                <outlet property="imgOutletBg" destination="3d3-3J-cXq" id="fjr-V9-tbS"/>
                 <outlet property="imgOutletIcon" destination="rTk-sc-4c1" id="igb-Pw-RPk"/>
                 <outlet property="imgOutletWarning" destination="uYQ-Rn-8qv" id="vjA-cz-7cB"/>
                 <outlet property="imgRightWarning" destination="gZ7-Wq-rvc" id="PlJ-pZ-7Mz"/>
                 <outlet property="lblDeviceName" destination="3S7-IA-YYk" id="I28-an-OHq"/>
                 <outlet property="lblWarning" destination="9cn-CU-zKc" id="oOr-cR-QY1"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
-                <outlet property="viewCo" destination="0xt-HO-rul" id="zkB-Z0-DhG"/>
-                <outlet property="viewIr" destination="Wqr-Zp-1j9" id="Och-uE-wPV"/>
-                <outlet property="viewNightLight" destination="jle-Xb-r2N" id="68r-n0-AAn"/>
-                <outlet property="viewOutlet" destination="3d3-3J-cXq" id="etg-V3-YGH"/>
-                <outlet property="viewWarning" destination="vYG-cf-QVu" id="CYD-Ha-qFT"/>
+                <outlet property="viewCo" destination="073-sb-3We" id="Wx6-v9-Ax5"/>
+                <outlet property="viewIr" destination="Ab2-TC-9xo" id="gy3-AC-L1E"/>
+                <outlet property="viewNightLight" destination="PEU-TO-aN6" id="O6h-ZQ-vrs"/>
+                <outlet property="viewOutlet" destination="WT5-Q0-caP" id="97G-eJ-ukf"/>
+                <outlet property="viewWarning" destination="vYG-cf-QVu" id="g4V-hY-mMi"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
