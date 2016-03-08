@@ -136,7 +136,7 @@ static UDPCommunication *instance;
             WebService *ws = [WebService new];
             ws.delegate = self;
             NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
-            [ws setTimerDelay:data];
+            [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
         } else if (protocol == PROTOCOL_UDP) {
             if (!udpSocket) {
                 udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];

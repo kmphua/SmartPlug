@@ -240,10 +240,10 @@
  * Timer methods
  *========================================================================*/
 
-- (void)setTimerDelay:(NSData *)data
+- (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", g_UserToken, [Global getCurrentLang], g_DeviceMac];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
     self.resultName = WS_DEV_CTRL;
     [self postDataWithBody:apiUrl params:params body:data];
 }

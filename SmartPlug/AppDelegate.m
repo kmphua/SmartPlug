@@ -12,10 +12,12 @@
 #import "WebService.h"
 #import "MainViewController.h"
 #import "UDPListenerService.h"
+#import "mDNSService.h"
 
 @interface AppDelegate ()
 
 @property (nonatomic, strong) UDPListenerService *udpListener;
+@property (nonatomic, strong) mDNSService *mDNSService;
 
 @end
 
@@ -29,10 +31,8 @@ NSString *g_UserToken;
 NSString *g_DevToken;
 NSArray *g_DeviceIcons;
 
-NSString *g_DeviceId;
 NSString *g_DeviceIp;
 NSString *g_DeviceName;
-NSString *g_DeviceGivenName;
 NSString *g_DeviceMac;
 
 int g_UdpCommand;
@@ -73,6 +73,10 @@ int g_UdpCommand;
     _udpListener = [UDPListenerService getInstance];
     [_udpListener startUdpBroadcastListener];
     
+    // Start mDNS service
+    _mDNSService = [mDNSService getInstance];
+    [_mDNSService startBrowsing];
+    
     return YES;
 }
 
@@ -85,6 +89,7 @@ int g_UdpCommand;
     // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
     // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
     [_udpListener stopUdpBroadcastListener];
+    [_mDNSService stopBrowsing];
 }
 
 - (void)applicationWillEnterForeground:(UIApplication *)application {
@@ -94,6 +99,7 @@ int g_UdpCommand;
 - (void)applicationDidBecomeActive:(UIApplication *)application {
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [_udpListener startUdpBroadcastListener];
+    [_mDNSService startBrowsing];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {

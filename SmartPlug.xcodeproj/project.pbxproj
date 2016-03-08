@@ -70,7 +70,6 @@
 		75229A481C816C07002FCAEB /* IrCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A471C816C07002FCAEB /* IrCode.m */; };
 		75229A4B1C816F34002FCAEB /* IrGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A4A1C816F34002FCAEB /* IrGroup.m */; };
 		754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE701C338449006F86B2 /* JSmartPlug.m */; };
-		755268991C334B5400602B58 /* SmartConfigService.m in Sources */ = {isa = PBXBuildFile; fileRef = 755268981C334B5400602B58 /* SmartConfigService.m */; };
 		7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7552689B1C334B6900602B58 /* UDPListenerService.m */; };
 		7559ECC91C3CC03700AA994D /* NoTimersViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7559ECC71C3CC03700AA994D /* NoTimersViewController.m */; };
 		7559ECCA1C3CC03700AA994D /* NoTimersViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7559ECC81C3CC03700AA994D /* NoTimersViewController.xib */; };
@@ -302,6 +301,7 @@
 		757411BE1C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */; };
 		757411BF1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */; };
 		757411C01C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png in Resources */ = {isa = PBXBuildFile; fileRef = 7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */; };
+		7578519B1C8F335900983AE7 /* mDNSService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7578519A1C8F335900983AE7 /* mDNSService.m */; };
 		758ABDD41C7500AD00980EDE /* IRMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 758ABDD21C7500AD00980EDE /* IRMainViewController.m */; };
 		758ABDD51C7500AD00980EDE /* IRMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 758ABDD31C7500AD00980EDE /* IRMainViewController.xib */; };
 		75B2BACE1C878C9900B59779 /* IREditModeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2BACC1C878C9900B59779 /* IREditModeViewController.m */; };
@@ -456,8 +456,6 @@
 		75229A4A1C816F34002FCAEB /* IrGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrGroup.m; sourceTree = "<group>"; };
 		754ADE6F1C338449006F86B2 /* JSmartPlug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSmartPlug.h; sourceTree = "<group>"; };
 		754ADE701C338449006F86B2 /* JSmartPlug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSmartPlug.m; sourceTree = "<group>"; };
-		755268971C334B5400602B58 /* SmartConfigService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SmartConfigService.h; sourceTree = "<group>"; };
-		755268981C334B5400602B58 /* SmartConfigService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SmartConfigService.m; sourceTree = "<group>"; };
 		7552689A1C334B6900602B58 /* UDPListenerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPListenerService.h; sourceTree = "<group>"; };
 		7552689B1C334B6900602B58 /* UDPListenerService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UDPListenerService.m; sourceTree = "<group>"; };
 		7559ECC61C3CC03700AA994D /* NoTimersViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NoTimersViewController.h; sourceTree = "<group>"; };
@@ -693,6 +691,8 @@
 		757411991C23AEE600CDCC2D /* see_Wi-Fi sharing device_1_white_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_1_white_bkgnd.png"; sourceTree = "<group>"; };
 		7574119A1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd.png"; sourceTree = "<group>"; };
 		7574119B1C23AEE600CDCC2D /* see_Wi-Fi sharing device_2_transparent_bkgnd_small.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "see_Wi-Fi sharing device_2_transparent_bkgnd_small.png"; sourceTree = "<group>"; };
+		757851991C8F335900983AE7 /* mDNSService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = mDNSService.h; sourceTree = "<group>"; };
+		7578519A1C8F335900983AE7 /* mDNSService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = mDNSService.m; sourceTree = "<group>"; };
 		758ABDD11C7500AD00980EDE /* IRMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRMainViewController.h; sourceTree = "<group>"; };
 		758ABDD21C7500AD00980EDE /* IRMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRMainViewController.m; sourceTree = "<group>"; };
 		758ABDD31C7500AD00980EDE /* IRMainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRMainViewController.xib; sourceTree = "<group>"; };
@@ -900,8 +900,8 @@
 				7512C1641C1BB3B700489091 /* WebService.h */,
 				7512C1651C1BB3B700489091 /* WebService.m */,
 				751510D71C22B9E8007772FE /* smartplug.h */,
-				755268971C334B5400602B58 /* SmartConfigService.h */,
-				755268981C334B5400602B58 /* SmartConfigService.m */,
+				757851991C8F335900983AE7 /* mDNSService.h */,
+				7578519A1C8F335900983AE7 /* mDNSService.m */,
 				75634AAF1C8CDB3A003ECC35 /* UDPCommunication.h */,
 				75634AB01C8CDB3A003ECC35 /* UDPCommunication.m */,
 				7552689A1C334B6900602B58 /* UDPListenerService.h */,
@@ -1817,7 +1817,6 @@
 				757411741C23ADC300CDCC2D /* DeviceMainViewController.m in Sources */,
 				75229A4B1C816F34002FCAEB /* IrGroup.m in Sources */,
 				75229A481C816C07002FCAEB /* IrCode.m in Sources */,
-				755268991C334B5400602B58 /* SmartConfigService.m in Sources */,
 				751ECFC61C850A9B0058A403 /* IRRecordViewController.m in Sources */,
 				75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */,
 				751510D31C22698C007772FE /* AddDeviceViewController.m in Sources */,
@@ -1832,6 +1831,7 @@
 				7512C1821C1BB3B700489091 /* BadgeStyle.m in Sources */,
 				7559ECC91C3CC03700AA994D /* NoTimersViewController.m in Sources */,
 				7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */,
+				7578519B1C8F335900983AE7 /* mDNSService.m in Sources */,
 				7508AA521C323C5800EB88D1 /* CC3xAPManager.m in Sources */,
 				7508AA731C326D2900EB88D1 /* ScheduleMainViewCell.m in Sources */,
 				7508AA5A1C32525100EB88D1 /* Reachability.m in Sources */,

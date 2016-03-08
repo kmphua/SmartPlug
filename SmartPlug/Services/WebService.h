@@ -73,7 +73,7 @@
 - (void)devDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 
 // Timer methods
-- (void)setTimerDelay:(NSData *)data;
+- (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data;
 
 // IR methods
 - (void)irList:(NSString *)userToken lang:(NSString *)lang;

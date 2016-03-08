@@ -60,6 +60,8 @@
 #define NOTIFICATION_STATUS_CHANGED_UPDATE_UI   @"status_changed_update_ui"
 #define NOTIFICATION_M1_UPDATE_UI               @"m1updateui"
 #define NOTIFICATION_IR_FILENAME                @"ir_filename"
+#define NOTIFICATION_MDNS_DEVICE_FOUND          @"mDNS_New_Device_Found"
+#define NOTIFICATION_MDNS_DEVICE_REMOVED        @"mDNS_Device_Removed"
 
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,
@@ -88,10 +90,8 @@ extern NSString *g_DevToken;
 extern NSArray *g_DeviceIcons;
 
 // Current device
-extern NSString *g_DeviceId;
 extern NSString *g_DeviceIp;
 extern NSString *g_DeviceName;
-extern NSString *g_DeviceGivenName;
 extern NSString *g_DeviceMac;
 
 // UDP command

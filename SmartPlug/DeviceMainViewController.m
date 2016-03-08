@@ -55,7 +55,6 @@
     
     // See current device info
     g_DeviceName = _device.name;
-    g_DeviceGivenName = _device.givenName;
     g_DeviceIp = _device.ip;
     g_DeviceMac = _device.sid;
     
@@ -111,11 +110,12 @@
 }
 
 - (void)getDeviceStatus:(NSNotification *)notification {
+    NSLog(@"Getting device status");
     [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
 }
 
 - (void)updateUI:(NSNotification *)notification {
-    
+    NSLog(@"Updating UI");
     NSArray *devices = [[SQLHelper getInstance] getPlugDataByID:self.device.sid];
     if (!devices || devices.count == 0) {
         NSLog(@"updateUI: No devices!");

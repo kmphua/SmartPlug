@@ -14,16 +14,13 @@
 #import "MainViewCell.h"
 #import "JSmartPlug.h"
 #import "UDPCommunication.h"
+#import "mDNSService.h"
 
-@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, NSNetServiceBrowserDelegate, NSNetServiceDelegate, MainViewCellDelegate>
+@interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, MainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *devices;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
-
-@property (strong, nonatomic) NSMutableArray *services;
-@property (strong, nonatomic) NSNetServiceBrowser *serviceBrowser;
-@property (nonatomic) BOOL searching;
 
 @end
 
@@ -51,7 +48,6 @@
     
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
-    [self startBrowsing];
     
     WebService *ws = [[WebService alloc] init];
     ws.delegate = self;
@@ -59,9 +55,11 @@
     [ws showWaitingView:self.view];
     
     // Register notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getDeviceStatus:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceFound:) name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -69,8 +67,9 @@
     [super viewWillDisappear:animated];
     
     // Deregister notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -113,141 +112,32 @@
     [self.navigationController pushViewController:settingsVc animated:YES];
 }
 
-- (void)getDeviceStatus:(NSNotification *)notification {
-    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
-}
-
 - (void)updateUI:(NSNotification *)notification {
+    self.devices = [[SQLHelper getInstance] getPlugData];
     [self.tableView reloadData];
+    [self adjustHeightOfTableview];
 }
 
-//==================================================================
-#pragma mark - Bonjour service discovery
-//==================================================================
+- (void)handleDeviceFound:(NSNotification*)notification {
+    self.devices = [[SQLHelper getInstance] getPlugData];
+    [self syncDeviceIpAddresses];
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
+}
 
-- (void)startBrowsing {
-    if (self.services) {
-        [self.services removeAllObjects];
-    } else {
-        self.services = [NSMutableArray new];
+- (void)handleDeviceRemoved:(NSNotification*)notification {
+    self.devices = [[SQLHelper getInstance] getPlugData];
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
+}
+
+- (void)syncDeviceIpAddresses {
+    // Sync database with mDNS IP addresses
+    NSArray *plugs = [[mDNSService getInstance] plugs];
+    for (JSmartPlug *plug in plugs) {
+        NSLog(@"Updating plug %@ with ip %@", plug.name, plug.ip);
+        [[SQLHelper getInstance] updatePlugIP:plug.name ip:plug.ip];
     }
-    
-    // Initialize Service Browser
-    self.serviceBrowser = [[NSNetServiceBrowser alloc] init];
-    
-    // Configure Service Browser
-    [self.serviceBrowser setDelegate:self];
-    [self.serviceBrowser searchForServicesOfType:SERVICE_TYPE inDomain:@"local."];
-}
-
-- (void)stopBrowsing {
-    if (self.serviceBrowser) {
-        [self.serviceBrowser stop];
-        [self.serviceBrowser setDelegate:nil];
-        [self setServiceBrowser:nil];
-    }
-    self.searching = NO;
-}
-
-// Error handling code
-- (void)handleError:(NSNumber *)error {
-    NSString *errorMsg = [NSString stringWithFormat:@"An error occurred.\nNSNetServicesErrorCode = %d", [error intValue]];
-    // Handle error here
-    UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)                                                                    message:errorMsg
-                                                       delegate:nil
-                                              cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                              otherButtonTitles:nil, nil];
-    [alertView show];
-}
-
-//==================================================================
-#pragma mark - NSNetServiceBrowserDelegate
-//==================================================================
-
-- (void)netServiceBrowserWillSearch:(NSNetServiceBrowser *)browser {
-    self.searching = YES;
-}
-
-// Sent when browsing stops
-- (void)netServiceBrowserDidStopSearch:(NSNetServiceBrowser *)browser {
-    [self stopBrowsing];
-}
-
-// Sent if browsing fails
-- (void)netServiceBrowser:(NSNetServiceBrowser *)browser
-             didNotSearch:(NSDictionary *)errorDict {
-    [self stopBrowsing];
-    self.searching = NO;
-    [self handleError:[errorDict objectForKey:NSNetServicesErrorCode]];
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)browser didFindDomain:(NSString *)domainString moreComing:(BOOL)moreComing {
-    NSLog(@"Found domain: %@", domainString);
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didFindService:(NSNetService *)service moreComing:(BOOL)moreComing {
-    // Update Services
-    [self.services addObject:service];
-    
-    // Sort Services
-    [self.services sortUsingDescriptors:@[[NSSortDescriptor sortDescriptorWithKey:@"name" ascending:YES]]];
-    
-    // Resolve Service
-    [service setDelegate:self];
-    [service resolveWithTimeout:30.0];
-    
-    if (!moreComing) {
-        [self stopBrowsing];
-    }
-}
-
-- (void)netServiceBrowser:(NSNetServiceBrowser *)serviceBrowser didRemoveService:(NSNetService *)service moreComing:(BOOL)moreComing {
-    // Update Services
-    [self.services removeObject:service];
-    
-    if (!moreComing) {
-        [self stopBrowsing];
-    }
-}
-
-//==================================================================
-#pragma mark - NSNetServiceDelegate
-//==================================================================
-
-- (void)netServiceDidResolveAddress:(NSNetService *)service {
-    
-    if ([service.name compare:SMARTCONFIG_IDENTIFIER] == NSOrderedSame) {
-        // Update IP address
-        NSArray *plugs = [[SQLHelper getInstance] getPlugData];
-        for (JSmartPlug *plug in plugs) {
-            // Check if plug exists
-            if ([plug.server isEqualToString:service.hostName]) {
-                NSArray *addresses = [[service addresses] mutableCopy];
-                NSData *address = [addresses objectAtIndex:0];
-                NSString *ip = [Global convertIpAddressToString:address];        
-                if ([plug.ip compare:ip] != NSOrderedSame) {
-                    [[SQLHelper getInstance] updatePlugIP:plug.name ip:ip];
-                    [self.view makeToast:NSLocalizedString(@"DeviceAddressUpdated", nil)
-                                duration:3.0
-                                position:CSToastPositionCenter];
-                }
-                break;
-            }
-        }
-    }
-}
-
-- (void)netService:(NSNetService *)service didNotResolve:(NSDictionary *)errorDict {
-    [service setDelegate:nil];
-}
-
-//==================================================================
-#pragma mark - UDPListenerDelegate
-//==================================================================
-
-- (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
-    NSString *dataStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
-    NSLog(@"Received data length %ld from address %@: %@", data.length, address);
 }
 
 //==================================================================
@@ -419,6 +309,9 @@
                         }
                     }
                 }
+                
+                // Sync IP address
+                [self syncDeviceIpAddresses];
                 
                 // Get devices from database
                 self.devices = [[SQLHelper getInstance] getPlugData];
