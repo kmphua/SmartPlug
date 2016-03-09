@@ -255,8 +255,6 @@
     if (serviceId == ALARM_NIGHTLED_SERVICE) {
         if (_nightlight == 0) {
             _action = 0x01;
-            //                nightlight = 1;
-            //                nightled_icon.setImageResource(R.drawable.svc_1_big);
         } else {
             _action = 0x00;
         }
@@ -311,6 +309,8 @@
     sMsg[22] = (uint8_t)((terminator >> 8 ) & 0xff);
     sMsg[21] = (uint8_t)((terminator >> 16 ) & 0xff);
     sMsg[20] = (uint8_t)((terminator >> 24 ) & 0xff);
+    
+    NSLog(@"Data length = %ld", sizeof(sMsg));
     
     NSData *deviceData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
     [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid data:deviceData];

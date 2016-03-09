@@ -9,9 +9,14 @@
 #import "ScheduleActionViewController.h"
 #import "SelectActionViewController.h"
 #import "MultiSelectSegmentedControl.h"
+#import "UDPCommunication.h"
 
 @interface ScheduleActionViewController () <MultiSelectSegmentedControlDelegate, SelectActionDelegate>
 {
+    int init_hour;
+    int end_hour;
+    int init_minute;
+    int end_minute;
     int dow;
 }
 
@@ -58,18 +63,6 @@
     // Init segemented control
     self.segCtrlDaysOfWeek.delegate = self;
     
-    // Init time pickers
-    
-    // Init action
-    if (_alarmId > 0) {
-        NSArray *alarms = [[SQLHelper getInstance] getAlarmDataById:_alarmId];
-        if (alarms && alarms.count > 0) {
-            Alarm *a = [alarms firstObject];
-            dow = a.dow;
-            [self setDOW];
-        }
-    }
-    
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc]
                                     initWithTitle:NSLocalizedString(@"btn_save", nil)
@@ -77,7 +70,37 @@
                                            target:self
                                            action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
+    
+    dow = 0b00000000;
 }
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if(_serviceId == ALARM_RELAY_SERVICE) {
+        [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_0_big"]];
+    } else if(_serviceId == ALARM_NIGHTLED_SERVICE){
+        [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_1_big"]];
+    }
+    
+    // Init action
+    if (_alarmId > 0) {
+        NSArray *alarms = [[SQLHelper getInstance] getAlarmDataById:_alarmId];
+        if (alarms && alarms.count > 0) {
+            Alarm *a = [alarms firstObject];
+            init_hour = a.initial_hour;
+            init_minute = a.initial_minute;
+            end_hour = a.end_hour;
+            end_minute = a.end_minute;
+            dow = a.dow;
+            [self setDOW];
+        }
+    } else {
+        dow |= (1 << 2);
+        [self setDOW];
+    }
+}
+
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
@@ -130,17 +153,16 @@
     } else {
         [[SQLHelper getInstance] insertAlarm:a];
     }
-
-    // TODO: Update timers on devices
-    //if(M1.ip != null) {
-    //    udp.setDeviceTimers(M1.mac, context);
-    //}
-    //       Intent i = new Intent(context, M1.class);
-    //       i.putExtra("ip", M1.ip);
-    //       i.putExtra("name", M1.name);
-    //       startActivity(i);
     
-    [self.navigationController popViewControllerAnimated:YES];
+    [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
+    
+    [[UDPCommunication getInstance] setDeviceTimers:g_DeviceMac];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        [self.navigationController popViewControllerAnimated:YES];
+    });
 }
 
 //==================================================================

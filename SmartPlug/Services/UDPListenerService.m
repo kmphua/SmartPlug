@@ -145,9 +145,8 @@ static UDPListenerService *instance;
 {
     // Do something with receive data
     NSString *ipAddress = [Global convertIpAddressToString:address];
-    NSLog(@"Received data %ld from address %@", data.length, ipAddress);
+    //NSLog(@"Received data %ld from address %@", data.length, ipAddress);
     
-    // TODO: Use NSNotification to broadcast packets received
     memcpy(lMsg, [data bytes], data.length);
     
     [self process_headers];
@@ -251,7 +250,7 @@ static UDPListenerService *instance;
     if (header != 1397576276) {
         process_data = true;
     }
-    NSLog(@"HEADER: %d", header);
+    //NSLog(@"HEADER: %d", header);
     /**********************************************/
     int msgid = abs([self process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
     if (msgid != previous_msgid){
@@ -260,16 +259,16 @@ static UDPListenerService *instance;
     } else {
         process_data = false;
     }
-    NSLog(@"MSGID: %d", msgid);
+    //NSLog(@"MSGID: %d", msgid);
     /**********************************************/
     int seq = abs([self process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
-    NSLog(@"SEQ: %d", seq);
+    //NSLog(@"SEQ: %d", seq);
     /**********************************************/
     int size = [self process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
-    NSLog(@"SIZE: %d", size);
+    //NSLog(@"SIZE: %d", size);
     /**********************************************/
     code = [self process_short:lMsg[16] b:lMsg[17]];
-    NSLog(@"CODE: %d", code);
+    //NSLog(@"CODE: %d", code);
 }
 
 - (void)process_query_device_command
@@ -347,9 +346,10 @@ static UDPListenerService *instance;
             js.hall_sensor = 1;
             NSLog(@"Relay warning");
         } else {
+            NSLog(@"Relay normal condition");
             js.hall_sensor = 0;
         }
-        //uint8_t datatype = lMsg[26];
+        uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if (data == 0x01){
             js.relay = 1;
@@ -367,8 +367,8 @@ static UDPListenerService *instance;
     int service_id = [self process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
     if(service_id == 0xD1000001) {
         NSLog(@"NIGHT LIGHT SERVICE");
-        //int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
-        //uint8_t datatype = lMsg[36];                                                    //always the same 0x01
+        int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
             js.nightlight = 1;
@@ -386,14 +386,17 @@ static UDPListenerService *instance;
     if (service_id == 0xD1000002) {
         int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
         if(flag == 0x00000010){
+            NSLog(@"CO SENSOR WARNING");
             js.co_sensor = 1;                      //WARNING
         } else if (flag == 0x00000100){
+            NSLog(@"CO SENSOR NOT PLUGGED IN");
             js.co_sensor = 3;                      //NOT PLUGGED
         } else {
+            NSLog(@"CO SENSOR NORMAL CONDITION");
             js.co_sensor = 0;                      //NORMAL
         }
-        //uint8_t datatype = lMsg[46];
-        //uint8_t data = lMsg[47];
+        uint8_t datatype = lMsg[46];
+        uint8_t data = lMsg[47];
     }
 }
 
