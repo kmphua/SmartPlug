@@ -567,7 +567,7 @@ static UDPCommunication *instance;
 - (void)get_relay_status
 {
     int service_id = [self process_long:lMsg[18] b:lMsg[19] c:lMsg[20] d:lMsg[21]];
-    if (service_id == 0xD1000000) {
+    if (service_id == RELAY_SERVICE) {
         NSLog(@"IS OUTLET SERVICE");
         int flag = [self process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
         if(flag == 0x00000010){
@@ -592,7 +592,7 @@ static UDPCommunication *instance;
 - (void)get_nightlight_status
 {
     int service_id = [self process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
-    if(service_id == 0xD1000001) {
+    if(service_id == NIGHTLED_SERVICE) {
         NSLog(@"NIGHT LIGHT SERVICE");
         int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
         uint8_t datatype = lMsg[36];                                                    //always the same 0x01
@@ -610,7 +610,7 @@ static UDPCommunication *instance;
 - (void)get_co_status
 {
     int service_id = [self process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
-    if (service_id == 0xD1000002) {
+    if (service_id == CO_SERVICE) {
         int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
         if(flag == 0x00000010){
             _js.co_sensor = 1;                      //WARNING

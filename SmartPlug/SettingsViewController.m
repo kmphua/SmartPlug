@@ -116,7 +116,7 @@
     } else if (indexPath.row == 1) {
         
         UIAlertController * alert = [UIAlertController
-                                     alertControllerWithTitle:NSLocalizedString(@"titlie_logout", nil)
+                                     alertControllerWithTitle:NSLocalizedString(@"title_logout", nil)
                                      message:NSLocalizedString(@"msg_logoutBtn", nil)
                                      preferredStyle:UIAlertControllerStyleAlert];
         

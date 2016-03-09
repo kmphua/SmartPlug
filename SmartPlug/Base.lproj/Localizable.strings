@@ -25,8 +25,6 @@
 "NewPasswordEmpty" = "New Password field is empty";
 "DeviceAlreadyAdded" = "Device already added";
 "DeviceAddressUpdated" = "Device IP address updated";
-"msg_co_warning" = "CO Warning";
-"msg_ha_warning" = "Over current Warning";
 
 // Timers
 "NoTimersSet" = "No Timers Set";
@@ -43,10 +41,6 @@
 "Snooze30MoreMinutes" = "Snooze 30 More Min.";
 "Snooze1MoreHour" = "Snooze 1 More Hr.";
 "CancelSnooze" = "Cancel Snooze";
-
-// Schedule
-"RemoveAction" = "Remove Action";
-"RemoveActionMsg" = "Are you sure you want to remove this scheduled action?";
 
 "id_username" = "Username";
 "id_password" = "Password";
@@ -87,7 +81,7 @@
 "btn_outlet" = "Outlet";
 "btn_ir" = "IR";
 "title_bedroom" = "Bedroom";
-"titlie_logout" = "Logout";
+"title_logout" = "Logout";
 "msg_logoutBtn" = "Are you sure you want to logout? You will need to login again to access your devices.";
 "btn_no" = "No";
 "btn_yes" = "Yes";
@@ -152,7 +146,29 @@
 "msg_recordIr" = "Please point your remote at the JSPlug and press the button you wish to record.\n\n1.Button recorded.";
 "btn_recordAgain" = "Record again";
 "btn_testCommand" = "Test command";
-
-// IR
-"ir_group" = "IR Group";
-"ir_add_new" = "Add new";
+"msg_co_warning" = "CO Warning";
+"msg_ha_warning" = "Over current Warning";
+"add_timer" = "Add Timer ?";
+"no_timer_set" = "No Timer Set";
+"title_add_new" = "Add New";
+"ir_recorded" = "(Recorded)";
+"title_device" = "Device";
+"notify_on_power_outage" = "Notify on Power Outage";
+"notify_on_co_warning" = "Notify on CO Warning";
+"notify_on_timer_activated" = "Notify on Timer Activated";
+"gcm_send_message" = "GCM send message";
+"token_error_message" = "Token Error Message";
+"connect_to_wifi" = "<u>Connect to WiFi</u>";
+"create_account_error" = "Error Creating New Account";
+"password_compare_error" = "Passwords are not the same";
+"no_udp_Connection" = "No UDP Connection";
+"new_device_found" = "New Device Found";
+"USB_not_plugged_in" = "USB not plugged in";
+"delay_5_minutes" = "Timer Delay 5 Minutes Sent";
+"delay_10_minutes" = "Timer Delay 10 Minutes Sent";
+"delay_60_minutes" = "Timer Delay 1 Hour Sent";
+"delay_30_minutes" = "Timer Delay 30 Minutes Sent";
+"please_wait" = "Wait a moment while we process your request, thank you";
+"btn_ota" = "<u>Update Firmware</u>";
+"ip_not_found" = "Device Not Connected, Please refresh APP within device local network";
+"please_wait_done" = "Loading... Please wait";

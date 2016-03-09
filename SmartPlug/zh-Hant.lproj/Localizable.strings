@@ -25,29 +25,22 @@
 "NewPasswordEmpty" = "新密碼未填";
 "DeviceAlreadyAdded" = "設備已存在";
 "DeviceAddressUpdated" = "設備IP位址已更新";
-"msg_co_warning" = "CO Warning";
-"msg_ha_warning" = "Over current Warning";
 
 // Timers
-"NoTimersSet" = "No Timers Set";
-"AddTimer" = "Add Timer";
-"TimersSet" = "Timers Set";
-"ShowModifyTimer" = "Show/Modify Timer";
-"Snooze5Minutes" = "Snooze 5 minutes";
-"Snooze10Minutes" = "Snooze 10 minutes";
-"Snooze30Minutes" = "Snooze 30 minutes";
-"Snooze1Hour" = "Snooze 1 hour";
-"Snoozing" = "Snoozing";
-"Snooze5MoreMinutes" = "Snooze 5 More Min.";
-"Snooze10MoreMinutes" = "Snooze 10 More Min.";
-"Snooze30MoreMinutes" = "Snooze 30 More Min.";
-"Snooze1MoreHour" = "Snooze 1 More Hr.";
-"CancelSnooze" = "Cancel Snooze";
-
-// Schedule
-"RemoveAction" = "Remove Action";
-"RemoveActionMsg" = "Are you sure you want to remove this scheduled action?";
-
+"NoTimersSet" = "無設置定時";
+"AddTimer" = "新增定時";
+"TimersSet" = "已設置定時";
+"ShowModifyTimer" = "顯示／編輯定時";
+"Snooze5Minutes" = "睡眠 5 分鐘";
+"Snooze10Minutes" = "睡眠 10 分鐘";
+"Snooze30Minutes" = "睡眠 30 分鐘";
+"Snooze1Hour" = "睡眠 1 小時";
+"Snoozing" = "睡眠中";
+"Snooze5MoreMinutes" = "睡眠多 5 分鐘";
+"Snooze10MoreMinutes" = "睡眠多 10 分鐘";
+"Snooze30MoreMinutes" = "睡眠多 30 分鐘";
+"Snooze1MoreHour" = "睡眠多 1 小時";
+"CancelSnooze" = "取消睡眠";
 
 "id_username" = "使用者";
 "id_password" = "密碼";
@@ -88,7 +81,7 @@
 "btn_outlet" = "插座";
 "btn_ir" = "紅外線";
 "title_bedroom" = "床";
-"titlie_logout" = "登出";
+"title_logout" = "登出";
 "msg_logoutBtn" = "您確定要登出？您將需要重新登錄才能訪問您的設備。";
 "btn_no" = "否";
 "btn_yes" = "是";
@@ -146,14 +139,36 @@
 "btn_chooseBrand" = "選擇品牌和型號";
 "btn_detectBrand" = "檢測品牌和型號";
 "btn_recordCustom" = "記錄自定義命令";
-"msg_delectIr" = "請指向遠程的JS插件，然後按指示按鍵。\n\n1.按“電源”按鈕\n2.按“音量”按鈕\n3.設備識別為：日立的A / C";
+"msg_delectIr" = "請指向遠程的JS插件，然後按指示按鍵。\n\n1.按\"電源\"按鈕\n2.按\"音量\"按鈕\n3.設備識別為：日立的A / C";
 "btn_addNow" = "現在新增";
 "title_customCommand" = "自定義命令";
 "id_recordIrCommand" = "記錄紅外指令";
 "msg_recordIr" = "請指向遠程的JSPlug並按要錄製按鈕。\n\n1.按鈕錄製。";
 "btn_recordAgain" = "再次記錄";
 "btn_testCommand" = "測試命令";
+"msg_co_warning" = "一氧化碳警告";
+"msg_ha_warning" = "過電警告";
+"add_timer" = "加入定時?";
+"no_timer_set" = "無定時設入";
+"title_add_new" = "加入";
+"ir_recorded" = "(已錄製)";
+"title_device" = "裝置";
+"notify_on_power_outage" = "停電通知";
+"notify_on_co_warning" = "一氧化碳通知";
+"notify_on_timer_activated" = "計時激活通知";
+"token_error_message" = "權限錯誤訊息";
+"connect_to_wifi" = "<u>連結至WiFi</u>";
+"create_account_error" = "新增帳號錯誤";
+"password_compare_error" = "密碼不一致";
+"no_udp_Connection" = "無UDP連線";
+"new_device_found" = "找到新裝置";
+"USB_not_plugged_in" = "USB未插入";
+"delay_5_minutes" = "已傳送定時延遲5分鐘";
+"delay_10_minutes" = "已傳送定時延遲10分鐘";
+"delay_30_minutes" = "已傳送定時延遲30分鐘";
+"delay_60_minutes" = "已傳送定時延遲1小時";
+"please_wait" = "請稍候，我們正在處理您的請求，謝謝";
+"btn_ota" = "<u>更新韌體</u>";
+"ip_not_found" = "裝置未連線。請在裝置的本地網路刷新APP";
+"please_wait_done" = "載入中...請稍候";
 
-// IR
-"ir_group" = "IR群組";
-"ir_add_new" = "新增";

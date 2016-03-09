@@ -36,8 +36,9 @@
 #define UD_DEVICE_TOKEN                 @"device_token"
 
 // Services
-#define ALARM_RELAY_SERVICE             0xD1000000
-#define ALARM_NIGHTLED_SERVICE          0xD1000001
+#define RELAY_SERVICE                   0xD1000000
+#define NIGHTLED_SERVICE                0xD1000001
+#define CO_SERVICE                      0xD1000002
 
 // UDP commands
 #define UDP_CMD_DEVICE_QUERY            0x0001

@@ -12,6 +12,7 @@
 #import "SetTimerViewController.h"
 #import "SetTimerSnoozeViewController.h"
 #import "ScheduleMainViewController.h"
+#import "ScheduleActionViewController.h"
 #import "IRMainViewController.h"
 #import "UDPCommunication.h"
 
@@ -244,7 +245,7 @@
 - (void)sendService:(int)serviceId
 {
     //progressBar.setVisibility(View.VISIBLE);
-    if (serviceId == ALARM_RELAY_SERVICE) {
+    if (serviceId == RELAY_SERVICE) {
         if (_relay == 0) {
             _action = 0x01;
         } else {
@@ -252,7 +253,7 @@
         }
     }
     
-    if (serviceId == ALARM_NIGHTLED_SERVICE) {
+    if (serviceId == NIGHTLED_SERVICE) {
         if (_nightlight == 0) {
             _action = 0x01;
         } else {
@@ -340,31 +341,30 @@
 }
 
 - (IBAction)onBtnOutletTimer:(id)sender {
-    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:ALARM_RELAY_SERVICE];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:RELAY_SERVICE];
     if (alarms && alarms.count>0) {
         // Snooze
         SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
         setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
         setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         setTimerSnoozeVC.devId = _device.sid;
-        setTimerSnoozeVC.serviceId = ALARM_RELAY_SERVICE;
+        setTimerSnoozeVC.serviceId = RELAY_SERVICE;
         setTimerSnoozeVC.delegate = self;
         [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
     } else {
         // Add new timer
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:NSLocalizedString(@"AppName",nil)
-                                              message:NSLocalizedString(@"NoTimersSet", nil)
+                                              alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
+                                              message:NSLocalizedString(@"add_timer", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* actionYes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
-            NoTimersViewController *noTimerVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
-            noTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-            noTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            noTimerVC.devId = _device.sid;
-            noTimerVC.serviceId = ALARM_RELAY_SERVICE;
-            noTimerVC.delegate = self;
-            [self presentViewController:noTimerVC animated:YES completion:nil];
+            ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
+            scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+            scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            scheduleActionVC.deviceId = _device.sid;
+            scheduleActionVC.serviceId = RELAY_SERVICE;
+            [self.navigationController pushViewController:scheduleActionVC animated:YES];
             
         }];
         [alertController addAction:actionYes];
@@ -376,35 +376,34 @@
 }
 
 - (IBAction)onTapOutletButton:(id)sender {
-    [self sendService:ALARM_RELAY_SERVICE];
+    [self sendService:RELAY_SERVICE];
 }
 
 - (IBAction)onBtnNightLightTimer:(id)sender {
-    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:ALARM_NIGHTLED_SERVICE];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:NIGHTLED_SERVICE];
     if (alarms && alarms.count>0) {
         // Snooze
         SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
         setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
         setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         setTimerSnoozeVC.devId = _device.sid;
-        setTimerSnoozeVC.serviceId = ALARM_NIGHTLED_SERVICE;
+        setTimerSnoozeVC.serviceId = NIGHTLED_SERVICE;
         setTimerSnoozeVC.delegate = self;
         [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
     } else {
         // Add new timer
         UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:NSLocalizedString(@"AppName",nil)
-                                              message:NSLocalizedString(@"NoTimersSet", nil)
+                                              alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
+                                              message:NSLocalizedString(@"add_timer", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         UIAlertAction* actionYes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
-            NoTimersViewController *noTimerVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
-            noTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-            noTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            noTimerVC.devId = _device.sid;
-            noTimerVC.serviceId = ALARM_NIGHTLED_SERVICE;
-            noTimerVC.delegate = self;
-            [self presentViewController:noTimerVC animated:YES completion:nil];
+            ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
+            scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+            scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            scheduleActionVC.deviceId = _device.sid;
+            scheduleActionVC.serviceId = NIGHTLED_SERVICE;
+            [self.navigationController pushViewController:scheduleActionVC animated:YES];
             
         }];
         [alertController addAction:actionYes];
@@ -416,7 +415,7 @@
 }
 
 - (IBAction)onTapNightlightButton:(id)sender {
-    [self sendService:ALARM_NIGHTLED_SERVICE];
+    [self sendService:NIGHTLED_SERVICE];
 }
 
 - (IBAction)onBtnIRTimer:(id)sender {

@@ -52,10 +52,10 @@
     [self.btnSelectAction setTitle:NSLocalizedString(@"btn_select", nil) forState:UIControlStateNormal];
     
     /*
-    if (_serviceId == ALARM_RELAY_SERVICE) {
+    if (_serviceId == RELAY_SERVICE) {
         self.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_big"];
     }
-    if (_serviceId == ALARM_NIGHTLED_SERVICE) {
+    if (_serviceId == NIGHTLED_SERVICE) {
         self.imgDeviceAction.image = [UIImage imageNamed:@"svc_1_big"];
     }
     */
@@ -77,9 +77,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    if(_serviceId == ALARM_RELAY_SERVICE) {
+    if(_serviceId == RELAY_SERVICE) {
         [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_0_big"]];
-    } else if(_serviceId == ALARM_NIGHTLED_SERVICE){
+    } else if(_serviceId == NIGHTLED_SERVICE){
         [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
     

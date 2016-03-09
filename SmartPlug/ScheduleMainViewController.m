@@ -49,7 +49,7 @@
 - (void)onRightBarButton:(id)sender {
     ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
     scheduleActionVC.deviceId = _devId;
-    scheduleActionVC.serviceId = ALARM_RELAY_SERVICE;
+    scheduleActionVC.serviceId = RELAY_SERVICE;
     [self.navigationController pushViewController:scheduleActionVC animated:YES];
 }
 
@@ -132,10 +132,10 @@
     cell.lblScheduleTime.text = name;
     
     int serviceId = alarm.service_id;
-    if (serviceId == ALARM_RELAY_SERVICE) {
+    if (serviceId == RELAY_SERVICE) {
         cell.lblDeviceName.text = @"Plug";
         cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_small"];
-    } else if (serviceId == ALARM_NIGHTLED_SERVICE) {
+    } else if (serviceId == NIGHTLED_SERVICE) {
         cell.lblDeviceName.text = @"Nightlight";
         cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_1_small"];
     }
@@ -167,10 +167,11 @@
 
 - (void)onClickBtnDelete:(NSIndexPath *)indexPath
 {
-    SPAlertView *alertView = [[SPAlertView alloc] initWithTitle:NSLocalizedString(@"RemoveAction", nil)
-                                                        message:NSLocalizedString(@"RemoveActionMsg", nil)
+    SPAlertView *alertView = [[SPAlertView alloc] initWithTitle:NSLocalizedString(@"title_removeAction", nil)
+                                                        message:NSLocalizedString(@"msg_removeActionBtn", nil)
                                               cancelButtonTitle:NSLocalizedString(@"No", nil)
                                                otherButtonTitle:NSLocalizedString(@"Yes", nil)];
+    
     [alertView show];
 }
 

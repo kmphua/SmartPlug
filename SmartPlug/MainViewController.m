@@ -245,7 +245,7 @@
     JSmartPlug *plug = [self.devices objectAtIndex:indexPathCell.row];
     if ([plug.ip isEqualToString:@"0"]) {
         int action;
-        int serviceId = 0xD1000000;
+        int serviceId = RELAY_SERVICE;
         int relay = plug.relay;
         
         if (relay == 0) {
