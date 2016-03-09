@@ -33,7 +33,7 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_new"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
-    self.alarms = [[SQLHelper getInstance] getAlarmDataByDevice:_device.sid];
+    self.alarms = [[SQLHelper getInstance] getAlarmDataByDevice:_devId];
     [self.tableView reloadData];
 }
 
@@ -44,7 +44,7 @@
 
 - (void)onRightBarButton:(id)sender {
     ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-    scheduleActionVC.deviceId = self.device.sid;
+    scheduleActionVC.deviceId = _devId;
     scheduleActionVC.serviceId = ALARM_RELAY_SERVICE;
     [self.navigationController pushViewController:scheduleActionVC animated:YES];
 }
@@ -153,8 +153,8 @@
 - (void)onClickBtnEdit:(NSIndexPath *)indexPath
 {
     ScheduleActionViewController *scheduleActionVc = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-    scheduleActionVc.deviceId = self.device.sid;
-    scheduleActionVc.serviceId = ALARM_RELAY_SERVICE;
+    scheduleActionVc.deviceId = self.devId;
+    scheduleActionVc.serviceId = self.serviceId;
     
     Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
     scheduleActionVc.alarmId = alarm.alarm_id;

@@ -10,12 +10,15 @@
 
 @protocol NoTimersDelegate <NSObject>
 
-- (void)addTimer;
+- (void)addTimer:(int)serviceId;
 
 @end
 
 @interface NoTimersViewController : UIViewController
 
 @property (nonatomic, assign) id<NoTimersDelegate> delegate;
+
+@property (nonatomic, assign) NSString *devId;
+@property (nonatomic, assign) int serviceId;
 
 @end

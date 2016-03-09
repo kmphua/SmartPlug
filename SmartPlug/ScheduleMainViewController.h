@@ -10,6 +10,8 @@
 
 @interface ScheduleMainViewController : BaseViewController
 
-@property (nonatomic, assign) JSmartPlug *device;
+@property (nonatomic, assign) NSString *devId;
+@property (nonatomic, assign) int serviceId;
+@property (nonatomic, assign) int alarmId;
 
 @end

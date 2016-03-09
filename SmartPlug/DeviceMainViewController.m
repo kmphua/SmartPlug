@@ -340,12 +340,39 @@
 }
 
 - (IBAction)onBtnOutletTimer:(id)sender {
-    // Snooze
-    SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
-    setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-    setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    setTimerSnoozeVC.delegate = self;
-    [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:ALARM_RELAY_SERVICE];
+    if (alarms && alarms.count>0) {
+        // Snooze
+        SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+        setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+        setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        setTimerSnoozeVC.devId = _device.sid;
+        setTimerSnoozeVC.serviceId = ALARM_RELAY_SERVICE;
+        setTimerSnoozeVC.delegate = self;
+        [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
+    } else {
+        // Add new timer
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"AppName",nil)
+                                              message:NSLocalizedString(@"NoTimersSet", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            
+            NoTimersViewController *noTimerVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
+            noTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+            noTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            noTimerVC.devId = _device.sid;
+            noTimerVC.serviceId = ALARM_RELAY_SERVICE;
+            noTimerVC.delegate = self;
+            [self presentViewController:noTimerVC animated:YES completion:nil];
+            
+        }];
+        [alertController addAction:actionYes];
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        }];
+        [alertController addAction:actionNo];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 - (IBAction)onTapOutletButton:(id)sender {
@@ -353,12 +380,39 @@
 }
 
 - (IBAction)onBtnNightLightTimer:(id)sender {
-    // Timer set, no snooze
-    SetTimerViewController *setTimerVC = [[SetTimerViewController alloc] initWithNibName:@"SetTimerViewController" bundle:nil];
-    setTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-    setTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    setTimerVC.delegate = self;
-    [self presentViewController:setTimerVC animated:YES completion:nil];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:ALARM_NIGHTLED_SERVICE];
+    if (alarms && alarms.count>0) {
+        // Snooze
+        SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+        setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+        setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        setTimerSnoozeVC.devId = _device.sid;
+        setTimerSnoozeVC.serviceId = ALARM_NIGHTLED_SERVICE;
+        setTimerSnoozeVC.delegate = self;
+        [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
+    } else {
+        // Add new timer
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"AppName",nil)
+                                              message:NSLocalizedString(@"NoTimersSet", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            
+            NoTimersViewController *noTimerVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
+            noTimerVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+            noTimerVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            noTimerVC.devId = _device.sid;
+            noTimerVC.serviceId = ALARM_NIGHTLED_SERVICE;
+            noTimerVC.delegate = self;
+            [self presentViewController:noTimerVC animated:YES completion:nil];
+            
+        }];
+        [alertController addAction:actionYes];
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        }];
+        [alertController addAction:actionNo];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 - (IBAction)onTapNightlightButton:(id)sender {
@@ -366,12 +420,7 @@
 }
 
 - (IBAction)onBtnIRTimer:(id)sender {
-    // Timer not set
-    NoTimersViewController *noTimersVC = [[NoTimersViewController alloc] initWithNibName:@"NoTimersViewController" bundle:nil];
-    noTimersVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-    noTimersVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-    noTimersVC.delegate = self;
-    [self presentViewController:noTimersVC animated:YES completion:nil];
+    // TODO: Handle IR timers
 }
 
 - (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
@@ -447,39 +496,42 @@
 //==================================================================
 #pragma mark - NoTimersDelegate
 //==================================================================
-- (void)addTimer
+- (void)addTimer:(int)serviceId
 {
     ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
-    scheduleVC.device = self.device;
+    scheduleVC.devId = _device.sid;
+    scheduleVC.serviceId = serviceId;
     [self.navigationController pushViewController:scheduleVC animated:YES];
 }
 
 //==================================================================
 #pragma mark - SetTimersDelegate
 //==================================================================
-- (void)modifyTimer
+- (void)modifyTimer:(int)alarmId serviceId:(int)serviceId
 {
     ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
-    scheduleVC.device = self.device;
+    scheduleVC.devId = _device.sid;
+    scheduleVC.serviceId = serviceId;
+    scheduleVC.alarmId = alarmId;
     [self.navigationController pushViewController:scheduleVC animated:YES];
 }
 
-- (void)snooze5Mins
+- (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)snooze10Mins
+- (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)snooze30Mins
+- (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)snooze1Hour
+- (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
     
 }
@@ -487,34 +539,36 @@
 //==================================================================
 #pragma mark - SetSnoozeTimersDelegate
 //==================================================================
-- (void)modifySnoozeTimer
+- (void)modifySnoozeTimer:(int)alarmId serviceId:(int)serviceId
 {
     ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
-    scheduleVC.device = self.device;
+    scheduleVC.devId = _device.sid;
+    scheduleVC.serviceId = serviceId;
+    scheduleVC.alarmId = alarmId;
     [self.navigationController pushViewController:scheduleVC animated:YES];
 }
 
-- (void)snooze5MoreMins
+- (void)snooze5MoreMins:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)snooze10MoreMins
+- (void)snooze10MoreMins:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)snooze30MoreMins
+- (void)snooze30MoreMins:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)snooze1MoreHour
+- (void)snooze1MoreHour:(int)alarmId serviceId:(int)serviceId
 {
     
 }
 
-- (void)cancelSnooze
+- (void)cancelSnooze:(int)alarmId serviceId:(int)serviceId
 {
     
 }

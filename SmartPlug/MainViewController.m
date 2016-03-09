@@ -40,8 +40,8 @@
     [super viewWillAppear:animated];
     
     // Add navigation buttons
-    UIBarButtonItem *leftBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_schedule"] style:UIBarButtonItemStylePlain target:self action:@selector(onLeftBarButton:)];
-    self.navigationItem.leftBarButtonItem = leftBarBtn;
+    //UIBarButtonItem *leftBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_schedule"] style:UIBarButtonItemStylePlain target:self action:@selector(onLeftBarButton:)];
+    //self.navigationItem.leftBarButtonItem = leftBarBtn;
 
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
@@ -219,6 +219,7 @@
     MainViewCell *clickedCell = (MainViewCell*)[[sender superview] superview];
     NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
     
+    // Remove device
     JSmartPlug *plug = [self.devices objectAtIndex:indexPathCell.row];
     if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
         WebService *ws = [WebService new];

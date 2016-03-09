@@ -60,27 +60,27 @@
 }
 
 - (IBAction)onBtnShowModifyTimer:(id)sender {
-    [self.delegate modifyTimer];
+    [self.delegate modifyTimer:self.alarmId serviceId:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze5Mins:(id)sender {
-    [self.delegate snooze5Mins];
+    [self.delegate snooze5Mins:self.alarmId serviceId:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze10Mins:(id)sender {
-    [self.delegate snooze10Mins];
+    [self.delegate snooze10Mins:self.alarmId serviceId:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze30Mins:(id)sender {
-    [self.delegate snooze30Mins];
+    [self.delegate snooze30Mins:self.alarmId serviceId:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 - (IBAction)onBtnSnooze1Hour:(id)sender {
-    [self.delegate snooze1Hour];
+    [self.delegate snooze1Hour:self.alarmId serviceId:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

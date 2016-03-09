@@ -50,7 +50,7 @@
 }
 
 - (IBAction)onBtnAddTimer:(id)sender {
-    [self.delegate addTimer];
+    [self.delegate addTimer:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 
