@@ -40,6 +40,10 @@
 #define NIGHTLED_SERVICE                0xD1000001
 #define CO_SERVICE                      0xD1000002
 
+// Protocol
+#define PROTOCOL_HTTP                   0
+#define PROTOCOL_UDP                    1
+
 // UDP commands
 #define UDP_CMD_DEVICE_QUERY            0x0001
 #define UDP_CMD_DEVICE_ACTIVATION       0x0002

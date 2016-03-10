@@ -28,7 +28,7 @@
 
 // Timers
 "NoTimersSet" = "No Timers Set";
-"AddTimer" = "Add Timer";
+"AddNewTimer" = "Add New Timer";
 "TimersSet" = "Timers Set";
 "ShowModifyTimer" = "Show/Modify Timer";
 "Snooze5Minutes" = "Snooze 5 minutes";
@@ -41,6 +41,9 @@
 "Snooze30MoreMinutes" = "Snooze 30 More Min.";
 "Snooze1MoreHour" = "Snooze 1 More Hr.";
 "CancelSnooze" = "Cancel Snooze";
+"SnoozeSentSuccess" = "Snooze sent successfully";
+"ErrorPleaseTryAgain" = "Error, please try again";
+
 
 "id_username" = "Username";
 "id_password" = "Password";

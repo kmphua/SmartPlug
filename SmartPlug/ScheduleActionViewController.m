@@ -51,15 +51,6 @@
     self.lblAction.text = NSLocalizedString(@"msg_action", nil);
     [self.btnSelectAction setTitle:NSLocalizedString(@"btn_select", nil) forState:UIControlStateNormal];
     
-    /*
-    if (_serviceId == RELAY_SERVICE) {
-        self.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_big"];
-    }
-    if (_serviceId == NIGHTLED_SERVICE) {
-        self.imgDeviceAction.image = [UIImage imageNamed:@"svc_1_big"];
-    }
-    */
-    
     // Init segemented control
     self.segCtrlDaysOfWeek.delegate = self;
     
@@ -154,7 +145,7 @@
         [[SQLHelper getInstance] insertAlarm:a];
     }
     
-    [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
+    [self.view makeToast:NSLocalizedString(@"please_wait", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
     

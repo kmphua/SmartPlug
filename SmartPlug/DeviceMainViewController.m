@@ -8,15 +8,13 @@
 
 #import "DeviceMainViewController.h"
 #import "DeviceItemSettingsViewController.h"
-#import "NoTimersViewController.h"
-#import "SetTimerViewController.h"
 #import "SetTimerSnoozeViewController.h"
 #import "ScheduleMainViewController.h"
 #import "ScheduleActionViewController.h"
 #import "IRMainViewController.h"
 #import "UDPCommunication.h"
 
-@interface DeviceMainViewController ()<NoTimersDelegate, SetTimerDelegate, SetSnoozeTimerDelegate, WebServiceDelegate>
+@interface DeviceMainViewController ()<SetSnoozeTimerDelegate, WebServiceDelegate>
 {
     int _relay;
     int _nightlight;
@@ -493,19 +491,17 @@
 }
 
 //==================================================================
-#pragma mark - NoTimersDelegate
+#pragma mark - SetSnoozeTimerDelegate
 //==================================================================
-- (void)addTimer:(int)serviceId
+- (void)addTimer:(int)alarmId serviceId:(int)serviceId
 {
-    ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
-    scheduleVC.devId = _device.sid;
+    ScheduleActionViewController *scheduleVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
+    scheduleVC.deviceId = _device.sid;
     scheduleVC.serviceId = serviceId;
+    scheduleVC.alarmId = alarmId;
     [self.navigationController pushViewController:scheduleVC animated:YES];
 }
 
-//==================================================================
-#pragma mark - SetTimersDelegate
-//==================================================================
 - (void)modifyTimer:(int)alarmId serviceId:(int)serviceId
 {
     ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
@@ -517,59 +513,43 @@
 
 - (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId
 {
-    
+    // Sending 5 minutes snooze to device
+    if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
+    }
+    [self.view makeToast:NSLocalizedString(@"delay_5_minutes", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
 }
 
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
-    
+    if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
+    }
+    [self.view makeToast:NSLocalizedString(@"delay_10_minutes", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
 }
 
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
-    
+    if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
+    }
+    [self.view makeToast:NSLocalizedString(@"delay_30_minutes", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
 }
 
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
-    
-}
-
-//==================================================================
-#pragma mark - SetSnoozeTimersDelegate
-//==================================================================
-- (void)modifySnoozeTimer:(int)alarmId serviceId:(int)serviceId
-{
-    ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
-    scheduleVC.devId = _device.sid;
-    scheduleVC.serviceId = serviceId;
-    scheduleVC.alarmId = alarmId;
-    [self.navigationController pushViewController:scheduleVC animated:YES];
-}
-
-- (void)snooze5MoreMins:(int)alarmId serviceId:(int)serviceId
-{
-    
-}
-
-- (void)snooze10MoreMins:(int)alarmId serviceId:(int)serviceId
-{
-    
-}
-
-- (void)snooze30MoreMins:(int)alarmId serviceId:(int)serviceId
-{
-    
-}
-
-- (void)snooze1MoreHour:(int)alarmId serviceId:(int)serviceId
-{
-    
-}
-
-- (void)cancelSnooze:(int)alarmId serviceId:(int)serviceId
-{
-    
+    if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
+    }
+    [self.view makeToast:NSLocalizedString(@"delay_60_minutes", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
 }
 
 //==================================================================

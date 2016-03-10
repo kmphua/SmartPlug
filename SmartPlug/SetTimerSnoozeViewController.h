@@ -10,12 +10,12 @@
 
 @protocol SetSnoozeTimerDelegate <NSObject>
 
-- (void)modifySnoozeTimer:(int)alarmId serviceId:(int)serviceId;
-- (void)snooze5MoreMins:(int)alarmId serviceId:(int)serviceId;
-- (void)snooze10MoreMins:(int)alarmId serviceId:(int)serviceId;
-- (void)snooze30MoreMins:(int)alarmId serviceId:(int)serviceId;
-- (void)snooze1MoreHour:(int)alarmId serviceId:(int)serviceId;
-- (void)cancelSnooze:(int)alarmId serviceId:(int)serviceId;
+- (void)addTimer:(int)alarmId serviceId:(int)serviceId;
+- (void)modifyTimer:(int)alarmId serviceId:(int)serviceId;
+- (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId;
+- (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId;
+- (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId;
+- (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId;
 
 @end
 

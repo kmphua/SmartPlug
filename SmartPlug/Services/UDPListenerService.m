@@ -15,9 +15,6 @@
 #define UDP_SERVER_PORT             20004
 #define UDP_TESTING_PORT            20005
 
-#define PROTOCOL_HTTP               0
-#define PROTOCOL_UDP                1
-
 @interface UDPListenerService()<GCDAsyncUdpSocketDelegate, WebServiceDelegate>
 {
     NSString* broadcastIP;

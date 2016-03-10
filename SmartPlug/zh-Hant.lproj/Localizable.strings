@@ -26,9 +26,10 @@
 "DeviceAlreadyAdded" = "設備已存在";
 "DeviceAddressUpdated" = "設備IP位址已更新";
 
+
 // Timers
 "NoTimersSet" = "無設置定時";
-"AddTimer" = "新增定時";
+"AddNewTimer" = "新增定時";
 "TimersSet" = "已設置定時";
 "ShowModifyTimer" = "顯示／編輯定時";
 "Snooze5Minutes" = "睡眠 5 分鐘";
@@ -41,6 +42,9 @@
 "Snooze30MoreMinutes" = "睡眠多 30 分鐘";
 "Snooze1MoreHour" = "睡眠多 1 小時";
 "CancelSnooze" = "取消睡眠";
+"SnoozeSentSuccess" = "傳送睡眠設定成功";
+"ErrorPleaseTryAgain" = "傳送錯誤，請再試一下";
+
 
 "id_username" = "使用者";
 "id_password" = "密碼";

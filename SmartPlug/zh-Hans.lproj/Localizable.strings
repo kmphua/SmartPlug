@@ -28,7 +28,7 @@
 
 // Timers
 "NoTimersSet" = "无设置定时";
-"AddTimer" = "新增定时";
+"AddNewTimer" = "新增定时";
 "TimersSet" = "已设置定时";
 "ShowModifyTimer" = "显示/编辑定时";
 "Snooze5Minutes" = "睡眠 5 分钟";
@@ -41,6 +41,8 @@
 "Snooze30MoreMinutes" = "睡眠多 30 分钟";
 "Snooze1MoreHour" = "睡眠多 1 小时";
 "CancelSnooze" = "取消睡眠";
+"Snooze Send Success" = "传送睡眠设定成功";
+"Error Please Try Again" = "传送错误,请再试一下";
 
 "id_username" = "使用者";
 "id_password" = "密码";
