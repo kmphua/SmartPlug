@@ -62,6 +62,12 @@
     [ws galleryList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
 }
 
+- (void)registerPushToken {
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws regPush:g_UserToken lang:[Global getCurrentLang] devToken:g_DevToken];
+}
+
 - (BOOL)checkInputFields
 {
     if (self.txtLogin.text.length == 0) {
@@ -168,7 +174,7 @@
                 // Go to main view
                 g_IsLogin = YES;
                 
-                [self getGalleryList];
+                [self registerPushToken];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
@@ -194,6 +200,17 @@
             // Go to main view
             MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
             [self.navigationController pushViewController:mainController animated:YES];
+        } else if ([resultName isEqualToString:WS_REG_PUSH]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Register push success!");
+            } else {
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Register push failed! %@", message);
+            }
+            [self getGalleryList];
         }
     }
 }

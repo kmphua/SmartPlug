@@ -155,7 +155,7 @@
 - (void)regPush:(NSString *)userToken lang:(NSString *)lang devToken:(NSString *)devToken
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_REG_PUSH];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&type=%@&devtoken=%@", userToken, lang, @"iOS", devToken];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&type=%@&devtoken=%@", userToken, lang, @"i", devToken];
     self.resultName = WS_REG_PUSH;
     [self postData:apiUrl params:params];
 }

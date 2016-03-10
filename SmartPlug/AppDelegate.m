@@ -139,4 +139,15 @@ int g_UdpCommand;
     NSLog(@"Failed to get token, error: %@", error);
 }
 
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    if (userInfo) {
+        NSDictionary *aps = [userInfo objectForKey:@"aps"];
+        if (aps) {
+            NSNumber *badge = [aps objectForKey:@"badge"];
+            NSLog(@"Push badge = %ld", [badge integerValue]);
+        }
+    }
+}
+
 @end
