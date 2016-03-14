@@ -273,7 +273,7 @@ static UDPCommunication *instance;
     BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_HTTP];
     BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
     
-    sleep(500);
+    [NSThread sleepForTimeInterval:0.5];
     
     if (!headerOK || !timerOK || !termiOK) {
         [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];

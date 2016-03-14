@@ -29,22 +29,26 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgOutletWarning;
+@property (weak, nonatomic) IBOutlet UILabel *lblOutlet;
 @property (weak, nonatomic) IBOutlet UIButton *btnOutletTimer;
 
 @property (weak, nonatomic) IBOutlet UIView *viewNightLight;
 @property (weak, nonatomic) IBOutlet UIImageView *imgNightLightBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgNightLightIcon;
+@property (weak, nonatomic) IBOutlet UILabel *lblNightLight;
 @property (weak, nonatomic) IBOutlet UIButton *btnNightLightTimer;
 
 @property (weak, nonatomic) IBOutlet UIView *viewIr;
 @property (weak, nonatomic) IBOutlet UIImageView *imgIrBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgIrIcon;
+@property (weak, nonatomic) IBOutlet UILabel *lblIr;
 @property (weak, nonatomic) IBOutlet UIButton *btnIrTimer;
 
 @property (weak, nonatomic) IBOutlet UIView *viewCo;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoBg;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgCoWarning;
+@property (weak, nonatomic) IBOutlet UILabel *lblCo;
 
 @property (weak, nonatomic) IBOutlet UIView *viewWarning;
 @property (weak, nonatomic) IBOutlet UIImageView *imgLeftWarning;
@@ -80,6 +84,11 @@
         self.lblDeviceName.text = self.device.name;
         self.title = self.device.name;
     }
+    
+    self.lblOutlet.text = NSLocalizedString(@"btn_outlet", nil);
+    self.lblNightLight.text = NSLocalizedString(@"btn_nightLight", nil);
+    self.lblIr.text = NSLocalizedString(@"btn_ir", nil);
+    self.lblCo.text = NSLocalizedString(@"btn_coNormal", nil);
         
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
@@ -111,6 +120,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePushNotification:) name:NOTIFICATION_PUSH object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -121,6 +132,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -132,12 +144,19 @@
     // Get device status
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:ICON_RES_1x devId:_device.sid];
+    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
 }
 
 - (void)handleDeviceStatusChanged:(NSNotification *)notification {
     NSLog(@"Device status changed");
     [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+}
+
+- (void)handlePushNotification:(NSNotification *)notification {
+    NSLog(@"Handle push notification");
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
 }
 
 - (void)getDeviceStatus:(NSNotification *)notification {
@@ -219,25 +238,10 @@
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
     
-    if (device.notify_timer == 0) {
-        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-    } else if (device.notify_timer == 1) {
-        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
-    }
-    
     if (device.icon && device.icon.length>0) {
         NSString *imagePath = self.device.icon;
         [_imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
-    
-    [_viewOutlet setUserInteractionEnabled:YES];
-    [_viewNightLight setUserInteractionEnabled:YES];
-    [_imgLeftWarning setHidden:YES];
-    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
-    [_lblWarning setHidden:YES];
-    [_imgRightWarning setHidden:YES];
 }
 
 - (void)sendService:(int)serviceId
@@ -259,16 +263,8 @@
         }
     }
     
-    [_imgLeftWarning setHidden:NO];
-    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
-    [_lblWarning setHidden:NO];
-    [_imgRightWarning setHidden:NO];
-    
-    [_viewOutlet setUserInteractionEnabled:NO];
-    [_viewNightLight setUserInteractionEnabled:NO];
-
     [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action];
-
+    
     // Set device status
     WebService *ws = [WebService new];
     ws.delegate = self;
@@ -355,7 +351,7 @@
                                               alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
                                               message:NSLocalizedString(@"add_timer", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
             ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
             scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
@@ -366,7 +362,7 @@
             
         }];
         [alertController addAction:actionYes];
-        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         }];
         [alertController addAction:actionNo];
         [self presentViewController:alertController animated:YES completion:nil];
@@ -426,71 +422,6 @@
 }
 
 //==================================================================
-#pragma mark - UDPListenerDelegate
-//==================================================================
-
-- (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
-    NSString *dataStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
-    NSLog(@"M1 - Received data from address %@: %@", address, dataStr);
-    NSArray *components = [dataStr componentsSeparatedByString:@"-"];
-    if (components && components.count == 5) {
-        NSString *devId = [components objectAtIndex:0];
-        NSString *currentDevId = @"123";  //[NSString stringWithFormat:@"%ld", [_device.devid integerValue]];
-        if ([devId compare:currentDevId] == NSOrderedSame) {
-            // Match
-            
-            // RELAY
-            NSString *relayStr = [components objectAtIndex:1];
-            NSInteger relayVal = [relayStr integerValue];
-            if (relayVal == 1) {
-                self.imgOutletIcon.image = [UIImage imageNamed:@"svc_0_big"];
-            } else {
-                self.imgOutletIcon.image = [UIImage imageNamed:@"svc_0_big_off"];
-            }
-            
-            // NIGHT LED
-            NSString *nlStr = [components objectAtIndex:2];
-            NSInteger nlVal = [nlStr integerValue];
-            if (nlVal == 1) {
-                self.imgNightLightIcon.image = [UIImage imageNamed:@"svc_1_big"];
-            } else {
-                self.imgNightLightIcon.image = [UIImage imageNamed:@"svc_1_big_off"];
-            }
-
-            //HALL SENSOR  ( WITH THE PLUG )
-            NSString *hoStr = [components objectAtIndex:3];
-            NSInteger hoVal = [hoStr integerValue];
-            if (hoVal == 1) {
-                self.imgLeftWarning.image = [UIImage imageNamed:@"marker_warn2"];
-                [self startBlinkingAnimation:self.imgLeftWarning];
-                self.lblWarning.text = NSLocalizedString(@"msg_ha_warning", nil);
-            } else {
-                self.imgLeftWarning.image = [UIImage imageNamed:@"marker_warn"];
-                //warning_icon.clearAnimation();
-            }
-            
-            //CO SENSOR
-            NSString *coStr = [components objectAtIndex:4];
-            NSInteger coVal = [coStr integerValue];
-            if (coVal == 1) {
-                self.imgCoWarning.image = [UIImage imageNamed:@"marker_warn2"];
-                [self startBlinkingAnimation:self.imgCoWarning];
-                self.lblWarning.text = NSLocalizedString(@"msg_co_warning", nil);
-            } else {
-                self.imgCoWarning.image = [UIImage imageNamed:@"marker_warn"];
-                //warning_icon_co.clearAnimation();
-            }
-
-            if (coVal == 1 || hoVal == 1) {
-                [self.viewWarning setHidden:NO];
-            } else {
-                [self.viewWarning setHidden:YES];
-            }
-        }
-    }
-}
-
-//==================================================================
 #pragma mark - SetSnoozeTimerDelegate
 //==================================================================
 - (void)addTimer:(int)alarmId serviceId:(int)serviceId
@@ -514,8 +445,8 @@
 - (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId
 {
     // Sending 5 minutes snooze to device
-    if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
+    if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP]) {
+        [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_5_minutes", nil)
                 duration:3.0
@@ -524,8 +455,8 @@
 
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
+    if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP]) {
+        [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_10_minutes", nil)
                 duration:3.0
@@ -534,8 +465,8 @@
 
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
+    if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP]) {
+        [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_30_minutes", nil)
                 duration:3.0
@@ -544,8 +475,8 @@
 
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
+    if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP]) {
+        [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_60_minutes", nil)
                 duration:3.0
@@ -581,32 +512,18 @@
                 NSString *nightlight = [jsonObject objectForKey:@"nightlight"];
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
-                NSString *snooze = [jsonObject objectForKey:@"snooze"];
                 
                 if(![relay isKindOfClass:[NSNull class]] && relay != nil && relay.length>0) {
                     [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:_device.sid];
-                } else {
-                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:_device.sid];
                 }
                 if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil && nightlight.length>0) {
                     [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:_device.sid];
-                } else {
-                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:_device.sid];
                 }
                 if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil && co_sensor.length>0) {
                     [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:_device.sid];
-                } else {
-                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:_device.sid];
                 }
                 if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil && hall_sensor.length>0) {
                     [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:_device.sid];
-                } else {
-                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:_device.sid];
-                }
-                if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
-                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:_device.sid];
-                } else {
-                    [[SQLHelper getInstance] updateSnooze:0 sid:_device.sid];
                 }
                 
                 [self updateUI:nil];

@@ -32,13 +32,13 @@
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_new"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
-    
-    self.alarms = [[SQLHelper getInstance] getAlarmDataByDevice:_devId];
-    [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+    
+    self.alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_devId serviceId:_serviceId];
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -167,12 +167,25 @@
 
 - (void)onClickBtnDelete:(NSIndexPath *)indexPath
 {
-    SPAlertView *alertView = [[SPAlertView alloc] initWithTitle:NSLocalizedString(@"title_removeAction", nil)
-                                                        message:NSLocalizedString(@"msg_removeActionBtn", nil)
-                                              cancelButtonTitle:NSLocalizedString(@"No", nil)
-                                               otherButtonTitle:NSLocalizedString(@"Yes", nil)];
+    UIAlertController *alertController = [UIAlertController
+                                          alertControllerWithTitle:NSLocalizedString(@"title_removeAction", nil)
+                                          message:NSLocalizedString(@"msg_removeActionBtn", nil)
+                                          preferredStyle:UIAlertControllerStyleAlert];
     
-    [alertView show];
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
+        BOOL result = [[SQLHelper getInstance] deleteAlarmData:alarm.alarm_id];
+        NSLog(@"Alarm %d deleted = %d", alarm.alarm_id, result);
+        
+        self.alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_devId serviceId:_serviceId];
+        [self.tableView reloadData];
+    }];
+    [alertController addAction:ok];
+    
+    UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:nil];
+    [alertController addAction:cancel];
+
+    [self presentViewController:alertController animated:YES completion:nil];
 }
 
 //==================================================================

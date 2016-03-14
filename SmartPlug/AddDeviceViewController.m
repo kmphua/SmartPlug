@@ -430,7 +430,7 @@
         // Setting the device name
         //if ( [deviceName.text length] <= 0 )deviceName.text = @"CC3000";
         
-        //[_config setDeviceName:deviceName.text];
+        [_config setDeviceName:@"CC3000"];
         
         [self sendAction];
         

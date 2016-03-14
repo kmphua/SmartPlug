@@ -85,6 +85,7 @@
             end_minute = a.end_minute;
             dow = a.dow;
             [self setDOW];
+            [self setTime];
         }
     } else {
         dow |= (1 << 2);
@@ -107,6 +108,21 @@
     }
     
     [_segCtrlDaysOfWeek setSelectedSegmentIndexes:indexSet];
+}
+
+- (void)setTime {
+    NSCalendar *calendar = [NSCalendar currentCalendar];
+    NSDateComponents *fromComponents = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute) fromDate:_pickerFromTime.date];
+    [fromComponents setHour:init_hour];
+    [fromComponents setMinute:init_minute];
+    NSDate *fromTime = [calendar dateFromComponents:fromComponents];
+    [self.pickerFromTime setDate:fromTime animated:TRUE];
+    
+    NSDateComponents *toComponents = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute) fromDate:_pickerToTime.date];
+    [toComponents setHour:end_hour];
+    [toComponents setMinute:end_minute];
+    NSDate *toTime = [calendar dateFromComponents:toComponents];
+    [self.pickerToTime setDate:toTime animated:TRUE];
 }
 
 - (IBAction)onBtnSelectAction:(id)sender
@@ -151,9 +167,7 @@
     
     [[UDPCommunication getInstance] setDeviceTimers:g_DeviceMac];
     
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(3 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        [self.navigationController popViewControllerAnimated:YES];
-    });
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //==================================================================

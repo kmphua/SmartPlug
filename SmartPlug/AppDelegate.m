@@ -146,6 +146,11 @@ int g_UdpCommand;
         if (aps) {
             NSNumber *badge = [aps objectForKey:@"badge"];
             NSLog(@"Push badge = %ld", [badge integerValue]);
+            
+            // Send push notification
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
+                                                                object:self
+                                                              userInfo:nil];
         }
     }
 }

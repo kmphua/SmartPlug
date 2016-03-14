@@ -26,13 +26,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZVe-b0-SFY">
-                    <rect key="frame" x="20" y="44" width="280" height="480"/>
+                    <rect key="frame" x="30" y="44" width="260" height="480"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="soG-BM-L3a">
-                            <rect key="frame" x="0.0" y="0.0" width="280" height="480"/>
+                            <rect key="frame" x="0.0" y="0.0" width="260" height="480"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timers Set (Snoozing 01h00m)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zWH-BZ-uvm">
-                            <rect key="frame" x="15" y="0.0" width="250" height="50"/>
+                            <rect key="frame" x="15" y="0.0" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="21" id="bEh-xC-zJy"/>
                                 <constraint firstAttribute="height" constant="50" id="gS5-tX-VlU"/>
@@ -46,17 +46,17 @@
                                 </mask>
                             </variation>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:30 - 12:00 TWM" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="HIq-YA-god">
-                            <rect key="frame" x="15" y="60" width="250" height="50"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:30 - 12:00 TWM" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="HIq-YA-god">
+                            <rect key="frame" x="15" y="60" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="RmA-7p-tXv"/>
                             </constraints>
-                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="18"/>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BcP-iF-6hf">
-                            <rect key="frame" x="15" y="120" width="250" height="50"/>
+                            <rect key="frame" x="15" y="120" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="0sV-0x-BwT"/>
                             </constraints>
@@ -69,7 +69,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nJc-ff-fvs">
-                            <rect key="frame" x="15" y="180" width="250" height="50"/>
+                            <rect key="frame" x="15" y="180" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="8Lm-kZ-Uof"/>
                             </constraints>
@@ -82,7 +82,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uau-aa-PQU">
-                            <rect key="frame" x="15" y="240" width="250" height="50"/>
+                            <rect key="frame" x="15" y="240" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="LMH-rH-X7R"/>
                             </constraints>
@@ -95,7 +95,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B8g-SQ-F5J">
-                            <rect key="frame" x="15" y="300" width="250" height="50"/>
+                            <rect key="frame" x="15" y="300" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="u3z-7R-JUI"/>
                             </constraints>
@@ -108,7 +108,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Blw-tx-TmE">
-                            <rect key="frame" x="15" y="360" width="250" height="50"/>
+                            <rect key="frame" x="15" y="360" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="xoq-eK-cA6"/>
                             </constraints>
@@ -121,7 +121,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EnZ-R5-LbB">
-                            <rect key="frame" x="15" y="420" width="250" height="50"/>
+                            <rect key="frame" x="15" y="420" width="230" height="50"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="50" id="BGl-bK-JAK"/>
                             </constraints>
@@ -187,8 +187,8 @@
             </subviews>
             <color key="backgroundColor" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="ZVe-b0-SFY" secondAttribute="trailing" constant="20" id="9k3-x8-e8p"/>
-                <constraint firstItem="ZVe-b0-SFY" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="Bx0-LQ-QAD"/>
+                <constraint firstAttribute="trailing" secondItem="ZVe-b0-SFY" secondAttribute="trailing" constant="30" id="9k3-x8-e8p"/>
+                <constraint firstItem="ZVe-b0-SFY" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="30" id="Bx0-LQ-QAD"/>
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="RZ9-s9-j17"/>
                 <constraint firstAttribute="bottom" secondItem="ZVe-b0-SFY" secondAttribute="bottom" constant="20" id="bpF-QS-d6b"/>
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="eRt-q6-xTU"/>

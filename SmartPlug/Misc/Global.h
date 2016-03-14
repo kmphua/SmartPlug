@@ -67,6 +67,7 @@
 #define NOTIFICATION_IR_FILENAME                @"ir_filename"
 #define NOTIFICATION_MDNS_DEVICE_FOUND          @"mDNS_New_Device_Found"
 #define NOTIFICATION_MDNS_DEVICE_REMOVED        @"mDNS_Device_Removed"
+#define NOTIFICATION_PUSH                       @"push_notification"
 
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,
