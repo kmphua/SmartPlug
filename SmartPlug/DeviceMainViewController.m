@@ -13,6 +13,8 @@
 #import "ScheduleActionViewController.h"
 #import "IRMainViewController.h"
 #import "UDPCommunication.h"
+#import "UDPListenerService.h"
+#import "CrashCountDown.h"
 
 @interface DeviceMainViewController ()<SetSnoozeTimerDelegate, WebServiceDelegate>
 {
@@ -55,6 +57,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblWarning;
 @property (weak, nonatomic) IBOutlet UIImageView *imgRightWarning;
 
+@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progressBar;
+
+@property (strong, nonatomic) CrashCountDown *crashTimer;
+@property (assign, nonatomic) BOOL udpConnection;
+
 @end
 
 @implementation DeviceMainViewController
@@ -64,6 +71,9 @@
     
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
+    
+    _udpConnection = NO;
+    _crashTimer = [CrashCountDown getInstance];
     
     // See current device info
     g_DeviceName = _device.name;
@@ -111,17 +121,36 @@
 {
     [super viewWillAppear:animated];
     
+    // Try to get device status over UDP
+    if ([[UDPListenerService getInstance] isRunning]) {
+        if(g_DeviceIp) {
+            [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+            [_crashTimer startTimer];
+        } else {
+            NSLog(@"IP IS NULL");
+            _udpConnection = false;
+        }
+    }
+    
     // Update device status
-    [self updateDeviceStatusFromServer];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        if (!_udpConnection) {
+            [self updateDeviceStatusFromServer];
+        }
+    });
     
     // Register notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(getDeviceStatus:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastUdpUpdateUi:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePushNotification:) name:NOTIFICATION_PUSH object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -133,6 +162,8 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -140,15 +171,22 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)updateDeviceStatusFromServer {
-    // Get device status
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
+- (void)udpUpdateUI:(NSNotification *)notification {
+    NSLog(@"Device status changed");
+    
+    _udpConnection = true;
+    
+    if(_crashTimer) {
+        [_crashTimer stopTimer];
+    }
+    
+    [self.progressBar setHidden:YES];;
+    [self updateUI:nil];
 }
 
-- (void)handleDeviceStatusChanged:(NSNotification *)notification {
-    NSLog(@"Device status changed");
+- (void)deviceStatusChanged:(NSNotification *)notification {
+    _udpConnection = true;
+    [_crashTimer stopTimer];
     [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
 }
 
@@ -159,9 +197,25 @@
     [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
 }
 
-- (void)getDeviceStatus:(NSNotification *)notification {
-    NSLog(@"Getting device status");
-    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+- (void)timerCrashReached:(NSNotification *)notification {
+    [_imgLeftWarning setHidden:NO];
+    [_lblWarning setText:NSLocalizedString(@"no_udp_Connection", nil)];
+    [_lblWarning setHidden:NO];
+    [_imgRightWarning setHidden:NO];
+    _udpConnection = false;
+}
+
+- (void)broadcastUdpUpdateUi:(NSNotification *)notification {
+    _udpConnection = true;
+    [_crashTimer stopTimer];
+    
+    //while(!mServiceBound){System.out.println("."); SystemClock.sleep(100);}
+    
+    if (g_DeviceIp && g_DeviceIp.length>0) {
+        [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+    } else {
+        NSLog(@"IP IS NULL");
+    }
 }
 
 - (void)updateUI:(NSNotification *)notification {
@@ -246,7 +300,8 @@
 
 - (void)sendService:(int)serviceId
 {
-    //progressBar.setVisibility(View.VISIBLE);
+    [self.progressBar setHidden:NO];
+    
     if (serviceId == RELAY_SERVICE) {
         if (_relay == 0) {
             _action = 0x01;
@@ -263,53 +318,82 @@
         }
     }
     
-    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action];
+    [_imgLeftWarning setHidden:NO];
+    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
+    [_lblWarning setHidden:NO];
+    [_imgRightWarning setHidden:NO];
+
+    [_viewOutlet setUserInteractionEnabled:NO];
+    [_viewNightLight setUserInteractionEnabled:NO];
     
-    // Set device status
+    _udpConnection = false;
+    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action];
+
+    // Send to HTTP after delay 1 second
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+    
+        // Set device status
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        
+        int header = 0x534D5254;
+        uint8_t sMsg[24];
+        sMsg[3] = (uint8_t)(header);
+        sMsg[2] = (uint8_t)((header >> 8 ));
+        sMsg[1] = (uint8_t)((header >> 16 ));
+        sMsg[0] = (uint8_t)((header >> 24 ));
+        
+        int msid = (int)(random()*4294967+1);
+        sMsg[7] = (uint8_t)(msid);
+        sMsg[6] = (uint8_t)((msid >> 8 ));
+        sMsg[5] = (uint8_t)((msid >> 16 ));
+        sMsg[4] = (uint8_t)((msid >> 24 ));
+        int seq = 0x80000000;
+        sMsg[11] = (uint8_t)(seq);
+        sMsg[10] = (uint8_t)((seq >> 8 ));
+        sMsg[9] = (uint8_t)((seq >> 16 ));
+        sMsg[8] = (uint8_t)((seq >> 24 ));
+        short command = 0x0008;
+        sMsg[13] = (uint8_t)(command);
+        sMsg[12] = (uint8_t)((command >> 8 ));
+        //int serviceId = 0xD1000000;
+        sMsg[17] = (uint8_t)(serviceId);
+        sMsg[16] = (uint8_t)((serviceId >> 8 ));
+        sMsg[15] = (uint8_t)((serviceId >> 16 ));
+        sMsg[14] = (uint8_t)((serviceId >> 24 ));
+        
+        uint8_t datatype = 0x01;
+        sMsg[18] = datatype;
+        uint8_t data = _action;
+        sMsg[19] = data;
+        int terminator = 0x00000000;
+        sMsg[23] = (uint8_t)(terminator & 0xff);
+        sMsg[22] = (uint8_t)((terminator >> 8 ) & 0xff);
+        sMsg[21] = (uint8_t)((terminator >> 16 ) & 0xff);
+        sMsg[20] = (uint8_t)((terminator >> 24 ) & 0xff);
+        
+        NSLog(@"Data length = %ld", sizeof(sMsg));
+        
+        NSData *deviceData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
+        
+        int send;
+        if (!_udpConnection) {
+            send = 1;
+        } else {
+            send = 0;
+        }
+        
+        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid send:send data:deviceData];
+    });
+    
+    [self.progressBar setHidden:YES];
+}
+
+- (void)updateDeviceStatusFromServer
+{
     WebService *ws = [WebService new];
     ws.delegate = self;
-    
-    int header = 0x534D5254;
-    uint8_t sMsg[24];
-    sMsg[3] = (uint8_t)(header);
-    sMsg[2] = (uint8_t)((header >> 8 ));
-    sMsg[1] = (uint8_t)((header >> 16 ));
-    sMsg[0] = (uint8_t)((header >> 24 ));
-    
-    int msid = (int)(random()*4294967+1);
-    sMsg[7] = (uint8_t)(msid);
-    sMsg[6] = (uint8_t)((msid >> 8 ));
-    sMsg[5] = (uint8_t)((msid >> 16 ));
-    sMsg[4] = (uint8_t)((msid >> 24 ));
-    int seq = 0x80000000;
-    sMsg[11] = (uint8_t)(seq);
-    sMsg[10] = (uint8_t)((seq >> 8 ));
-    sMsg[9] = (uint8_t)((seq >> 16 ));
-    sMsg[8] = (uint8_t)((seq >> 24 ));
-    short command = 0x0008;
-    sMsg[13] = (uint8_t)(command);
-    sMsg[12] = (uint8_t)((command >> 8 ));
-    //int serviceId = 0xD1000000;
-    sMsg[17] = (uint8_t)(serviceId);
-    sMsg[16] = (uint8_t)((serviceId >> 8 ));
-    sMsg[15] = (uint8_t)((serviceId >> 16 ));
-    sMsg[14] = (uint8_t)((serviceId >> 24 ));
-    
-    uint8_t datatype = 0x01;
-    sMsg[18] = datatype;
-    uint8_t data = _action;
-    sMsg[19] = data;
-    int terminator = 0x00000000;
-    sMsg[23] = (uint8_t)(terminator & 0xff);
-    sMsg[22] = (uint8_t)((terminator >> 8 ) & 0xff);
-    sMsg[21] = (uint8_t)((terminator >> 16 ) & 0xff);
-    sMsg[20] = (uint8_t)((terminator >> 24 ) & 0xff);
-    
-    NSLog(@"Data length = %ld", sizeof(sMsg));
-    
-    NSData *deviceData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
-    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid data:deviceData];
-    //progressBar.setVisibility(View.GONE);
+    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
 }
 
 - (void)onRightBarButton:(id)sender {
@@ -445,8 +529,8 @@
 - (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId
 {
     // Sending 5 minutes snooze to device
-    if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP]) {
-        [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP];
+    if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_5_minutes", nil)
                 duration:3.0
@@ -455,8 +539,8 @@
 
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP]) {
-        [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP];
+    if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_10_minutes", nil)
                 duration:3.0
@@ -465,8 +549,8 @@
 
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP]) {
-        [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP];
+    if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_30_minutes", nil)
                 duration:3.0
@@ -475,8 +559,8 @@
 
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP]) {
-        [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP];
+    if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP]) {
+        [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_60_minutes", nil)
                 duration:3.0
@@ -512,21 +596,37 @@
                 NSString *nightlight = [jsonObject objectForKey:@"nightlight"];
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
+                NSString *snooze = [jsonObject objectForKey:@"snooze"];
                 
                 if(![relay isKindOfClass:[NSNull class]] && relay != nil && relay.length>0) {
                     [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:_device.sid];
                 }
                 if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil && nightlight.length>0) {
                     [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:_device.sid];
                 }
                 if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil && co_sensor.length>0) {
                     [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:_device.sid];
                 }
                 if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil && hall_sensor.length>0) {
                     [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:_device.sid];
+                }
+                if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
+                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:_device.sid];
+                } else {
+                    [[SQLHelper getInstance] updateSnooze:0 sid:_device.sid];
                 }
                 
-                [self updateUI:nil];
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS
+                                                                    object:self
+                                                                  userInfo:nil];
                 
             } else {
                 // Failure

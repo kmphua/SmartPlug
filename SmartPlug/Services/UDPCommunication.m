@@ -35,6 +35,7 @@
     int IRFlag;
     int IRSendFlag;
     int irCode;
+    int sendFlag;
     
     GCDAsyncUdpSocket *udpSocket;
     BOOL isRunning;
@@ -265,20 +266,35 @@ static UDPCommunication *instance;
     NSLog(@"IR HEADERS SENT");
 }
 
-- (BOOL)setDeviceTimers:(NSString *)devId
+- (BOOL)setDeviceTimersHTTP:(NSString *)devId send:(int)send
 {
     BOOL result = true;
+    sendFlag = send;
     NSString *ip = g_DeviceIp;
     BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_HTTP];
     BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_HTTP];
     BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
     
-    [NSThread sleepForTimeInterval:0.5];
+    if (headerOK && timerOK && termiOK) {
+        result = true;
+    } else {
+        result = false;
+    }
+    return result;
+}
+
+- (BOOL)setDeviceTimersUDP:(NSString *)devId
+{
+    BOOL result = true;
+    NSString *ip = g_DeviceIp;
+    BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
+    BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_UDP];
+    BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_UDP];
     
-    if (!headerOK || !timerOK || !termiOK) {
-        [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
-        [self sendTimers:devId protocol:PROTOCOL_UDP];
-        [self sendTimerTerminator:ip protocol:PROTOCOL_UDP];
+    if (headerOK && timerOK && termiOK) {
+        result = true;
+    } else {
+        result = false;
     }
     return result;
 }
@@ -315,7 +331,7 @@ static UDPCommunication *instance;
     if(protocol == PROTOCOL_HTTP) {
         WebService *ws = [WebService new];
         ws.delegate = self;
-        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
+        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
     } else if(protocol == PROTOCOL_UDP) {
         [self sendUDP:ip data:data];
     }
@@ -355,7 +371,7 @@ static UDPCommunication *instance;
     if(protocol == PROTOCOL_HTTP) {
         WebService *ws = [WebService new];
         ws.delegate = self;
-        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
+        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
     } else if(protocol == PROTOCOL_UDP) {
         [self sendUDP:ip data:data];
     }
@@ -427,7 +443,7 @@ static UDPCommunication *instance;
             if(protocol == PROTOCOL_HTTP) {
                 WebService *ws = [WebService new];
                 ws.delegate = self;
-                [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
+                [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
             } else if(protocol == PROTOCOL_UDP) {
                 [self sendUDP:ip data:data];
             }

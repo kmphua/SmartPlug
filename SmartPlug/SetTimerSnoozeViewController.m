@@ -85,9 +85,9 @@
             int background = 0;
             
             if (alarm.service_id == RELAY_SERVICE) {
-                service = @"Plug";
+                service = NSLocalizedString(@"btn_outlet", nil);
             } else if(alarm.service_id == NIGHTLED_SERVICE) {
-                service = @"Nightlight";
+                service = NSLocalizedString(@"btn_nightLight", nil);
             }
             
             int intdow = alarm.dow;

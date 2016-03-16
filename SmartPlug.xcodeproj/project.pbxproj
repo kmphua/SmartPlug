@@ -302,6 +302,7 @@
 		7578519B1C8F335900983AE7 /* mDNSService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7578519A1C8F335900983AE7 /* mDNSService.m */; };
 		758ABDD41C7500AD00980EDE /* IRMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 758ABDD21C7500AD00980EDE /* IRMainViewController.m */; };
 		758ABDD51C7500AD00980EDE /* IRMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 758ABDD31C7500AD00980EDE /* IRMainViewController.xib */; };
+		759C51881C98D03A00E23BC6 /* CrashCountDown.m in Sources */ = {isa = PBXBuildFile; fileRef = 759C51871C98D03A00E23BC6 /* CrashCountDown.m */; };
 		75B2BACE1C878C9900B59779 /* IREditModeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75B2BACC1C878C9900B59779 /* IREditModeViewController.m */; };
 		75B2BACF1C878C9900B59779 /* IREditModeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75B2BACD1C878C9900B59779 /* IREditModeViewController.xib */; };
 		75C4CD861C731DA600E8C629 /* Alarm.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD831C731DA600E8C629 /* Alarm.m */; };
@@ -689,6 +690,8 @@
 		758ABDD11C7500AD00980EDE /* IRMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRMainViewController.h; sourceTree = "<group>"; };
 		758ABDD21C7500AD00980EDE /* IRMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRMainViewController.m; sourceTree = "<group>"; };
 		758ABDD31C7500AD00980EDE /* IRMainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRMainViewController.xib; sourceTree = "<group>"; };
+		759C51861C98D03A00E23BC6 /* CrashCountDown.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CrashCountDown.h; sourceTree = "<group>"; };
+		759C51871C98D03A00E23BC6 /* CrashCountDown.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CrashCountDown.m; sourceTree = "<group>"; };
 		75B2BACB1C878C9900B59779 /* IREditModeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IREditModeViewController.h; sourceTree = "<group>"; };
 		75B2BACC1C878C9900B59779 /* IREditModeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IREditModeViewController.m; sourceTree = "<group>"; };
 		75B2BACD1C878C9900B59779 /* IREditModeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IREditModeViewController.xib; sourceTree = "<group>"; };
@@ -892,6 +895,8 @@
 				751510D71C22B9E8007772FE /* smartplug.h */,
 				757851991C8F335900983AE7 /* mDNSService.h */,
 				7578519A1C8F335900983AE7 /* mDNSService.m */,
+				759C51861C98D03A00E23BC6 /* CrashCountDown.h */,
+				759C51871C98D03A00E23BC6 /* CrashCountDown.m */,
 				75634AAF1C8CDB3A003ECC35 /* UDPCommunication.h */,
 				75634AB01C8CDB3A003ECC35 /* UDPCommunication.m */,
 				7552689A1C334B6900602B58 /* UDPListenerService.h */,
@@ -1786,6 +1791,7 @@
 				75C4CD861C731DA600E8C629 /* Alarm.m in Sources */,
 				75D0D3361C848FA000D72E47 /* IRAddNewViewController.m in Sources */,
 				751510CE1C225D71007772FE /* MainViewCell.m in Sources */,
+				759C51881C98D03A00E23BC6 /* CrashCountDown.m in Sources */,
 				75DC2D001C81484C00F108EE /* AlarmList.m in Sources */,
 				75084A781C8A7082002F456A /* IrGroupViewCell.m in Sources */,
 				75D9D1551C2BF9C40032F96E /* SettingsViewController.m in Sources */,

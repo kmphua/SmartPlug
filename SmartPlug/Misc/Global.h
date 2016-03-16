@@ -68,6 +68,9 @@
 #define NOTIFICATION_MDNS_DEVICE_FOUND          @"mDNS_New_Device_Found"
 #define NOTIFICATION_MDNS_DEVICE_REMOVED        @"mDNS_Device_Removed"
 #define NOTIFICATION_PUSH                       @"push_notification"
+#define NOTIFICATION_TIMERS_SENT_SUCCESS        @"timers_sent_successfully"
+#define NOTIFICATION_HTTP_DEVICE_STATUS         @"http_device_status"
+#define NOTIFICATION_TIMER_CRASH_REACHED        @"timer_crash_reached"
 
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,

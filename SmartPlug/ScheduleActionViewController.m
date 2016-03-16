@@ -33,12 +33,16 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceAction;
 
+@property (assign, nonatomic) BOOL udpConnection;
+
 @end
 
 @implementation ScheduleActionViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    _udpConnection = false;
 
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
@@ -91,12 +95,25 @@
         dow |= (1 << 2);
         [self setDOW];
     }
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timersSentSuccess:) name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
 }
 
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Deregister notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
+}
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)timersSentSuccess:(NSNotification *)notification {
+    _udpConnection = true;
 }
 
 - (void)setDOW {
@@ -165,9 +182,18 @@
                 duration:3.0
                 position:CSToastPositionCenter];
     
-    [[UDPCommunication getInstance] setDeviceTimers:g_DeviceMac];
+    [[UDPCommunication getInstance] setDeviceTimersUDP:g_DeviceMac];
     
-    [self.navigationController popViewControllerAnimated:YES];
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        if (!_udpConnection) {
+            [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceIp send:1];
+        } else {
+            [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceIp send:0];
+        }
+        
+        [self.navigationController popViewControllerAnimated:YES];
+    });
 }
 
 //==================================================================

@@ -31,7 +31,8 @@
 - (BOOL)sendOTACommand:(NSString *)ip;
 - (BOOL)sendIRFileName:(int)filename;
 - (void)sendIRHeader:(int)filename;
-- (BOOL)setDeviceTimers:(NSString *)devId;
+- (BOOL)setDeviceTimersHTTP:(NSString *)devId send:(int)send;
+- (BOOL)setDeviceTimersUDP:(NSString *)devId;
 - (BOOL)sendTimerTerminator:(NSString *)ip protocol:(int)protocol;
 - (BOOL)sendTimerHeaders:(NSString *)ip protocol:(int)protocol;
 - (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol;
