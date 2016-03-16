@@ -10,9 +10,9 @@
 #import "DeviceItemSettingsViewController.h"
 #import "IRAddNewViewController.h"
 #import "IrGroupViewCell.h"
-#import "IREditModeViewController.h"
+#import "IRCodeModeViewController.h"
 
-@interface IRMainViewController ()<UITableViewDataSource, UITableViewDelegate>
+@interface IRMainViewController ()<UITableViewDataSource, UITableViewDelegate, IrGroupCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *irGroups;
@@ -46,6 +46,23 @@
 - (void)onBtnAddNew:(id)sender {
     IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
     [self.navigationController pushViewController:irAddNewVC animated:YES];
+}
+
+//==================================================================
+#pragma mark - IrGroupCellDelegate
+//==================================================================
+
+- (void)onClickBtnDelete:(id)sender {
+    IrGroupViewCell *clickedCell = (IrGroupViewCell*)[[sender superview] superview];
+    NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
+
+    if ([[SQLHelper getInstance] deleteIRGroupById:(int)(indexPathCell.row-1)]){
+        NSLog(@"Successfully deleted");
+    }
+    
+    IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
+    irCodeModeVC.groupId = (int)indexPathCell.row-1;
+    [self.navigationController pushViewController:irCodeModeVC animated:YES];
 }
 
 //==================================================================
@@ -123,7 +140,7 @@
         if (irGroup.icon && irGroup.icon.length>0) {
             int iconId = [irGroup.icon intValue];
             if (g_DeviceIcons) {
-                NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId-1];
+                NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId];
                 NSString *imagePath = [icon objectForKey:@"url"];
                 [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
             }
@@ -156,9 +173,9 @@
         IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
         [self.navigationController pushViewController:irAddNewVC animated:YES];
     } else {
-        IREditModeViewController *irEditModeVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
-        irEditModeVC.irGroup = (IrGroup *)[self.irGroups objectAtIndex:[indexPath row]-1];
-        [self.navigationController pushViewController:irEditModeVC animated:YES];
+        IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
+        irCodeModeVC.groupId = (int)indexPath.row-1;
+        [self.navigationController pushViewController:irCodeModeVC animated:YES];
     }
 
     [tableView deselectRowAtIndexPath:indexPath animated:YES];

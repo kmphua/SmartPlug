@@ -1,20 +1,19 @@
 //
-//  IREditItemViewController.m
+//  IRCodeModeViewController.m
 //  SmartPlug
 //
 //  Created by Kevin Phua on 3/1/16.
 //  Copyright © 2016 Kevin Phua. All rights reserved.
 //
 
-#import "IREditItemViewController.h"
+#import "IRCodeModeViewController.h"
 #import "IREditModeViewController.h"
 #import "DeviceIconViewController.h"
 #import "DQAlertView.h"
+
 #import "IRRecordViewController.h"
 
-#define FILE_PATH       @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
-
-@interface IREditItemViewController ()
+@interface IRCodeModeViewController ()
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UITextField *txtName;
@@ -22,7 +21,7 @@
 
 @end
 
-@implementation IREditItemViewController
+@implementation IRCodeModeViewController
 
 - (void)viewDidLoad {
     [super viewDidLoad];
@@ -47,12 +46,17 @@
 }
 
 - (void)onRightBarButton:(id)sender {
+    IRRecordViewController *irRecordVC = [[IRRecordViewController alloc] initWithNibName:@"IRRecordViewController" bundle:nil];
+    [self.navigationController pushViewController:irRecordVC animated:YES];
+    
+    /*
     // Save IR group
     NSString *irGroupName = (_txtName && _txtName.text.length>0) ? _txtName.text : @"TV on/off";
-    [[SQLHelper getInstance] insertIRGroup:irGroupName icon:FILE_PATH position:0];
+    [[SQLHelper getInstance] insertIRGroup:irGroupName icon:0 position:0];
     
     IREditModeViewController *irEditVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
     [self.navigationController pushViewController:irEditVC animated:YES];
+     */
 }
 
 //==================================================================
@@ -104,6 +108,7 @@
     
     if (indexPath.row == 0) {
         cell.textLabel.text = NSLocalizedString(@"title_title", nil);
+        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
         
         // Add title
         UILabel *lblTitle = [[UILabel alloc] initWithFrame:CGRectMake(cell.frame.size.width - 90, 7, 100, 40)];
@@ -179,7 +184,7 @@
             NSLog(@"Cancel button clicked");
         };
         alertView.otherButtonAction = ^{
-            [[SQLHelper getInstance] updatePlugName:_txtName.text sid:g_DeviceMac];
+            //[[SQLHelper getInstance] updatePlugName:_txtName.text sid:_device.sid];
             //_device.givenName = _txtName.text;
             [self.tableView reloadData];
         };

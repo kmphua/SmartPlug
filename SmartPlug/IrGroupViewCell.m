@@ -20,4 +20,8 @@
     // Configure the view for the selected state
 }
 
+- (IBAction)onBtnDelete:(id)sender {
+    [self.delegate onClickBtnDelete:sender];
+}
+
 @end

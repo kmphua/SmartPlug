@@ -12,7 +12,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="72"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="71.5"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="71"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="main_item_0_a.png" translatesAutoresizingMaskIntoConstraints="NO" id="nRr-h1-QSh">
@@ -39,40 +39,32 @@
                             </mask>
                         </variation>
                     </label>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Rmz-MP-FWc">
+                        <rect key="frame" x="266" y="18" width="36" height="36"/>
+                        <constraints>
+                            <constraint firstAttribute="height" constant="36" id="iFt-NZ-HS7"/>
+                            <constraint firstAttribute="width" constant="36" id="wp3-Lu-Y9q"/>
+                        </constraints>
+                        <state key="normal" backgroundImage="btn_warn_close.png"/>
+                        <state key="selected" backgroundImage="marker_warn2.png"/>
+                        <connections>
+                            <action selector="onBtnDelete:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="vG5-oj-12u"/>
+                        </connections>
+                    </button>
                 </subviews>
                 <constraints>
                     <constraint firstItem="nht-Td-g0L" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="06T-hm-242"/>
                     <constraint firstItem="Acf-zL-d1a" firstAttribute="centerY" secondItem="H2p-sc-9uM" secondAttribute="centerY" id="1ww-lh-qd0"/>
-                    <constraint firstItem="nRr-h1-QSh" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" id="4j9-eG-rAR"/>
-                    <constraint firstItem="Acf-zL-d1a" firstAttribute="centerY" secondItem="nht-Td-g0L" secondAttribute="centerY" id="5oN-jG-tqZ"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="Rmz-MP-FWc" secondAttribute="trailing" constant="10" id="4TW-xX-rnq"/>
                     <constraint firstAttribute="bottomMargin" secondItem="nRr-h1-QSh" secondAttribute="bottom" constant="-8" id="CcJ-Ai-aAJ"/>
-                    <constraint firstItem="nht-Td-g0L" firstAttribute="centerY" secondItem="nRr-h1-QSh" secondAttribute="centerY" id="EuC-he-lSH"/>
                     <constraint firstAttribute="trailingMargin" secondItem="Acf-zL-d1a" secondAttribute="trailing" constant="10" id="Gs1-3t-a3J"/>
                     <constraint firstItem="Acf-zL-d1a" firstAttribute="leading" secondItem="nht-Td-g0L" secondAttribute="trailing" constant="5" id="IIP-OL-1FD"/>
-                    <constraint firstItem="nRr-h1-QSh" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" id="L3K-Vu-ipI"/>
+                    <constraint firstItem="Rmz-MP-FWc" firstAttribute="centerY" secondItem="nht-Td-g0L" secondAttribute="centerY" id="NfK-IA-NhL"/>
                     <constraint firstAttribute="trailingMargin" secondItem="nRr-h1-QSh" secondAttribute="trailing" constant="-8" id="WyI-70-yfG"/>
-                    <constraint firstItem="Acf-zL-d1a" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="17" id="YNj-V1-TAb"/>
                     <constraint firstItem="nht-Td-g0L" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="10" id="ZRo-bX-4md"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="nRr-h1-QSh" secondAttribute="trailing" id="dCc-Om-9N1"/>
-                    <constraint firstItem="nRr-h1-QSh" firstAttribute="trailing" secondItem="H2p-sc-9uM" secondAttribute="trailingMargin" constant="-8" id="hgE-bl-hnn"/>
                     <constraint firstItem="nRr-h1-QSh" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-8" id="uad-2M-3RJ"/>
-                    <constraint firstItem="nht-Td-g0L" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="20" id="vfn-MY-U8X"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="nRr-h1-QSh" secondAttribute="trailing" id="vqg-GJ-w3o"/>
                     <constraint firstItem="nRr-h1-QSh" firstAttribute="leading" secondItem="H2p-sc-9uM" secondAttribute="leadingMargin" constant="-8" id="w7I-hk-sgQ"/>
                 </constraints>
-                <variation key="default">
-                    <mask key="constraints">
-                        <exclude reference="4j9-eG-rAR"/>
-                        <exclude reference="L3K-Vu-ipI"/>
-                        <exclude reference="dCc-Om-9N1"/>
-                        <exclude reference="hgE-bl-hnn"/>
-                        <exclude reference="vqg-GJ-w3o"/>
-                        <exclude reference="EuC-he-lSH"/>
-                        <exclude reference="vfn-MY-U8X"/>
-                        <exclude reference="5oN-jG-tqZ"/>
-                        <exclude reference="YNj-V1-TAb"/>
-                    </mask>
-                </variation>
             </tableViewCellContentView>
             <connections>
                 <outlet property="imgCellBg" destination="nRr-h1-QSh" id="PqB-8L-Yf5"/>
@@ -82,6 +74,8 @@
         </tableViewCell>
     </objects>
     <resources>
+        <image name="btn_warn_close.png" width="36" height="36"/>
         <image name="main_item_0_a.png" width="150" height="72"/>
+        <image name="marker_warn2.png" width="24" height="24"/>
     </resources>
 </document>
