@@ -256,9 +256,7 @@
         
         if ([[UDPCommunication getInstance] setDeviceStatus:plug.ip serviceId:serviceId action:action]) {
             NSLog(@"SET DEVICE STATUS PROCESS");
-        }
-        
-        relay = ~relay;
+        }        
     }
 }
 

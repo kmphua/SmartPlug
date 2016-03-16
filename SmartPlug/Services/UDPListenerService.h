@@ -13,5 +13,6 @@
 + (UDPListenerService *)getInstance;
 - (BOOL)startUdpBroadcastListener;
 - (void)stopUdpBroadcastListener;
+- (BOOL)isRunning;
 
 @end

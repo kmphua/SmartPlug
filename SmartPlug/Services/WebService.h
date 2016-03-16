@@ -61,7 +61,7 @@
 
 // Device methods
 - (void)actDev:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId title:(NSString *)title model:(NSString *)model;
-- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data;
+- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId send:(int)send data:(NSData *)data;
 - (void)devList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
 - (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes devId:(NSString *)devId;
 - (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger;

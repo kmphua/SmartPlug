@@ -172,10 +172,10 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data
+- (void)devCtrl:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId send:(int)send data:(NSData *)data
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&send=%d", userToken, lang, devId, send];
     self.resultName = WS_DEV_CTRL;
     [self postDataWithBody:apiUrl params:params body:data];
 }

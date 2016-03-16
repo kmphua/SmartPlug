@@ -123,6 +123,11 @@ static UDPListenerService *instance;
     NSLog(@"UDP sent %ld bytes to %@", data.length, ip);
 }
 
+- (BOOL)isRunning
+{
+    return _isRunning;
+}
+
 //==================================================================
 #pragma mark - GCDAsyncUdpSocketDelegate
 //==================================================================
@@ -204,6 +209,16 @@ static UDPListenerService *instance;
             [self process_get_device_status];
             [[SQLHelper getInstance] updatePlugServices:js];
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
+                                                                object:self
+                                                              userInfo:nil];
+            g_UdpCommand = 0;   // Reset command after processing
+        }
+    }
+    
+    if(g_UdpCommand == UDP_CMD_SET_DEVICE_TIMERS){
+        if(code == 0){
+            code = 1;
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMERS_SENT_SUCCESS
                                                                 object:self
                                                               userInfo:nil];
             g_UdpCommand = 0;   // Reset command after processing
@@ -356,6 +371,8 @@ static UDPListenerService *instance;
             NSLog(@"Relay is off");
         }
         
+        [[SQLHelper getInstance] updatePlugRelayService:data sid:g_DeviceMac];
+        [[SQLHelper getInstance] updatePlugHallSensorService:js.hall_sensor sid:g_DeviceMac];
     }
 }
 
@@ -374,24 +391,31 @@ static UDPListenerService *instance;
             js.nightlight = 0;
             NSLog(@"Nighlight is off");
         }
+        
+        [[SQLHelper getInstance] updatePlugNightlightService:data sid:g_DeviceMac];
     }
 }
 
 - (void)get_co_status
 {
     int service_id = [self process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
+    int costatus = 0;
     if (service_id == CO_SERVICE) {
         int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
         if(flag == 0x00000010){
             NSLog(@"CO SENSOR WARNING");
-            js.co_sensor = 1;                      //WARNING
+            costatus = 1;
+            js.co_sensor = costatus;                      //WARNING
         } else if (flag == 0x00000100){
+            costatus = 3;
             NSLog(@"CO SENSOR NOT PLUGGED IN");
-            js.co_sensor = 3;                      //NOT PLUGGED
+            js.co_sensor = costatus;                      //NOT PLUGGED
         } else {
+            costatus = 0;
             NSLog(@"CO SENSOR NORMAL CONDITION");
-            js.co_sensor = 0;                      //NORMAL
+            js.co_sensor = costatus;                      //NORMAL
         }
+        [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:g_DeviceMac];
         uint8_t datatype = lMsg[46];
         uint8_t data = lMsg[47];
     }
