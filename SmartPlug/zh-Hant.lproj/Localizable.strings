@@ -176,3 +176,17 @@
 "ip_not_found" = "裝置未連線。請在裝置的本地網路刷新APP";
 "please_wait_done" = "載入中...請稍候";
 
+// Help
+"help_1_title" = "快速入門指南";
+"help_1_desc" = "使用這個程序，您可以輕鬆地從世界任何地方訪問您的新JSPlug！";
+"help_2_title" = "登入";
+"help_2_desc" = "創建一個帳戶或登錄到您的帳戶";
+"help_3_title" = "添加新設備";
+"help_3_desc" = "如果沒有顯示添加設備頁面，按（＋）按鈕顯示添加設備頁面";
+"help_4_title" = "打開你的JSPlug";
+"help_4_desc" = "插上你的JSPlug，並等待綠色指示燈亮";
+"help_5_title" = "初始化設備";
+"help_5_desc" = "按初始化設備按鈕，並輸入您的無線路由器的SSID和密碼";
+"help_6_title" = "添加設備";
+"help_6_desc" = "您的JSPlug應該顯示在列表上。您只需點擊它以添加它到您的帳戶";
+"help_7_title" = "準備開始！";

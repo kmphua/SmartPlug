@@ -173,3 +173,18 @@
 "btn_ota" = "<u>更新韧体</u>";
 "ip_not_found" = "装置未连线。请在装置的本地网路刷新APP";
 "please_wait_done" = "载入中...请稍候";
+
+// Help
+"help_1_title" = "快速入门指南";
+"help_1_desc" = "使用这个程序，您可以轻松地从世界任何地方访问您的新JSPlug！";
+"help_2_title" = "登入";
+"help_2_desc" = "创建一个帐户或登录到您的帐户";
+"help_3_title" = "添加新设备";
+"help_3_desc" = "如果没有显示添加设备页面，按（＋）按钮显示添加设备页面";
+"help_4_title" = "打开你的JSPlug";
+"help_4_desc" = "插上你的JSPlug，并等待绿色指示灯亮";
+"help_5_title" = "初始化设备";
+"help_5_desc" = "按初始化设备按钮，并输入您的无线路由器的SSID和密码";
+"help_6_title" = "添加设备";
+"help_6_desc" = "您的JSPlug应该显示在列表上。您只需点击它以添加它到您的帐户";
+"help_7_title" = "准备开始！";

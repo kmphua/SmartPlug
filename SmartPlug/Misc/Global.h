@@ -34,6 +34,7 @@
 #define UD_KEY_LAST_LOGIN               @"last_login"
 #define UD_USER_TOKEN                   @"user_token"
 #define UD_DEVICE_TOKEN                 @"device_token"
+#define UD_KEY_FIRST_USE                @"first_use"
 
 // Services
 #define RELAY_SERVICE                   0xD1000000
@@ -106,6 +107,7 @@ extern int g_UdpCommand;
 @interface Global : NSObject
 
 + (UIColor *)colorWithType:(ColorType)type;
++ (UIColor *)colorWithHelpPage:(int)pageNo;
 + (NSString *)getCurrentLang;
 + (IconResolution)getIconResolution;
 + (NSString *)convertIpAddressToString:(NSData *)data;

@@ -58,6 +58,58 @@
     return color;
 }
 
++ (UIColor *)colorWithHelpPage:(int)pageNo
+{
+    UIColor *color;
+    switch (pageNo) {
+        case 0:
+        {
+            // #e8b646
+            color = [UIColor colorWithRed:232/255.0f green:182/255.0f blue:70/255.0f alpha:1.0f];
+            break;
+        }
+        case 1:
+        {
+            // #ea794f
+            color = [UIColor colorWithRed:234/255.0f green:121/255.0f blue:79/255.0f alpha:1.0f];
+            break;
+        }
+        case 2:
+        {
+            // #de5360
+            color = [UIColor colorWithRed:222/255.0f green:83/255.0f blue:96/255.0f alpha:1.0f];
+            break;
+        }
+        case 3:
+        {
+            // #b7c45a
+            color = [UIColor colorWithRed:183/255.0f green:196/255.0f blue:90/255.0f alpha:1.0f];
+            break;
+        }
+        case 4:
+        {
+            // #52b66b
+            color = [UIColor colorWithRed:82/255.0f green:182/255.0f blue:107/255.0f alpha:1.0f];
+            break;
+        }
+        case 5:
+        {
+            // #54b6d0
+            color = [UIColor colorWithRed:84/255.0f green:182/255.0f blue:208/255.0f alpha:1.0f];
+            break;
+        }
+        case 6:
+        {
+            // #b491c1
+            color = [UIColor colorWithRed:180/255.0f green:145/255.0f blue:193/255.0f alpha:1.0f];
+            break;
+        }
+        default:
+            break;
+    }
+    return color;
+}
+
 + (NSString *)getCurrentLang {
     NSString *language = [[NSLocale preferredLanguages] objectAtIndex:0];
     if ([language containsString:@"zh-Hant"]) {

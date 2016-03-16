@@ -27,6 +27,8 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    //[self.navigationController setNavigationBarHidden:NO animated:YES];
+    
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
     self.txtLogin.placeholder = NSLocalizedString(@"id_username", nil);

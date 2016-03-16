@@ -13,6 +13,7 @@
 #import "MainViewController.h"
 #import "UDPListenerService.h"
 #import "mDNSService.h"
+#import "HelpPageViewController.h"
 
 @interface AppDelegate ()
 
@@ -63,8 +64,19 @@ int g_UdpCommand;
     [[UIApplication sharedApplication] setStatusBarStyle:UIStatusBarStyleLightContent animated:NO];
 
     // Show initial view
-    LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
-    UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:loginController];
+    UINavigationController *navigationController;
+    
+    NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+    BOOL isFirstUse = [ud boolForKey:UD_KEY_FIRST_USE];
+    
+    if (!isFirstUse) {
+        HelpPageViewController *helpPageController = [[HelpPageViewController alloc] initWithNibName:@"HelpPageViewController" bundle:nil];
+        helpPageController.startIndex = 0;
+        navigationController = [[UINavigationController alloc] initWithRootViewController:helpPageController];
+    } else {
+        LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+        navigationController = [[UINavigationController alloc] initWithRootViewController:loginController];
+    }
     
     self.window.rootViewController = navigationController;
     [self.window makeKeyAndVisible];

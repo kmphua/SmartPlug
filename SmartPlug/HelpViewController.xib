@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HelpViewController">
+            <connections>
+                <outlet property="btnLogin" destination="IxJ-d5-9Qs" id="NMH-Lo-hUq"/>
+                <outlet property="imgIcon" destination="q1s-xQ-dlQ" id="O8o-At-6YV"/>
+                <outlet property="lblDesc" destination="L7Z-bX-hGU" id="e7I-Ir-XYR"/>
+                <outlet property="lblTitle" destination="Mec-ft-gi6" id="69e-Zg-VRp"/>
+                <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
+            <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="q1s-xQ-dlQ">
+                    <rect key="frame" x="30" y="80" width="260" height="173.5"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="128" id="cSJ-RQ-hnh"/>
+                        <constraint firstAttribute="width" constant="300" id="jdC-By-B3D"/>
+                        <constraint firstAttribute="width" secondItem="q1s-xQ-dlQ" secondAttribute="height" multiplier="3:2" id="niK-M3-GP1"/>
+                        <constraint firstAttribute="height" constant="200" id="wmq-Ey-mnA"/>
+                    </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="cSJ-RQ-hnh"/>
+                            <exclude reference="jdC-By-B3D"/>
+                            <exclude reference="wmq-Ey-mnA"/>
+                        </mask>
+                    </variation>
+                </imageView>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Mec-ft-gi6">
+                    <rect key="frame" x="20" y="303" width="280" height="21"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="21" id="4J7-Hr-4Lq"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="22"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="L7Z-bX-hGU">
+                    <rect key="frame" x="20" y="354" width="280" height="100"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="100" id="pCA-bf-XeQ"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="18"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="IxJ-d5-9Qs">
+                    <rect key="frame" x="230" y="506" width="60" height="32"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="60" id="DWw-nf-ADe"/>
+                        <constraint firstAttribute="width" secondItem="IxJ-d5-9Qs" secondAttribute="height" multiplier="47:25" id="c8H-J7-pfC"/>
+                        <constraint firstAttribute="height" constant="50" id="fKl-y1-JgL"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                    <state key="normal" title="Login" backgroundImage="help_7.png"/>
+                    <state key="highlighted" backgroundImage="help_8.png"/>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="fKl-y1-JgL"/>
+                        </mask>
+                    </variation>
+                    <connections>
+                        <action selector="onBtnLogin:" destination="-1" eventType="touchUpInside" id="qVh-FU-TOJ"/>
+                    </connections>
+                </button>
+            </subviews>
+            <color key="backgroundColor" red="0.94901960784313721" green="0.94901960784313721" blue="0.94901960784313721" alpha="1" colorSpace="calibratedRGB"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="q1s-xQ-dlQ" secondAttribute="trailing" constant="30" id="089-RK-ccj"/>
+                <constraint firstItem="Mec-ft-gi6" firstAttribute="centerX" secondItem="q1s-xQ-dlQ" secondAttribute="centerX" id="1MD-K1-kwF"/>
+                <constraint firstItem="Mec-ft-gi6" firstAttribute="trailing" secondItem="L7Z-bX-hGU" secondAttribute="trailing" id="JWy-rt-7aE"/>
+                <constraint firstItem="Mec-ft-gi6" firstAttribute="leading" secondItem="L7Z-bX-hGU" secondAttribute="leading" id="KuB-Qx-7Su"/>
+                <constraint firstAttribute="bottom" secondItem="IxJ-d5-9Qs" secondAttribute="bottom" constant="30" id="Rdj-J3-Uoo"/>
+                <constraint firstAttribute="trailing" secondItem="Mec-ft-gi6" secondAttribute="trailing" constant="20" id="U3O-8w-7NZ"/>
+                <constraint firstItem="q1s-xQ-dlQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="86" id="bnR-7Q-SLf"/>
+                <constraint firstAttribute="trailing" secondItem="IxJ-d5-9Qs" secondAttribute="trailing" constant="30" id="duv-6f-P3D"/>
+                <constraint firstItem="q1s-xQ-dlQ" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="gbT-5f-HSX"/>
+                <constraint firstItem="Mec-ft-gi6" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="gn8-zz-Vaf"/>
+                <constraint firstItem="q1s-xQ-dlQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="30" id="jOG-ic-bQA"/>
+                <constraint firstItem="L7Z-bX-hGU" firstAttribute="top" secondItem="Mec-ft-gi6" secondAttribute="bottom" constant="30" id="n3L-zA-rfN"/>
+                <constraint firstItem="q1s-xQ-dlQ" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="40" id="oAe-uE-ESO"/>
+                <constraint firstAttribute="bottom" secondItem="Mec-ft-gi6" secondAttribute="bottom" constant="219" id="pyM-2Q-Tnv"/>
+                <constraint firstItem="Mec-ft-gi6" firstAttribute="top" secondItem="q1s-xQ-dlQ" secondAttribute="bottom" constant="50" id="rb2-4l-vtW"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina4"/>
+            <variation key="default">
+                <mask key="constraints">
+                    <exclude reference="bnR-7Q-SLf"/>
+                    <exclude reference="oAe-uE-ESO"/>
+                    <exclude reference="1MD-K1-kwF"/>
+                    <exclude reference="pyM-2Q-Tnv"/>
+                </mask>
+            </variation>
+            <point key="canvasLocation" x="212" y="248"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="help_7.png" width="47" height="25"/>
+        <image name="help_8.png" width="47" height="25"/>
+    </resources>
+</document>

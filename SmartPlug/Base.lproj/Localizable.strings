@@ -175,3 +175,18 @@
 "btn_ota" = "<u>Update Firmware</u>";
 "ip_not_found" = "Device Not Connected, Please refresh APP within device local network";
 "please_wait_done" = "Loading... Please wait";
+
+// Help
+"help_1_title" = "Quick Start Guide";
+"help_1_desc" = "Using this app, you can easily access your new JSPlug from anywhere in the world！";
+"help_2_title" = "Login";
+"help_2_desc" = "Create an account or login to your current account";
+"help_3_title" = "Add a New Device";
+"help_3_desc" = "If the add device screen is not shown, press the (+) button to show the add device screen";
+"help_4_title" = "Turn On Your JSPlug";
+"help_4_desc" = "Plug in your JSPlug, and wait for the green indicator light to turn on";
+"help_5_title" = "Initialize the Device";
+"help_5_desc" = "Press the \"Initialize Devices\" button and enter the SSID and password for your WIFI router";
+"help_6_title" = "Add the Device";
+"help_6_desc" = "Your JSPlug should now be listed in the list. Simply tap it to add the device to your account";
+"help_7_title" = "Ready to Begin!";
