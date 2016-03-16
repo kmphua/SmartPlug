@@ -249,7 +249,6 @@ static UDPListenerService *instance;
                                                                 object:self
                                                               userInfo:userInfo];
         }
-        
     }
     return true;
 }

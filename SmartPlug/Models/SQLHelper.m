@@ -127,11 +127,11 @@ static SQLHelper *instance;
 //==================================================================
 #pragma mark - Public methods
 //==================================================================
-- (BOOL)insertIcons:(NSString *)url size:(int)size
+- (BOOL)insertIcons:(NSString *)url size:(int)size sid:(NSString *)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO icons (url, size) VALUES (?, ?)",
-                   url, [NSNumber numberWithInt:size]];
+    BOOL result = [db executeUpdate:@"INSERT INTO icons (sid, url, size) VALUES (?, ?, ?)",
+                   sid, url, [NSNumber numberWithInt:size]];
     [db close];
     return result;
 }
@@ -143,6 +143,23 @@ static SQLHelper *instance;
     NSMutableArray *icons = [NSMutableArray new];
     while ([results next]) {
         Icon *icon = [Icon new];
+        icon.sid = [results stringForColumn:COLUMN_SID];
+        icon.url = [results stringForColumn:COLUMN_URL];
+        icon.size = [results intForColumn:COLUMN_SIZE];
+        [icons addObject:icon];
+    }
+    [db close];
+    return icons;
+}
+
+- (NSArray *)getIconByUrl:(NSString *)url
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM icons WHERE url = ?", url];
+    NSMutableArray *icons = [NSMutableArray new];
+    while ([results next]) {
+        Icon *icon = [Icon new];
+        icon.sid = [results stringForColumn:COLUMN_SID];
         icon.url = [results stringForColumn:COLUMN_URL];
         icon.size = [results intForColumn:COLUMN_SIZE];
         [icons addObject:icon];
@@ -315,7 +332,7 @@ static SQLHelper *instance;
 {
     [db open];
     BOOL result = [db executeUpdate:@"UPDATE smartplugs SET nightlight = ? WHERE sid = ?",
-                   data, sid];
+                   [NSNumber numberWithInt:data], sid];
     [db close];
     return result;
 }
@@ -324,7 +341,7 @@ static SQLHelper *instance;
 {
     [db open];
     BOOL result = [db executeUpdate:@"UPDATE smartplugs SET csensor = ? WHERE sid = ?",
-                   data, sid];
+                   [NSNumber numberWithInt:data], sid];
     [db close];
     return result;
 }
@@ -333,7 +350,7 @@ static SQLHelper *instance;
 {
     [db open];
     BOOL result = [db executeUpdate:@"UPDATE smartplugs SET hsensor = ? WHERE sid = ?",
-                   data, sid];
+                   [NSNumber numberWithInt:data], sid];
     [db close];
     return result;
 }
@@ -342,7 +359,7 @@ static SQLHelper *instance;
 {
     [db open];
     BOOL result = [db executeUpdate:@"UPDATE smartplugs SET snooze = ? WHERE sid = ?",
-                   data, sid];
+                   [NSNumber numberWithInt:data], sid];
     [db close];
     return result;
 }
@@ -351,7 +368,7 @@ static SQLHelper *instance;
 {
     [db open];
     BOOL result = [db executeUpdate:@"UPDATE smartplugs SET relay = ? WHERE sid = ?",
-                   data, sid];
+                   [NSNumber numberWithInt:data], sid];
     [db close];
     return result;
 }
@@ -479,6 +496,7 @@ static SQLHelper *instance;
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        plug.snooze = [results intForColumn:COLUMN_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -513,6 +531,7 @@ static SQLHelper *instance;
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        plug.snooze = [results intForColumn:COLUMN_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -546,6 +565,7 @@ static SQLHelper *instance;
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        plug.snooze = [results intForColumn:COLUMN_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -580,6 +600,7 @@ static SQLHelper *instance;
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        plug.snooze = [results intForColumn:COLUMN_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -613,6 +634,7 @@ static SQLHelper *instance;
         plug.notify_co = [results intForColumn:COLUMN_NOTIFY_CO];
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
+        plug.snooze = [results intForColumn:COLUMN_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];

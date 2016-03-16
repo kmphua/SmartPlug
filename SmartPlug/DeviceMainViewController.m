@@ -180,7 +180,7 @@
         [_crashTimer stopTimer];
     }
     
-    [self.progressBar setHidden:YES];;
+    [self.progressBar setHidden:YES];
     [self updateUI:nil];
 }
 
@@ -292,10 +292,26 @@
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
     
+    // Snooze
+    if (device.snooze == 0) {
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+    } else if (device.snooze == 1) {
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+    }
+    
     if (device.icon && device.icon.length>0) {
         NSString *imagePath = self.device.icon;
         [_imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
+    
+    [_viewNightLight setUserInteractionEnabled:YES];
+    [_viewOutlet setUserInteractionEnabled:YES];
+    [_imgRightWarning setHidden:YES];
+    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
+    [_lblWarning setHidden:YES];
+    [_imgLeftWarning setHidden:YES];
 }
 
 - (void)sendService:(int)serviceId
@@ -597,6 +613,9 @@
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
                 NSString *snooze = [jsonObject objectForKey:@"snooze"];
+                
+                NSLog(@"Devget returned: relay=%@, nightlight=%@, co_sensor=%@, hall_sensor=%@, snooze=%@",
+                      relay, nightlight, co_sensor, hall_sensor, snooze);
                 
                 if(![relay isKindOfClass:[NSNull class]] && relay != nil && relay.length>0) {
                     [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:_device.sid];

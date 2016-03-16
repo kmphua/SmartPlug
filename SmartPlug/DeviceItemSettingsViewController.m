@@ -10,8 +10,14 @@
 #import "DeviceIconViewController.h"
 #import "DQAlertView.h"
 #import "FirstTimeConfig.h"
+#import "UDPCommunication.h"
 
 @interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
+{
+    int notify_on_power_outage;
+    int notify_on_co_warning;
+    int notify_on_timer_activated;
+}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic) BOOL deviceInRange;
@@ -33,18 +39,77 @@
     } else {
         _deviceInRange = NO;
     }
+    
+    notify_on_power_outage = 0;
+    notify_on_co_warning = 0;
+    notify_on_timer_activated = 0;
+    
+    // Add navigation buttons
+    UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"btn_done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
+    self.navigationItem.rightBarButtonItem = rightBarBtn;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    // TODO: Get Device Status
-    
-    [self.tableView reloadData];
+
+    /*
+    // Get Device Status
+    NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:g_DeviceMac];
+    if (plugs && plugs.count>0) {
+        _device = [plugs firstObject];
+        [self.tableView reloadData];
+    }
+     */
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)onRightBarButton:(id)sender {
+    if (_device.notify_power) {
+        notify_on_power_outage = 1;
+    } else {
+        notify_on_power_outage = 0;
+    }
+    if (_device.notify_co) {
+        notify_on_co_warning = 1;
+    } else {
+        notify_on_co_warning = 0;
+    }
+    if (_device.notify_timer) {
+        notify_on_timer_activated = 1;
+    } else {
+        notify_on_timer_activated = 0;
+    }
+    
+    NSString *name = _txtName.text;
+    if (g_DeviceMac && _deviceInRange) {
+        BOOL result = [[SQLHelper getInstance] updatePlugNameNotify:g_DeviceMac
+                                                               name:name
+                                                notifyOnPowerOutage:notify_on_power_outage
+                                                  notifyOnCoWarning:notify_on_co_warning
+                                             notifyOnTimerActivated:notify_on_timer_activated
+                                                               icon:_device.icon];
+        
+        if (result) {
+            NSArray *icons = [[SQLHelper getInstance] getIconByUrl:_device.icon];
+            NSString *iconId = @"";
+            if(icons && icons.count > 0){
+                Icon *icon = [icons firstObject];
+                iconId = icon.sid;
+            }
+            
+            WebService *ws = [WebService new];
+            ws.delegate = self;
+            [ws devSet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac icon:iconId title:name notifyPower:[NSString stringWithFormat:@"%d", notify_on_power_outage] notifyTimer:[NSString stringWithFormat:@"%d", notify_on_timer_activated] notifyDanger:[NSString stringWithFormat:@"%d",notify_on_co_warning]];
+            
+            NSLog(@"DB UPDATED SUCCESSFULLY");
+        } else {
+            NSLog(@"CHECK IF MAC ADDRESS IS NULL");
+        }
+    }
 }
 
 //==================================================================
@@ -59,11 +124,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    if (_deviceInRange) {
-        return 9;
-    } else {
-        return 10;
-    }
+    return 10;
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
@@ -209,12 +270,14 @@
         case 8:
             if (_deviceInRange) {
                 cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
-            } else {
-                cell.textLabel.text = NSLocalizedString(@"msg_deskLampBtn", nil);
             }
             break;
         case 9:
-            cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
+            if (_deviceInRange) {
+                cell.textLabel.text = NSLocalizedString(@"btn_ota", nil);
+            } else {
+                cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
+            }
             break;
     }
     return cell;
@@ -275,7 +338,74 @@
             [self.tableView reloadData];
         };
         [alertView show];
+    } else if (indexPath.row == 5) {
+        if (!_deviceInRange) {
+            if (self.device.notify_power) {
+                self.device.notify_timer = 0;
+            } else {
+                self.device.notify_timer = 1;
+            }
+        }
+    } else if (indexPath.row == 6) {
+        if (!_deviceInRange) {
+            if (self.device.notify_co) {
+                self.device.notify_co = 0;
+            } else {
+                self.device.notify_co = 1;
+            }
+        }
+    } else if (indexPath.row == 7) {
+        if (!_deviceInRange) {
+            if (self.device.notify_co) {
+                self.device.notify_co = 0;
+            } else {
+                self.device.notify_co = 1;
+            }
+        }
+    } else if (indexPath.row == 8) {
+        if (_deviceInRange) {
+            // Remove and reset
+            UIAlertController *alertController = [UIAlertController
+                                                  alertControllerWithTitle:nil
+                                                  message:NSLocalizedString(@"msg_removeAndResetBtn", nil)
+                                                  preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
+            }];
+            [alertController addAction:actionYes];
+            UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            }];
+            [alertController addAction:actionNo];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
+    } else if (indexPath.row == 9) {
+        if (_deviceInRange) {
+            // Update firmare
+            [[UDPCommunication getInstance] sendOTACommand:g_DeviceIp];
+            
+            [self.view makeToast:NSLocalizedString(@"please_wait", nil)
+                        duration:3.0
+                        position:CSToastPositionCenter];
+        } else {
+            // Remove and reset
+            UIAlertController *alertController = [UIAlertController
+                                                  alertControllerWithTitle:nil
+                                                  message:NSLocalizedString(@"msg_removeAndResetBtn", nil)
+                                                  preferredStyle:UIAlertControllerStyleAlert];
+            
+            UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+                [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
+            }];
+            [alertController addAction:actionYes];
+            UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            }];
+            [alertController addAction:actionNo];
+            [self presentViewController:alertController animated:YES completion:nil];
+        }
     }
+    
+    [self.tableView reloadData];
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
@@ -331,7 +461,23 @@
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
             }
-        } 
+        } else if ([resultName isEqualToString:WS_DEV_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        }
     }
 }
 

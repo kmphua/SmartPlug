@@ -159,7 +159,7 @@
 "notify_on_co_warning" = "一氧化碳通知";
 "notify_on_timer_activated" = "计时激活通知";
 "token_error_message" = "权限错误讯息";
-"connect_to_wifi" = "<u>连结至WiFi</u>";
+"connect_to_wifi" = "连结至WiFi";
 "create_account_error" = "新增帐号错误";
 "password_compare_error" = "密码不一致";
 "no_udp_Connection" = "无UDP连线";
@@ -170,7 +170,7 @@
 "delay_30_minutes" = "已传送定时延迟30分钟";
 "delay_60_minutes" = "已传送定时延迟1小时";
 "please_wait" = "请稍候，我们正在处理您的请求，谢谢";
-"btn_ota" = "<u>更新韧体</u>";
+"btn_ota" = "更新韧体";
 "ip_not_found" = "装置未连线。请在装置的本地网路刷新APP";
 "please_wait_done" = "载入中...请稍候";
 

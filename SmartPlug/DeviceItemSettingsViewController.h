@@ -9,7 +9,7 @@
 #import "BaseViewController.h"
 #import "JSmartPlug.h"
 
-@interface DeviceItemSettingsViewController : BaseViewController
+@interface DeviceItemSettingsViewController : BaseViewController<WebServiceDelegate>
 
 @property (nonatomic, assign) JSmartPlug *device;
 

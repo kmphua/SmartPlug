@@ -40,7 +40,11 @@ static CrashCountDown *instance;
 
 - (void)startTimer
 {
-    _crashTimer = [NSTimer timerWithTimeInterval:CRASH_TIMER_INTERVAL target:self selector:@selector(timerExpired) userInfo:nil repeats:NO];
+    _crashTimer = [NSTimer scheduledTimerWithTimeInterval:CRASH_TIMER_INTERVAL
+                                                   target:self
+                                                 selector:@selector(timerExpired:)
+                                                 userInfo:nil
+                                                  repeats:NO];
 }
 
 - (void)stopTimer
@@ -51,7 +55,7 @@ static CrashCountDown *instance;
     }
 }
 
-- (void)timerExpired
+- (void)timerExpired:(id)sender
 {
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
 }

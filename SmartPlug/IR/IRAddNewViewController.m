@@ -31,7 +31,7 @@
     
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
-    self.lblTitle.text = NSLocalizedString(@"ir_add_new", nil);
+    self.lblTitle.text = NSLocalizedString(@"title_add_new", nil);
     self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
@@ -51,6 +51,8 @@
 
     UITapGestureRecognizer *tapViewRecord = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewRecord:)];
     [self.viewRecord addGestureRecognizer:tapViewRecord];
+    
+    [self.viewChoose setHidden:YES];
 }
 
 - (void)didReceiveMemoryWarning {

@@ -7,8 +7,12 @@
 //
 
 #import "IRRecordViewController.h"
+#import "UDPCommunication.h"
 
 @interface IRRecordViewController ()
+{
+    int ir_filename;
+}
 
 @property (nonatomic, weak) IBOutlet UILabel *lblMessage;
 @property (weak, nonatomic) IBOutlet UIImageView *imgWait;
@@ -42,11 +46,35 @@
     self.imgWait.animationImages = waitImages;
     self.imgWait.animationDuration = 0.5;
 
+    // Send IR Record command
+    dispatch_async(dispatch_get_global_queue( DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^(void){
+        [self sendIRRecordCommand];
+    });
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleIrFileName:) name:NOTIFICATION_IR_FILENAME object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [[NSNotificationCenter defaultCenter] removeObserver:NOTIFICATION_IR_FILENAME];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)handleIrFileName:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    ir_filename = [[userInfo objectForKey:@"filename"] intValue];
+    self.searching = NO;
+    [self updateUI];
+    NSLog(@"IR filename: %d", ir_filename);
+}
+
+- (void)sendIRRecordCommand {
+    [[UDPCommunication getInstance] sendIRMode];
 }
 
 - (void)updateUI {
@@ -61,15 +89,16 @@
 - (IBAction)onBtnRecordAgain:(id)sender {
     self.searching = YES;
     [self updateUI];
+    [self sendIRRecordCommand];
 }
 
 - (IBAction)onBtnTestCommand:(id)sender {
-    
+    [[UDPCommunication getInstance] sendIRFileName:ir_filename];
 }
 
 - (IBAction)onBtnAddNow:(id)sender {
-    self.searching = YES;
-    [self updateUI];
+    [[SQLHelper getInstance] insertIRCodes:_groupId name:_name filename:ir_filename icon:_icon mac:g_DeviceMac];
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

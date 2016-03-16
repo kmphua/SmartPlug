@@ -161,7 +161,7 @@
 "notify_on_co_warning" = "一氧化碳通知";
 "notify_on_timer_activated" = "計時激活通知";
 "token_error_message" = "權限錯誤訊息";
-"connect_to_wifi" = "<u>連結至WiFi</u>";
+"connect_to_wifi" = "連結至WiFi";
 "create_account_error" = "新增帳號錯誤";
 "password_compare_error" = "密碼不一致";
 "no_udp_Connection" = "無UDP連線";
@@ -172,7 +172,7 @@
 "delay_30_minutes" = "已傳送定時延遲30分鐘";
 "delay_60_minutes" = "已傳送定時延遲1小時";
 "please_wait" = "請稍候，我們正在處理您的請求，謝謝";
-"btn_ota" = "<u>更新韌體</u>";
+"btn_ota" = "更新韌體";
 "ip_not_found" = "裝置未連線。請在裝置的本地網路刷新APP";
 "please_wait_done" = "載入中...請稍候";
 

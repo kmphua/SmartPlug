@@ -161,7 +161,7 @@
 "notify_on_timer_activated" = "Notify on Timer Activated";
 "gcm_send_message" = "GCM send message";
 "token_error_message" = "Token Error Message";
-"connect_to_wifi" = "<u>Connect to WiFi</u>";
+"connect_to_wifi" = "Connect to WiFi";
 "create_account_error" = "Error Creating New Account";
 "password_compare_error" = "Passwords are not the same";
 "no_udp_Connection" = "No UDP Connection";
@@ -172,7 +172,7 @@
 "delay_60_minutes" = "Timer Delay 1 Hour Sent";
 "delay_30_minutes" = "Timer Delay 30 Minutes Sent";
 "please_wait" = "Wait a moment while we process your request, thank you";
-"btn_ota" = "<u>Update Firmware</u>";
+"btn_ota" = "Update Firmware";
 "ip_not_found" = "Device Not Connected, Please refresh APP within device local network";
 "please_wait_done" = "Loading... Please wait";
 

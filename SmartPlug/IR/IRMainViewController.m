@@ -28,14 +28,14 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
-    
-    self.irGroups = [[SQLHelper getInstance] getIRGroups];
-    [self.tableView reloadData];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+    
+    self.irGroups = [[SQLHelper getInstance] getIRGroups];
+    [self.tableView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -85,7 +85,7 @@
     UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
     [label setFont:[UIFont systemFontOfSize:32]];
     [label setTextColor:[UIColor whiteColor]];
-    [label setText:NSLocalizedString(@"ir_group", nil)];
+    [label setText:NSLocalizedString(@"title_irControl", nil)];
     [label setTextAlignment:NSTextAlignmentCenter];
     [view addSubview:label];
     return view;

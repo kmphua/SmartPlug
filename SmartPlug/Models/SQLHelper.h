@@ -19,8 +19,9 @@
 
 + (SQLHelper *)getInstance;
 
-- (BOOL)insertIcons:(NSString *)url size:(int)size;
+- (BOOL)insertIcons:(NSString *)url size:(int)size sid:(NSString *)sid;
 - (NSArray *)getIcons;
+- (NSArray *)getIconByUrl:(NSString *)url;
 
 - (BOOL)insertIRGroup:(NSString *)desc icon:(NSString *)icon position:(int)position;
 - (NSArray *)getIRGroups;
