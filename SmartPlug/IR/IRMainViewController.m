@@ -10,6 +10,7 @@
 #import "DeviceItemSettingsViewController.h"
 #import "IRAddNewViewController.h"
 #import "IrGroupViewCell.h"
+#import "IREditModeViewController.h"
 #import "IRCodeModeViewController.h"
 
 @interface IRMainViewController ()<UITableViewDataSource, UITableViewDelegate, IrGroupCellDelegate>
@@ -60,9 +61,9 @@
         NSLog(@"Successfully deleted");
     }
     
-    IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
-    irCodeModeVC.groupId = (int)indexPathCell.row-1;
-    [self.navigationController pushViewController:irCodeModeVC animated:YES];
+    IREditModeViewController *irEditModeVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
+    irEditModeVC.groupId = (int)indexPathCell.row-1;
+    [self.navigationController pushViewController:irEditModeVC animated:YES];
 }
 
 //==================================================================
@@ -136,6 +137,7 @@
         
         IrGroup *irGroup = [self.irGroups objectAtIndex:[indexPath row]-1];
         cell.lblDeviceName.text = irGroup.name;
+        cell.delegate = self;
         
         if (irGroup.icon && irGroup.icon.length>0) {
             int iconId = [irGroup.icon intValue];

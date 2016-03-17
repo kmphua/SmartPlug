@@ -10,6 +10,4 @@
 
 @interface IREditModeViewController : BaseViewController
 
-@property (nonatomic, assign) int groupId;
-
 @end

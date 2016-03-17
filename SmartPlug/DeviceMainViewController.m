@@ -11,7 +11,7 @@
 #import "SetTimerSnoozeViewController.h"
 #import "ScheduleMainViewController.h"
 #import "ScheduleActionViewController.h"
-#import "IRMainViewController.h"
+#import "IREditModeViewController.h"
 #import "UDPCommunication.h"
 #import "UDPListenerService.h"
 #import "CrashCountDown.h"
@@ -517,7 +517,7 @@
 }
 
 - (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
-    IRMainViewController *irVC = [[IRMainViewController alloc] initWithNibName:@"IRMainViewController" bundle:nil];
+    IREditModeViewController *irVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
     [self.navigationController pushViewController:irVC animated:YES];
 }
 

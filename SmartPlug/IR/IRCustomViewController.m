@@ -96,7 +96,7 @@
     static NSString *CellIdentifier = @"TableViewCell";
     UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleValue1 reuseIdentifier:CellIdentifier];
     }
     
     if (indexPath.row == 0) {
@@ -177,8 +177,7 @@
             NSLog(@"Cancel button clicked");
         };
         alertView.otherButtonAction = ^{
-            //[[SQLHelper getInstance] updatePlugName:_txtName.text sid:_device.sid];
-            //_device.givenName = _txtName.text;
+            [[SQLHelper getInstance] updatePlugName:_txtName.text sid:g_DeviceMac];
             [self.tableView reloadData];
         };
         [alertView show];
