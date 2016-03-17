@@ -136,7 +136,7 @@
         
         if (_icon && _icon.length>0) {
             NSString *imagePath = _icon;
-            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:[UIImage imageNamed:@"btn_power_pressed"]];
+            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:[UIImage imageNamed:@"btn_power_pressed_2"]];
         }
     }
     

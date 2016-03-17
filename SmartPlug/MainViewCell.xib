@@ -12,7 +12,7 @@
             <rect key="frame" x="0.0" y="0.0" width="320" height="72"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="KGk-i7-Jjw" id="H2p-sc-9uM">
-                <rect key="frame" x="0.0" y="0.0" width="320" height="71"/>
+                <rect key="frame" x="0.0" y="0.0" width="320" height="71.5"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="main_item_0_a.png" translatesAutoresizingMaskIntoConstraints="NO" id="nRr-h1-QSh">
@@ -45,8 +45,8 @@
                             <constraint firstAttribute="width" constant="48" id="QnM-vl-drY"/>
                             <constraint firstAttribute="height" constant="48" id="WzH-gk-Zuw"/>
                         </constraints>
-                        <state key="normal" backgroundImage="btn_power.png"/>
-                        <state key="selected" backgroundImage="btn_power_pressed.png"/>
+                        <state key="normal" backgroundImage="btn_power_2.png"/>
+                        <state key="selected" backgroundImage="btn_power_pressed_2.png"/>
                         <connections>
                             <action selector="onBtnPower:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="h9F-E0-z1Q"/>
                         </connections>
@@ -134,8 +134,8 @@
         </tableViewCell>
     </objects>
     <resources>
-        <image name="btn_power.png" width="48" height="48"/>
-        <image name="btn_power_pressed.png" width="48" height="48"/>
+        <image name="btn_power_2.png" width="48" height="48"/>
+        <image name="btn_power_pressed_2.png" width="48" height="48"/>
         <image name="btn_warn_close.png" width="36" height="36"/>
         <image name="main_item_0_a.png" width="150" height="72"/>
         <image name="marker_timer.png" width="24" height="24"/>
