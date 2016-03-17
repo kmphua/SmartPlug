@@ -7,14 +7,32 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IREditModeViewController">
             <connections>
+                <outlet property="tableView" destination="RQ2-Fn-bhq" id="4Nu-Ed-NWT"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="i5M-Pr-FkT">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+            <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="RQ2-Fn-bhq">
+                    <rect key="frame" x="20" y="50" width="335" height="597"/>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <connections>
+                        <outlet property="dataSource" destination="-1" id="NZn-OP-Eqh"/>
+                        <outlet property="delegate" destination="-1" id="OmZ-Xe-4xy"/>
+                    </connections>
+                </tableView>
+            </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+            <constraints>
+                <constraint firstAttribute="trailing" secondItem="RQ2-Fn-bhq" secondAttribute="trailing" constant="20" id="9bD-fS-zuc"/>
+                <constraint firstItem="RQ2-Fn-bhq" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="DuQ-vC-3Lr"/>
+                <constraint firstItem="RQ2-Fn-bhq" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="FCr-2a-a3f"/>
+                <constraint firstAttribute="bottom" secondItem="RQ2-Fn-bhq" secondAttribute="bottom" constant="20" id="nqP-gl-301"/>
+            </constraints>
+            <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
         </view>
     </objects>
 </document>

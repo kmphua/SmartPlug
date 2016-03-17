@@ -23,17 +23,23 @@
 - (NSArray *)getIcons;
 - (NSArray *)getIconByUrl:(NSString *)url;
 
-- (BOOL)insertIRGroup:(NSString *)desc icon:(NSString *)icon position:(int)position;
+// IR Groups
 - (NSArray *)getIRGroups;
-- (BOOL)deleteIRCodes:(int)groupid;
-- (BOOL)deleteIRGroupById:(int)groupId;
-- (BOOL)deleteIRCode:(int)id;
-- (NSArray *)getIRGroups:(int)id;
-- (BOOL)insertIRCodes:(int)gid name:(NSString *)name filename:(int)filename
-                 icon:(NSString *)icon mac:(NSString *)mac;
-- (NSArray *)getIRCodes;
-- (NSArray *)getIRCodesByGroup:(int)id;
+- (NSArray *)getIRGroup:(int)groupId;
+- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position;
+- (BOOL)updateIRGroup:(IrGroup *)group;
 
+// IR Codes
+- (NSArray *)getIRCodes;
+- (NSArray *)getIRCodesByGroup:(int)groupid;
+- (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
+                 icon:(NSString *)icon mac:(NSString *)mac;
+- (BOOL)updateIRCode:(IrCode *)code;
+- (BOOL)deleteIRCodes:(int)groupId;
+- (BOOL)deleteIRGroupById:(int)groupId;
+- (BOOL)deleteIRCode:(int)groupId;
+
+// Plugs
 - (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip;
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active;
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip;
@@ -63,6 +69,7 @@
 - (BOOL)updatePlugNameNotify:(NSString *)mac name:(NSString *)name notifyOnPowerOutage:(int)notifyOnPowerOutage notifyOnCoWarning:(int)notifyOnCoWarning notifyOnTimerActivated:(int)notifyOnTimerActivated icon:(NSString *)icon;
 - (BOOL)deleteNonActivePlug:(NSString *)name;
 
+// Alarms
 - (BOOL)deleteAlarmData:(int)id;
 - (BOOL)removeAlarms:(NSString *)mac;
 - (BOOL)insertAlarm:(Alarm *)a;

@@ -5,9 +5,11 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IREditItemViewController">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IRCodeModeViewController">
             <connections>
-                <outlet property="tableView" destination="Dc9-QQ-fLx" id="FkS-Fg-QWN"/>
+                <outlet property="bgView" destination="ZC0-YP-iMn" id="i10-6F-Bcs"/>
+                <outlet property="gmGridView" destination="W6w-4v-Mzh" id="3Ys-x5-Du0"/>
+                <outlet property="lblTitle" destination="EY6-zD-YQO" id="eqK-cL-63f"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -16,33 +18,48 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" scrollEnabled="NO" style="grouped" separatorStyle="default" rowHeight="45" sectionHeaderHeight="75" sectionFooterHeight="1" translatesAutoresizingMaskIntoConstraints="NO" id="Dc9-QQ-fLx">
-                    <rect key="frame" x="20" y="50" width="560" height="500"/>
-                    <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZC0-YP-iMn">
+                    <rect key="frame" x="20" y="80" width="560" height="490"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Command" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EY6-zD-YQO">
+                            <rect key="frame" x="0.0" y="0.0" width="560" height="75"/>
+                            <color key="backgroundColor" red="0.022490610047168198" green="0.73407907196969702" blue="0.0010741643708563507" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="75" id="8ib-KV-hgy"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="W6w-4v-Mzh" customClass="GMGridView">
+                            <rect key="frame" x="0.0" y="75" width="560" height="415"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <outlet property="actionDelegate" destination="-1" id="LeG-3Y-ci9"/>
+                                <outlet property="dataSource" destination="-1" id="GTz-pD-SUH"/>
+                                <outlet property="delegate" destination="-1" id="dof-fX-A6g"/>
+                                <outlet property="mainSuperView" destination="ZC0-YP-iMn" id="UKE-9s-5vY"/>
+                            </connections>
+                        </view>
+                    </subviews>
+                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="165" id="1hb-lC-ta0"/>
-                        <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="150" id="XSB-eu-LB9"/>
-                        <constraint firstAttribute="height" constant="128" id="oTr-sA-OlJ"/>
+                        <constraint firstAttribute="trailing" secondItem="EY6-zD-YQO" secondAttribute="trailing" id="4Ha-KO-8T0"/>
+                        <constraint firstItem="W6w-4v-Mzh" firstAttribute="top" secondItem="EY6-zD-YQO" secondAttribute="bottom" id="GEA-qU-5lE"/>
+                        <constraint firstItem="W6w-4v-Mzh" firstAttribute="leading" secondItem="ZC0-YP-iMn" secondAttribute="leading" id="SSk-iF-Nb7"/>
+                        <constraint firstItem="EY6-zD-YQO" firstAttribute="top" secondItem="ZC0-YP-iMn" secondAttribute="top" id="YQn-hB-UoB"/>
+                        <constraint firstAttribute="trailing" secondItem="W6w-4v-Mzh" secondAttribute="trailing" id="elT-Rg-Vas"/>
+                        <constraint firstAttribute="bottom" secondItem="W6w-4v-Mzh" secondAttribute="bottom" id="hBm-zp-9I4"/>
+                        <constraint firstItem="EY6-zD-YQO" firstAttribute="leading" secondItem="ZC0-YP-iMn" secondAttribute="leading" id="ntD-ye-c73"/>
                     </constraints>
-                    <variation key="default">
-                        <mask key="constraints">
-                            <exclude reference="1hb-lC-ta0"/>
-                            <exclude reference="XSB-eu-LB9"/>
-                            <exclude reference="oTr-sA-OlJ"/>
-                        </mask>
-                    </variation>
-                    <connections>
-                        <outlet property="dataSource" destination="-1" id="U7a-Pl-nXN"/>
-                        <outlet property="delegate" destination="-1" id="rrC-oO-Gl7"/>
-                    </connections>
-                </tableView>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="bottom" secondItem="Dc9-QQ-fLx" secondAttribute="bottom" constant="50" id="6ni-ji-O7N"/>
-                <constraint firstItem="Dc9-QQ-fLx" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="8ua-9O-BqA"/>
-                <constraint firstItem="Dc9-QQ-fLx" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="heD-i0-KsI"/>
-                <constraint firstAttribute="trailing" secondItem="Dc9-QQ-fLx" secondAttribute="trailing" constant="20" id="l6o-53-gof"/>
+                <constraint firstAttribute="bottom" secondItem="ZC0-YP-iMn" secondAttribute="bottom" constant="30" id="9H2-Lc-1Kv"/>
+                <constraint firstItem="ZC0-YP-iMn" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="FKH-X7-YFK"/>
+                <constraint firstItem="ZC0-YP-iMn" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="f5N-SJ-7nP"/>
+                <constraint firstAttribute="trailing" secondItem="ZC0-YP-iMn" secondAttribute="trailing" constant="20" id="sbd-7G-IC1"/>
             </constraints>
         </view>
     </objects>

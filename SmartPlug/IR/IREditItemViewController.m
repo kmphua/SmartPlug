@@ -14,11 +14,14 @@
 
 #define FILE_PATH       @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
 
-@interface IREditItemViewController ()
+@interface IREditItemViewController ()<DeviceIconDelegate, UITextFieldDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UITextField *txtName;
 @property (nonatomic, strong) UIImageView *iconImageView;
+
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *icon;
 
 @end
 
@@ -48,11 +51,18 @@
 
 - (void)onRightBarButton:(id)sender {
     // Save IR group
-    NSString *irGroupName = (_txtName && _txtName.text.length>0) ? _txtName.text : @"TV on/off";
-    [[SQLHelper getInstance] insertIRGroup:irGroupName icon:FILE_PATH position:0];
-    
-    IREditModeViewController *irEditVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
-    [self.navigationController pushViewController:irEditVC animated:YES];
+    [[SQLHelper getInstance] insertIRGroup:_name icon:_icon position:0];
+    [self.navigationController popViewControllerAnimated:YES];
+}
+
+//==================================================================
+#pragma DeviceIconDelegate
+//==================================================================
+- (void)selectedIcon:(NSString *)icon
+{
+    // Update device icon
+    _icon = icon;
+    [self.tableView reloadData];
 }
 
 //==================================================================
@@ -123,7 +133,11 @@
             _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20, 7, 40, 40)];
             [cell addSubview:_iconImageView];
         }
-        _iconImageView.image = [UIImage imageNamed:@"btn_power_pressed"];
+        
+        if (_icon && _icon.length>0) {
+            NSString *imagePath = _icon;
+            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:[UIImage imageNamed:@"btn_power_pressed"]];
+        }
     }
     
     return cell;
@@ -153,7 +167,7 @@
         txtName.backgroundColor = [UIColor whiteColor];
         txtName.borderStyle = UITextBorderStyleNone;
         txtName.textAlignment = NSTextAlignmentCenter;
-        //txtName.text = (_device.givenName && _device.givenName.length>0) ? _device.givenName : _device.name;
+        txtName.text = _name;
         txtName.delegate = self;
         _txtName = txtName;
         [contentView addSubview:txtName];
@@ -180,7 +194,7 @@
         };
         alertView.otherButtonAction = ^{
             [[SQLHelper getInstance] updatePlugName:_txtName.text sid:g_DeviceMac];
-            //_device.givenName = _txtName.text;
+            _name = _txtName.text;
             [self.tableView reloadData];
         };
         [alertView show];

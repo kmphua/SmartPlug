@@ -10,4 +10,6 @@
 
 @interface IRCustomViewController : BaseViewController
 
+@property (nonatomic, assign) int groupId;
+
 @end

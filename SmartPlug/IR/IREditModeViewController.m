@@ -17,6 +17,7 @@
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *irGroups;
+@property (strong, nonatomic) UIButton *btnAddNew;
 
 @end
 
@@ -57,10 +58,12 @@
     IrGroupViewCell *clickedCell = (IrGroupViewCell*)[[sender superview] superview];
     NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
     
-    if ([[SQLHelper getInstance] deleteIRGroupById:(int)(indexPathCell.row-1)]){
+    IrGroup *group = [_irGroups objectAtIndex:(int)(indexPathCell.row-1)];
+    if ([[SQLHelper getInstance] deleteIRGroupById:group.group_id]){
         NSLog(@"Successfully deleted");
     }
     
+    self.irGroups = [[SQLHelper getInstance] getIRGroups];
     [self.tableView reloadData];
 }
 
@@ -117,12 +120,13 @@
             cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
         }
         
-        UIButton *btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
-        [btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
-        [btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
-        [btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];
-        
-        [cell addSubview:btnAddNew];
+        if (!_btnAddNew) {
+            _btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
+            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
+            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
+            [_btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];            
+            [cell addSubview:_btnAddNew];
+        }
         return cell;
         
     } else {
@@ -174,7 +178,9 @@
         [self.navigationController pushViewController:irAddNewVC animated:YES];
     } else {
         IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
-        irCodeModeVC.groupId = (int)indexPath.row-1;
+        
+        IrGroup *irGroup = [self.irGroups objectAtIndex:[indexPath row]-1];
+        irCodeModeVC.groupId = irGroup.group_id;
         [self.navigationController pushViewController:irCodeModeVC animated:YES];
     }
     

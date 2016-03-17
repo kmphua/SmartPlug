@@ -10,6 +10,7 @@
 
 @interface IrCode : NSObject
 
+@property (nonatomic, assign) int code_id;
 @property (nonatomic, assign) int group_id;
 @property (nonatomic, copy) NSString *name;
 @property (nonatomic, assign) int filename;

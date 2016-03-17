@@ -51,8 +51,6 @@
 
     UITapGestureRecognizer *tapViewRecord = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewRecord:)];
     [self.viewRecord addGestureRecognizer:tapViewRecord];
-    
-    [self.viewChoose setHidden:YES];
 }
 
 - (void)didReceiveMemoryWarning {

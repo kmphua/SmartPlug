@@ -10,14 +10,22 @@
 #import "IREditModeViewController.h"
 #import "DeviceIconViewController.h"
 #import "DQAlertView.h"
+#import "GMGridView.h"
 
 #import "IRRecordViewController.h"
+#import "IRCustomViewController.h"
+#import "UDPCommunication.h"
 
-@interface IRCodeModeViewController ()
+@interface IRCodeModeViewController()<GMGridViewDataSource, GMGridViewActionDelegate>
 
-@property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (nonatomic, strong) UITextField *txtName;
-@property (nonatomic, strong) UIImageView *iconImageView;
+@property (weak, nonatomic) IBOutlet UIView *bgView;
+@property (nonatomic, assign) IBOutlet UILabel *lblTitle;
+@property (nonatomic, assign) IBOutlet GMGridView *gmGridView;
+@property (nonatomic, strong) NSArray *codes;
+@property (nonatomic, strong) IrGroup *group;
+@property (nonatomic) BOOL isEditMode;
+@property (strong, nonatomic) UIButton *btnAddNew;
+@property (strong, nonatomic) UIBarButtonItem *rightBarBtn;
 
 @end
 
@@ -27,17 +35,25 @@
     [super viewDidLoad];
     
     // Do any additional setup after loading the view from its nib.
-    self.tableView.backgroundColor = [UIColor clearColor];
-    self.tableView.layer.cornerRadius = CORNER_RADIUS;
-    self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    self.bgView.layer.cornerRadius = CORNER_RADIUS;
+    self.lblTitle.text = NSLocalizedString(@"title_editCommand", nil);
+    self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
+    self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
     // Add navigation buttons
-    UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc]
-                                    initWithTitle:NSLocalizedString(@"btn_done", nil)
+    self.rightBarBtn = [[UIBarButtonItem alloc]
+                                    initWithImage:[UIImage imageNamed:@"ic_edit"]
                                     style:UIBarButtonItemStylePlain
                                     target:self
                                     action:@selector(onRightBarButton:)];
-    self.navigationItem.rightBarButtonItem = rightBarBtn;
+    self.navigationItem.rightBarButtonItem = self.rightBarBtn;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
+    [_gmGridView reloadData];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -46,151 +62,185 @@
 }
 
 - (void)onRightBarButton:(id)sender {
-    IRRecordViewController *irRecordVC = [[IRRecordViewController alloc] initWithNibName:@"IRRecordViewController" bundle:nil];
-    [self.navigationController pushViewController:irRecordVC animated:YES];
+    if (_isEditMode) {
+        _isEditMode = NO;
+        [_rightBarBtn setImage:[UIImage imageNamed:@"ic_edit"]];
+    } else {
+        _isEditMode = YES;
+        [_rightBarBtn setImage:[UIImage imageNamed:@"ic_edit_pressed"]];
+    }
+    [_gmGridView reloadData];
+}
+
+- (void)onBtnAddNew:(id)sender {
+    IRCustomViewController *irCustomVC = [[IRCustomViewController alloc] initWithNibName:@"IRCustomViewController" bundle:nil];
+    irCustomVC.groupId = _groupId;
+    [self.navigationController pushViewController:irCustomVC animated:YES];
+}
+
+//////////////////////////////////////////////////////////////
+#pragma mark GMGridViewDataSource
+//////////////////////////////////////////////////////////////
+
+- (NSInteger)numberOfItemsInGMGridView:(GMGridView *)gridView
+{
+    if (_isEditMode) {
+        return [_codes count]+1;
+    }
+    return [_codes count];
+}
+
+- (CGSize)GMGridView:(GMGridView *)gridView sizeForItemsInInterfaceOrientation:(UIInterfaceOrientation)orientation
+{
+    return CGSizeMake(120, 120);
+}
+
+- (GMGridViewCell *)GMGridView:(GMGridView *)gridView cellForItemAtIndex:(NSInteger)index
+{
+    CGSize size = [self GMGridView:gridView sizeForItemsInInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
     
-    /*
-    // Save IR group
-    NSString *irGroupName = (_txtName && _txtName.text.length>0) ? _txtName.text : @"TV on/off";
-    [[SQLHelper getInstance] insertIRGroup:irGroupName icon:0 position:0];
-    
-    IREditModeViewController *irEditVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
-    [self.navigationController pushViewController:irEditVC animated:YES];
-     */
-}
-
-//==================================================================
-#pragma mark - Table view delegate
-//==================================================================
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    return 2;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 75;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 55;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
-    [view setBackgroundColor:[Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN]];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
-    [label setFont:[UIFont systemFontOfSize:32]];
-    [label setTextColor:[UIColor whiteColor]];
-    [label setText:NSLocalizedString(@"title_editCommand", nil)];
-    [label setTextAlignment:NSTextAlignmentCenter];
-    [view addSubview:label];
-    return view;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    static NSString *CellIdentifier = @"TableViewCell";
-    UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-    if (cell == nil) {
-        cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
+    IrCode *code;
+    if (_isEditMode) {
+        if (index == 0) {
+            // Show add button
+        } else {
+            code = [_codes objectAtIndex:index-1];
+        }
+    } else {
+        code = [_codes objectAtIndex:index];
     }
     
-    if (indexPath.row == 0) {
-        cell.textLabel.text = NSLocalizedString(@"title_title", nil);
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
-        
-        // Add title
-        UILabel *lblTitle = [[UILabel alloc] initWithFrame:CGRectMake(cell.frame.size.width - 90, 7, 100, 40)];
-        if (_txtName && _txtName.text) {
-            cell.detailTextLabel.text = _txtName.text;
+    GMGridViewCell *cell = [gridView dequeueReusableCell];
+    if (!cell) {
+        cell = [[GMGridViewCell alloc] init];
+    }
+
+    if (_isEditMode) {
+        if (index == 0) {
+            _btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
+            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
+            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
+            [_btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];
+            cell.contentView = _btnAddNew;
         } else {
-            cell.detailTextLabel.text = @"TV on/off";
+            // Create ir button
+            UIView *viewIr = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 120, 120)];
+            viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
+            viewIr.layer.cornerRadius = 10;
+            [viewIr setUserInteractionEnabled:YES];
+            
+            UIButton *btnIr = [[UIButton alloc] initWithFrame:CGRectMake(25, 25, 70, 70)];
+            btnIr.tag = code.code_id;
+            
+            SDWebImageManager *manager = [SDWebImageManager sharedManager];
+            __weak IRCodeModeViewController *weakself = self;
+            [manager downloadImageWithURL:[NSURL URLWithString:code.icon]
+                                  options:0
+                                 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                                     // progression tracking code
+                                     NSLog(@"Received image %ld of %ld bytes", receivedSize, expectedSize);
+                                 }
+                                completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+                                    if (image) {
+                                        NSLog(@"Received image width=%.1f, height=%.lf", image.size.width, image.size.height);
+                                        [btnIr setBackgroundImage:image forState:UIControlStateNormal];
+                                    }
+                                }];
+            
+            [btnIr addTarget:self action:@selector(onBtnIr:) forControlEvents:UIControlEventTouchUpInside];
+            [viewIr addSubview:btnIr];
+            
+            UIButton *btnDelete = [[UIButton alloc] initWithFrame:CGRectMake(90, 0, 30, 30)];
+            [btnDelete setBackgroundImage:[UIImage imageNamed:@"btn_warn_close"] forState:UIControlStateNormal];
+            [btnDelete addTarget:self action:@selector(onBtnDelete:) forControlEvents:UIControlEventTouchUpInside];
+            btnDelete.tag = code.code_id;
+            [viewIr addSubview:btnDelete];
+            cell.contentView = viewIr;
         }
-        [cell addSubview:lblTitle];
+    } else {
+        // Create ir button
+        UIView *viewIr = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 120, 120)];
+        viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
+        viewIr.layer.cornerRadius = 10;
+        [viewIr setUserInteractionEnabled:YES];
         
-    } else if (indexPath.row == 1) {
-        cell.textLabel.text = NSLocalizedString(@"id_icon", nil);
-        cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
+        UIButton *btnIr = [[UIButton alloc] initWithFrame:CGRectMake(25, 25, 70, 70)];
+        btnIr.tag = code.code_id;
         
-        // Add icon
-        if (!_iconImageView) {
-            _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20, 7, 40, 40)];
-            [cell addSubview:_iconImageView];
-        }
-        _iconImageView.image = [UIImage imageNamed:@"btn_power_pressed"];
+        SDWebImageManager *manager = [SDWebImageManager sharedManager];
+        //__weak IRCodeModeViewController *weakself = self;
+        [manager downloadImageWithURL:[NSURL URLWithString:code.icon]
+                              options:0
+                             progress:^(NSInteger receivedSize, NSInteger expectedSize) {
+                                 // progression tracking code
+                                 NSLog(@"Received image %ld of %ld bytes", receivedSize, expectedSize);
+                             }
+                            completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
+                                if (image) {
+                                    NSLog(@"Received image width=%.1f, height=%.lf", image.size.width, image.size.height);
+                                    [btnIr setBackgroundImage:image forState:UIControlStateNormal];
+                                }
+                            }];
+        [btnIr addTarget:self action:@selector(onBtnIr:) forControlEvents:UIControlEventTouchUpInside];
+        [viewIr addSubview:btnIr];
+        cell.contentView = viewIr;
     }
     
     return cell;
 }
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
+- (void)onBtnIr:(id)sender {
+    UIButton *btnIr = (UIButton *)sender;
+    int codeId = (int)btnIr.tag;
+    [[UDPCommunication getInstance] sendIRFileName:codeId];
+}
+
+- (void)onBtnDelete:(id)sender {
+    UIButton *btnDelete = (UIButton *)sender;
+    int codeId = (int)btnDelete.tag;
+    [[SQLHelper getInstance] deleteIRCode:codeId];
+    
+    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
+    [_gmGridView reloadData];
+}
+
+- (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
 {
-    if (indexPath.row == 1) {
-        // Get device icons
-        DeviceIconViewController *iconVC = [[DeviceIconViewController alloc] initWithNibName:@"DeviceIconViewController" bundle:nil];
-        iconVC.delegate = self;
-        [self.navigationController pushViewController:iconVC animated:YES];
-    } else if (indexPath.row == 0) {
-        // Set device name
-        DQAlertView *alertView = [[DQAlertView alloc] initWithTitle:@"Device Name"
-                                                            message:@"Please enter new device name"
-                                                  cancelButtonTitle:NSLocalizedString(@"Cancel", nil)
-                                                   otherButtonTitle:NSLocalizedString(@"OK", nil)];
-        
-        alertView.hideSeperator = YES;
-        alertView.customFrame = CGRectMake(0, 0, 320, 200);
-        alertView.titleHeight = 50;
-        alertView.messageLeftRightPadding = 50;
-        
-        UIView *contentView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 150)];
-        UITextField *txtName = [[UITextField alloc] initWithFrame:CGRectMake(60, 120, 200, 30)];
-        txtName.backgroundColor = [UIColor whiteColor];
-        txtName.borderStyle = UITextBorderStyleNone;
-        txtName.textAlignment = NSTextAlignmentCenter;
-        //txtName.text = (_device.givenName && _device.givenName.length>0) ? _device.givenName : _device.name;
-        txtName.delegate = self;
-        _txtName = txtName;
-        [contentView addSubview:txtName];
-        
-        UILabel *lblTitle = [[UILabel alloc] initWithFrame:CGRectMake(60, 26, 200, 30)];
-        lblTitle.font = [UIFont systemFontOfSize:18.0];
-        lblTitle.text = @"Device name";
-        lblTitle.textAlignment = NSTextAlignmentCenter;
-        [contentView addSubview:lblTitle];
-        
-        UILabel *lblMessage = [[UILabel alloc] initWithFrame:CGRectMake(60, 60, 200, 100)];
-        lblMessage.font = [UIFont systemFontOfSize:15.0];
-        lblMessage.text = @"Please enter new device name";
-        lblMessage.numberOfLines = 0;
-        [lblMessage sizeToFit];
-        [contentView addSubview:lblMessage];
-        contentView.backgroundColor = [UIColor clearColor];
-        alertView.contentView = contentView;
-        
-        alertView.center = self.view.center;
-        
-        alertView.cancelButtonAction = ^{
-            NSLog(@"Cancel button clicked");
-        };
-        alertView.otherButtonAction = ^{
-            //[[SQLHelper getInstance] updatePlugName:_txtName.text sid:_device.sid];
-            //_device.givenName = _txtName.text;
-            [self.tableView reloadData];
-        };
-        [alertView show];
+    return NO;
+}
+
+//////////////////////////////////////////////////////////////
+#pragma mark GMGridViewActionDelegate
+//////////////////////////////////////////////////////////////
+
+- (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
+{
+    IrCode *code = [_codes objectAtIndex:position];
+    [[UDPCommunication getInstance] sendIRFileName:code.filename];
+    NSLog(@"Sending IR filename %d", code.filename);
+}
+
+- (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView
+{
+    NSLog(@"Tap on empty space");
+}
+
+- (void)GMGridView:(GMGridView *)gridView processDeleteActionForItemAtIndex:(NSInteger)index
+{
+    UIAlertView *alert = [[UIAlertView alloc] initWithTitle:@"Confirm" message:@"Are you sure you want to delete this item?" delegate:self cancelButtonTitle:@"Cancel" otherButtonTitles:@"Delete", nil];
+    
+    [alert show];
+    
+    //_lastDeleteItemIndexAsked = index;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    if (buttonIndex == 1)
+    {
+        //[_currentData removeObjectAtIndex:_lastDeleteItemIndexAsked];
+        //[_gmGridView removeObjectAtIndex:_lastDeleteItemIndexAsked withAnimation:GMGridViewItemAnimationFade];
     }
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
 
 
