@@ -618,29 +618,29 @@
                       relay, nightlight, co_sensor, hall_sensor, snooze);
                 
                 if(![relay isKindOfClass:[NSNull class]] && relay != nil && relay.length>0) {
-                    [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:g_DeviceMac];
                 } else {
-                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:g_DeviceMac];
                 }
                 if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil && nightlight.length>0) {
-                    [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:g_DeviceMac];
                 } else {
-                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:g_DeviceMac];
                 }
                 if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil && co_sensor.length>0) {
-                    [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:g_DeviceMac];
                 } else {
                     [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:_device.sid];
                 }
                 if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil && hall_sensor.length>0) {
                     [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:_device.sid];
                 } else {
-                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:g_DeviceMac];
                 }
                 if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
-                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:_device.sid];
+                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:g_DeviceMac];
                 } else {
-                    [[SQLHelper getInstance] updateSnooze:0 sid:_device.sid];
+                    [[SQLHelper getInstance] updateSnooze:0 sid:g_DeviceMac];
                 }
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS
