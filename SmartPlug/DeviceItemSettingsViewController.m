@@ -8,7 +8,6 @@
 
 #import "DeviceItemSettingsViewController.h"
 #import "DeviceIconViewController.h"
-#import "DQAlertView.h"
 #import "FirstTimeConfig.h"
 #import "UDPCommunication.h"
 

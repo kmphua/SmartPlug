@@ -9,7 +9,6 @@
 #import "IRCustomViewController.h"
 #import "IRRecordViewController.h"
 #import "DeviceIconViewController.h"
-#import "DQAlertView.h"
 
 #define FILE_PATH   @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
 
@@ -19,7 +18,6 @@
 @property (nonatomic, strong) UITextField *txtName;
 @property (nonatomic, strong) UIImageView *iconImageView;
 
-@property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *filePath;
 
 @end
@@ -49,8 +47,19 @@
 }
 
 - (void)onRightBarButton:(id)sender {
+    if (!_txtName.text || _txtName.text.length == 0) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"NameEmptyMsg", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return;
+    }
+    
     IRRecordViewController *irRecordVC = [[IRRecordViewController alloc] initWithNibName:@"IRRecordViewController" bundle:nil];
-    irRecordVC.name = _name;
+    irRecordVC.name = _txtName.text;
     irRecordVC.groupId = _groupId;
     irRecordVC.icon = _filePath;
     [self.navigationController pushViewController:irRecordVC animated:YES];
@@ -122,7 +131,6 @@
             _txtName.backgroundColor = [UIColor whiteColor];
             _txtName.borderStyle = UITextBorderStyleNone;
             _txtName.textAlignment = NSTextAlignmentRight;
-            _txtName.text = _name;
             _txtName.delegate = self;
             _txtName.placeholder = @"TV on/off";
             _txtName.font = [UIFont systemFontOfSize:18];

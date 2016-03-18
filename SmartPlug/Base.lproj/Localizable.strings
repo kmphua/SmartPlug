@@ -25,6 +25,7 @@
 "NewPasswordEmpty" = "New Password field is empty";
 "DeviceAlreadyAdded" = "Device already added";
 "DeviceAddressUpdated" = "Device IP address updated";
+"NameEmptyMsg" = "Name field must not be empty";
 
 // Timers
 "NoTimersSet" = "No Timers Set";

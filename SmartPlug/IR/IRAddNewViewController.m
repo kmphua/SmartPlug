@@ -43,6 +43,9 @@
     self.lblDetect.text = NSLocalizedString(@"btn_detectBrand", nil);
     self.lblRecord.text = NSLocalizedString(@"btn_recordCustom", nil);
     
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.viewChoose attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0]];
+    [self.view addConstraint:[NSLayoutConstraint constraintWithItem:self.viewDetect attribute:NSLayoutAttributeHeight relatedBy:NSLayoutRelationEqual toItem:nil attribute:NSLayoutAttributeNotAnAttribute multiplier:1.0 constant:0]];
+    
     UITapGestureRecognizer *tapViewChoose = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapViewChoose:)];
     [self.viewChoose addGestureRecognizer:tapViewChoose];
 

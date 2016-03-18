@@ -9,7 +9,6 @@
 #import "IRCodeModeViewController.h"
 #import "IREditModeViewController.h"
 #import "DeviceIconViewController.h"
-#import "DQAlertView.h"
 #import "GMGridView.h"
 
 #import "IRRecordViewController.h"
@@ -36,9 +35,14 @@
     
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
-    self.lblTitle.text = NSLocalizedString(@"title_editCommand", nil);
     self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
+    
+    NSArray *groups = [[SQLHelper getInstance] getIRGroup:_groupId];
+    if (groups && groups.count>0) {
+        _group = [groups firstObject];
+        self.lblTitle.text = _group.name;
+    }
     
     // Add navigation buttons
     self.rightBarBtn = [[UIBarButtonItem alloc]
@@ -84,10 +88,7 @@
 
 - (NSInteger)numberOfItemsInGMGridView:(GMGridView *)gridView
 {
-    if (_isEditMode) {
-        return [_codes count]+1;
-    }
-    return [_codes count];
+    return [_codes count]+1;
 }
 
 - (CGSize)GMGridView:(GMGridView *)gridView sizeForItemsInInterfaceOrientation:(UIInterfaceOrientation)orientation
@@ -97,72 +98,43 @@
 
 - (GMGridViewCell *)GMGridView:(GMGridView *)gridView cellForItemAtIndex:(NSInteger)index
 {
-    CGSize size = [self GMGridView:gridView sizeForItemsInInterfaceOrientation:[[UIApplication sharedApplication] statusBarOrientation]];
-    
-    IrCode *code;
-    if (_isEditMode) {
-        if (index == 0) {
-            // Show add button
-        } else {
-            code = [_codes objectAtIndex:index-1];
-        }
-    } else {
-        code = [_codes objectAtIndex:index];
-    }
-    
     GMGridViewCell *cell = [gridView dequeueReusableCell];
     if (!cell) {
         cell = [[GMGridViewCell alloc] init];
     }
 
-    if (_isEditMode) {
-        if (index == 0) {
-            _btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
-            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
-            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
-            [_btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];
-            cell.contentView = _btnAddNew;
-        } else {
-            // Create ir button
-            UIView *viewIr = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 120, 120)];
-            viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
-            viewIr.layer.cornerRadius = 10;
-            [viewIr setUserInteractionEnabled:YES];
-            
-            UIButton *btnIr = [[UIButton alloc] initWithFrame:CGRectMake(25, 25, 70, 70)];
-            btnIr.tag = code.code_id;
-            
-            SDWebImageManager *manager = [SDWebImageManager sharedManager];
-            __weak IRCodeModeViewController *weakself = self;
-            [manager downloadImageWithURL:[NSURL URLWithString:code.icon]
-                                  options:0
-                                 progress:^(NSInteger receivedSize, NSInteger expectedSize) {
-                                     // progression tracking code
-                                     NSLog(@"Received image %ld of %ld bytes", receivedSize, expectedSize);
-                                 }
-                                completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-                                    if (image) {
-                                        NSLog(@"Received image width=%.1f, height=%.lf", image.size.width, image.size.height);
-                                        [btnIr setBackgroundImage:image forState:UIControlStateNormal];
-                                    }
-                                }];
-            
-            [btnIr addTarget:self action:@selector(onBtnIr:) forControlEvents:UIControlEventTouchUpInside];
-            [viewIr addSubview:btnIr];
-            
-            UIButton *btnDelete = [[UIButton alloc] initWithFrame:CGRectMake(90, 0, 30, 30)];
-            [btnDelete setBackgroundImage:[UIImage imageNamed:@"btn_warn_close"] forState:UIControlStateNormal];
-            [btnDelete addTarget:self action:@selector(onBtnDelete:) forControlEvents:UIControlEventTouchUpInside];
-            btnDelete.tag = code.code_id;
-            [viewIr addSubview:btnDelete];
-            cell.contentView = viewIr;
-        }
+    if (index == 0) {
+        _btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
+        [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
+        [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
+        [_btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];
+        cell.contentView = _btnAddNew;
     } else {
+        IrCode *code = [_codes objectAtIndex:index-1];
+        
         // Create ir button
         UIView *viewIr = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 120, 120)];
-        viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
         viewIr.layer.cornerRadius = 10;
         [viewIr setUserInteractionEnabled:YES];
+        
+        // Modify cell background according to row position
+        int row = (index-1) % 4;
+        switch (row) {
+            case 0:
+                viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_RED];
+                break;
+            case 1:
+                viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
+                break;
+            case 2:
+                viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_YELLOW];
+                break;
+            case 3:
+                viewIr.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_BLUE];
+                break;
+            default:
+                break;
+        }
         
         UIButton *btnIr = [[UIButton alloc] initWithFrame:CGRectMake(25, 25, 70, 70)];
         btnIr.tag = code.code_id;
@@ -181,8 +153,26 @@
                                     [btnIr setBackgroundImage:image forState:UIControlStateNormal];
                                 }
                             }];
+        
         [btnIr addTarget:self action:@selector(onBtnIr:) forControlEvents:UIControlEventTouchUpInside];
         [viewIr addSubview:btnIr];
+        
+        UILabel *lblIr = [[UILabel alloc] initWithFrame:CGRectMake(0, 98, 120, 20)];
+        lblIr.textColor = [UIColor whiteColor];
+        lblIr.text = code.name;
+        lblIr.font = [UIFont systemFontOfSize:15];
+        lblIr.textAlignment = NSTextAlignmentCenter;
+        lblIr.adjustsFontSizeToFitWidth = YES;
+        [viewIr addSubview:lblIr];
+        
+        if (_isEditMode) {
+            UIButton *btnDelete = [[UIButton alloc] initWithFrame:CGRectMake(90, 0, 30, 30)];
+            [btnDelete setBackgroundImage:[UIImage imageNamed:@"btn_warn_close"] forState:UIControlStateNormal];
+            [btnDelete addTarget:self action:@selector(onBtnDelete:) forControlEvents:UIControlEventTouchUpInside];
+            btnDelete.tag = code.code_id;
+            [viewIr addSubview:btnDelete];
+        }
+        
         cell.contentView = viewIr;
     }
     
@@ -192,7 +182,14 @@
 - (void)onBtnIr:(id)sender {
     UIButton *btnIr = (UIButton *)sender;
     int codeId = (int)btnIr.tag;
-    [[UDPCommunication getInstance] sendIRFileName:codeId];
+    
+    for (IrCode *code in _codes) {
+        if (code.code_id == codeId) {
+            [[UDPCommunication getInstance] sendIRFileName:code.filename];
+            NSLog(@"Sending IR filename %d", code.filename);
+            break;
+        }
+    }
 }
 
 - (void)onBtnDelete:(id)sender {
@@ -215,9 +212,9 @@
 
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
-    IrCode *code = [_codes objectAtIndex:position];
-    [[UDPCommunication getInstance] sendIRFileName:code.filename];
-    NSLog(@"Sending IR filename %d", code.filename);
+    //IrCode *code = [_codes objectAtIndex:position-1];
+    //[[UDPCommunication getInstance] sendIRFileName:code.filename];
+    //NSLog(@"Sending IR filename %d", code.filename);
 }
 
 - (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView

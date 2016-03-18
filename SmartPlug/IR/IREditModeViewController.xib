@@ -7,7 +7,9 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IREditModeViewController">
             <connections>
-                <outlet property="tableView" destination="RQ2-Fn-bhq" id="4Nu-Ed-NWT"/>
+                <outlet property="bgView" destination="QgY-0q-JUV" id="5AP-Ga-m1m"/>
+                <outlet property="gmGridView" destination="sJP-1D-nQo" id="ACp-80-1Lg"/>
+                <outlet property="lblTitle" destination="lBz-FV-xTy" id="70J-Tn-d9m"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
             </connections>
         </placeholder>
@@ -16,21 +18,48 @@
             <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
-                <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="RQ2-Fn-bhq">
-                    <rect key="frame" x="20" y="50" width="335" height="597"/>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="QgY-0q-JUV">
+                    <rect key="frame" x="20" y="80" width="335" height="557"/>
+                    <subviews>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Edit Command" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lBz-FV-xTy">
+                            <rect key="frame" x="0.0" y="0.0" width="335" height="75"/>
+                            <color key="backgroundColor" red="0.022490610049999998" green="0.734079072" blue="0.0010741643710000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="75" id="Pxx-qs-NBC"/>
+                            </constraints>
+                            <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <nil key="highlightedColor"/>
+                        </label>
+                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="sJP-1D-nQo" customClass="GMGridView">
+                            <rect key="frame" x="0.0" y="75" width="335" height="482"/>
+                            <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            <connections>
+                                <outlet property="actionDelegate" destination="-1" id="Soz-O7-dei"/>
+                                <outlet property="dataSource" destination="-1" id="Dl7-OA-vPu"/>
+                                <outlet property="delegate" destination="-1" id="3XZ-az-dVJ"/>
+                                <outlet property="mainSuperView" destination="QgY-0q-JUV" id="PLM-jR-Vnz"/>
+                            </connections>
+                        </view>
+                    </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <connections>
-                        <outlet property="dataSource" destination="-1" id="NZn-OP-Eqh"/>
-                        <outlet property="delegate" destination="-1" id="OmZ-Xe-4xy"/>
-                    </connections>
-                </tableView>
+                    <constraints>
+                        <constraint firstAttribute="trailing" secondItem="lBz-FV-xTy" secondAttribute="trailing" id="5mg-T3-Gpz"/>
+                        <constraint firstAttribute="trailing" secondItem="sJP-1D-nQo" secondAttribute="trailing" id="BGz-Ax-OJo"/>
+                        <constraint firstItem="lBz-FV-xTy" firstAttribute="top" secondItem="QgY-0q-JUV" secondAttribute="top" id="Dli-sX-myA"/>
+                        <constraint firstItem="sJP-1D-nQo" firstAttribute="leading" secondItem="QgY-0q-JUV" secondAttribute="leading" id="SKP-dH-Bhh"/>
+                        <constraint firstAttribute="bottom" secondItem="sJP-1D-nQo" secondAttribute="bottom" id="cYn-OY-jIF"/>
+                        <constraint firstItem="sJP-1D-nQo" firstAttribute="top" secondItem="lBz-FV-xTy" secondAttribute="bottom" id="gFh-NC-mIe"/>
+                        <constraint firstItem="lBz-FV-xTy" firstAttribute="leading" secondItem="QgY-0q-JUV" secondAttribute="leading" id="lXK-OS-prQ"/>
+                    </constraints>
+                </view>
             </subviews>
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
-                <constraint firstAttribute="trailing" secondItem="RQ2-Fn-bhq" secondAttribute="trailing" constant="20" id="9bD-fS-zuc"/>
-                <constraint firstItem="RQ2-Fn-bhq" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="DuQ-vC-3Lr"/>
-                <constraint firstItem="RQ2-Fn-bhq" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="FCr-2a-a3f"/>
-                <constraint firstAttribute="bottom" secondItem="RQ2-Fn-bhq" secondAttribute="bottom" constant="20" id="nqP-gl-301"/>
+                <constraint firstItem="QgY-0q-JUV" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="K1k-FQ-ixv"/>
+                <constraint firstAttribute="bottom" secondItem="QgY-0q-JUV" secondAttribute="bottom" constant="30" id="ZGV-3W-O2Q"/>
+                <constraint firstAttribute="trailing" secondItem="QgY-0q-JUV" secondAttribute="trailing" constant="20" id="pSg-at-O1l"/>
+                <constraint firstItem="QgY-0q-JUV" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="pcm-n1-GST"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina47"/>
         </view>

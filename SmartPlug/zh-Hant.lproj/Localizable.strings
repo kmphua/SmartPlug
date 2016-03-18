@@ -25,7 +25,7 @@
 "NewPasswordEmpty" = "新密碼未填";
 "DeviceAlreadyAdded" = "設備已存在";
 "DeviceAddressUpdated" = "設備IP位址已更新";
-
+"NameEmptyMsg" = "名稱未填";
 
 // Timers
 "NoTimersSet" = "無設置定時";
