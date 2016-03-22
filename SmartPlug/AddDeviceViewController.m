@@ -419,9 +419,6 @@
             _config = nil;
         
         if ( _ssid && _wifiPassword ){
-            unsigned char buffer[1];
-            buffer[0] = 0x03;
-            NSData *keyData = [NSData dataWithBytes:buffer length:1];
             _config = [[FirstTimeConfig alloc] initWithKey:_wifiPassword withEncryptionKey:nil];
         } else {
             _config = [[FirstTimeConfig alloc] init];
