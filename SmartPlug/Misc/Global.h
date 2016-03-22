@@ -26,7 +26,7 @@
 
 #define SERVICE_TYPE                    @"_http._tcp."
 #define SMARTCONFIG_IDENTIFIER          @"JSPlug"
-#define SMARTCONFIG_BROADCAST_TIME      10  // seconds
+#define SMARTCONFIG_BROADCAST_TIME      30  // seconds
 
 // User defaults
 #define UD_KEY_PHONE                    @"phone"
