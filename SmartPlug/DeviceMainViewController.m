@@ -121,6 +121,7 @@
 {
     [super viewWillAppear:animated];
     
+    /*
     // Try to get device status over UDP
     if ([[UDPListenerService getInstance] isRunning]) {
         if(g_DeviceIp) {
@@ -138,19 +139,24 @@
             [self updateDeviceStatusFromServer];
         }
     });
+    */
     
     // Register notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastUdpUpdateUi:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceFound:) name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
+
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_DEVICE_INFO object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePushNotification:) name:NOTIFICATION_PUSH object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
+    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -158,12 +164,14 @@
     [super viewWillDisappear:animated];
     
     // Deregister notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_INFO object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
+    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -172,14 +180,10 @@
 }
 
 - (void)udpUpdateUI:(NSNotification *)notification {
-    NSLog(@"Device status changed");
-    
     _udpConnection = true;
-    
     if(_crashTimer) {
         [_crashTimer stopTimer];
     }
-    
     [self.progressBar setHidden:YES];
     [self updateUI:nil];
 }
@@ -192,9 +196,11 @@
 
 - (void)handlePushNotification:(NSNotification *)notification {
     NSLog(@"Handle push notification");
+    /*
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
+     */
 }
 
 - (void)timerCrashReached:(NSNotification *)notification {
@@ -211,11 +217,13 @@
     
     //while(!mServiceBound){System.out.println("."); SystemClock.sleep(100);}
     
+    /*
     if (g_DeviceIp && g_DeviceIp.length>0) {
         [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
     } else {
         NSLog(@"IP IS NULL");
     }
+    */
 }
 
 - (void)updateUI:(NSNotification *)notification {
@@ -291,7 +299,8 @@
         _nightlight = 1;
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
-    
+
+    /*
     // Snooze
     if (device.snooze == 0) {
         [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
@@ -300,6 +309,7 @@
         [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
     }
+    */
     
     if (device.icon && device.icon.length>0) {
         NSString *imagePath = self.device.icon;
@@ -345,6 +355,7 @@
     _udpConnection = false;
     [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action];
 
+    /*
     // Send to HTTP after delay 1 second
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
     
@@ -401,6 +412,7 @@
         
         [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid send:send data:deviceData];
     });
+    */
     
     [self.progressBar setHidden:YES];
 }

@@ -19,7 +19,7 @@
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, MainViewCellDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (strong, nonatomic) NSArray *devices;
+@property (strong, nonatomic) NSArray *plugs;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @end
@@ -40,26 +40,25 @@
     [super viewWillAppear:animated];
     
     // Add navigation buttons
-    //UIBarButtonItem *leftBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_schedule"] style:UIBarButtonItemStylePlain target:self action:@selector(onLeftBarButton:)];
-    //self.navigationItem.leftBarButtonItem = leftBarBtn;
-
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     
-    WebService *ws = [[WebService alloc] init];
-    ws.delegate = self;
-    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
-    [ws showWaitingView:self.view];
+    // Get plugs
+    self.plugs = [[SQLHelper getInstance] getPlugData];
     
     // Register notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
-    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceInfo:) name:NOTIFICATION_DEVICE_INFO object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceFound:) name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePush:) name:NOTIFICATION_PUSH object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -67,9 +66,11 @@
     [super viewWillDisappear:animated];
     
     // Deregister notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_INFO object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -112,23 +113,34 @@
     [self.navigationController pushViewController:settingsVc animated:YES];
 }
 
-- (void)updateUI:(NSNotification *)notification {
-    self.devices = [[SQLHelper getInstance] getPlugData];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
+- (void)deviceInfo:(NSNotification *)notification {
+    
 }
 
 - (void)handleDeviceFound:(NSNotification*)notification {
-    self.devices = [[SQLHelper getInstance] getPlugData];
+    self.plugs = [[SQLHelper getInstance] getPlugData];
     [self syncDeviceIpAddresses];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
-    self.devices = [[SQLHelper getInstance] getPlugData];
+    self.plugs = [[SQLHelper getInstance] getPlugData];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
+}
+
+- (void)handlePush:(NSNotification *)notification {
+    // Update device list
+    WebService *ws = [[WebService alloc] init];
+    ws.delegate = self;
+    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
+    [ws showWaitingView:self.view];
+    NSLog(@"GET DEVICE LIST IP: %@", g_DeviceIp);
+}
+
+- (void)deviceStatusChanged:(NSNotification *)notification {
+    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
 }
 
 - (void)syncDeviceIpAddresses {
@@ -152,7 +164,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.devices count];
+    return [self.plugs count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -169,7 +181,7 @@
         cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
     }
     
-    JSmartPlug *plug = [self.devices objectAtIndex:[indexPath row]];
+    JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
     
     if (plug.givenName && plug.givenName.length>0){
         cell.lblDeviceName.text = plug.givenName;
@@ -183,7 +195,7 @@
     }
     
     // Modify cell background according to row position
-    NSInteger rowCount = [self.devices count];
+    NSInteger rowCount = [self.plugs count];
     NSInteger row = indexPath.row;
     if (row == rowCount-1) {
         // Last row
@@ -205,9 +217,9 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
+    JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
     DeviceMainViewController *devMainVc = [[DeviceMainViewController alloc] initWithNibName:@"DeviceMainViewController" bundle:nil];
-    devMainVc.device = device;
+    devMainVc.device = plug;
     [self.navigationController pushViewController:devMainVc animated:YES];
 }
 
@@ -220,13 +232,13 @@
     NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
     
     // Remove device
-    JSmartPlug *plug = [self.devices objectAtIndex:indexPathCell.row];
+    JSmartPlug *plug = [self.plugs objectAtIndex:indexPathCell.row];
     if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
         WebService *ws = [WebService new];
         ws.delegate = self;
         [ws devDel:g_UserToken lang:[Global getCurrentLang] devId:plug.sid];
         
-        self.devices = [[SQLHelper getInstance] getPlugData];
+        self.plugs = [[SQLHelper getInstance] getPlugData];
         [self.tableView reloadData];
         [self adjustHeightOfTableview];
     }
@@ -242,7 +254,7 @@
     MainViewCell *clickedCell = (MainViewCell*)[[sender superview] superview];
     NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
 
-    JSmartPlug *plug = [self.devices objectAtIndex:indexPathCell.row];
+    JSmartPlug *plug = [self.plugs objectAtIndex:indexPathCell.row];
     if ([plug.ip isEqualToString:@"0"]) {
         int action;
         int serviceId = RELAY_SERVICE;
@@ -313,7 +325,7 @@
                 [self syncDeviceIpAddresses];
                 
                 // Get devices from database
-                self.devices = [[SQLHelper getInstance] getPlugData];
+                self.plugs = [[SQLHelper getInstance] getPlugData];
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
             } else {
@@ -334,7 +346,7 @@
                 NSLog(@"Deleted device success - %@", message);
                 
                 // Get devices from database
-                self.devices = [[SQLHelper getInstance] getPlugData];
+                self.plugs = [[SQLHelper getInstance] getPlugData];
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
             } else {
