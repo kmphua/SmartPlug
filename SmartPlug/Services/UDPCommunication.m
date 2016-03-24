@@ -226,6 +226,35 @@ static UDPCommunication *instance;
     return YES;
 }
 
+- (BOOL)cancelIRMode
+{
+    NSString *ip = g_DeviceIp;
+    g_UdpCommand = UDP_CMD_ADV_DEVICE_SETTINGS;
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+
+    [self generate_header];
+    for (int i = 0; i < 14; i++){
+        iMsg[i] = hMsg[i];
+    }
+    int service_id = 0xD1000004;
+    iMsg[14] = (uint8_t)(service_id & 0xff);
+    iMsg[15] = (uint8_t)((service_id >> 8) & 0xff);
+    iMsg[16] = (uint8_t)((service_id >> 16) & 0xff);
+    iMsg[17] = (uint8_t)((service_id >> 24) & 0xff);
+    int flag = 0x00000000;
+    iMsg[18] = (uint8_t)(flag & 0xff);
+    iMsg[19] = (uint8_t)((flag >> 8) & 0xff);
+    iMsg[20] = (uint8_t)((flag >> 16) & 0xff);
+    iMsg[21] = (uint8_t)((flag >> 24) & 0xff);
+    
+    NSData *data = [NSData dataWithBytes:iMsg length:sizeof(iMsg)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    return YES;
+}
+
 - (BOOL)sendOTACommand:(NSString *)ip
 {
     g_UdpCommand = 0x000F;
@@ -420,10 +449,10 @@ static UDPCommunication *instance;
             }
             
             if(protocol == PROTOCOL_UDP) {
-                timer[14] = (uint8_t) (serviceId & 0xff);
-                timer[15] = (uint8_t) ((serviceId >> 8) & 0xff);
-                timer[16] = (uint8_t) ((serviceId >> 16) & 0xff);
-                timer[17] = (uint8_t) ((serviceId >> 24) & 0xff);
+                timer[17] = (uint8_t) (serviceId & 0xff);
+                timer[16] = (uint8_t) ((serviceId >> 8) & 0xff);
+                timer[15] = (uint8_t) ((serviceId >> 16) & 0xff);
+                timer[14] = (uint8_t) ((serviceId >> 24) & 0xff);
                 timer[18] = 0x01;
                 timer[19] = 0x01;
                 timer[20] = 0x00;

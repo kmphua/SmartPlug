@@ -68,8 +68,21 @@
 - (void)handleIrFileName:(NSNotification *)notification {
     NSDictionary *userInfo = notification.userInfo;
     ir_filename = [[userInfo objectForKey:@"filename"] intValue];
+    
+    if (ir_filename == -1){
+        [self.view makeToast:NSLocalizedString(@"ir_timeout", nil)
+                    duration:3.0
+                    position:CSToastPositionCenter];
+        [_btnTestCommand setEnabled:NO];
+        [_btnAddNow setEnabled:NO];
+    } else {
+        [_btnTestCommand setEnabled:YES];
+        [_btnAddNow setEnabled:YES];
+    }
+
     self.searching = NO;
     [self updateUI];
+
     NSLog(@"IR filename: %d", ir_filename);
 }
 
@@ -99,6 +112,11 @@
 - (IBAction)onBtnAddNow:(id)sender {
     [[SQLHelper getInstance] insertIRCodes:_groupId name:_name filename:ir_filename icon:_icon mac:g_DeviceMac];
     [self.navigationController popViewControllerAnimated:YES];
+}
+
+- (void)cancelIRRecordCommand {
+    NSLog(@"CANCELING IR SCANNING");
+    [[UDPCommunication getInstance] cancelIRMode];
 }
 
 @end

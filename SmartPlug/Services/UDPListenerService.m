@@ -217,7 +217,7 @@ static UDPListenerService *instance;
     
     if(g_UdpCommand == UDP_CMD_SET_DEVICE_TIMERS){
         if(code == 0){
-            code = 1;
+            //code = 1;
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMERS_SENT_SUCCESS
                                                                 object:self
                                                               userInfo:nil];
@@ -249,12 +249,19 @@ static UDPListenerService *instance;
                                                                 object:self
                                                               userInfo:userInfo];
         }
+        if(name == 'x'){
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:-1] forKey:@"filename"];
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_IR_FILENAME
+                                                                object:self
+                                                              userInfo:userInfo];
+        }
     }
     return true;
 }
 
 - (void)process_headers
 {
+    code = 1;
     /**********************************************/
     int header = abs([self process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
     

@@ -558,7 +558,8 @@
 {
     // Sending 5 minutes snooze to device
     if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
+        [[SQLHelper getInstance] updateSnooze:5 sid:_device.sid];
+        //[[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_5_minutes", nil)
                 duration:3.0
@@ -568,7 +569,8 @@
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
     if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
+        [[SQLHelper getInstance] updateSnooze:10 sid:_device.sid];
+        //[[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_10_minutes", nil)
                 duration:3.0
@@ -578,7 +580,8 @@
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
     if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
+        [[SQLHelper getInstance] updateSnooze:30 sid:_device.sid];
+        //[[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_30_minutes", nil)
                 duration:3.0
@@ -588,7 +591,8 @@
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
     if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP]) {
-        [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
+        [[SQLHelper getInstance] updateSnooze:59 sid:_device.sid];
+        //[[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
     }
     [self.view makeToast:NSLocalizedString(@"delay_60_minutes", nil)
                 duration:3.0

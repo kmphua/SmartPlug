@@ -28,6 +28,7 @@
 - (BOOL)listenForIRCodes;
 - (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param;
 - (BOOL)sendIRMode;
+- (BOOL)cancelIRMode;
 - (BOOL)sendOTACommand:(NSString *)ip;
 - (BOOL)sendIRFileName:(int)filename;
 - (void)sendIRHeader:(int)filename;

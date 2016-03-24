@@ -176,6 +176,8 @@
 "btn_ota" = "Update Firmware";
 "ip_not_found" = "Device Not Connected, Please refresh APP within device local network";
 "please_wait_done" = "Loading... Please wait";
+"cancelir" = "Stop Scanning";
+"ir_timeout" = "IR Scanning Time Out";
 
 // Help
 "help_1_title" = "Quick Start Guide";

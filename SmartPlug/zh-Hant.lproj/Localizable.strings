@@ -175,6 +175,8 @@
 "btn_ota" = "更新韌體";
 "ip_not_found" = "裝置未連線。請在裝置的本地網路刷新APP";
 "please_wait_done" = "載入中...請稍候";
+"cancelir" = "停止掃描";
+"ir_timeout" = "IR掃瞄逾時";
 
 // Help
 "help_1_title" = "快速入門指南";
