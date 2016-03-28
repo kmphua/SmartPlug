@@ -188,7 +188,7 @@
             cell.textLabel.text = NSLocalizedString(@"id_name", nil);
             
             if (!_txtName) {
-                _txtName = [[UITextField alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-70, 5, 100, cell.contentView.frame.size.height)];
+                _txtName = [[UITextField alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-120, 5, 150, cell.contentView.frame.size.height)];
                 _txtName.backgroundColor = [UIColor whiteColor];
                 _txtName.borderStyle = UITextBorderStyleNone;
                 _txtName.textAlignment = NSTextAlignmentRight;
@@ -196,6 +196,7 @@
                 _txtName.delegate = self;
                 _txtName.placeholder = @"TV on/off";
                 _txtName.font = [UIFont systemFontOfSize:18];
+                _txtName.adjustsFontSizeToFitWidth = YES;
             }
             [cell.contentView addSubview:_txtName];
             break;

@@ -212,9 +212,9 @@
 
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
-    //IrCode *code = [_codes objectAtIndex:position-1];
-    //[[UDPCommunication getInstance] sendIRFileName:code.filename];
-    //NSLog(@"Sending IR filename %d", code.filename);
+    IrCode *code = [_codes objectAtIndex:position-1];
+    [[UDPCommunication getInstance] sendIRFileName:code.filename];
+    NSLog(@"Sending IR filename %d", code.filename);
 }
 
 - (void)GMGridViewDidTapOnEmptySpace:(GMGridView *)gridView
