@@ -165,6 +165,7 @@ static UDPListenerService *instance;
     if(g_UdpCommand == UDP_CMD_DEVICE_QUERY){
         if(code == 0){
             [self process_query_device_command];
+            [[SQLHelper getInstance] updatePlugServices:js];
             
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       ipAddress, @"ip",
@@ -377,7 +378,8 @@ static UDPListenerService *instance;
             NSLog(@"Relay is off");
         }
         
-        [[SQLHelper getInstance] updatePlugRelayService:data sid:g_DeviceMac];
+        NSLog(@"MAC: %@", g_DeviceMac);
+        [[SQLHelper getInstance] updatePlugRelayService:js.relay sid:g_DeviceMac];
         [[SQLHelper getInstance] updatePlugHallSensorService:js.hall_sensor sid:g_DeviceMac];
     }
 }

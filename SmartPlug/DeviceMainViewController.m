@@ -16,6 +16,8 @@
 #import "UDPListenerService.h"
 #import "CrashCountDown.h"
 
+#define STATUS_CHECKER_TIMER_INTERVAL       5
+
 @interface DeviceMainViewController ()<SetSnoozeTimerDelegate, WebServiceDelegate>
 {
     int _relay;
@@ -60,6 +62,7 @@
 @property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progressBar;
 
 @property (strong, nonatomic) CrashCountDown *crashTimer;
+@property (strong, nonatomic) NSTimer *statusCheckerTimer;
 @property (assign, nonatomic) BOOL udpConnection;
 
 @end
@@ -121,6 +124,8 @@
 {
     [super viewWillAppear:animated];
     
+    [self updateDeviceStatusFromServer];
+    
     /*
     // Try to get device status over UDP
     if ([[UDPListenerService getInstance] isRunning]) {
@@ -157,6 +162,14 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
     
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
+    
+    // Start status checker timer
+    _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
+                                                   target:self
+                                                 selector:@selector(checkStatus:)
+                                                 userInfo:nil
+                                                  repeats:NO];
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -172,6 +185,12 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
     //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
+    
+    // Stop status checker timer
+    if (_statusCheckerTimer) {
+        [_statusCheckerTimer invalidate];
+        _statusCheckerTimer = nil;
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -196,11 +215,10 @@
 
 - (void)handlePushNotification:(NSNotification *)notification {
     NSLog(@"Handle push notification");
-    /*
+    
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
-     */
 }
 
 - (void)timerCrashReached:(NSNotification *)notification {
@@ -355,7 +373,6 @@
     _udpConnection = false;
     [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action];
 
-    /*
     // Send to HTTP after delay 1 second
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
     
@@ -412,7 +429,6 @@
         
         [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid send:send data:deviceData];
     });
-    */
     
     [self.progressBar setHidden:YES];
 }
@@ -531,6 +547,23 @@
 - (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
     IREditModeViewController *irVC = [[IREditModeViewController alloc] initWithNibName:@"IREditModeViewController" bundle:nil];
     [self.navigationController pushViewController:irVC animated:YES];
+}
+
+- (void)checkStatus:(id)sender {
+    if (g_DeviceIp) {
+        if ([[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
+            //[_crashTimer startTimer];
+        } else {
+            NSLog(@"IP IS NULL");
+        }
+        _udpConnection = NO;
+    }
+
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:g_DeviceMac];
+
+    [self updateUI:nil];
 }
 
 //==================================================================

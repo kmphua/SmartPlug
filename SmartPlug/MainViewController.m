@@ -59,6 +59,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePush:) name:NOTIFICATION_PUSH object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -71,6 +73,7 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -131,6 +134,9 @@
 }
 
 - (void)handlePush:(NSNotification *)notification {
+    // Delete plugs in database first
+    [[SQLHelper getInstance] deletePlugs];
+    
     // Update device list
     WebService *ws = [[WebService alloc] init];
     ws.delegate = self;
@@ -150,6 +156,10 @@
         NSLog(@"Updating plug %@ with ip %@", plug.name, plug.ip);
         [[SQLHelper getInstance] updatePlugIP:plug.name ip:plug.ip];
     }
+}
+
+- (void)m1UpdateUI:(NSNotification *)notification {
+    NSLog(@"UDP BROADCAST RECEIVED");
 }
 
 //==================================================================

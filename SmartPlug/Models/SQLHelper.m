@@ -408,7 +408,8 @@ static SQLHelper *instance;
 - (BOOL)updatePlugServices:(JSmartPlug *)js
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET relay = ?, hsensor = ?, csensor = ?, nightlight = ?, hw_ver = ?, fw_ver = ? WHERE ip = ?",
+    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET sid = ?, relay = ?, hsensor = ?, csensor = ?, nightlight = ?, hw_ver = ?, fw_ver = ? WHERE ip = ?",
+            js.sid,
             [NSNumber numberWithInt:js.relay],
             [NSNumber numberWithInt:js.hall_sensor],
             [NSNumber numberWithInt:js.co_sensor],
@@ -699,6 +700,15 @@ static SQLHelper *instance;
             name,
             icon,
             mac];
+    [db close];
+    return result;
+}
+
+- (BOOL)deletePlugs
+{
+    BOOL result;
+    [db open];
+    result = [db executeUpdate:@"DELETE FROM smartplugs"];
     [db close];
     return result;
 }
