@@ -29,7 +29,7 @@
 @property (nonatomic, strong) FirstTimeConfig *config;
 @property (nonatomic, strong) Reachability *wifiReachability;
 
-@property (nonatomic, strong) NSArray *devices;
+@property (nonatomic, strong) NSArray *plugs;
 
 @property (nonatomic, strong) NSString *ssid;
 @property (nonatomic, strong) NSString *gatewayAddress;
@@ -106,7 +106,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
     
-    self.devices = [[mDNSService getInstance] plugs];
+    self.plugs = [[mDNSService getInstance] plugs];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     
@@ -190,13 +190,13 @@
 }
 
 - (void)handleDeviceFound:(NSNotification*)notification {
-    self.devices = [[mDNSService getInstance] plugs];
+    self.plugs = [[mDNSService getInstance] plugs];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
-    self.devices = [[mDNSService getInstance] plugs];
+    self.plugs = [[mDNSService getInstance] plugs];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
 }
@@ -208,7 +208,7 @@
 - (void)didReceiveData:(NSData *)data fromAddress:(NSString *)address {
     NSLog(@"Received data %@ from %@", data, address);
     
-    // Check added devices
+    // Check added plugs
     NSArray *plugs = [[SQLHelper getInstance] getPlugData:address];
     if (plugs) {
         JSmartPlug *plug = [plugs objectAtIndex:0];
@@ -489,7 +489,7 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-    return [self.devices count];
+    return [self.plugs count];
 }
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -503,10 +503,10 @@
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     
     // Fetch Service
-    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
+    JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
     
     // Configure Cell
-    [cell.textLabel setText:device.name];
+    [cell.textLabel setText:plug.name];
     
     return cell;
 }
@@ -514,15 +514,26 @@
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
     // Add device to device list
-    JSmartPlug *device = [self.devices objectAtIndex:[indexPath row]];
+    JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
     
+    [[SQLHelper getInstance] insertPlug:plug active:1];
+
     // Set temp device name
-    g_DeviceName = device.name;
+    g_DeviceName = plug.name;
+    NSString *devId = [NSString stringWithFormat:@"%d", [plug.sid intValue]];
+    
+    // Activate device
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:devId title:g_DeviceName model:model];
+    
+    /*
     [[UDPCommunication getInstance] queryDevices:device.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
     
     [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
+     */
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
