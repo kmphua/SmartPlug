@@ -171,6 +171,12 @@ static UDPListenerService *instance;
                                       ipAddress, @"ip",
                                       js.sid, @"id",
                                       js.model, @"model",
+                                      [NSNumber numberWithInt:js.buildno], @"buildno",
+                                      [NSNumber numberWithInt:js.prot_ver], @"prot_ver",
+                                      js.hw_ver, @"hw_ver",
+                                      js.fw_ver, @"fw_ver",
+                                      [NSNumber numberWithInt:js.fw_date], @"fw_date",
+                                      [NSNumber numberWithInt:js.flag], @"flag",
                                       nil];
             
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_INFO

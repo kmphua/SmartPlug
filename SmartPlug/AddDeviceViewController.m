@@ -14,6 +14,7 @@
 #import "UDPCommunication.h"
 #import "mDNSService.h"
 #include <arpa/inet.h>
+#import "CrashCountDown.h"
 
 @interface AddDeviceViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, InitDevicesDelegate>
 
@@ -30,12 +31,17 @@
 @property (nonatomic, strong) Reachability *wifiReachability;
 
 @property (nonatomic, strong) NSArray *plugs;
+@property (nonatomic, strong) NSString *devId;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *ip;
 
 @property (nonatomic, strong) NSString *ssid;
 @property (nonatomic, strong) NSString *gatewayAddress;
 @property (nonatomic, strong) NSString *wifiPassword;
 
+
 @property (strong, nonatomic) GCDAsyncSocket *socket;
+@property (strong, nonatomic) CrashCountDown *crashTimer;
 
 @end
 
@@ -90,6 +96,7 @@
         [_btnInitDevices setEnabled:YES];
     }
     
+    _crashTimer = [CrashCountDown getInstance];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -177,22 +184,54 @@
 - (void)handleDeviceInfo:(NSNotification*)notification {
     NSLog(@"%s", __func__);
     
+    // Update device info
     NSDictionary *userInfo = notification.userInfo;
-    NSString *ip = [userInfo objectForKey:@"ip"];
-    NSString *devId = [userInfo objectForKey:@"id"];
+    _ip = [userInfo objectForKey:@"ip"];
+    _devId = [userInfo objectForKey:@"id"];
+    
+    NSLog(@"DEVICE INFO RECEIVED IP: %@ ID: %@", _ip, _devId);
+    
     NSString *model = [userInfo objectForKey:@"model"];
     model = [model stringByReplacingOccurrencesOfString:@" " withString:@""];
+    int buildno = [[userInfo objectForKey:@"buildno"] intValue];
+    int prot_ver = [[userInfo objectForKey:@"prot_ver"] intValue];
+    NSString *hw_ver = [userInfo objectForKey:@"hw_ver"];
+    NSString *fw_ver = [userInfo objectForKey:@"fw_ver"];
+    int fw_date = [[userInfo objectForKey:@"fw_date"] intValue];
+    int flag = [[userInfo objectForKey:@"flag"] intValue];
     
+    for (JSmartPlug *plug in _plugs) {
+        if ([plug.name isEqualToString:_name]) {
+            plug.sid = _devId;
+            plug.model = model;
+            plug.buildno = buildno;
+            plug.prot_ver = prot_ver;
+            plug.hw_ver = hw_ver;
+            plug.fw_ver = fw_ver;
+            plug.fw_date = fw_date;
+            plug.flag = flag;
+        }
+    }
+    
+    /*
     // Activate device
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:devId title:g_DeviceName model:model];
+    [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:_devId title:g_DeviceName model:model];
+    */
 }
 
 - (void)handleDeviceFound:(NSNotification*)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    _name = [userInfo objectForKey:@"name"];
+    _ip = [userInfo objectForKey:@"ip"];
+
     self.plugs = [[mDNSService getInstance] plugs];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
+    
+    [[UDPCommunication getInstance] queryDevices:_ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
+    [_crashTimer startTimer];
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
@@ -520,20 +559,19 @@
 
     // Set temp device name
     g_DeviceName = plug.name;
-    NSString *devId = [NSString stringWithFormat:@"%d", [plug.sid intValue]];
     
     // Activate device
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:devId title:g_DeviceName model:model];
+    [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:plug.sid title:g_DeviceName model:plug.model];
     
     /*
     [[UDPCommunication getInstance] queryDevices:device.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
-    
+     */
+     
     [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
-     */
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
