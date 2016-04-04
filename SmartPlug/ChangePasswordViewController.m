@@ -174,8 +174,8 @@
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 
                 UIAlertController * alert = [UIAlertController
-                                             alertControllerWithTitle:NSLocalizedString(@"title_accountCreated", nil)
-                                             message:NSLocalizedString(@"msg_accountCreatedBtn", nil)
+                                             alertControllerWithTitle:NSLocalizedString(@"title_changePassword", nil)
+                                             message:NSLocalizedString(@"password_reset", nil)
                                              preferredStyle:UIAlertControllerStyleAlert];
                 
                 UIAlertAction* ok = [UIAlertAction
@@ -193,7 +193,7 @@
             } else  {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"title_changePassword", nil)
                                                                     message:message
                                                                    delegate:nil
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)

@@ -124,44 +124,14 @@
 {
     [super viewWillAppear:animated];
     
-    [self updateDeviceStatusFromServer];
-    
-    /*
-    // Try to get device status over UDP
-    if ([[UDPListenerService getInstance] isRunning]) {
-        if(g_DeviceIp) {
-            [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
-            [_crashTimer startTimer];
-        } else {
-            NSLog(@"IP IS NULL");
-            _udpConnection = false;
-        }
-    }
-    
-    // Update device status
-    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        if (!_udpConnection) {
-            [self updateDeviceStatusFromServer];
-        }
-    });
-    */
-    
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastUdpUpdateUi:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
 
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceFound:) name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
-
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_DEVICE_INFO object:nil];
-    
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePushNotification:) name:NOTIFICATION_PUSH object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
-    
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateUI:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
     
     // Start status checker timer
     _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
@@ -178,13 +148,9 @@
     
     // Deregister notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_INFO object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
-    //[[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
     
     // Stop status checker timer
     if (_statusCheckerTimer) {
@@ -317,17 +283,6 @@
         _nightlight = 1;
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
-
-    /*
-    // Snooze
-    if (device.snooze == 0) {
-        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-    } else if (device.snooze == 1) {
-        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
-    }
-    */
     
     if (device.icon && device.icon.length>0) {
         NSString *imagePath = self.device.icon;
@@ -344,6 +299,13 @@
 
 - (void)sendService:(int)serviceId
 {
+    [_imgOutletIcon setHidden:YES];
+    [_imgNightLightIcon setHidden:YES];
+    
+    [self.view makeToast:NSLocalizedString(@"processing_command", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
+    
     [self.progressBar setHidden:NO];
     
     if (serviceId == RELAY_SERVICE) {
@@ -590,10 +552,9 @@
 - (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId
 {
     // Sending 5 minutes snooze to device
-    if (![[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP]) {
-        [[SQLHelper getInstance] updateSnooze:5 sid:_device.sid];
-        //[[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
-    }
+    [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:5 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_5_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -601,10 +562,9 @@
 
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP]) {
-        [[SQLHelper getInstance] updateSnooze:10 sid:_device.sid];
-        //[[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
-    }
+    [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:10 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_10_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -612,10 +572,9 @@
 
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP]) {
-        [[SQLHelper getInstance] updateSnooze:30 sid:_device.sid];
-        //[[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
-    }
+    [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:30 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_30_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -623,10 +582,9 @@
 
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
-    if (![[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP]) {
-        [[SQLHelper getInstance] updateSnooze:59 sid:_device.sid];
-        //[[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
-    }
+    [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:59 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_60_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -679,10 +637,10 @@
                 if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil && co_sensor.length>0) {
                     [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:g_DeviceMac];
                 } else {
-                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:g_DeviceMac];
                 }
                 if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil && hall_sensor.length>0) {
-                    [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:_device.sid];
+                    [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:g_DeviceMac];
                 } else {
                     [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:g_DeviceMac];
                 }

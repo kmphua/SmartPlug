@@ -177,6 +177,9 @@
 "please_wait_done" = "載入中...請稍候";
 "cancelir" = "停止掃描";
 "ir_timeout" = "IR掃瞄逾時";
+"processing_ir_command" = "紅外線指令進行中";
+"processing_command" = "指令進行中";
+"password_reset" = "密碼已修改完成";
 
 // Help
 "help_1_title" = "快速入門指南";

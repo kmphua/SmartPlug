@@ -111,7 +111,7 @@
 
 - (IBAction)onBtnAddNow:(id)sender {
     [[SQLHelper getInstance] insertIRCodes:_groupId name:_name filename:ir_filename icon:_icon mac:g_DeviceMac];
-    [self.navigationController popViewControllerAnimated:YES];
+    //[self.navigationController popViewControllerAnimated:YES];
 }
 
 - (void)cancelIRRecordCommand {

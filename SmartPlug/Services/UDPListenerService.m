@@ -10,6 +10,7 @@
 #import "GCDAsyncUdpSocket.h"
 #include <arpa/inet.h>
 #import "JSmartPlug.h"
+#import "UDPCommunication.h"
 
 #define MAX_UDP_DATAGRAM_LEN        128
 #define UDP_SERVER_PORT             20004
@@ -35,7 +36,6 @@
     short code;
     BOOL shouldRestartSocketListen;
     short command;
-    JSmartPlug *js;
     int IRFlag;
     int IRSendFlag;
     int irCode;
@@ -72,7 +72,7 @@ static UDPListenerService *instance;
         IRSendFlag = 0;
         shouldRestartSocketListen = NO;
         IRFlag = 0;
-        js = [JSmartPlug new];
+        _js = [JSmartPlug new];
     }
     return self;
 }
@@ -120,12 +120,19 @@ static UDPListenerService *instance;
     }
     
     [_udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
-    NSLog(@"UDP sent %ld bytes to %@", data.length, ip);
+    NSLog(@"UDP sent %ld bytes to %@", (unsigned long)data.length, ip);
 }
 
 - (BOOL)isRunning
 {
     return _isRunning;
+}
+
+- (BOOL)setDeviceStatusProcess:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action
+{
+    code = 1;
+    [[UDPCommunication getInstance] setDeviceStatus:ip serviceId:serviceId action:action];
+    return YES;
 }
 
 //==================================================================
@@ -165,18 +172,18 @@ static UDPListenerService *instance;
     if(g_UdpCommand == UDP_CMD_DEVICE_QUERY){
         if(code == 0){
             [self process_query_device_command];
-            [[SQLHelper getInstance] updatePlugServices:js];
+            [[SQLHelper getInstance] updatePlugServices:_js];
             
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       ipAddress, @"ip",
-                                      js.sid, @"id",
-                                      js.model, @"model",
-                                      [NSNumber numberWithInt:js.buildno], @"buildno",
-                                      [NSNumber numberWithInt:js.prot_ver], @"prot_ver",
-                                      js.hw_ver, @"hw_ver",
-                                      js.fw_ver, @"fw_ver",
-                                      [NSNumber numberWithInt:js.fw_date], @"fw_date",
-                                      [NSNumber numberWithInt:js.flag], @"flag",
+                                      _js.sid, @"id",
+                                      _js.model, @"model",
+                                      [NSNumber numberWithInt:_js.buildno], @"buildno",
+                                      [NSNumber numberWithInt:_js.prot_ver], @"prot_ver",
+                                      _js.hw_ver, @"hw_ver",
+                                      _js.fw_ver, @"fw_ver",
+                                      [NSNumber numberWithInt:_js.fw_date], @"fw_date",
+                                      [NSNumber numberWithInt:_js.flag], @"flag",
                                       nil];
             
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_INFO
@@ -214,7 +221,7 @@ static UDPListenerService *instance;
         if(code == 0){
             code = 1;
             [self process_get_device_status];
-            [[SQLHelper getInstance] updatePlugServices:js];
+            [[SQLHelper getInstance] updatePlugServices:_js];
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
                                                                 object:self
                                                               userInfo:nil];
@@ -303,49 +310,49 @@ static UDPListenerService *instance;
     for (int i = 18; i < 24; i++) {
         [mac appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
     }
-    js.sid = mac;
+    _js.sid = mac;
     NSLog(@"MAC: %@", mac);
     /**********************************************/
     NSMutableString *model = [NSMutableString new];
     for (int i = 24; i < 40; i++) {
         [model appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    js.model = model;
+    _js.model = model;
     NSLog(@"MODEL: %@", model);
     /**********************************************/
     int buildno = [self process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
-    js.buildno = buildno;
+    _js.buildno = buildno;
     NSLog(@"BUILD NO: %d", buildno);
     /**********************************************/
     int prot_ver = [self process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
-    js.prot_ver = prot_ver;
+    _js.prot_ver = prot_ver;
     NSLog(@"PROTOCOL VER: %d", prot_ver);
     /**********************************************/
     NSMutableString *hw_ver = [NSMutableString new];
     for (int i = 48; i < 64; i++) {
         [hw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    js.hw_ver = hw_ver;
+    _js.hw_ver = hw_ver;
     NSLog(@"HARDWARE VERSION: %@", hw_ver);
     /**********************************************/
     NSMutableString *fw_ver = [NSMutableString new];
     for (int i = 64; i < 80; i++) {
         [fw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
     }
-    js.fw_ver = fw_ver;
+    _js.fw_ver = fw_ver;
     NSLog(@"FIRMWARE VERSION: %@", fw_ver);
     /**********************************************/
     int fw_date = [self process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
-    js.fw_date = fw_date;
+    _js.fw_date = fw_date;
     NSLog(@"FIRMWARE DATE: %d", fw_date);
     /**********************************************/
     int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
-    js.flag = flag;
+    _js.flag = flag;
     NSLog(@"FLAG: %d", flag);
     
     // Update to database
-    js.ip = g_DeviceIp;
-    [[SQLHelper getInstance] updatePlugServices:js];
+    _js.ip = g_DeviceIp;
+    [[SQLHelper getInstance] updatePlugServices:_js];
 }
 
 - (void)process_get_device_status
@@ -368,25 +375,25 @@ static UDPListenerService *instance;
         NSLog(@"IS OUTLET SERVICE");
         int flag = [self process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
         if(flag == 0x00000010){
-            js.hall_sensor = 1;
+            _js.hall_sensor = 1;
             NSLog(@"Relay warning");
         } else {
             NSLog(@"Relay normal condition");
-            js.hall_sensor = 0;
+            _js.hall_sensor = 0;
         }
         uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if (data == 0x01){
-            js.relay = 1;
+            _js.relay = 1;
             NSLog(@"Relay is on");
         } else {
-            js.relay = 0;
+            _js.relay = 0;
             NSLog(@"Relay is off");
         }
         
         NSLog(@"MAC: %@", g_DeviceMac);
-        [[SQLHelper getInstance] updatePlugRelayService:js.relay sid:g_DeviceMac];
-        [[SQLHelper getInstance] updatePlugHallSensorService:js.hall_sensor sid:g_DeviceMac];
+        [[SQLHelper getInstance] updatePlugRelayService:_js.relay sid:g_DeviceMac];
+        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:g_DeviceMac];
     }
 }
 
@@ -399,10 +406,10 @@ static UDPListenerService *instance;
         uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
-            js.nightlight = 1;
+            _js.nightlight = 1;
             NSLog(@"Nighlight is on");
         } else {
-            js.nightlight = 0;
+            _js.nightlight = 0;
             NSLog(@"Nighlight is off");
         }
         
@@ -419,15 +426,15 @@ static UDPListenerService *instance;
         if(flag == 0x00000010){
             NSLog(@"CO SENSOR WARNING");
             costatus = 1;
-            js.co_sensor = costatus;                      //WARNING
+            _js.co_sensor = costatus;                      //WARNING
         } else if (flag == 0x00000100){
             costatus = 3;
             NSLog(@"CO SENSOR NOT PLUGGED IN");
-            js.co_sensor = costatus;                      //NOT PLUGGED
+            _js.co_sensor = costatus;                      //NOT PLUGGED
         } else {
             costatus = 0;
             NSLog(@"CO SENSOR NORMAL CONDITION");
-            js.co_sensor = costatus;                      //NORMAL
+            _js.co_sensor = costatus;                      //NORMAL
         }
         [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:g_DeviceMac];
         uint8_t datatype = lMsg[46];

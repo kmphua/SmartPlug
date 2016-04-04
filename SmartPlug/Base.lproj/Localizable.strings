@@ -178,6 +178,9 @@
 "please_wait_done" = "Loading... Please wait";
 "cancelir" = "Stop Scanning";
 "ir_timeout" = "IR Scanning Time Out";
+"processing_ir_command" = "Processing IR Command";
+"processing_command" = "Processing Command";
+"password_reset" = "Password has been changed successfully";
 
 // Help
 "help_1_title" = "Quick Start Guide";

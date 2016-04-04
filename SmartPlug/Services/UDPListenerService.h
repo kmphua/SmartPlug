@@ -10,9 +10,12 @@
 
 @interface UDPListenerService : NSObject
 
+@property (nonatomic, strong) JSmartPlug *js;
+
 + (UDPListenerService *)getInstance;
 - (BOOL)startUdpBroadcastListener;
 - (void)stopUdpBroadcastListener;
 - (BOOL)isRunning;
+- (BOOL)setDeviceStatusProcess:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action;
 
 @end
