@@ -16,7 +16,7 @@
 #import "UDPListenerService.h"
 #import "CrashCountDown.h"
 
-#define STATUS_CHECKER_TIMER_INTERVAL       5
+#define STATUS_CHECKER_TIMER_INTERVAL       7
 
 @interface DeviceMainViewController ()<SetSnoozeTimerDelegate, WebServiceDelegate>
 {
@@ -124,6 +124,11 @@
 {
     [super viewWillAppear:animated];
     
+    // Init UI
+    [_imgOutletWarning setHidden:YES];
+    [_imgCoWarning setHidden:YES];
+    [_btnIrTimer setHidden:YES];
+    
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 
@@ -180,7 +185,7 @@
 }
 
 - (void)handlePushNotification:(NSNotification *)notification {
-    NSLog(@"Handle push notification");
+    NSLog(@"I GOT A PUSH NOTIFICATION!!!!");
     
     WebService *ws = [WebService new];
     ws.delegate = self;
@@ -212,7 +217,7 @@
 
 - (void)updateUI:(NSNotification *)notification {
     NSLog(@"Updating UI");
-    NSArray *devices = [[SQLHelper getInstance] getPlugDataByID:self.device.sid];
+    NSArray *devices = [[SQLHelper getInstance] getPlugDataByID:_device.sid];
     if (!devices || devices.count == 0) {
         NSLog(@"updateUI: No devices!");
         return;
@@ -282,6 +287,15 @@
     } else if (device.nightlight == 1) {
         _nightlight = 1;
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
+    }
+    
+    // Snooze
+    if (device.snooze == 0) {
+        [_btnOutletTimer setImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+    } else {
+        [_btnOutletTimer setImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
     
     if (device.icon && device.icon.length>0) {
