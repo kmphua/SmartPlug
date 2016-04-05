@@ -928,11 +928,11 @@
 		7512C1661C1BB3B700489091 /* Widgets */ = {
 			isa = PBXGroup;
 			children = (
+				7512C1671C1BB3B700489091 /* CustomBadge */,
 				7508AA7E1C3291CA00EB88D1 /* MultiSelectSegmentedControl.h */,
 				7508AA7F1C3291CA00EB88D1 /* MultiSelectSegmentedControl.m */,
 				7508AA471C3229A800EB88D1 /* SPAlertView.h */,
 				7508AA481C3229A800EB88D1 /* SPAlertView.m */,
-				7512C1671C1BB3B700489091 /* CustomBadge */,
 				7512C1701C1BB3B700489091 /* PickerActionSheet.h */,
 				7512C1711C1BB3B700489091 /* PickerActionSheet.m */,
 				7512C1721C1BB3B700489091 /* PRPShadowedTableView.h */,
@@ -1377,6 +1377,7 @@
 				7512C11B1C1BA3B900489091 /* Resources */,
 				3C60663754F1A931AE1BD504 /* Copy Pods Resources */,
 				7581AD9F1C21817300DF8BD2 /* ShellScript */,
+				46D228C834E48909E6795CAD /* Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -1773,6 +1774,21 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		46D228C834E48909E6795CAD /* Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		7581AD9F1C21817300DF8BD2 /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -2010,7 +2026,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = SmartPlug/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -2031,7 +2047,7 @@
 				ENABLE_BITCODE = NO;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				INFOPLIST_FILE = SmartPlug/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 7.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

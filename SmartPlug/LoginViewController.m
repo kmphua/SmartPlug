@@ -162,6 +162,7 @@
                 // Save username and password
                 [[NSUserDefaults standardUserDefaults] setObject:_txtLogin.text forKey:UD_KEY_PHONE];
                 [[NSUserDefaults standardUserDefaults] setObject:_txtPassword.text forKey:UD_KEY_PASSWORD];
+                [[NSUserDefaults standardUserDefaults] setObject:userToken forKey:UD_USER_TOKEN];
                 
                 g_Username = _txtLogin.text;
                 g_Password = _txtPassword.text;

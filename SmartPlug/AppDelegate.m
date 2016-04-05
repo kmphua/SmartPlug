@@ -14,6 +14,7 @@
 #import "UDPListenerService.h"
 #import "mDNSService.h"
 #import "HelpPageViewController.h"
+#import "MainViewController.h"
 
 @interface AppDelegate ()
 
@@ -68,11 +69,16 @@ int g_UdpCommand;
     
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     BOOL isFirstUse = [ud boolForKey:UD_KEY_FIRST_USE];
+    NSString *userToken = [ud stringForKey:UD_USER_TOKEN];
     
     if (!isFirstUse) {
         HelpPageViewController *helpPageController = [[HelpPageViewController alloc] initWithNibName:@"HelpPageViewController" bundle:nil];
         helpPageController.startIndex = 0;
         navigationController = [[UINavigationController alloc] initWithRootViewController:helpPageController];
+    } else if (userToken && userToken.length>0) {
+        g_UserToken = userToken;
+        MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
+        navigationController = [[UINavigationController alloc] initWithRootViewController:mainController];
     } else {
         LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
         navigationController = [[UINavigationController alloc] initWithRootViewController:loginController];

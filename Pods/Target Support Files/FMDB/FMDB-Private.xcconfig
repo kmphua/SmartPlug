@@ -1,6 +1,0 @@
-#include "FMDB.xcconfig"
-GCC_PREPROCESSOR_DEFINITIONS = $(inherited) COCOAPODS=1
-HEADER_SEARCH_PATHS = "${PODS_ROOT}/Headers/Private" "${PODS_ROOT}/Headers/Private/FMDB" "${PODS_ROOT}/Headers/Public" "${PODS_ROOT}/Headers/Public/CocoaAsyncSocket" "${PODS_ROOT}/Headers/Public/DQAlertView" "${PODS_ROOT}/Headers/Public/FMDB" "${PODS_ROOT}/Headers/Public/GMGridView" "${PODS_ROOT}/Headers/Public/KLCPopup" "${PODS_ROOT}/Headers/Public/SDWebImage+ExtensionSupport" "${PODS_ROOT}/Headers/Public/Toast"
-OTHER_LDFLAGS = ${FMDB_OTHER_LDFLAGS}
-PODS_ROOT = ${SRCROOT}
-SKIP_INSTALL = YES

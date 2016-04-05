@@ -8,80 +8,51 @@
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>1</integer>
 		</dict>
 		<key>DQAlertView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>2</integer>
 		</dict>
 		<key>FMDB.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>3</integer>
 		</dict>
 		<key>GMGridView.xcscheme</key>
 		<dict>
-			<key>orderHint</key>
-			<integer>8</integer>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>KLCPopup.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>4</integer>
+		</dict>
+		<key>MBProgressHUD.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
 		</dict>
 		<key>Pods.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>5</integer>
 		</dict>
 		<key>SDWebImage+ExtensionSupport.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>6</integer>
 		</dict>
 		<key>Toast.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
-			<key>orderHint</key>
-			<integer>7</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>1E4A5F837C3655C301B64C0D8DA49BA2</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>238053D698FBDC69A03575AAFA70DCAF</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>260D23BD5913C64608480DC142F91A70</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>30041BA2C05F40F1081A70370B599E76</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>3426D5F97866CE3CEC3BF7275C7DA554</key>
+		<key>149456B91F1611241D1A5251E22A60F4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -96,12 +67,7 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>84130E2D6A85E1B67BBCF5834B2D4CB7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>8955447505F9CCFFBB03E27452725387</key>
+		<key>695839A356C61BDDE527F97CC16D44F4</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -111,27 +77,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>A05C6A9F83EDDB85426F1969E9D508E7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>B7BAF5E0D95762FD26AAE834A871A017</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C4B7346ECEFEC8189960E600DB9201C0</key>
+		<key>F42F9A2BA75A4E5DBC611803E6620D95</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>C51B8568547A17E541C997DAB9D55578</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>DB35A3E19E784F493449C606F710C3D7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
-		<key>EBCC11D125FA7301D87AD57004B1DC06</key>
+		<key>FE2F1D7B9D9FCEA148517E4657B243F4</key>
 		<dict>
 			<key>primary</key>
 			<true/>

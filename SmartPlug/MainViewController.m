@@ -71,7 +71,7 @@
                                                            target:self
                                                          selector:@selector(checkStatus:)
                                                          userInfo:nil
-                                                          repeats:NO];
+                                                          repeats:YES];
 }
 
 - (void)viewWillDisappear:(BOOL)animated

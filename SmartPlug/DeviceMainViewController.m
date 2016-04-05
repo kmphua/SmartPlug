@@ -15,6 +15,7 @@
 #import "UDPCommunication.h"
 #import "UDPListenerService.h"
 #import "CrashCountDown.h"
+#import "MBProgressHUD.h"
 
 #define STATUS_CHECKER_TIMER_INTERVAL       7
 
@@ -59,11 +60,11 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblWarning;
 @property (weak, nonatomic) IBOutlet UIImageView *imgRightWarning;
 
-@property (weak, nonatomic) IBOutlet UIActivityIndicatorView *progressBar;
-
 @property (strong, nonatomic) CrashCountDown *crashTimer;
 @property (strong, nonatomic) NSTimer *statusCheckerTimer;
 @property (assign, nonatomic) BOOL udpConnection;
+
+@property (strong, nonatomic) MBProgressHUD *hud;
 
 @end
 
@@ -102,7 +103,8 @@
     self.lblNightLight.text = NSLocalizedString(@"btn_nightLight", nil);
     self.lblIr.text = NSLocalizedString(@"btn_ir", nil);
     self.lblCo.text = NSLocalizedString(@"btn_coNormal", nil);
-        
+    self.lblWarning.text = NSLocalizedString(@"please_wait_done", nil);
+    
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
@@ -143,8 +145,9 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:NO];
-
+                                                  repeats:YES];
+    
+    [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -169,12 +172,23 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showWaitingIndicator:(NSString *)labelText {
+    _hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    _hud.mode = MBProgressHUDModeIndeterminate;
+    _hud.labelText = labelText;
+    [_hud show:YES];
+}
+
+- (void)dismissWaitingIndicator {
+    [_hud hide:YES];
+}
+
 - (void)udpUpdateUI:(NSNotification *)notification {
     _udpConnection = true;
     if(_crashTimer) {
         [_crashTimer stopTimer];
     }
-    [self.progressBar setHidden:YES];
+    [self dismissWaitingIndicator];
     [self updateUI:nil];
 }
 
@@ -252,7 +266,7 @@
         [_imgOutletWarning setHidden:NO];
         [_lblWarning setHidden:NO];
         [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
-        [_imgOutletWarning startAnimating];
+        [self startBlinkingAnimation:_imgOutletWarning];
         [_imgLeftWarning setHidden:NO];
         [_imgRightWarning setHidden:NO];
         [_lblWarning setText:NSLocalizedString(@"msg_ha_warning", nil)];
@@ -267,7 +281,7 @@
     } else if (device.co_sensor == 1) {
         [_imgCoWarning setHidden:YES];
         [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
-        [_imgCoWarning startAnimating];
+        [self startBlinkingAnimation:_imgCoWarning];
         [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
         [_imgLeftWarning setHidden:NO];
         [_imgRightWarning setHidden:NO];
@@ -291,11 +305,11 @@
     
     // Snooze
     if (device.snooze == 0) {
-        [_btnOutletTimer setImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
     } else {
-        [_btnOutletTimer setImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
     
     if (device.icon && device.icon.length>0) {
@@ -309,18 +323,13 @@
     [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
     [_lblWarning setHidden:YES];
     [_imgLeftWarning setHidden:YES];
+    
+    [self dismissWaitingIndicator];
 }
 
 - (void)sendService:(int)serviceId
 {
-    [_imgOutletIcon setHidden:YES];
-    [_imgNightLightIcon setHidden:YES];
-    
-    [self.view makeToast:NSLocalizedString(@"processing_command", nil)
-                duration:3.0
-                position:CSToastPositionCenter];
-    
-    [self.progressBar setHidden:NO];
+    [self showWaitingIndicator:NSLocalizedString(@"processing_command", nil)];
     
     if (serviceId == RELAY_SERVICE) {
         if (_relay == 0) {
@@ -405,8 +414,6 @@
         
         [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:_device.sid send:send data:deviceData];
     });
-    
-    [self.progressBar setHidden:YES];
 }
 
 - (void)updateDeviceStatusFromServer
@@ -424,7 +431,7 @@
 
 - (void)startBlinkingAnimation:(UIView *)view {
     view.alpha = 1.0f;
-    [UIView animateWithDuration:0.5
+    [UIView animateWithDuration:0.6
                           delay:0.0
                         options:UIViewAnimationOptionCurveEaseInOut |
      UIViewAnimationOptionRepeat |
@@ -473,10 +480,6 @@
     }
 }
 
-- (IBAction)onTapOutletButton:(id)sender {
-    [self sendService:RELAY_SERVICE];
-}
-
 - (IBAction)onBtnNightLightTimer:(id)sender {
     NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:NIGHTLED_SERVICE];
     if (alarms && alarms.count>0) {
@@ -512,11 +515,15 @@
     }
 }
 
-- (IBAction)onTapNightlightButton:(id)sender {
+- (void)onTapOutletButton:(UITapGestureRecognizer *)recognizer {
+   [self sendService:RELAY_SERVICE];
+}
+
+- (void)onTapNightlightButton:(UITapGestureRecognizer *)recognizer {
     [self sendService:NIGHTLED_SERVICE];
 }
 
-- (IBAction)onBtnIRTimer:(id)sender {
+- (void)onBtnIRTimer:(UITapGestureRecognizer *)recognizer {
     // TODO: Handle IR timers
 }
 

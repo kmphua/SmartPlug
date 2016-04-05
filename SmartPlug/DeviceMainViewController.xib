@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10116" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
@@ -32,7 +32,6 @@
                 <outlet property="lblNightLight" destination="CI7-QV-zyM" id="BaW-xg-6px"/>
                 <outlet property="lblOutlet" destination="ace-jt-r2V" id="aRY-ze-j6l"/>
                 <outlet property="lblWarning" destination="9cn-CU-zKc" id="oOr-cR-QY1"/>
-                <outlet property="progressBar" destination="Ghq-2y-3dz" id="LC3-4U-Eof"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
                 <outlet property="viewCo" destination="073-sb-3We" id="Wx6-v9-Ax5"/>
                 <outlet property="viewIr" destination="Ab2-TC-9xo" id="gy3-AC-L1E"/>
@@ -86,7 +85,7 @@
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_big_bkgnd_0.png" translatesAutoresizingMaskIntoConstraints="NO" id="3d3-3J-cXq">
                                     <rect key="frame" x="0.0" y="0.0" width="100" height="120"/>
                                 </imageView>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn.png" translatesAutoresizingMaskIntoConstraints="NO" id="uYQ-Rn-8qv">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn2.png" translatesAutoresizingMaskIntoConstraints="NO" id="uYQ-Rn-8qv">
                                     <rect key="frame" x="8" y="8" width="24" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="24" id="UZd-hm-clL"/>
@@ -106,7 +105,7 @@
                                         <constraint firstAttribute="width" constant="32" id="kw1-ch-SK4"/>
                                         <constraint firstAttribute="height" constant="32" id="lzb-EP-xX1"/>
                                     </constraints>
-                                    <state key="normal" title="Button" backgroundImage="btn_timer_delay.png"/>
+                                    <state key="normal" title="Button" backgroundImage="btn_timer_off.png"/>
                                     <connections>
                                         <action selector="onBtnOutletTimer:" destination="-1" eventType="touchUpInside" id="tGu-ly-hRv"/>
                                     </connections>
@@ -390,9 +389,6 @@
                                 <constraint firstAttribute="trailing" secondItem="gZ7-Wq-rvc" secondAttribute="trailing" constant="10" id="yL7-Nc-uYq"/>
                             </constraints>
                         </view>
-                        <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" fixedFrame="YES" hidesWhenStopped="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="Ghq-2y-3dz">
-                            <rect key="frame" x="244" y="20" width="20" height="20"/>
-                        </activityIndicatorView>
                     </subviews>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
@@ -444,7 +440,6 @@
         <image name="btn_big_bkgnd_1.png" width="48" height="48"/>
         <image name="btn_big_bkgnd_2.png" width="48" height="48"/>
         <image name="btn_big_bkgnd_3.png" width="48" height="48"/>
-        <image name="btn_timer_delay.png" width="32" height="32"/>
         <image name="btn_timer_off.png" width="32" height="32"/>
         <image name="btn_warn_close.png" width="36" height="36"/>
         <image name="marker_warn.png" width="24" height="24"/>
