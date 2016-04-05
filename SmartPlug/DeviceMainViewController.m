@@ -195,7 +195,7 @@
     if(_crashTimer) {
         [_crashTimer stopTimer];
     }
-    [self dismissWaitingIndicator];
+    //[self dismissWaitingIndicator];
     [self updateUI:nil];
 }
 
@@ -572,7 +572,7 @@
     //I need to delete all the alarms
     [data getBytes:array length:data.length];
     
-    for (int i = 0; i < data.length ; i++) {
+    for (int i = 0; i < data.length ; i+=12) {
         int serviceId = [Global process_long:array[i] b:array[i+1] c:array[i+2] d:array[i+3]];
         
         if(serviceId != 0) {
