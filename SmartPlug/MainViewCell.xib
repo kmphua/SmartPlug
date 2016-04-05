@@ -68,7 +68,7 @@
                             <constraint firstAttribute="width" constant="36" id="Gaz-02-1In"/>
                             <constraint firstAttribute="height" constant="36" id="Vmi-EM-Cbx"/>
                         </constraints>
-                        <state key="normal" backgroundImage="btn_warn_close.png"/>
+                        <state key="normal" backgroundImage="marker_warn.png"/>
                         <state key="selected" backgroundImage="marker_warn2.png"/>
                         <connections>
                             <action selector="onBtnWarn:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="vrL-BE-geG"/>
@@ -136,9 +136,9 @@
     <resources>
         <image name="btn_power_2.png" width="48" height="48"/>
         <image name="btn_power_pressed_2.png" width="48" height="48"/>
-        <image name="btn_warn_close.png" width="36" height="36"/>
         <image name="main_item_0_a.png" width="150" height="72"/>
         <image name="marker_timer.png" width="24" height="24"/>
+        <image name="marker_warn.png" width="24" height="24"/>
         <image name="marker_warn2.png" width="24" height="24"/>
     </resources>
 </document>

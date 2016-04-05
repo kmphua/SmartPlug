@@ -16,6 +16,7 @@
 #import "UDPCommunication.h"
 #import "UDPListenerService.h"
 #import "mDNSService.h"
+#import "MBProgressHUD.h"
 
 #define STATUS_CHECKER_TIMER_INTERVAL       7
 
@@ -26,6 +27,7 @@
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @property (strong, nonatomic) NSTimer *statusCheckerTimer;
+@property (strong, nonatomic) MBProgressHUD *hud;
 
 @end
 
@@ -72,6 +74,8 @@
                                                          selector:@selector(checkStatus:)
                                                          userInfo:nil
                                                           repeats:YES];
+    
+    [self showWaitingIndicator];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -96,6 +100,17 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)showWaitingIndicator {
+    _hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    _hud.mode = MBProgressHUDModeIndeterminate;
+    _hud.labelText = NSLocalizedString(@"please_wait_done",nil);
+    [_hud show:YES];
+}
+
+- (void)dismissWaitingIndicator {
+    [_hud hide:YES];
 }
 
 - (void)adjustHeightOfTableview
@@ -300,25 +315,32 @@
     [self.navigationController pushViewController:devMainVc animated:YES];
 }
 
+- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
+    return YES;
+}
+
+- (void)tableView:(UITableView *)tableView commitEditingStyle:(UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
+    if (editingStyle == UITableViewCellEditingStyleDelete) {
+        // Remove device
+        JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
+        if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
+            WebService *ws = [WebService new];
+            ws.delegate = self;
+            [ws devDel:g_UserToken lang:[Global getCurrentLang] devId:plug.sid];
+            
+            self.plugs = [[SQLHelper getInstance] getPlugData];
+            [self.tableView reloadData];
+            [self adjustHeightOfTableview];
+        }
+    }
+}
+
 //==================================================================
 #pragma MainViewCellDelegate
 //==================================================================
 - (void)onClickBtnWarn:(id)sender
 {
-    MainViewCell *clickedCell = (MainViewCell*)[[sender superview] superview];
-    NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
-    
-    // Remove device
-    JSmartPlug *plug = [self.plugs objectAtIndex:indexPathCell.row];
-    if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
-        WebService *ws = [WebService new];
-        ws.delegate = self;
-        [ws devDel:g_UserToken lang:[Global getCurrentLang] devId:plug.sid];
-        
-        self.plugs = [[SQLHelper getInstance] getPlugData];
-        [self.tableView reloadData];
-        [self adjustHeightOfTableview];
-    }
+
 }
 
 - (void)onClickBtnTimer:(id)sender
@@ -568,11 +590,14 @@
                 [alertView show];
             }
         }
+        
+        [self dismissWaitingIndicator];
     }
 }
 
 - (void)connectFail:(NSString*)resultName {
     NSLog(@"Connect fail for %@", resultName);
+    [self dismissWaitingIndicator];
 }
 
 @end
