@@ -174,7 +174,7 @@
                                           message:NSLocalizedString(@"msg_removeActionBtn", nil)
                                           preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
         BOOL result = [[SQLHelper getInstance] deleteAlarmData:alarm.alarm_id];
         NSLog(@"Alarm %d deleted = %d", alarm.alarm_id, result);
@@ -184,7 +184,7 @@
     }];
     [alertController addAction:ok];
     
-    UIAlertAction* cancel = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:nil];
     [alertController addAction:cancel];
 
     [self presentViewController:alertController animated:YES completion:nil];

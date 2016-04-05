@@ -190,7 +190,7 @@
         
         [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceIp send:1];
         
-        [self.navigationController popViewControllerAnimated:YES];
+        //[self.navigationController popViewControllerAnimated:YES];
     });
 }
 

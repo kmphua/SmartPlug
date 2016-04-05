@@ -317,7 +317,9 @@ static UDPCommunication *instance;
     BOOL result = true;
     NSString *ip = g_DeviceIp;
     BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
+    [NSThread sleepForTimeInterval:0.5];
     BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_UDP];
+    [NSThread sleepForTimeInterval:0.5];
     BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_UDP];
     
     if (headerOK && timerOK && termiOK) {

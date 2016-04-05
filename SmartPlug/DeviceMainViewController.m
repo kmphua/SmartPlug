@@ -506,7 +506,7 @@
                                               alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
                                               message:NSLocalizedString(@"add_timer", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:@"Yes" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             
             ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
             scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
@@ -518,7 +518,7 @@
             
         }];
         [alertController addAction:actionYes];
-        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:@"No" style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         }];
         [alertController addAction:actionNo];
         [self presentViewController:alertController animated:YES completion:nil];
@@ -770,7 +770,7 @@
             if (result == 0) {
                 // Success
                 NSLog(@"Get alarm success");
-                [self handleUpdateAlarm:data];
+                //[self handleUpdateAlarm:data];
             } else {
                 // Failure
                 NSLog(@"Get alarm failed");
