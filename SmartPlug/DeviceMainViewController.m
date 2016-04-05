@@ -572,7 +572,7 @@
     //I need to delete all the alarms
     [data getBytes:array length:data.length];
     
-    for (int i = 0; i < data.length -12 ; i+=12) {
+    for (int i = 0; i < data.length ; i++) {
         int serviceId = [Global process_long:array[i] b:array[i+1] c:array[i+2] d:array[i+3]];
         
         if(serviceId != 0) {

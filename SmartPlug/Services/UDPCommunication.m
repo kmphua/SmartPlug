@@ -386,10 +386,10 @@ static UDPCommunication *instance;
     
     int time = (int)[[NSDate date] timeIntervalSince1970];
     if (protocol == PROTOCOL_HTTP) {
-        timerHeader[17] = (uint8_t) (time & 0xff);
-        timerHeader[16] = (uint8_t) ((time >> 8) & 0xff);
-        timerHeader[15] = (uint8_t) ((time >> 16) & 0xff);
-        timerHeader[14] = (uint8_t) ((time >> 24) & 0xff);
+        timerHeader[14] = (uint8_t) (time & 0xff);
+        timerHeader[15] = (uint8_t) ((time >> 8) & 0xff);
+        timerHeader[16] = (uint8_t) ((time >> 16) & 0xff);
+        timerHeader[17] = (uint8_t) ((time >> 24) & 0xff);
     }
     if (protocol == PROTOCOL_UDP) {
         timerHeader[14] = (uint8_t) (time & 0xff);
@@ -430,44 +430,46 @@ static UDPCommunication *instance;
     if (alarms && alarms.count>0) {
         for (Alarm *alarm in alarms) {
             int serviceId = alarm.service_id;
-            if(protocol == PROTOCOL_HTTP){
-                timer[17] = (uint8_t) (serviceId & 0xff);
-                timer[16] = (uint8_t) ((serviceId >> 8) & 0xff);
-                timer[15] = (uint8_t) ((serviceId >> 16) & 0xff);
-                timer[14] = (uint8_t) ((serviceId >> 24) & 0xff);
-                timer[18] = 0x01;
-                timer[19] = 0x01;
-                timer[20] = 0x00;
-                int dow = alarm.dow;
-                timer[21] = (uint8_t) (dow & 0xff);
-                int initHour = alarm.initial_hour;
-                timer[22] = (uint8_t) (initHour & 0xff);
-                int initMin = alarm.initial_minute;
-                timer[23] = (uint8_t) (initMin & 0xff);
-                int endHour = alarm.end_hour;
-                timer[24] = (uint8_t) (endHour & 0xff);
-                int endMinu = alarm.end_minute;
-                timer[25] = (uint8_t) (endMinu & 0xff);
-            }
-            
-            if(protocol == PROTOCOL_UDP) {
-                timer[17] = (uint8_t) (serviceId & 0xff);
-                timer[16] = (uint8_t) ((serviceId >> 8) & 0xff);
-                timer[15] = (uint8_t) ((serviceId >> 16) & 0xff);
-                timer[14] = (uint8_t) ((serviceId >> 24) & 0xff);
-                timer[18] = 0x01;
-                timer[19] = 0x01;
-                timer[20] = 0x00;
-                int dow = alarm.dow;
-                timer[21] = (uint8_t) (dow & 0xff);
-                int initHour = alarm.initial_hour;
-                timer[22] = (uint8_t) (initHour & 0xff);
-                int initMin = alarm.initial_minute;
-                timer[23] = (uint8_t) (initMin & 0xff);
-                int endHour = alarm.end_hour;
-                timer[24] = (uint8_t) (endHour & 0xff);
-                int endMinu = alarm.end_minute;
-                timer[25] = (uint8_t) (endMinu & 0xff);
+            if (serviceId == RELAY_SERVICE || serviceId == NIGHTLED_SERVICE) {
+                if(protocol == PROTOCOL_HTTP){
+                    timer[17] = (uint8_t) (serviceId & 0xff);
+                    timer[16] = (uint8_t) ((serviceId >> 8) & 0xff);
+                    timer[15] = (uint8_t) ((serviceId >> 16) & 0xff);
+                    timer[14] = (uint8_t) ((serviceId >> 24) & 0xff);
+                    timer[18] = 0x01;
+                    timer[19] = 0x01;
+                    timer[20] = 0x00;
+                    int dow = alarm.dow;
+                    timer[21] = (uint8_t) (dow & 0xff);
+                    int initHour = alarm.initial_hour;
+                    timer[22] = (uint8_t) (initHour & 0xff);
+                    int initMin = alarm.initial_minute;
+                    timer[23] = (uint8_t) (initMin & 0xff);
+                    int endHour = alarm.end_hour;
+                    timer[24] = (uint8_t) (endHour & 0xff);
+                    int endMinu = alarm.end_minute;
+                    timer[25] = (uint8_t) (endMinu & 0xff);
+                }
+                
+                if(protocol == PROTOCOL_UDP) {
+                    timer[17] = (uint8_t) (serviceId & 0xff);
+                    timer[16] = (uint8_t) ((serviceId >> 8) & 0xff);
+                    timer[15] = (uint8_t) ((serviceId >> 16) & 0xff);
+                    timer[14] = (uint8_t) ((serviceId >> 24) & 0xff);
+                    timer[18] = 0x01;
+                    timer[19] = 0x01;
+                    timer[20] = 0x00;
+                    int dow = alarm.dow;
+                    timer[21] = (uint8_t) (dow & 0xff);
+                    int initHour = alarm.initial_hour;
+                    timer[22] = (uint8_t) (initHour & 0xff);
+                    int initMin = alarm.initial_minute;
+                    timer[23] = (uint8_t) (initMin & 0xff);
+                    int endHour = alarm.end_hour;
+                    timer[24] = (uint8_t) (endHour & 0xff);
+                    int endMinu = alarm.end_minute;
+                    timer[25] = (uint8_t) (endMinu & 0xff);
+                }
             }
             
             NSData *data = [NSData dataWithBytes:timer length:sizeof(timer)];

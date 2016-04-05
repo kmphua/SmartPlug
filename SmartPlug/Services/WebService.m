@@ -177,6 +177,8 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&send=%d", userToken, lang, devId, send];
     self.resultName = WS_DEV_CTRL;
+    
+    NSLog(@"Send devctrl: %@", [Global hexStringFromData:data]);    
     [self postDataWithBody:apiUrl params:params body:data];
 }
 
