@@ -11,6 +11,7 @@
 #import "ScheduleMainViewCell.h"
 #import "SPAlertView.h"
 #import "Alarm.h"
+#import "UDPCommunication.h"
 
 @interface ScheduleMainViewController () <UITableViewDataSource, UITableViewDelegate, ScheduleMainViewCellDelegate, ScheduleActionViewDelegate>
 
@@ -39,11 +40,56 @@
     
     self.alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_devId serviceId:_serviceId];
     [self.tableView reloadData];
+    
+    // Register notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(alarmListChanged:) name:NOTIFICATION_ALARM_LIST_CHANGED object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timersSentSuccess:) name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Deregister notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_ALARM_LIST_CHANGED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)alarmListChanged:(NSNotification *)notification {
+    self.alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_devId serviceId:_serviceId];
+    [self.tableView reloadData];
+    
+    [self.view makeToast:NSLocalizedString(@"please_wait", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
+    
+    // This is sending both UDP and HTTP to server
+    [[UDPCommunication getInstance] setDeviceTimersUDP:g_DeviceMac];
+    
+    //if(UDPListenerService.code == 0){
+      //  udpconnection = true;
+    //} else {
+      //  udpconnection = false;
+    //}
+
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
+        
+        [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceMac send:1];
+        
+    });
+}
+
+- (void)timersSentSuccess:(NSNotification *)notification {
+    //udpconnection = true;
+    [self.view makeToast:NSLocalizedString(@"alarms_sent_success", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
 }
 
 - (void)onRightBarButton:(id)sender {
@@ -181,6 +227,9 @@
         NSLog(@"Alarm %d deleted = %d", alarm.alarm_id, result);
         
         self.alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_devId serviceId:_serviceId];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_ALARM_LIST_CHANGED object:nil];
+        
         [self.tableView reloadData];
     }];
     [alertController addAction:ok];

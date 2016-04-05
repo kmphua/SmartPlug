@@ -268,7 +268,7 @@
     if ([[SQLHelper getInstance] getAlarmDataById:plug.dbid]) {
         [cell.btnTimer setHidden:NO];
         if (plug.snooze > 0) {
-            [cell.btnTimer setImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+            [cell.btnTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
         }
     } else {
         [cell.btnTimer setHidden:YES];
@@ -281,9 +281,9 @@
     }
     
     if (plug.relay == 0) {
-        [cell.btnPower setImage:[UIImage imageNamed:@"btn_power"] forState:UIControlStateNormal];
+        [cell.btnPower setBackgroundImage:[UIImage imageNamed:@"btn_power"] forState:UIControlStateNormal];
     } else {
-        [cell.btnPower setImage:[UIImage imageNamed:@"btn_power_pressed"] forState:UIControlStateNormal];
+        [cell.btnPower setBackgroundImage:[UIImage imageNamed:@"btn_power_pressed"] forState:UIControlStateNormal];
     }
     
     // Modify cell background according to row position

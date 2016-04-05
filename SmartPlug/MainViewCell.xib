@@ -26,7 +26,7 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Acf-zL-d1a">
-                        <rect key="frame" x="55" y="24" width="116" height="24"/>
+                        <rect key="frame" x="55" y="24" width="128" height="24"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="42" id="ouh-B2-qS1"/>
                         </constraints>
@@ -51,6 +51,18 @@
                             <action selector="onBtnPower:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="h9F-E0-z1Q"/>
                         </connections>
                     </button>
+                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QCC-dN-Xq7">
+                        <rect key="frame" x="193" y="24" width="24" height="24"/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="24" id="Gaz-02-1In"/>
+                            <constraint firstAttribute="height" constant="24" id="Vmi-EM-Cbx"/>
+                        </constraints>
+                        <state key="normal" backgroundImage="marker_warn.png"/>
+                        <state key="selected" backgroundImage="marker_warn2.png"/>
+                        <connections>
+                            <action selector="onBtnWarn:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="vrL-BE-geG"/>
+                        </connections>
+                    </button>
                     <button hidden="YES" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UTM-on-jjN">
                         <rect key="frame" x="225" y="24" width="24" height="24"/>
                         <constraints>
@@ -60,18 +72,6 @@
                         <state key="normal" backgroundImage="marker_timer.png"/>
                         <connections>
                             <action selector="onBtnTimer:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="jHL-bC-h9X"/>
-                        </connections>
-                    </button>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="QCC-dN-Xq7">
-                        <rect key="frame" x="181" y="18" width="36" height="36"/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="36" id="Gaz-02-1In"/>
-                            <constraint firstAttribute="height" constant="36" id="Vmi-EM-Cbx"/>
-                        </constraints>
-                        <state key="normal" backgroundImage="marker_warn.png"/>
-                        <state key="selected" backgroundImage="marker_warn2.png"/>
-                        <connections>
-                            <action selector="onBtnWarn:" destination="KGk-i7-Jjw" eventType="touchUpInside" id="vrL-BE-geG"/>
                         </connections>
                     </button>
                 </subviews>

@@ -72,6 +72,7 @@
 #define NOTIFICATION_TIMERS_SENT_SUCCESS        @"timers_sent_successfully"
 #define NOTIFICATION_HTTP_DEVICE_STATUS         @"http_device_status"
 #define NOTIFICATION_TIMER_CRASH_REACHED        @"timer_crash_reached"
+#define NOTIFICATION_ALARM_LIST_CHANGED         @"alarm_list_changed"
 
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,
