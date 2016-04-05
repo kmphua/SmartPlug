@@ -210,7 +210,7 @@ static UDPCommunication *instance;
     for (int i = 0; i < 14; i++){
         iMsg[i] = hMsg[i];
     }
-    int service_id = 0x1D000003;
+    int service_id = 0xD1000003;
     iMsg[14] = (uint8_t)(service_id & 0xff);
     iMsg[15] = (uint8_t)((service_id >> 8) & 0xff);
     iMsg[16] = (uint8_t)((service_id >> 16) & 0xff);

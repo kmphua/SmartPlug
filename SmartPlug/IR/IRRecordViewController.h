@@ -10,8 +10,8 @@
 
 @interface IRRecordViewController : BaseViewController
 
-@property (nonatomic, assign) NSString *name;
 @property (nonatomic, assign) int groupId;
-@property (nonatomic, assign) NSString *icon;
+@property (nonatomic, strong) NSString *name;
+@property (nonatomic, strong) NSString *icon;
 
 @end
