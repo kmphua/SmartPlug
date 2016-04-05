@@ -11,6 +11,7 @@
 @interface ScheduleMainViewController : BaseViewController
 
 @property (nonatomic, assign) NSString *devId;
+@property (nonatomic, assign) NSString *devName;
 @property (nonatomic, assign) int serviceId;
 @property (nonatomic, assign) int alarmId;
 

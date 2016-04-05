@@ -737,7 +737,7 @@ static SQLHelper *instance;
 - (BOOL)removeAlarms:(NSString *)mac
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM alarms WHERE sid = ?", mac];
+    BOOL result = [db executeUpdate:@"DELETE FROM alarms WHERE device_id = ?", mac];
     [db close];
     return result;
 }

@@ -66,6 +66,8 @@
 
 @property (strong, nonatomic) MBProgressHUD *hud;
 
+@property (strong, nonatomic) NSMutableArray *alarms;
+
 @end
 
 @implementation DeviceMainViewController
@@ -78,6 +80,7 @@
     
     _udpConnection = NO;
     _crashTimer = [CrashCountDown getInstance];
+    _alarms = [NSMutableArray new];
     
     // See current device info
     g_DeviceName = _device.name;
@@ -97,6 +100,7 @@
     } else {
         self.lblDeviceName.text = self.device.name;
         self.title = self.device.name;
+        self.device.givenName = self.device.name;
     }
     
     self.lblOutlet.text = NSLocalizedString(@"btn_outlet", nil);
@@ -139,6 +143,9 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePushNotification:) name:NOTIFICATION_PUSH object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
+    
+    // Update alarms from server
+    [self updateAlarms];
     
     // Start status checker timer
     _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
@@ -324,10 +331,6 @@
     
     [_viewNightLight setUserInteractionEnabled:YES];
     [_viewOutlet setUserInteractionEnabled:YES];
-    //[_imgRightWarning setHidden:YES];
-    //[_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
-    //[_lblWarning setHidden:YES];
-    //[_imgLeftWarning setHidden:YES];
     
     [self dismissWaitingIndicator];
 }
@@ -352,10 +355,10 @@
         }
     }
     
-    [_imgLeftWarning setHidden:NO];
-    [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
-    [_lblWarning setHidden:NO];
-    [_imgRightWarning setHidden:NO];
+    //[_imgLeftWarning setHidden:NO];
+    //[_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
+    //[_lblWarning setHidden:NO];
+    //[_imgRightWarning setHidden:NO];
 
     [_viewOutlet setUserInteractionEnabled:NO];
     [_viewNightLight setUserInteractionEnabled:NO];
@@ -473,6 +476,7 @@
             scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
             scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             scheduleActionVC.deviceId = _device.sid;
+            scheduleActionVC.deviceName = _device.givenName;
             scheduleActionVC.serviceId = RELAY_SERVICE;
             [self.navigationController pushViewController:scheduleActionVC animated:YES];
             
@@ -508,6 +512,7 @@
             scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
             scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
             scheduleActionVC.deviceId = _device.sid;
+            scheduleActionVC.deviceName = _device.givenName;
             scheduleActionVC.serviceId = NIGHTLED_SERVICE;
             [self.navigationController pushViewController:scheduleActionVC animated:YES];
             
@@ -554,6 +559,56 @@
     [self updateUI:nil];
 }
 
+- (void)updateAlarms {
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws alarmGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac];
+    [_alarms removeAllObjects];
+}
+
+- (void)handleUpdateAlarm:(NSData *)data {
+    uint8_t array[128];
+    memset(array, 0, 128);
+    //I need to delete all the alarms
+    [data getBytes:array length:data.length];
+    
+    for (int i = 0; i < data.length -12 ; i+=12) {
+        int serviceId = [Global process_long:array[i] b:array[i+1] c:array[i+2] d:array[i+3]];
+        
+        if(serviceId != 0) {
+            Alarm *a = [Alarm new];
+            a.device_id = g_DeviceMac;
+            if(serviceId == RELAY_SERVICE) {
+                a.service_id = RELAY_SERVICE;
+            } else if(serviceId == NIGHTLED_SERVICE){
+                a.service_id = NIGHTLED_SERVICE;
+            }
+            
+            NSLog(@"SERVICE FROM SERVER: %d", a.service_id);
+            
+            a.dow = array[i + 7];
+            a.initial_hour = array[i + 8];
+            a.initial_minute = array[i + 9];
+            a.end_hour = array[i + 10];
+            a.end_minute = array[i + 11];
+            NSLog(@"ALARM GET CONTROL - Service Id: %d, DOW: %d, Init Hour: %d, Init Minute: %d, End Hour: %d, End Minute: %d", a.service_id, a.dow, a.initial_hour, a.initial_minute, a.end_hour, a.end_minute);
+            [_alarms addObject:a];
+        }
+    }
+    
+    if (_alarms.count > 0) {
+        [[SQLHelper getInstance] removeAlarms:g_DeviceMac];
+        for(int i = 0; i < _alarms.count; i++){
+            Alarm *a = [_alarms objectAtIndex:i];
+            if ([[SQLHelper getInstance] insertAlarm:a]) {
+                NSLog(@"ALARM INSERTED");
+            } else {
+                NSLog(@"ALARM INSERTION FAILURE");
+            }
+        }
+    }
+}
+
 //==================================================================
 #pragma mark - SetSnoozeTimerDelegate
 //==================================================================
@@ -561,6 +616,7 @@
 {
     ScheduleActionViewController *scheduleVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
     scheduleVC.deviceId = _device.sid;
+    scheduleVC.deviceName = _device.givenName;
     scheduleVC.serviceId = serviceId;
     scheduleVC.alarmId = alarmId;
     [self.navigationController pushViewController:scheduleVC animated:YES];
@@ -570,6 +626,7 @@
 {
     ScheduleMainViewController *scheduleVC = [[ScheduleMainViewController alloc] initWithNibName:@"ScheduleMainViewController" bundle:nil];
     scheduleVC.devId = _device.sid;
+    scheduleVC.devName = _device.givenName;
     scheduleVC.serviceId = serviceId;
     scheduleVC.alarmId = alarmId;
     [self.navigationController pushViewController:scheduleVC animated:YES];
@@ -622,6 +679,11 @@
 - (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
+
+    // TODO: Remove when alarmget is fixed
+    if ([dataString isEqualToString:@"Alarm Not Exist"]) {
+        [[SQLHelper getInstance] removeAlarms:g_DeviceMac];
+    }
     
     NSError *error = nil;
     id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
@@ -702,6 +764,16 @@
             } else {
                 // Failure
                 NSLog(@"Set device status failed");
+            }
+        } else if ([resultName isEqualToString:WS_ALARM_GET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"Get alarm success");
+                [self handleUpdateAlarm:data];
+            } else {
+                // Failure
+                NSLog(@"Get alarm failed");
             }
         }
     }

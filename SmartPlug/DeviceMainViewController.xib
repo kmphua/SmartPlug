@@ -356,21 +356,21 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vYG-cf-QVu">
                             <rect key="frame" x="0.0" y="428" width="272" height="40"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn2.png" translatesAutoresizingMaskIntoConstraints="NO" id="P96-7L-qnq">
+                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn2.png" translatesAutoresizingMaskIntoConstraints="NO" id="P96-7L-qnq">
                                     <rect key="frame" x="10" y="8" width="24" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="24" id="UFS-my-K90"/>
                                         <constraint firstAttribute="width" constant="24" id="tiG-a9-T8B"/>
                                     </constraints>
                                 </imageView>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_warn_close.png" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-Wq-rvc">
+                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_warn_close.png" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-Wq-rvc">
                                     <rect key="frame" x="238" y="8" width="24" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="24" id="Ngv-9f-x0j"/>
                                         <constraint firstAttribute="height" constant="24" id="zJ8-sm-A1r"/>
                                     </constraints>
                                 </imageView>
-                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cn-CU-zKc">
+                                <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cn-CU-zKc">
                                     <rect key="frame" x="39" y="8" width="194" height="0.0"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>

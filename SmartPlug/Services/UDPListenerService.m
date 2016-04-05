@@ -277,14 +277,14 @@ static UDPListenerService *instance;
 {
     code = 1;
     /**********************************************/
-    int header = abs([self process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
+    int header = abs([Global process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
     
     if (header != 1397576276) {
         process_data = true;
     }
     //NSLog(@"HEADER: %d", header);
     /**********************************************/
-    int msgid = abs([self process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
+    int msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
     if (msgid != previous_msgid){
         previous_msgid = msgid;
         process_data = true;
@@ -293,13 +293,13 @@ static UDPListenerService *instance;
     }
     //NSLog(@"MSGID: %d", msgid);
     /**********************************************/
-    int seq = abs([self process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
+    int seq = abs([Global process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
     //NSLog(@"SEQ: %d", seq);
     /**********************************************/
-    int size = [self process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
+    int size = [Global process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
     //NSLog(@"SIZE: %d", size);
     /**********************************************/
-    code = [self process_short:lMsg[16] b:lMsg[17]];
+    code = [Global process_short:lMsg[16] b:lMsg[17]];
     //NSLog(@"CODE: %d", code);
 }
 
@@ -320,11 +320,11 @@ static UDPListenerService *instance;
     _js.model = model;
     NSLog(@"MODEL: %@", model);
     /**********************************************/
-    int buildno = [self process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
+    int buildno = [Global process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
     _js.buildno = buildno;
     NSLog(@"BUILD NO: %d", buildno);
     /**********************************************/
-    int prot_ver = [self process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
+    int prot_ver = [Global process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
     _js.prot_ver = prot_ver;
     NSLog(@"PROTOCOL VER: %d", prot_ver);
     /**********************************************/
@@ -342,11 +342,11 @@ static UDPListenerService *instance;
     _js.fw_ver = fw_ver;
     NSLog(@"FIRMWARE VERSION: %@", fw_ver);
     /**********************************************/
-    int fw_date = [self process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
+    int fw_date = [Global process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
     _js.fw_date = fw_date;
     NSLog(@"FIRMWARE DATE: %d", fw_date);
     /**********************************************/
-    int flag = [self process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
+    int flag = [Global process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
     _js.flag = flag;
     NSLog(@"FLAG: %d", flag);
     
@@ -361,7 +361,7 @@ static UDPListenerService *instance;
     [self get_nightlight_status];
     [self get_co_status];
     /**************TERMINATOR**************/
-    int terminator = [self process_long:lMsg[48] b:lMsg[49] c:lMsg[50] d:lMsg[51]];
+    int terminator = [Global process_long:lMsg[48] b:lMsg[49] c:lMsg[50] d:lMsg[51]];
     NSLog(@"TERMINATOR: %d", terminator);
 }
 
@@ -370,10 +370,10 @@ static UDPListenerService *instance;
 //==================================================================
 - (void)get_relay_status
 {
-    int service_id = [self process_long:lMsg[18] b:lMsg[19] c:lMsg[20] d:lMsg[21]];
+    int service_id = [Global process_long:lMsg[18] b:lMsg[19] c:lMsg[20] d:lMsg[21]];
     if (service_id == RELAY_SERVICE) {
         NSLog(@"IS OUTLET SERVICE");
-        int flag = [self process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
+        int flag = [Global process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
         if(flag == 0x00000010){
             _js.hall_sensor = 1;
             NSLog(@"Relay warning");
@@ -399,10 +399,10 @@ static UDPListenerService *instance;
 
 - (void)get_nightlight_status
 {
-    int service_id = [self process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
+    int service_id = [Global process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
     if(service_id == NIGHTLED_SERVICE) {
         NSLog(@"NIGHT LIGHT SERVICE");
-        int flag = [self process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
         uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
@@ -419,10 +419,10 @@ static UDPListenerService *instance;
 
 - (void)get_co_status
 {
-    int service_id = [self process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
+    int service_id = [Global process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
     int costatus = 0;
     if (service_id == CO_SERVICE) {
-        int flag = [self process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
+        int flag = [Global process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
         if(flag == 0x00000010){
             NSLog(@"CO SENSOR WARNING");
             costatus = 1;
@@ -440,30 +440,6 @@ static UDPListenerService *instance;
         uint8_t datatype = lMsg[46];
         uint8_t data = lMsg[47];
     }
-}
-
-- (int)process_long:(uint8_t)a b:(uint8_t)b c:(uint8_t)c d:(uint8_t)d
-{
-    NSMutableData *buffer = [NSMutableData dataWithCapacity:4];
-    [buffer appendBytes:&d length:1];
-    [buffer appendBytes:&c length:1];
-    [buffer appendBytes:&b length:1];
-    [buffer appendBytes:&a length:1];
-    
-    int result;
-    [buffer getBytes:&result length:sizeof(result)];
-    return result;
-}
-
-- (short)process_short:(uint8_t)a b:(uint8_t)b
-{
-    NSMutableData *buffer = [NSMutableData dataWithCapacity:2];
-    [buffer appendBytes:&b length:1];
-    [buffer appendBytes:&a length:1];
-    
-    short result;
-    [buffer getBytes:&result length:sizeof(result)];
-    return result;
 }
 
 - (void)generate_header

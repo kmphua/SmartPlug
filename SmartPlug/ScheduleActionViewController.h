@@ -13,5 +13,6 @@
 @property (nonatomic, assign) NSString *deviceId;
 @property (nonatomic) int serviceId;
 @property (nonatomic) int alarmId;
+@property (nonatomic, assign) NSString *deviceName;
 
 @end

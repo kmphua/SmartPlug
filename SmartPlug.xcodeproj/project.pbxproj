@@ -314,6 +314,7 @@
 		75A02F5F1C99C29A007B461B /* IREditModeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75A02F5D1C99C29A007B461B /* IREditModeViewController.xib */; };
 		75A02F631C99C47B007B461B /* IREditItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A02F611C99C47B007B461B /* IREditItemViewController.m */; };
 		75A02F641C99C47B007B461B /* IREditItemViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75A02F621C99C47B007B461B /* IREditItemViewController.xib */; };
+		75B5B3D21CB3A11E00295C64 /* lamp.png in Resources */ = {isa = PBXBuildFile; fileRef = 75B5B3D11CB3A11E00295C64 /* lamp.png */; };
 		75C4CD861C731DA600E8C629 /* Alarm.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD831C731DA600E8C629 /* Alarm.m */; };
 		75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD891C731EDC00E8C629 /* BroadcastReply.m */; };
 		75C9A95C1C4469B900AE72E2 /* SetTimerSnoozeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C9A9571C4469B900AE72E2 /* SetTimerSnoozeViewController.m */; };
@@ -715,6 +716,7 @@
 		75A02F601C99C47B007B461B /* IREditItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IREditItemViewController.h; sourceTree = "<group>"; };
 		75A02F611C99C47B007B461B /* IREditItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IREditItemViewController.m; sourceTree = "<group>"; };
 		75A02F621C99C47B007B461B /* IREditItemViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IREditItemViewController.xib; sourceTree = "<group>"; };
+		75B5B3D11CB3A11E00295C64 /* lamp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lamp.png; sourceTree = "<group>"; };
 		75C4CD821C731DA600E8C629 /* Alarm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alarm.h; sourceTree = "<group>"; };
 		75C4CD831C731DA600E8C629 /* Alarm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alarm.m; sourceTree = "<group>"; };
 		75C4CD881C731EDC00E8C629 /* BroadcastReply.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BroadcastReply.h; sourceTree = "<group>"; };
@@ -1211,6 +1213,7 @@
 				756679D11C1F864B001B30B2 /* ir_detect@2x.png */,
 				756679D21C1F864B001B30B2 /* ir_record@1x.png */,
 				756679D31C1F864B001B30B2 /* ir_record@2x.png */,
+				75B5B3D11CB3A11E00295C64 /* lamp.png */,
 				756679D41C1F864B001B30B2 /* logo@1x.png */,
 				756679D51C1F864B001B30B2 /* logo@2x.png */,
 				756679D61C1F864B001B30B2 /* main_item_0_a@1x.png */,
@@ -1598,6 +1601,7 @@
 				755F34271C993A25003D162C /* help_6@2x.png in Resources */,
 				75667A7E1C1F864C001B30B2 /* btn_dow_bkgnd_pressed@2x.png in Resources */,
 				7508AA431C32195100EB88D1 /* InitDevicesViewController.xib in Resources */,
+				75B5B3D21CB3A11E00295C64 /* lamp.png in Resources */,
 				755F34191C993A25003D162C /* help_2_en@2x.png in Resources */,
 				75E926821C2106EF004C476C /* Localizable.strings in Resources */,
 				75667AAC1C1F864C001B30B2 /* ic_menu_settings@2x.png in Resources */,

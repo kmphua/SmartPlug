@@ -146,4 +146,29 @@
     return ipAddress;
 }
 
++ (int)process_long:(uint8_t)a b:(uint8_t)b c:(uint8_t)c d:(uint8_t)d
+{
+    NSMutableData *buffer = [NSMutableData dataWithCapacity:4];
+    [buffer appendBytes:&d length:1];
+    [buffer appendBytes:&c length:1];
+    [buffer appendBytes:&b length:1];
+    [buffer appendBytes:&a length:1];
+    
+    int result;
+    [buffer getBytes:&result length:sizeof(result)];
+    return result;
+}
+
++ (short)process_short:(uint8_t)a b:(uint8_t)b
+{
+    NSMutableData *buffer = [NSMutableData dataWithCapacity:2];
+    [buffer appendBytes:&b length:1];
+    [buffer appendBytes:&a length:1];
+    
+    short result;
+    [buffer getBytes:&result length:sizeof(result)];
+    return result;
+}
+
+
 @end

@@ -49,6 +49,7 @@
 - (void)onRightBarButton:(id)sender {
     ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
     scheduleActionVC.deviceId = _devId;
+    scheduleActionVC.deviceName = _devName;
     scheduleActionVC.serviceId = RELAY_SERVICE;
     [self.navigationController pushViewController:scheduleActionVC animated:YES];
 }
@@ -158,6 +159,7 @@
 {
     ScheduleActionViewController *scheduleActionVc = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
     scheduleActionVc.deviceId = self.devId;
+    scheduleActionVc.deviceName = self.devName;
     scheduleActionVc.serviceId = self.serviceId;
     
     Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];

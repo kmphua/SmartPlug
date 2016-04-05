@@ -54,6 +54,7 @@
     self.lblTimeEachDay.text = NSLocalizedString(@"msg_timeEachDay", nil);
     self.lblAction.text = NSLocalizedString(@"msg_action", nil);
     [self.btnSelectAction setTitle:NSLocalizedString(@"btn_select", nil) forState:UIControlStateNormal];
+    self.lblDeviceName.text = _deviceName;
     
     // Init segemented control
     self.segCtrlDaysOfWeek.delegate = self;
@@ -73,9 +74,9 @@
     [super viewWillAppear:animated];
     
     if(_serviceId == RELAY_SERVICE) {
-        [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_0_big"]];
+        [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_0_small"]];
     } else if(_serviceId == NIGHTLED_SERVICE){
-        [_imgDeviceAction setImage:[UIImage imageNamed:@"svc_1_big"]];
+        [_imgDeviceAction setImage:[UIImage imageNamed:@"lamp"]];
     }
     
     // Init action

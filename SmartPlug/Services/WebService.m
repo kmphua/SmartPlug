@@ -240,6 +240,14 @@
  * Timer methods
  *========================================================================*/
 
+- (void)alarmGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ALARM_GET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    self.resultName = WS_ALARM_GET;
+    [self postData:apiUrl params:params];
+}
+
 - (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];

@@ -26,6 +26,8 @@
 #define WS_DEV_LOG                  @"devlog"
 #define WS_DEV_DEL                  @"devdel"
 
+#define WS_ALARM_GET                @"alarmget"
+
 #define WS_GALLERY_LIST             @"gallery"
 
 #define WS_NEW_DEV                  @"newdev"
@@ -73,6 +75,7 @@
 - (void)devDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 
 // Timer methods
+- (void)alarmGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 - (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data;
 
 // IR methods
