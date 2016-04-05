@@ -16,7 +16,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/IR/IREditItemViewController.m"
@@ -32,16 +32,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/Services/UDPCommunication.m"
-            timestampString = "481537968.284407"
+            timestampString = "481541691.99805"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "300"
-            endingLineNumber = "300"
-            landmarkName = "-setDeviceTimersHTTP:send:"
+            startingLineNumber = "732"
+            endingLineNumber = "732"
+            landmarkName = "-didReceiveData:resultName:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -52,28 +52,12 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/Services/UDPCommunication.m"
-            timestampString = "481539035.254213"
+            timestampString = "481542285.906064"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "732"
-            endingLineNumber = "732"
-            landmarkName = "-didReceiveData:resultName:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartPlug/Services/UDPCommunication.m"
-            timestampString = "481539031.484774"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "732"
-            endingLineNumber = "732"
-            landmarkName = "-didReceiveData:resultName:"
+            startingLineNumber = "300"
+            endingLineNumber = "300"
+            landmarkName = "-setDeviceTimersHTTP:send:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

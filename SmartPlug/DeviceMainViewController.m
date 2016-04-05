@@ -680,11 +680,6 @@
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
 
-    // TODO: Remove when alarmget is fixed
-    if ([dataString isEqualToString:@"Alarm Not Exist"]) {
-        [[SQLHelper getInstance] removeAlarms:g_DeviceMac];
-    }
-    
     NSError *error = nil;
     id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
     
@@ -766,14 +761,12 @@
                 NSLog(@"Set device status failed");
             }
         } else if ([resultName isEqualToString:WS_ALARM_GET]) {
-            long result = [[jsonObject objectForKey:@"r"] longValue];
-            if (result == 0) {
+            if ([dataString isEqualToString:@"Alarm Not Exist"]) {
+                [[SQLHelper getInstance] removeAlarms:g_DeviceMac];
+            } else {
                 // Success
                 NSLog(@"Get alarm success");
-                //[self handleUpdateAlarm:data];
-            } else {
-                // Failure
-                NSLog(@"Get alarm failed");
+                [self handleUpdateAlarm:data];
             }
         }
     }

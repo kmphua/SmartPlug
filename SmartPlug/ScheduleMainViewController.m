@@ -12,7 +12,7 @@
 #import "SPAlertView.h"
 #import "Alarm.h"
 
-@interface ScheduleMainViewController () <UITableViewDataSource, UITableViewDelegate, ScheduleMainViewCellDelegate>
+@interface ScheduleMainViewController () <UITableViewDataSource, UITableViewDelegate, ScheduleMainViewCellDelegate, ScheduleActionViewDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *alarms;
@@ -51,6 +51,7 @@
     scheduleActionVC.deviceId = _devId;
     scheduleActionVC.deviceName = _devName;
     scheduleActionVC.serviceId = RELAY_SERVICE;
+    scheduleActionVC.delegate = self;
     [self.navigationController pushViewController:scheduleActionVC animated:YES];
 }
 
@@ -188,6 +189,13 @@
     [alertController addAction:cancel];
 
     [self presentViewController:alertController animated:YES completion:nil];
+}
+
+//==================================================================
+#pragma ScheduleActionViewDelegate
+//==================================================================
+- (void)didUpdateAlarms {
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //==================================================================

@@ -8,11 +8,19 @@
 
 #import "BaseViewController.h"
 
+@protocol ScheduleActionViewDelegate <NSObject>
+
+- (void)didUpdateAlarms;
+
+@end
+
 @interface ScheduleActionViewController : BaseViewController
 
 @property (nonatomic, assign) NSString *deviceId;
 @property (nonatomic) int serviceId;
 @property (nonatomic) int alarmId;
 @property (nonatomic, assign) NSString *deviceName;
+
+@property (nonatomic, assign) id<ScheduleActionViewDelegate> delegate;
 
 @end

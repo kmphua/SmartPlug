@@ -188,9 +188,10 @@
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         
-        [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceIp send:1];
-        
-        //[self.navigationController popViewControllerAnimated:YES];
+        [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceMac send:1];
+        [self.navigationController popViewControllerAnimated:YES];
+        [self.delegate didUpdateAlarms];
+
     });
 }
 
