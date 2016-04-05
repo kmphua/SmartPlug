@@ -144,9 +144,6 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
     
-    // Update alarms from server
-    [self updateAlarms];
-    
     // Start status checker timer
     _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
                                                    target:self
@@ -737,6 +734,8 @@
                                                                     object:self
                                                                   userInfo:nil];
                 
+                // Update alarms from server
+                [self updateAlarms];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
