@@ -81,10 +81,10 @@
 // IR methods
 - (void)irList:(NSString *)userToken lang:(NSString *)lang;
 - (void)modelList:(NSString *)userToken lang:(NSString *)lang brand:(int)brand;
-- (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model res:(int)res;
-- (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId res:(int)res;
-- (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang res:(int)res devId:(NSString *)devId serviceId:(NSString *)serviceId groupId:(NSString *)groupId name:(NSString *)name icon:(int)icon;
-- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang res:(int)res devId:(NSString *)devId serviceId:(NSString *)serviceId buttonId:(NSString *)buttonId name:(NSString *)name icon:(int)icon;
+- (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model;
+- (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId;
+- (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId action:(NSString *)action groupId:(NSString *)groupId name:(NSString *)name icon:(int)icon;
+- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId action:(NSString *)action buttonId:(int)buttonId name:(NSString *)name icon:(int)icon;
 
 @end
 
