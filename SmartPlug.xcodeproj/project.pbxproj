@@ -319,6 +319,8 @@
 		75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD891C731EDC00E8C629 /* BroadcastReply.m */; };
 		75C9A95C1C4469B900AE72E2 /* SetTimerSnoozeViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C9A9571C4469B900AE72E2 /* SetTimerSnoozeViewController.m */; };
 		75C9A95D1C4469B900AE72E2 /* SetTimerSnoozeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75C9A9581C4469B900AE72E2 /* SetTimerSnoozeViewController.xib */; };
+		75CF081F1CB63E57005CCA7C /* help_9@1x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75CF081D1CB63E57005CCA7C /* help_9@1x.png */; };
+		75CF08201CB63E57005CCA7C /* help_9@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 75CF081E1CB63E57005CCA7C /* help_9@2x.png */; };
 		75D0D3361C848FA000D72E47 /* IRAddNewViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D0D3341C848FA000D72E47 /* IRAddNewViewController.m */; };
 		75D0D3371C848FA000D72E47 /* IRAddNewViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75D0D3351C848FA000D72E47 /* IRAddNewViewController.xib */; };
 		75D9D1501C2BF5CE0032F96E /* ChangePasswordViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75D9D14E1C2BF5CE0032F96E /* ChangePasswordViewController.m */; };
@@ -724,6 +726,8 @@
 		75C9A9561C4469B900AE72E2 /* SetTimerSnoozeViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SetTimerSnoozeViewController.h; sourceTree = "<group>"; };
 		75C9A9571C4469B900AE72E2 /* SetTimerSnoozeViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SetTimerSnoozeViewController.m; sourceTree = "<group>"; };
 		75C9A9581C4469B900AE72E2 /* SetTimerSnoozeViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SetTimerSnoozeViewController.xib; sourceTree = "<group>"; };
+		75CF081D1CB63E57005CCA7C /* help_9@1x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help_9@1x.png"; sourceTree = "<group>"; };
+		75CF081E1CB63E57005CCA7C /* help_9@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "help_9@2x.png"; sourceTree = "<group>"; };
 		75D0D3331C848FA000D72E47 /* IRAddNewViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IRAddNewViewController.h; sourceTree = "<group>"; };
 		75D0D3341C848FA000D72E47 /* IRAddNewViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IRAddNewViewController.m; sourceTree = "<group>"; };
 		75D0D3351C848FA000D72E47 /* IRAddNewViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IRAddNewViewController.xib; sourceTree = "<group>"; };
@@ -1181,6 +1185,8 @@
 				755F340F1C993A25003D162C /* help_7@2x.png */,
 				755F34101C993A25003D162C /* help_8@1x.png */,
 				755F34111C993A25003D162C /* help_8@2x.png */,
+				75CF081D1CB63E57005CCA7C /* help_9@1x.png */,
+				75CF081E1CB63E57005CCA7C /* help_9@2x.png */,
 				756679B61C1F864B001B30B2 /* ic_check@1x.png */,
 				756679B71C1F864B001B30B2 /* ic_check@2x.png */,
 				756679B81C1F864B001B30B2 /* ic_combo@1x.png */,
@@ -1544,6 +1550,7 @@
 				75667AD31C1F864C001B30B2 /* marker_warn2@1x.png in Resources */,
 				75667A5E1C1F864C001B30B2 /* btn_add_pressed@2x.png in Resources */,
 				75667B291C1F864C001B30B2 /* toast_warn_icon@2x.png in Resources */,
+				75CF081F1CB63E57005CCA7C /* help_9@1x.png in Resources */,
 				755F341B1C993A25003D162C /* help_3_cn@2x.png in Resources */,
 				75667A5B1C1F864C001B30B2 /* btn_add@1x.png in Resources */,
 				7508AA741C326D2900EB88D1 /* ScheduleMainViewCell.xib in Resources */,
@@ -1676,6 +1683,7 @@
 				75229A421C815B61002FCAEB /* jsplugs.db in Resources */,
 				755F341E1C993A25003D162C /* help_4_cn@1x.png in Resources */,
 				755F34291C993A25003D162C /* help_7@2x.png in Resources */,
+				75CF08201CB63E57005CCA7C /* help_9@2x.png in Resources */,
 				75667AAF1C1F864C001B30B2 /* ir_choose@1x.png in Resources */,
 				7587B4CB1C9A776200697BE1 /* btn_power_pressed_2@2x.png in Resources */,
 				75667AA31C1F864C001B30B2 /* ic_edit_pressed@1x.png in Resources */,

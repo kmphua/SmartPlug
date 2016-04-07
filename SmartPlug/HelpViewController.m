@@ -61,7 +61,7 @@
             break;
         case 3:
             {
-                //[_imgIcon setImage:[UIImage imageNamed:@"help_4_en"]];
+                [_imgIcon setImage:[UIImage imageNamed:@"help_9"]];
                 [_lblTitle setText:NSLocalizedString(@"help_4_title", nil)];
                 [_lblDesc setText:NSLocalizedString(@"help_4_desc", nil)];
                 [_btnLogin setHidden:YES];
