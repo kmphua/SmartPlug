@@ -37,6 +37,11 @@
 #define WS_MODEL_DETAILS            @"modeldetails"
 #define WS_DEV_IR_GET               @"devirget"
 #define WS_DEV_IR_SET               @"devirset"
+#define WS_IR_DETECT                @"irdetect"
+
+#define IR_SET_ADD                  @"add"
+#define IR_SET_MODIFY               @"mod"
+#define IR_SET_DELETE               @"del"
 
 @protocol WebServiceDelegate <NSObject>
 
@@ -85,6 +90,7 @@
 - (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId;
 - (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId action:(NSString *)action groupId:(NSString *)groupId name:(NSString *)name icon:(int)icon;
 - (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId action:(NSString *)action buttonId:(int)buttonId name:(NSString *)name icon:(int)icon;
+- (void)irDetect:(NSString *)userToken lang:(NSString *)lang;
 
 @end
 

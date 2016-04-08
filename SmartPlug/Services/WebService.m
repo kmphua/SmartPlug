@@ -310,4 +310,12 @@
     [self postData:apiUrl params:params];
 }
 
+- (void)irDetect:(NSString *)userToken lang:(NSString *)lang
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_IR_DETECT];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@", userToken, lang];
+    self.resultName = WS_IR_DETECT;
+    [self postData:apiUrl params:params];
+}
+
 @end
