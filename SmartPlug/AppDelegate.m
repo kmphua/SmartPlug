@@ -48,9 +48,6 @@ int g_UdpCommand;
     if ([application respondsToSelector:@selector(registerUserNotificationSettings:)]) {
         UIUserNotificationSettings *settings = [UIUserNotificationSettings settingsForTypes:(UIUserNotificationTypeAlert | UIUserNotificationTypeBadge | UIUserNotificationTypeSound) categories:nil];
         [application registerUserNotificationSettings:settings];
-    } else {
-        UIRemoteNotificationType myTypes = UIRemoteNotificationTypeBadge | UIRemoteNotificationTypeAlert | UIRemoteNotificationTypeSound;
-        [application registerForRemoteNotificationTypes:myTypes];
     }
     
     UIWindow *window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];
@@ -150,6 +147,11 @@ int g_UdpCommand;
     g_DevToken = deviceTokenString;
     [[NSUserDefaults standardUserDefaults] setObject:deviceTokenString forKey:UD_DEVICE_TOKEN];
     [[NSUserDefaults standardUserDefaults] synchronize];
+    
+    // Register push
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws regPush:g_UserToken lang:[Global getCurrentLang] devToken:g_DevToken];
 }
 
 - (void)application:(UIApplication*)application didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
@@ -158,6 +160,16 @@ int g_UdpCommand;
 }
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
+{
+    [self handleRemoteNotification:userInfo];
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
+{
+    [self handleRemoteNotification:userInfo];
+}
+
+- (void)handleRemoteNotification:(NSDictionary *)userInfo
 {
     if (userInfo) {
         NSDictionary *aps = [userInfo objectForKey:@"aps"];
@@ -171,6 +183,41 @@ int g_UdpCommand;
                                                               userInfo:nil];
         }
     }
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName isEqualToString:WS_REG_PUSH]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Register push success!");
+            } else {
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Register push failed! %@", message);
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
 }
 
 @end

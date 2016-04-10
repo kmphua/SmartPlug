@@ -27,7 +27,7 @@
 - (BOOL)delayTimer:(int)seconds protocol:(int)protocol;
 - (BOOL)listenForIRCodes;
 - (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param;
-- (BOOL)sendIRMode;
+- (BOOL)sendIRMode:(NSString *)ip;
 - (BOOL)cancelIRMode;
 - (BOOL)sendOTACommand:(NSString *)ip;
 - (BOOL)sendIRFileName:(int)filename;

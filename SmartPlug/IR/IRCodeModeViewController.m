@@ -38,9 +38,8 @@
     self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
-    NSArray *groups = [[SQLHelper getInstance] getIRGroup:_groupId];
-    if (groups && groups.count>0) {
-        _group = [groups firstObject];
+    _group = [[SQLHelper getInstance] getIRGroupBySID:_groupId];
+    if (_group) {
         self.lblTitle.text = _group.name;
     }
     
@@ -185,7 +184,8 @@
     
     for (IrCode *code in _codes) {
         if (code.code_id == codeId) {
-            [[UDPCommunication getInstance] sendIRFileName:code.filename];
+            [self setDeviceStatus:g_DeviceMac serviceId:IR_SERVICE action:code.filename];
+            //[[UDPCommunication getInstance] sendIRFileName:code.filename];
             NSLog(@"Sending IR filename %d", code.filename);
             break;
         }
@@ -195,8 +195,20 @@
 - (void)onBtnDelete:(id)sender {
     UIButton *btnDelete = (UIButton *)sender;
     int codeId = (int)btnDelete.tag;
-    [[SQLHelper getInstance] deleteIRCode:codeId];
     
+    int groupId = 0;
+    IrGroup *irGroup = [[SQLHelper getInstance] getIRGroupBySID:_groupId];
+    if (irGroup) {
+        groupId = irGroup.sid;
+    }
+    int iconId = 0;
+    
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE buttonId:codeId name:@"" icon:iconId iconRes:[Global getIconResolution]];
+    /*
+    [[SQLHelper getInstance] deleteIRCode:codeId];
+    */
     _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
     [_gmGridView reloadData];
 }
@@ -204,6 +216,53 @@
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
 {
     return NO;
+}
+
+- (void)setDeviceStatus:(NSString *)devId serviceId:(int)serviceId action:(uint8_t)action
+{
+    int header = 0x534D5254;
+    uint8_t sMsg[24];
+    sMsg[3] = (uint8_t)(header);
+    sMsg[2] = (uint8_t)((header >> 8 ));
+    sMsg[1] = (uint8_t)((header >> 16 ));
+    sMsg[0] = (uint8_t)((header >> 24 ));
+    
+    int msid = (int)(random()*4294967+1);
+    sMsg[7] = (uint8_t)(msid);
+    sMsg[6] = (uint8_t)((msid >> 8 ));
+    sMsg[5] = (uint8_t)((msid >> 16 ));
+    sMsg[4] = (uint8_t)((msid >> 24 ));
+    int seq = 0x80000000;
+    sMsg[11] = (uint8_t)(seq);
+    sMsg[10] = (uint8_t)((seq >> 8 ));
+    sMsg[9] = (uint8_t)((seq >> 16 ));
+    sMsg[8] = (uint8_t)((seq >> 24 ));
+    short command = 0x0008;
+    sMsg[13] = (uint8_t)(command);
+    sMsg[12] = (uint8_t)((command >> 8 ));
+    //int serviceId = 0xD1000000;
+    sMsg[17] = (uint8_t)(serviceId);
+    sMsg[16] = (uint8_t)((serviceId >> 8 ));
+    sMsg[15] = (uint8_t)((serviceId >> 16 ));
+    sMsg[14] = (uint8_t)((serviceId >> 24 ));
+    
+    uint8_t datatype = 0x01;
+    sMsg[18] = datatype;
+    uint8_t data = action;
+    sMsg[19] = data;
+    int terminator = 0x00000000;
+    sMsg[23] = (uint8_t)(terminator & 0xff);
+    sMsg[22] = (uint8_t)((terminator >> 8 ) & 0xff);
+    sMsg[21] = (uint8_t)((terminator >> 16 ) & 0xff);
+    sMsg[20] = (uint8_t)((terminator >> 24 ) & 0xff);
+    
+    NSLog(@"Data length = %ld", sizeof(sMsg));
+    
+    NSData *deviceData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
+    
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:1 data:deviceData];
 }
 
 //////////////////////////////////////////////////////////////
@@ -238,6 +297,53 @@
         //[_currentData removeObjectAtIndex:_lastDeleteItemIndexAsked];
         //[_gmGridView removeObjectAtIndex:_lastDeleteItemIndexAsked withAnimation:GMGridViewItemAnimationFade];
     }
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error) {
+        NSLog(@"Error received: %@", [error localizedDescription]);
+    }
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName compare:WS_DEV_CTRL] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"Set device status success");
+            } else {
+                // Failure
+                NSLog(@"Set device status failed");
+            }
+        } else if ([resultName isEqualToString:WS_DEV_IR_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"IR set success");
+            } else {
+                // Failure
+                NSLog(@"IR set failed");
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
 }
 
 

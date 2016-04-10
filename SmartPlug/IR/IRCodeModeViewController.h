@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 
-@interface IRCodeModeViewController : BaseViewController
+@interface IRCodeModeViewController : BaseViewController<WebServiceDelegate>
 
 @property (nonatomic, assign) int groupId;
 

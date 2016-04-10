@@ -8,7 +8,7 @@
 
 #import "BaseViewController.h"
 
-@interface IRRecordViewController : BaseViewController
+@interface IRRecordViewController : BaseViewController<WebServiceDelegate>
 
 @property (nonatomic, assign) int groupId;
 @property (nonatomic, strong) NSString *name;

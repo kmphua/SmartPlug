@@ -24,6 +24,7 @@
     int _relay;
     int _nightlight;
     int _action;
+    int _snooze;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
@@ -81,6 +82,7 @@
     _udpConnection = NO;
     _crashTimer = [CrashCountDown getInstance];
     _alarms = [NSMutableArray new];
+    _snooze = 0;
     
     // See current device info
     g_DeviceName = _device.name;
@@ -149,7 +151,7 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:YES];
+                                                  repeats:NO];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
@@ -314,9 +316,21 @@
     
     // Snooze
     if (device.snooze == 0) {
-        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
-        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:RELAY_SERVICE];
+        if (alarms && alarms.count>0) {
+            [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        } else {
+            [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_off"] forState:UIControlStateNormal];
+        }
+
+        alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:NIGHTLED_SERVICE];
+        if (alarms && alarms.count>0) {
+            [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        } else {
+            [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_off"] forState:UIControlStateNormal];
+        }
     } else {
+        _snooze = device.snooze;
         [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
         [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
@@ -459,6 +473,7 @@
         setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
         setTimerSnoozeVC.devId = _device.sid;
         setTimerSnoozeVC.serviceId = RELAY_SERVICE;
+        setTimerSnoozeVC.snooze = _snooze;
         setTimerSnoozeVC.delegate = self;
         [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
     } else {
@@ -496,6 +511,7 @@
         setTimerSnoozeVC.devId = _device.sid;
         setTimerSnoozeVC.serviceId = NIGHTLED_SERVICE;
         setTimerSnoozeVC.delegate = self;
+        setTimerSnoozeVC.snooze = _snooze;
         [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
     } else {
         // Add new timer
@@ -632,9 +648,9 @@
 - (void)snooze5Mins:(int)alarmId serviceId:(int)serviceId
 {
     // Sending 5 minutes snooze to device
-    [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_UDP];
-    [[SQLHelper getInstance] updateSnooze:5 sid:_device.sid];
-    [[UDPCommunication getInstance] delayTimer:5 protocol:PROTOCOL_HTTP];
+    [[UDPCommunication getInstance] delayTimer:_snooze+5 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:_snooze+5 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:_snooze+5 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_5_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -642,9 +658,9 @@
 
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId
 {
-    [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_UDP];
-    [[SQLHelper getInstance] updateSnooze:10 sid:_device.sid];
-    [[UDPCommunication getInstance] delayTimer:10 protocol:PROTOCOL_HTTP];
+    [[UDPCommunication getInstance] delayTimer:_snooze+10 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:_snooze+10 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:_snooze+10 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_10_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -652,9 +668,9 @@
 
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId
 {
-    [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_UDP];
-    [[SQLHelper getInstance] updateSnooze:30 sid:_device.sid];
-    [[UDPCommunication getInstance] delayTimer:30 protocol:PROTOCOL_HTTP];
+    [[UDPCommunication getInstance] delayTimer:_snooze+30 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:_snooze+30 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:_snooze+30 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_30_minutes", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
@@ -662,10 +678,20 @@
 
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId
 {
-    [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_UDP];
-    [[SQLHelper getInstance] updateSnooze:59 sid:_device.sid];
-    [[UDPCommunication getInstance] delayTimer:59 protocol:PROTOCOL_HTTP];
+    [[UDPCommunication getInstance] delayTimer:_snooze+59 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:_snooze+59 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:_snooze+59 protocol:PROTOCOL_HTTP];
     [self.view makeToast:NSLocalizedString(@"delay_60_minutes", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
+}
+
+- (void)cancelSnooze:(int)alarmId serviceId:(int)serviceId
+{
+    [[UDPCommunication getInstance] delayTimer:0 protocol:PROTOCOL_UDP];
+    [[SQLHelper getInstance] updateSnooze:0 sid:_device.sid];
+    [[UDPCommunication getInstance] delayTimer:0 protocol:PROTOCOL_HTTP];
+    [self.view makeToast:NSLocalizedString(@"CancelSnooze", nil)
                 duration:3.0
                 position:CSToastPositionCenter];
 }

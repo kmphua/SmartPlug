@@ -48,14 +48,27 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
-    self.irGroups = [[SQLHelper getInstance] getIRGroups];
-    [_gmGridView reloadData];
+    [self updateView];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)updateView
+{
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
+
+    self.irGroups = [[SQLHelper getInstance] getIRGroups];
+    [_gmGridView reloadData];
+    if (self.irGroups.count > 0) {
+        self.navigationItem.rightBarButtonItem = _rightBarBtn;
+    } else {
+        self.navigationItem.rightBarButtonItem = nil;
+    }
 }
 
 - (void)onRightBarButton:(id)sender {
@@ -73,128 +86,6 @@
     IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
     [self.navigationController pushViewController:irAddNewVC animated:YES];
 }
-
-/*
-//==================================================================
-#pragma mark - Table view delegate
-//==================================================================
-
-- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
-{
-    // Return the number of sections.
-    return 1;
-}
-
-- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
-{
-    if (_irGroups) {
-        return _irGroups.count+1;
-    } else {
-        return 1;
-    }
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section
-{
-    return 75;
-}
-
-- (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    return 72;
-}
-
-- (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
-{
-    UIView *view = [[UIView alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
-    [view setBackgroundColor:[Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN]];
-    
-    UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, tableView.frame.size.width, 75)];
-    [label setFont:[UIFont systemFontOfSize:32]];
-    [label setTextColor:[UIColor whiteColor]];
-    [label setText:NSLocalizedString(@"title_irControl", nil)];
-    [label setTextAlignment:NSTextAlignmentCenter];
-    [view addSubview:label];
-    return view;
-}
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row == 0) {
-        // Add new ir group
-        static NSString *CellIdentifier = @"TableViewCell";
-        UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil) {
-            cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-        }
-        
-        if (!_btnAddNew) {
-            _btnAddNew = [[UIButton alloc] initWithFrame:CGRectMake(cell.frame.size.width/2, 8, 56, 56)];
-            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
-            [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
-            [_btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];            
-            [cell addSubview:_btnAddNew];
-        }
-        return cell;
-        
-    } else {
-        static NSString *CellIdentifier = @"IrGroupViewCell";
-        IrGroupViewCell *cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        if (cell == nil) {
-            [tableView registerNib:[UINib nibWithNibName:@"IrGroupViewCell" bundle:nil] forCellReuseIdentifier:CellIdentifier];
-            cell = [tableView dequeueReusableCellWithIdentifier:CellIdentifier];
-        }
-        
-        IrGroup *irGroup = [self.irGroups objectAtIndex:[indexPath row]-1];
-        cell.lblDeviceName.text = irGroup.name;
-        cell.delegate = self;
-        
-        if (irGroup.icon && irGroup.icon.length>0) {
-            int iconId = [irGroup.icon intValue];
-            if (g_DeviceIcons) {
-                NSDictionary *icon = [g_DeviceIcons objectAtIndex:iconId];
-                NSString *imagePath = [icon objectForKey:@"url"];
-                [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-            }
-        }
-        
-        // Modify cell background according to row position
-        NSInteger rowCount = [self.irGroups count];
-        NSInteger row = indexPath.row-1;
-        if (row == rowCount-1) {
-            // Last row
-            NSString *cellBgImg = [NSString stringWithFormat:@"main_item_%ld_c", row%4];
-            cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
-        } else if (row == 0) {
-            // First row
-            NSString *cellBgImg = [NSString stringWithFormat:@"main_item_%ld_a", row%4];
-            cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
-        } else {
-            // Middle row
-            NSString *cellBgImg = [NSString stringWithFormat:@"main_item_%ld_b", row%4];
-            cell.imgCellBg.image = [UIImage imageNamed:cellBgImg];
-        }
-        
-        return cell;
-    }
-}
-
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
-{
-    if (indexPath.row == 0) {
-        IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
-        [self.navigationController pushViewController:irAddNewVC animated:YES];
-    } else {
-        IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
-        
-        IrGroup *irGroup = [self.irGroups objectAtIndex:[indexPath row]-1];
-        irCodeModeVC.groupId = irGroup.group_id;
-        [self.navigationController pushViewController:irCodeModeVC animated:YES];
-    }
-    
-    [tableView deselectRowAtIndexPath:indexPath animated:YES];
-}
- */
 
 //////////////////////////////////////////////////////////////
 #pragma mark GMGridViewDataSource
@@ -308,12 +199,26 @@
     UIButton *btnDelete = (UIButton *)sender;
     int groupId = (int)btnDelete.tag;
     
+    int newIndex = 0;
+    NSString *groupName = @"";
+    NSString *iconId = @"";
+    NSArray *groups = [[SQLHelper getInstance] getIRGroup:groupId];
+    if (groups && groups.count>0) {
+        IrGroup *group = groups.firstObject;
+        newIndex = group.sid;
+        groupName = group.name;
+        iconId = group.icon;
+    }
+    
     if ([[SQLHelper getInstance] deleteIRGroupById:groupId]){
         NSLog(@"Successfully deleted");
     }
     
-    self.irGroups = [[SQLHelper getInstance] getIRGroups];
-    [_gmGridView reloadData];
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE groupId:newIndex name:groupName icon:[iconId intValue] iconRes:[Global getIconResolution]];
+    
+    [self updateView];
 }
 
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
@@ -353,6 +258,74 @@
         //[_currentData removeObjectAtIndex:_lastDeleteItemIndexAsked];
         //[_gmGridView removeObjectAtIndex:_lastDeleteItemIndexAsked withAnimation:GMGridViewItemAnimationFade];
     }
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error) {
+        NSLog(@"Error received: %@", [error localizedDescription]);
+    }
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName isEqualToString:WS_DEV_IR_GET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
+                if (groups) {
+                    NSLog(@"Total %ld groups", (unsigned long)groups.count);
+                    
+                    for (NSDictionary *group in groups) {
+                        int groupId = [[group objectForKey:@"id"] intValue];
+                        NSString *title = [group objectForKey:@"title"];
+                        NSString *icon = [group objectForKey:@"icon"];
+                        
+                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        
+                        NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
+                        for (NSDictionary *button in buttons) {
+                            int sid = [[button objectForKey:@"id"] intValue];
+                            NSString *title = [button objectForKey:@"title"];
+                            NSString *icon = [button objectForKey:@"icon"];
+                            int code = [[button objectForKey:@"code"] intValue];
+                            
+                            [[SQLHelper getInstance] insertIRCodes:groupId name:title filename:code icon:icon mac:g_DeviceMac sid:sid];
+                        }
+                    }
+                    
+                    [self updateView];
+                }
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
 }
 
 @end

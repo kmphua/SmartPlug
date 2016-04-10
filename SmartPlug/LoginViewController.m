@@ -207,7 +207,7 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSLog(@"Register push success!");
             } else {
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];

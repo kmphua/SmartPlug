@@ -87,9 +87,9 @@
 - (void)irList:(NSString *)userToken lang:(NSString *)lang;
 - (void)modelList:(NSString *)userToken lang:(NSString *)lang brand:(int)brand;
 - (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model;
-- (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId;
-- (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId action:(NSString *)action groupId:(NSString *)groupId name:(NSString *)name icon:(int)icon;
-- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(NSString *)serviceId action:(NSString *)action buttonId:(int)buttonId name:(NSString *)name icon:(int)icon;
+- (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId iconRes:(IconResolution)iconRes;
+- (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId name:(NSString *)name icon:(int)icon iconRes:(IconResolution)iconRes;
+- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action buttonId:(int)buttonId name:(NSString *)name icon:(int)icon iconRes:(IconResolution)iconRes;
 - (void)irDetect:(NSString *)userToken lang:(NSString *)lang;
 
 @end

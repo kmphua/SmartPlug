@@ -20,6 +20,7 @@
 @property (weak, nonatomic) IBOutlet UIButton *btnSnooze10Mins;
 @property (weak, nonatomic) IBOutlet UIButton *btnSnooze30Mins;
 @property (weak, nonatomic) IBOutlet UIButton *btnSnooze1Hour;
+@property (weak, nonatomic) IBOutlet UIButton *btnCancelSnooze;
 
 @end
 
@@ -41,10 +42,21 @@
     self.lblTitle.text = title;
     [self.btnAddTimer setTitle:NSLocalizedString(@"AddNewTimer", nil) forState:UIControlStateNormal];
     [self.btnShowModifyTimer setTitle:NSLocalizedString(@"ShowModifyTimer", nil) forState:UIControlStateNormal];
-    [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5Minutes", nil) forState:UIControlStateNormal];
-    [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10Minutes", nil) forState:UIControlStateNormal];
-    [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30Minutes", nil) forState:UIControlStateNormal];
-    [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1Hour", nil) forState:UIControlStateNormal];
+    [self.btnCancelSnooze setTitle:NSLocalizedString(@"CancelSnooze", nil) forState:UIControlStateNormal];
+    
+    if (_snooze > 0) {
+        [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5MoreMinutes", nil) forState:UIControlStateNormal];
+        [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10MoreMinutes", nil) forState:UIControlStateNormal];
+        [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30MoreMinutes", nil) forState:UIControlStateNormal];
+        [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1MoreHour", nil) forState:UIControlStateNormal];
+        [self.btnCancelSnooze setHidden:NO];
+    } else {
+        [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5Minutes", nil) forState:UIControlStateNormal];
+        [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10Minutes", nil) forState:UIControlStateNormal];
+        [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30Minutes", nil) forState:UIControlStateNormal];
+        [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1Hour", nil) forState:UIControlStateNormal];
+        [self.btnCancelSnooze setHidden:YES];
+    }
     
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
     [self.view addGestureRecognizer:tapView];
@@ -173,6 +185,11 @@
 
 - (IBAction)onBtnSnooze1Hour:(id)sender {
     [self.delegate snooze1Hour:self.alarmId serviceId:self.serviceId];
+    [self dismissViewControllerAnimated:YES completion:nil];
+}
+
+- (IBAction)onBtnCancelSnooze:(id)sender {
+    [self.delegate cancelSnooze:self.alarmId serviceId:self.serviceId];
     [self dismissViewControllerAnimated:YES completion:nil];
 }
 

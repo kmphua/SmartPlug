@@ -40,6 +40,7 @@
 #define RELAY_SERVICE                   0xD1000000
 #define NIGHTLED_SERVICE                0xD1000001
 #define CO_SERVICE                      0xD1000002
+#define IR_SERVICE                      0xD1000003
 
 // Protocol
 #define PROTOCOL_HTTP                   0

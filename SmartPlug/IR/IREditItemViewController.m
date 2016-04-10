@@ -60,7 +60,16 @@
         return;
     }
     
-    [[SQLHelper getInstance] insertIRGroup:_txtName.text icon:_icon position:0];
+    int iconId = 0;
+    NSArray *icons = [[SQLHelper getInstance] getIconByUrl:_icon];
+    if (icons && icons.count>0) {
+        Icon *icon = icons.firstObject;
+        iconId = [icon.sid intValue];
+    }
+    
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text icon:iconId iconRes:[Global getIconResolution]];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

@@ -19,5 +19,6 @@
 @property (nonatomic, assign) int position;
 @property (nonatomic, copy) NSString *brand;
 @property (nonatomic, copy) NSString *model;
+@property (nonatomic, assign) int sid;
 
 @end

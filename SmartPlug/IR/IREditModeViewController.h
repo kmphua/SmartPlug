@@ -8,6 +8,6 @@
 
 #import "BaseViewController.h"
 
-@interface IREditModeViewController : BaseViewController
+@interface IREditModeViewController : BaseViewController<WebServiceDelegate>
 
 @end

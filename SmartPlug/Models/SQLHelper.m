@@ -168,11 +168,17 @@ static SQLHelper *instance;
     return icons;
 }
 
-- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position
+- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position sid:(int)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO irgroups (name, icon, position) VALUES (?, ?, ?)",
-                   name, icon, [NSNumber numberWithInt:position]];
+    BOOL result = NO;
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    if (!results || !results.next) {
+        result = [db executeUpdate:@"INSERT INTO irgroups (name, icon, position, sid) VALUES (?, ?, ?, ?)",
+                       name, icon, [NSNumber numberWithInt:position], [NSNumber numberWithInt:sid]];
+    } else {
+        NSLog(@"RECORD EXIST - IR GROUP NOT ADDED");
+    }
     [db close];
     return result;
 }
@@ -200,10 +206,28 @@ static SQLHelper *instance;
         irGroup.name = [results stringForColumn:COLUMN_NAME];
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
+        irGroup.sid = [results intForColumn:COLUMN_SID];
         [irGroups addObject:irGroup];
     }
     [db close];
     return irGroups;
+}
+
+- (IrGroup *)getIRGroupBySID:(int)sid
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    IrGroup *irGroup;
+    while ([results next]) {
+        irGroup = [IrGroup new];
+        irGroup.group_id = [results intForColumn:COLUMN_ID];
+        irGroup.name = [results stringForColumn:COLUMN_NAME];
+        irGroup.icon = [results stringForColumn:COLUMN_ICON];
+        irGroup.position = [results intForColumn:COLUMN_POSITION];
+        irGroup.sid = [results intForColumn:COLUMN_SID];
+    }
+    [db close];
+    return irGroup;
 }
 
 - (BOOL)deleteIRGroupById:(int)groupId
@@ -222,6 +246,25 @@ static SQLHelper *instance;
 }
 
 - (BOOL)deleteIRCodes:(int)groupId
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE group_id = ?", [NSNumber numberWithInt:groupId]];
+    [db close];
+    return result;
+}
+
+- (BOOL)deleteIRGroupBySID:(int)sid
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    if (result) {
+        result = [self deleteIRCodesBySID:sid];
+    }
+    [db close];
+    return result;
+}
+
+- (BOOL)deleteIRCodesBySID:(int)groupId
 {
     [db open];
     BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE group_id = ?", [NSNumber numberWithInt:groupId]];
@@ -249,6 +292,7 @@ static SQLHelper *instance;
         irGroup.name = [results stringForColumn:COLUMN_NAME];
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
+        irGroup.sid = [results intForColumn:COLUMN_SID];
         [irGroups addObject:irGroup];
     }
     [db close];
@@ -256,11 +300,21 @@ static SQLHelper *instance;
 }
 
 - (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
-                 icon:(NSString *)icon mac:(NSString *)mac
+                 icon:(NSString *)icon mac:(NSString *)mac sid:(int)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO ircodes (group_id, name, filename, icon, mac) VALUES (?, ?, ?, ?, ?)",
-                   [NSNumber numberWithInt:groupId], name, [NSNumber numberWithInt:filename], icon, mac];
+    BOOL result = [db executeUpdate:@"INSERT INTO ircodes (group_id, name, filename, icon, mac, sid) VALUES (?, ?, ?, ?, ?, ?)",
+                   [NSNumber numberWithInt:groupId], name, [NSNumber numberWithInt:filename], icon, mac, [NSNumber numberWithInt:sid]];
+    [db close];
+    return result;
+}
+
+- (BOOL)updateIRCodeSID:(int)codeId sid:(int)sid
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE ircodes SET sid = ? WHERE _id = ?",
+                   [NSNumber numberWithInt:sid],
+                   [NSNumber numberWithInt:codeId]];
     [db close];
     return result;
 }
@@ -298,6 +352,7 @@ static SQLHelper *instance;
         irCode.position = [results intForColumn:COLUMN_POSITION];
         irCode.brand = [results stringForColumn:COLUMN_IRBRAND];
         irCode.model = [results stringForColumn:COLUMN_IRMODEL];
+        irCode.sid = [results intForColumn:COLUMN_SID];
         [irCodes addObject:irCode];
     }
     [db close];
@@ -320,12 +375,14 @@ static SQLHelper *instance;
         irCode.position = [results intForColumn:COLUMN_POSITION];
         irCode.brand = [results stringForColumn:COLUMN_IRBRAND];
         irCode.model = [results stringForColumn:COLUMN_IRMODEL];
+        irCode.sid = [results intForColumn:COLUMN_SID];
         [irCodes addObject:irCode];
     }
     [db close];
     return irCodes;
 }
 
+/*
 - (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip
 {
     [db open];
@@ -334,6 +391,7 @@ static SQLHelper *instance;
     [db close];
     return result;
 }
+*/
 
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active
 {
@@ -430,6 +488,7 @@ static SQLHelper *instance;
     return result;
 }
 
+/*
 - (BOOL)updatePlugRelay:(NSString *)sid relay:(int)relay
 {
     [db open];
@@ -447,6 +506,7 @@ static SQLHelper *instance;
     [db close];
     return result;
 }
+*/
 
 - (BOOL)updatePlugIcon:(NSString *)sid icon:(NSString *)icon
 {
@@ -456,11 +516,11 @@ static SQLHelper *instance;
     return result;
 }
 
-- (BOOL)activatePlug:(NSString *)sid
+- (BOOL)deActivatePlug:(NSString *)sid
 {
     [db open];
     BOOL result = [db executeUpdate:@"UPDATE smartplugs SET active = ? WHERE sid = ?",
-                   [NSNumber numberWithInt:1], sid];
+                   [NSNumber numberWithInt:0], sid];
     [db close];
     return result;
 }
@@ -486,6 +546,7 @@ static SQLHelper *instance;
     return tokens;
 }
 
+/*
 - (BOOL)removePlugsIP
 {
     [db open];
@@ -501,6 +562,7 @@ static SQLHelper *instance;
     [db close];
     return result;
 }
+*/
 
 - (NSArray *)getPlugData:(NSString *)ip
 {

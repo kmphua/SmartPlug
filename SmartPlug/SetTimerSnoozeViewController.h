@@ -16,6 +16,7 @@
 - (void)snooze10Mins:(int)alarmId serviceId:(int)serviceId;
 - (void)snooze30Mins:(int)alarmId serviceId:(int)serviceId;
 - (void)snooze1Hour:(int)alarmId serviceId:(int)serviceId;
+- (void)cancelSnooze:(int)alarmId serviceId:(int)serviceId;
 
 @end
 
@@ -26,5 +27,6 @@
 @property (nonatomic, assign) NSString *devId;
 @property (nonatomic, assign) int serviceId;
 @property (nonatomic, assign) int alarmId;
+@property (nonatomic, assign) int snooze;
 
 @end

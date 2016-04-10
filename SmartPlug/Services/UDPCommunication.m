@@ -197,9 +197,8 @@ static UDPCommunication *instance;
     return YES;
 }
 
-- (BOOL)sendIRMode
+- (BOOL)sendIRMode:(NSString *)ip
 {
-    NSString *ip = g_DeviceIp;
     g_UdpCommand = UDP_CMD_ADV_DEVICE_SETTINGS;
     
     if (!udpSocket) {

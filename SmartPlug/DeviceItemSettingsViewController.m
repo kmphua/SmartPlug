@@ -404,7 +404,7 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
                 if (devices) {
                     NSLog(@"Total %ld actions", devices.count);
@@ -424,7 +424,7 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 
             } else {
                 // Failure

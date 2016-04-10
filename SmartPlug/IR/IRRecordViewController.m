@@ -89,7 +89,7 @@
 }
 
 - (void)sendIRRecordCommand {
-    [[UDPCommunication getInstance] sendIRMode];
+    [[UDPCommunication getInstance] sendIRMode:g_DeviceIp];
 }
 
 - (void)updateUI {
@@ -112,7 +112,23 @@
 }
 
 - (IBAction)onBtnAddNow:(id)sender {
-    [[SQLHelper getInstance] insertIRCodes:_groupId name:_name filename:ir_filename icon:_icon mac:g_DeviceMac];
+    int groupId = 0;
+    IrGroup *irGroup = [[SQLHelper getInstance] getIRGroupBySID:_groupId];
+    if (irGroup) {
+        groupId = irGroup.sid;
+    }
+    int iconId = 0;
+    NSArray *icons = [[SQLHelper getInstance] getIconByUrl:_icon];
+    if (icons && icons.count>0) {
+        Icon *icon = icons.firstObject;
+        iconId = [icon.sid intValue];
+    }
+    
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD buttonId:0 name:_name icon:iconId iconRes:[Global getIconResolution]];
+    
+    //[[SQLHelper getInstance] insertIRCodes:_groupId name:_name filename:ir_filename icon:_icon mac:g_DeviceMac];
     [self.navigationController popViewControllerAnimated:YES];
 }
 

@@ -45,7 +45,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    
+        
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
@@ -151,7 +151,7 @@
 - (void)deviceInfo:(NSNotification *)notification {
     NSDictionary *userInfo = [notification userInfo];
     NSString *ip = [userInfo objectForKey:@"ip"];
-    NSString *devId = [userInfo objectForKey:@"id"];
+    //NSString *devId = [userInfo objectForKey:@"id"];
     JSmartPlug *jsTemp = [UDPListenerService getInstance].js;
     jsTemp.ip = ip;
     if (jsTemp.ip != nil && jsTemp.ip.length>0) {

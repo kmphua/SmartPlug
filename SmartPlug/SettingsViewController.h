@@ -8,8 +8,7 @@
 
 #import <UIKit/UIKit.h>
 #import "BaseViewController.h"
-#import "WebService.h"
 
-@interface SettingsViewController : BaseViewController <UITextFieldDelegate, WebServiceDelegate>
+@interface SettingsViewController : BaseViewController <UITextFieldDelegate>
 
 @end

@@ -26,21 +26,25 @@
 // IR Groups
 - (NSArray *)getIRGroups;
 - (NSArray *)getIRGroup:(int)groupId;
-- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position;
+- (IrGroup *)getIRGroupBySID:(int)sid;
+- (BOOL)deleteIRGroupById:(int)groupId;
+- (BOOL)deleteIRGroupBySID:(int)sid;
+- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position sid:(int)sid;
 - (BOOL)updateIRGroup:(IrGroup *)group;
 
 // IR Codes
 - (NSArray *)getIRCodes;
 - (NSArray *)getIRCodesByGroup:(int)groupid;
 - (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
-                 icon:(NSString *)icon mac:(NSString *)mac;
+                 icon:(NSString *)icon mac:(NSString *)mac sid:(int)sid;
+- (BOOL)updateIRCodeSID:(int)codeId sid:(int)sid;
 - (BOOL)updateIRCode:(IrCode *)code;
 - (BOOL)deleteIRCodes:(int)groupId;
-- (BOOL)deleteIRGroupById:(int)groupId;
+- (BOOL)deleteIRCodesBySID:(int)groupId;
 - (BOOL)deleteIRCode:(int)groupId;
 
 // Plugs
-- (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip;
+//- (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip;
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active;
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip;
 - (BOOL)updatePlugName:(NSString *)data sid:(NSString *)sid;
@@ -52,13 +56,13 @@
 - (BOOL)updatePlugRelayService:(int)data sid:(NSString *)sid;
 - (BOOL)updatePlugServices:(JSmartPlug *)js;
 - (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip;
-- (BOOL)updatePlugRelay:(NSString *)id relay:(int)relay;
-- (BOOL)updatePlugNightlight:(NSString *)id nl:(int)nl;
-- (BOOL)activatePlug:(NSString *)sid;
+//- (BOOL)updatePlugRelay:(NSString *)id relay:(int)relay;
+//- (BOOL)updatePlugNightlight:(NSString *)id nl:(int)nl;
+- (BOOL)deActivatePlug:(NSString *)sid;
 - (BOOL)insertToken:(NSString *)token;
 - (NSArray *)getToken;
-- (BOOL)removePlugsIP;
-- (BOOL)removePlugIP:(NSString *)serviceName;
+//- (BOOL)removePlugsIP;
+//- (BOOL)removePlugIP:(NSString *)serviceName;
 - (NSArray *)getPlugData:(NSString *)ip;
 - (NSArray *)getPlugDataByID:(NSString *)id;
 - (NSArray *)getPlugDataByName:(NSString *)name;

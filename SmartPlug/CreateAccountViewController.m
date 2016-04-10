@@ -252,7 +252,7 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 
                 UIAlertController * alert = [UIAlertController
                                              alertControllerWithTitle:NSLocalizedString(@"title_accountCreated", nil)
