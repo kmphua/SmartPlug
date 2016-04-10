@@ -216,7 +216,7 @@ static SQLHelper *instance;
 - (IrGroup *)getIRGroupBySID:(int)sid
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE _id = ?", [NSNumber numberWithInt:sid]];
     IrGroup *irGroup;
     while ([results next]) {
         irGroup = [IrGroup new];

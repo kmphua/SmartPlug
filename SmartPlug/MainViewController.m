@@ -179,15 +179,7 @@
 }
 
 - (void)handlePush:(NSNotification *)notification {
-    // Delete plugs in database first
-    [[SQLHelper getInstance] deletePlugs];
-    
-    // Update device list
-    WebService *ws = [[WebService alloc] init];
-    ws.delegate = self;
-    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
-    [ws showWaitingView:self.view];
-    NSLog(@"GET DEVICE LIST IP: %@", g_DeviceIp);
+    [self checkStatus:nil];
 }
 
 - (void)deviceStatusChanged:(NSNotification *)notification {

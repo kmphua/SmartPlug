@@ -48,7 +48,10 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-    [self updateView];
+    
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];    
 }
 
 - (void)didReceiveMemoryWarning {
@@ -58,10 +61,6 @@
 
 - (void)updateView
 {
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
-
     self.irGroups = [[SQLHelper getInstance] getIRGroups];
     [_gmGridView reloadData];
     if (self.irGroups.count > 0) {
@@ -115,6 +114,8 @@
         [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add.png"] forState:UIControlStateNormal];
         [_btnAddNew setBackgroundImage:[UIImage imageNamed:@"btn_add_pressed.png"] forState:UIControlStateSelected];
         [_btnAddNew addTarget:self action:@selector(onBtnAddNew:) forControlEvents:UIControlEventTouchUpInside];
+        
+        cell.layer.masksToBounds = NO;
         cell.contentView = _btnAddNew;
     } else {
         IrGroup *group = [_irGroups objectAtIndex:index-1];
@@ -190,9 +191,13 @@
     UIButton *btnIr = (UIButton *)sender;
     int groupId = (int)btnIr.tag;
 
-    IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
-    irCodeModeVC.groupId = groupId;
-    [self.navigationController pushViewController:irCodeModeVC animated:YES];
+    if (g_DeviceIp) {
+        IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
+        irCodeModeVC.groupId = groupId;
+        [self.navigationController pushViewController:irCodeModeVC animated:YES];
+    } else {
+        NSLog(@"NO DEVICE IP!!!");
+    }
 }
 
 - (void)onBtnDelete:(id)sender {

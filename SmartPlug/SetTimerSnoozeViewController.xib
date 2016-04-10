@@ -27,10 +27,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZVe-b0-SFY">
-                    <rect key="frame" x="30" y="50" width="260" height="420"/>
+                    <rect key="frame" x="30" y="32" width="260" height="415"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="soG-BM-L3a">
-                            <rect key="frame" x="0.0" y="0.0" width="260" height="420"/>
+                            <rect key="frame" x="0.0" y="0.0" width="260" height="415"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timers Set (Snoozing 01h00m)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zWH-BZ-uvm">
                             <rect key="frame" x="15" y="0.0" width="230" height="30"/>
@@ -187,6 +187,7 @@
                         <constraint firstItem="UEq-S0-jSe" firstAttribute="trailing" secondItem="EnZ-R5-LbB" secondAttribute="trailing" id="ovO-0N-8fg"/>
                         <constraint firstItem="B8g-SQ-F5J" firstAttribute="trailing" secondItem="uau-aa-PQU" secondAttribute="trailing" id="pNx-t1-RzH"/>
                         <constraint firstItem="nJc-ff-fvs" firstAttribute="top" secondItem="HIq-YA-god" secondAttribute="bottom" constant="10" id="pUV-kg-vJO"/>
+                        <constraint firstAttribute="bottom" secondItem="UEq-S0-jSe" secondAttribute="bottom" constant="10" id="qvY-XE-Dca"/>
                         <constraint firstItem="BcP-iF-6hf" firstAttribute="trailing" secondItem="EnZ-R5-LbB" secondAttribute="trailing" id="s1t-al-f9d"/>
                         <constraint firstAttribute="trailing" secondItem="nJc-ff-fvs" secondAttribute="trailing" constant="15" id="uw8-Yk-LNN"/>
                         <constraint firstItem="Blw-tx-TmE" firstAttribute="leading" secondItem="B8g-SQ-F5J" secondAttribute="leading" id="vF3-Be-WaG"/>
@@ -214,12 +215,15 @@
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="RZ9-s9-j17"/>
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="50" id="SD0-xJ-swr"/>
                 <constraint firstAttribute="bottom" secondItem="ZVe-b0-SFY" secondAttribute="bottom" constant="20" id="bpF-QS-d6b"/>
+                <constraint firstItem="ZVe-b0-SFY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="e8V-ey-ccH"/>
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="eRt-q6-xTU"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
             <variation key="default">
                 <mask key="constraints">
+                    <exclude reference="ON6-tn-aNQ"/>
                     <exclude reference="RZ9-s9-j17"/>
+                    <exclude reference="SD0-xJ-swr"/>
                     <exclude reference="bpF-QS-d6b"/>
                     <exclude reference="eRt-q6-xTU"/>
                 </mask>

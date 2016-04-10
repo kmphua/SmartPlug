@@ -164,11 +164,6 @@ int g_UdpCommand;
     [self handleRemoteNotification:userInfo];
 }
 
-- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo fetchCompletionHandler:(void (^)(UIBackgroundFetchResult))completionHandler
-{
-    [self handleRemoteNotification:userInfo];
-}
-
 - (void)handleRemoteNotification:(NSDictionary *)userInfo
 {
     if (userInfo) {

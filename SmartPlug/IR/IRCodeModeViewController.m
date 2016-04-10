@@ -55,8 +55,9 @@
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
-    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
-    [_gmGridView reloadData];
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -79,6 +80,17 @@
     IRCustomViewController *irCustomVC = [[IRCustomViewController alloc] initWithNibName:@"IRCustomViewController" bundle:nil];
     irCustomVC.groupId = _groupId;
     [self.navigationController pushViewController:irCustomVC animated:YES];
+}
+
+- (void)updateView
+{
+    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
+    [_gmGridView reloadData];
+    if (self.codes.count > 0) {
+        self.navigationItem.rightBarButtonItem = _rightBarBtn;
+    } else {
+        self.navigationItem.rightBarButtonItem = nil;
+    }
 }
 
 //////////////////////////////////////////////////////////////
@@ -337,6 +349,36 @@
             } else {
                 // Failure
                 NSLog(@"IR set failed");
+            }
+        } else if ([resultName isEqualToString:WS_DEV_IR_GET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"IR get success");
+                NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
+                for (NSDictionary *group in groups) {
+                    int groupId = [[group objectForKey:@"id"] intValue];
+                    NSString *title = [group objectForKey:@"title"];
+                    NSString *icon = [group objectForKey:@"icon"];
+                    
+                    [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                    [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                    
+                    NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
+                    for (NSDictionary *button in buttons) {
+                        NSString *title = [button objectForKey:@"title"];
+                        int code = [[button objectForKey:@"code"] intValue];
+                        NSString *icon = [button objectForKey:@"icon"];
+                        int sid = [[button objectForKey:@"id"] intValue];
+                        
+                        [[SQLHelper getInstance] insertIRCodes:groupId name:title filename:code icon:icon mac:g_DeviceMac sid:sid];
+                    }
+                }
+                
+                [self updateView];
+            } else {
+                // Failure
+                NSLog(@"IR get failed");
             }
         }
     }

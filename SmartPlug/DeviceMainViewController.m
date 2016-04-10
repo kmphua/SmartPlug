@@ -151,7 +151,7 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:NO];
+                                                  repeats:YES];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
@@ -205,11 +205,8 @@
 }
 
 - (void)handlePushNotification:(NSNotification *)notification {
-    NSLog(@"I GOT A PUSH NOTIFICATION!!!!");
-    
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
+    NSLog(@"RECEIVED PUSH");
+    [self checkStatus:nil];
 }
 
 - (void)timerCrashReached:(NSNotification *)notification {
@@ -786,12 +783,14 @@
                 NSLog(@"Set device status failed");
             }
         } else if ([resultName isEqualToString:WS_ALARM_GET]) {
-            if ([dataString isEqualToString:@"Alarm Not Exist"]) {
-                [[SQLHelper getInstance] removeAlarms:g_DeviceMac];
-            } else {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
                 // Success
                 NSLog(@"Get alarm success");
                 [self handleUpdateAlarm:data];
+            } else {
+                // Failure
+                NSLog(@"Set alarm failed");
             }
         }
     }

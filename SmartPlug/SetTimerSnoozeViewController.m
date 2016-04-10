@@ -37,6 +37,17 @@
     UIImage *stretchableImage = [originalImage resizableImageWithCapInsets:insets];
     self.imgBackground.image = stretchableImage;
     
+    UIImage *buttonImage = [UIImage imageNamed:@"btn_bkgnd"];
+    UIEdgeInsets btnInsets = UIEdgeInsetsMake(5, 5, 5, 5);
+    UIImage *stretchableBtnImage = [buttonImage resizableImageWithCapInsets:btnInsets];
+    [self.btnAddTimer setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    [self.btnShowModifyTimer setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    [self.btnSnooze5Mins setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    [self.btnSnooze10Mins setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    [self.btnSnooze30Mins setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    [self.btnSnooze1Hour setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    [self.btnCancelSnooze setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
+    
     NSString *title = [NSString stringWithFormat:@"%@",NSLocalizedString(@"TimersSet", nil)];
     
     self.lblTitle.text = title;

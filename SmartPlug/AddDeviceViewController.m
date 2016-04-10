@@ -599,7 +599,7 @@
         
         if ([resultName compare:WS_ACT_DEV] == NSOrderedSame) {
             NSString *result = [jsonObject objectForKey:@"r"];
-            if (result == 0) {
+            if ([result isEqualToString:@"0"]) {
                 // Success
                 [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
                             duration:3.0
