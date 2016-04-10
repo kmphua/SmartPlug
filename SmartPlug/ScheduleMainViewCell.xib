@@ -24,7 +24,7 @@
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="yqx-7K-pVS">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="svc_0_small.png" translatesAutoresizingMaskIntoConstraints="NO" id="yqx-7K-pVS">
                         <rect key="frame" x="13" y="33" width="32" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="32" id="W9q-LD-a04"/>
@@ -32,7 +32,7 @@
                         </constraints>
                     </imageView>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iYi-Jh-CMK">
-                        <rect key="frame" x="243" y="22" width="32" height="32"/>
+                        <rect key="frame" x="243" y="29.5" width="32" height="32"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="32" id="D73-RQ-kdp"/>
                             <constraint firstAttribute="width" constant="32" id="MTe-ZD-woV"/>
@@ -43,7 +43,7 @@
                         </connections>
                     </button>
                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Hl-F7-tav">
-                        <rect key="frame" x="280" y="21" width="32" height="32"/>
+                        <rect key="frame" x="280" y="29.5" width="32" height="32"/>
                         <constraints>
                             <constraint firstAttribute="width" constant="32" id="RNB-GH-bXu"/>
                             <constraint firstAttribute="height" constant="32" id="dm9-wg-krd"/>
@@ -63,21 +63,23 @@
                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <nil key="highlightedColor"/>
                     </label>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="kHx-0A-xtb">
-                        <rect key="frame" x="178" y="36" width="24" height="24"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="svc_0_small.png" translatesAutoresizingMaskIntoConstraints="NO" id="kHx-0A-xtb">
+                        <rect key="frame" x="178" y="33" width="32" height="32"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="24" id="WNj-Vz-UPr"/>
-                            <constraint firstAttribute="width" constant="24" id="rhd-IY-vfm"/>
+                            <constraint firstAttribute="height" constant="32" id="WNj-Vz-UPr"/>
+                            <constraint firstAttribute="width" constant="32" id="rhd-IY-vfm"/>
                         </constraints>
                     </imageView>
                 </subviews>
                 <constraints>
                     <constraint firstItem="yqx-7K-pVS" firstAttribute="top" secondItem="VmL-Gf-XQ9" secondAttribute="bottom" id="0si-0o-B7n"/>
                     <constraint firstItem="kHx-0A-xtb" firstAttribute="centerY" secondItem="ewo-yn-3jb" secondAttribute="centerY" id="2yp-3E-kc5"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="iYi-Jh-CMK" secondAttribute="bottom" constant="5" id="8b2-60-zjV"/>
                     <constraint firstItem="kHx-0A-xtb" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="-25" id="8dT-OX-Vlm"/>
                     <constraint firstItem="1Hl-F7-tav" firstAttribute="leading" secondItem="iYi-Jh-CMK" secondAttribute="trailing" constant="5" id="CZu-wX-fxh"/>
                     <constraint firstAttribute="bottomMargin" secondItem="ewo-yn-3jb" secondAttribute="bottom" constant="6.5" id="Czp-94-vCt"/>
-                    <constraint firstItem="kHx-0A-xtb" firstAttribute="top" secondItem="VmL-Gf-XQ9" secondAttribute="bottom" constant="8" id="Eu9-oK-ZUc"/>
+                    <constraint firstItem="kHx-0A-xtb" firstAttribute="top" secondItem="VmL-Gf-XQ9" secondAttribute="bottom" constant="5" id="Eu9-oK-ZUc"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="1Hl-F7-tav" secondAttribute="bottom" constant="5" id="F3N-EO-Bg7"/>
                     <constraint firstItem="yqx-7K-pVS" firstAttribute="top" secondItem="VmL-Gf-XQ9" secondAttribute="bottom" constant="5" id="JeU-R1-xdJ"/>
                     <constraint firstItem="VmL-Gf-XQ9" firstAttribute="top" secondItem="H2p-sc-9uM" secondAttribute="topMargin" constant="2" id="K5r-QN-Vyy"/>
                     <constraint firstAttribute="bottomMargin" secondItem="kHx-0A-xtb" secondAttribute="bottom" constant="5.5" id="L0X-gZ-xSL"/>
@@ -127,9 +129,11 @@
                         <exclude reference="rKp-mb-j8g"/>
                         <exclude reference="sZo-P2-eXE"/>
                         <exclude reference="y6p-kg-8FQ"/>
+                        <exclude reference="VrG-8d-wBO"/>
                         <exclude reference="aav-pz-hfg"/>
                         <exclude reference="amd-Oc-O9e"/>
                         <exclude reference="Q8H-Ph-x0N"/>
+                        <exclude reference="gUr-a7-SHj"/>
                     </mask>
                 </variation>
             </tableViewCellContentView>
@@ -146,5 +150,6 @@
     <resources>
         <image name="ic_delete_pressed.png" width="32" height="32"/>
         <image name="ic_edit.png" width="32" height="32"/>
+        <image name="svc_0_small.png" width="24" height="24"/>
     </resources>
 </document>

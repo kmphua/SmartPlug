@@ -206,7 +206,7 @@
             break;
         case 4:
             if (_deviceInRange) {
-                cell.textLabel.text = @"CO sensor";
+                cell.textLabel.text = NSLocalizedString(@"id_cosensor", nil);
                 if (self.device.co_sensor) {
                     cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
                 }
@@ -230,10 +230,10 @@
             break;
         case 5:
             if (_deviceInRange) {
-                cell.textLabel.text = @"Hardware";
+                cell.textLabel.text = NSLocalizedString(@"id_hardware", nil);
                 cell.detailTextLabel.text = self.device.hw_ver;
             } else {
-                cell.textLabel.text = @"Notify on power outage";
+                cell.textLabel.text = NSLocalizedString(@"notify_on_power_outage", nil);
                 if (self.device.notify_power) {
                     cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
                 }
@@ -241,10 +241,10 @@
             break;
         case 6:
             if (_deviceInRange) {
-                cell.textLabel.text = @"Firmware";
+                cell.textLabel.text = NSLocalizedString(@"id_firmware", nil);
                 cell.detailTextLabel.text = self.device.fw_ver;
             } else {
-                cell.textLabel.text = @"Notify on CO warning";
+                cell.textLabel.text = NSLocalizedString(@"notify_on_co_warning", nil);
                 if (self.device.notify_co) {
                     cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
                 }
@@ -268,7 +268,7 @@
                     cell.detailTextLabel.text = self.device.sid;
                 }
             } else {
-                cell.textLabel.text = @"Notify on timer activated";
+                cell.textLabel.text = NSLocalizedString(@"notify_on_timer_activated", nil);
                 if (self.device.notify_timer) {
                     cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
                 }

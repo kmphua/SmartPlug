@@ -31,6 +31,8 @@
 "NoTimersSet" = "無設置定時";
 "AddNewTimer" = "新增定時";
 "TimersSet" = "已設置定時";
+"update_alarms_on_server" = "更新鬧鐘裝置";
+"alarms_sent_success" = "成功送出鬧鐘";
 "ShowModifyTimer" = "顯示／編輯定時";
 "Snooze5Minutes" = "睡眠 5 分鐘";
 "Snooze10Minutes" = "睡眠 10 分鐘";

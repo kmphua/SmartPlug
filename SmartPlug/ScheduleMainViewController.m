@@ -181,14 +181,15 @@
     
     int serviceId = alarm.service_id;
     if (serviceId == RELAY_SERVICE) {
-        cell.lblDeviceName.text = @"Plug";
+        cell.lblDeviceName.text = NSLocalizedString(@"btn_outlet", nil);
+        cell.imgDeviceIcon.image = [UIImage imageNamed:@"svc_0_small"];
         cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_0_small"];
     } else if (serviceId == NIGHTLED_SERVICE) {
-        cell.lblDeviceName.text = @"Nightlight";
+        cell.lblDeviceName.text = NSLocalizedString(@"btn_nightLight", nil);
+        cell.imgDeviceIcon.image = [UIImage imageNamed:@"svc_1_small"];
         cell.imgDeviceAction.image = [UIImage imageNamed:@"svc_1_small"];
     }
 
-    cell.imgDeviceIcon.image = [UIImage imageNamed:@"see_Table Lamps_1_white_bkgnd"];
     cell.delegate = self;
         
     return cell;

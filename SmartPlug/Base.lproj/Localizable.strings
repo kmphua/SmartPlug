@@ -44,7 +44,8 @@
 "CancelSnooze" = "Cancel Snooze";
 "SnoozeSentSuccess" = "Snooze sent successfully";
 "ErrorPleaseTryAgain" = "Error, please try again";
-
+"update_alarms_on_server" = "Update Alarms on Device";
+"alarms_sent_success" = "Alarms Sent Successfully";
 
 "id_username" = "Username";
 "id_password" = "Password";

@@ -92,6 +92,9 @@ int g_UdpCommand;
     _mDNSService = [mDNSService getInstance];
     [_mDNSService startBrowsing];
     
+    // Clear push badge
+    [UIApplication sharedApplication].applicationIconBadgeNumber = 0;
+    
     return YES;
 }
 
