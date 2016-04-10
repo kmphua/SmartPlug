@@ -598,7 +598,7 @@
         NSLog(@"jsonDict - %@", jsonDict);
         
         if ([resultName compare:WS_ACT_DEV] == NSOrderedSame) {
-            long result = [[jsonObject objectForKey:@"r"] longValue];
+            NSString *result = [jsonObject objectForKey:@"r"];
             if (result == 0) {
                 // Success
                 [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)

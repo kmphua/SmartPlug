@@ -45,7 +45,11 @@
             break;
         case 1:
             {
-                [_imgIcon setImage:[UIImage imageNamed:@"help_2_en"]];
+                if ([[Global getCurrentLang] isEqualToString:@"en"]) {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_2_en"]];
+                } else {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_2_cn"]];
+                }
                 [_lblTitle setText:NSLocalizedString(@"help_2_title", nil)];
                 [_lblDesc setText:NSLocalizedString(@"help_2_desc", nil)];
                 [_btnLogin setHidden:YES];
@@ -53,7 +57,11 @@
             break;
         case 2:
             {
-                [_imgIcon setImage:[UIImage imageNamed:@"help_3_en"]];
+                if ([[Global getCurrentLang] isEqualToString:@"en"]) {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_3_en"]];
+                } else {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_3_cn"]];
+                }
                 [_lblTitle setText:NSLocalizedString(@"help_3_title", nil)];
                 [_lblDesc setText:NSLocalizedString(@"help_3_desc", nil)];
                 [_btnLogin setHidden:YES];
@@ -69,7 +77,11 @@
             break;
         case 4:
             {
-                [_imgIcon setImage:[UIImage imageNamed:@"help_4_en"]];
+                if ([[Global getCurrentLang] isEqualToString:@"en"]) {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_4_en"]];
+                } else {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_4_cn"]];
+                }
                 [_lblTitle setText:NSLocalizedString(@"help_5_title", nil)];
                 [_lblDesc setText:NSLocalizedString(@"help_5_desc", nil)];
                 [_btnLogin setHidden:YES];
@@ -77,7 +89,11 @@
             break;
         case 5:
             {
-                [_imgIcon setImage:[UIImage imageNamed:@"help_5_en"]];
+                if ([[Global getCurrentLang] isEqualToString:@"en"]) {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_5_en"]];
+                } else {
+                    [_imgIcon setImage:[UIImage imageNamed:@"help_5_cn"]];
+                }
                 [_lblTitle setText:NSLocalizedString(@"help_6_title", nil)];
                 [_lblDesc setText:NSLocalizedString(@"help_6_desc", nil)];
                 [_btnLogin setHidden:YES];

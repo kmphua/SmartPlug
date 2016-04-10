@@ -8,6 +8,8 @@
 
 #import "SettingsViewController.h"
 #import "ChangePasswordViewController.h"
+#import "LoginViewController.h"
+#import "AppDelegate.h"
 
 #define kOFFSET_FOR_KEYBOARD 80.0
 
@@ -135,10 +137,15 @@
                                  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PHONE];
                                  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_PASSWORD];
                                  [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_KEY_LAST_LOGIN];
+                                 [[NSUserDefaults standardUserDefaults] setObject:nil forKey:UD_USER_TOKEN];
                                  [[NSUserDefaults standardUserDefaults] synchronize];
                                  
                                  // Return to login screen
-                                 [self.navigationController popToRootViewControllerAnimated:YES];
+                                 LoginViewController *loginController = [[LoginViewController alloc] initWithNibName:@"LoginViewController" bundle:nil];
+                                 UINavigationController *navi = [[UINavigationController alloc]initWithRootViewController:loginController];
+                                 AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+                                 appDelegate.window.rootViewController = navi;
+                                 [appDelegate.window makeKeyAndVisible];
                              }];
         
         UIAlertAction* noAction = [UIAlertAction
