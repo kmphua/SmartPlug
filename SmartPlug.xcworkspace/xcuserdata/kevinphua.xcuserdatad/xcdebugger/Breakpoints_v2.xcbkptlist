@@ -32,32 +32,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartPlug/MainViewController.m"
-            timestampString = "481978209.228752"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "182"
-            endingLineNumber = "182"
-            landmarkName = "-handlePush:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/DeviceMainViewController.m"
-            timestampString = "481978493.43716"
+            timestampString = "481997459.363325"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "193"
-            endingLineNumber = "193"
-            landmarkName = "-udpUpdateUI:"
+            startingLineNumber = "558"
+            endingLineNumber = "558"
+            landmarkName = "-checkStatus:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -67,29 +51,13 @@
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IRCodeModeViewController.m"
-            timestampString = "481983012.53689"
+            filePath = "SmartPlug/DeviceMainViewController.m"
+            timestampString = "481998938.9317"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "42"
-            endingLineNumber = "42"
-            landmarkName = "-viewDidLoad"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IREditModeViewController.m"
-            timestampString = "481983394.227336"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
-            landmarkName = "-onBtnIr:"
+            startingLineNumber = "731"
+            endingLineNumber = "731"
+            landmarkName = "-didReceiveData:resultName:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

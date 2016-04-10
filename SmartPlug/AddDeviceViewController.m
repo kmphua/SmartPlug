@@ -39,7 +39,7 @@
 @property (nonatomic, strong) NSString *gatewayAddress;
 @property (nonatomic, strong) NSString *wifiPassword;
 
-
+@property (nonatomic, strong) JSmartPlug *plug;
 @property (strong, nonatomic) GCDAsyncSocket *socket;
 @property (strong, nonatomic) CrashCountDown *crashTimer;
 
@@ -554,8 +554,9 @@
 {
     // Add device to device list
     JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
-    
-    [[SQLHelper getInstance] insertPlug:plug active:1];
+    _plug = plug;
+
+    //[[SQLHelper getInstance] insertPlug:plug active:1];
 
     // Set temp device name
     g_DeviceName = plug.name;
@@ -604,6 +605,8 @@
                 [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
                             duration:3.0
                             position:CSToastPositionCenter];
+                
+                [[SQLHelper getInstance] insertPlug:_plug active:1];
                 
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 [self.navigationController popViewControllerAnimated:YES];

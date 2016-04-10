@@ -89,7 +89,7 @@
 - (void)modelDetails:(NSString *)userToken lang:(NSString *)lang model:(int)model;
 - (void)devIrGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId iconRes:(IconResolution)iconRes;
 - (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId name:(NSString *)name icon:(int)icon iconRes:(IconResolution)iconRes;
-- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action buttonId:(int)buttonId name:(NSString *)name icon:(int)icon iconRes:(IconResolution)iconRes;
+- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId buttonId:(int)buttonId name:(NSString *)name icon:(int)icon code:(int)code iconRes:(IconResolution)iconRes;
 - (void)irDetect:(NSString *)userToken lang:(NSString *)lang;
 
 @end

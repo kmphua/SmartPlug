@@ -40,6 +40,11 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws galleryList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -67,6 +72,11 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    
+    // Get device list
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
     
     // Start status checker timer
     _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
@@ -580,6 +590,20 @@
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
+            }
+        } else if ([resultName isEqualToString:WS_GALLERY_LIST]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSArray *icons = (NSArray *)[jsonObject objectForKey:@"icons"];
+                if (icons) {
+                    for (NSDictionary *icon in icons) {
+                        NSString *url = [icon objectForKey:@"url"];
+                        NSString *idParam = [icon objectForKey:@"id"];
+                        
+                        [[SQLHelper getInstance] insertIcons:url size:0 sid:idParam];
+                    }
+                }
             }
         }
         

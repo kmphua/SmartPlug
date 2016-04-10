@@ -161,7 +161,7 @@ static mDNSService *instance;
             BOOL addPlug = YES;
             for (JSmartPlug *plug in self.plugs) {
                 // Check if plug exists
-                if (plug.server && [plug.server isEqualToString:serviceIp]) {
+                if ([plug.name isEqualToString:service.name]) {
                     addPlug = NO;
                     break;
                 }

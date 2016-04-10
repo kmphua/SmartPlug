@@ -145,7 +145,7 @@
         }
         
         UIButton *btnIr = [[UIButton alloc] initWithFrame:CGRectMake(25, 25, 70, 70)];
-        btnIr.tag = group.group_id;
+        btnIr.tag = group.sid;
         
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
         //__weak IRCodeModeViewController *weakself = self;
@@ -177,7 +177,7 @@
             UIButton *btnDelete = [[UIButton alloc] initWithFrame:CGRectMake(90, 0, 30, 30)];
             [btnDelete setBackgroundImage:[UIImage imageNamed:@"btn_warn_close"] forState:UIControlStateNormal];
             [btnDelete addTarget:self action:@selector(onBtnDelete:) forControlEvents:UIControlEventTouchUpInside];
-            btnDelete.tag = group.group_id;
+            btnDelete.tag = group.sid;
             [viewIr addSubview:btnDelete];
         }
         
@@ -222,8 +222,6 @@
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE groupId:newIndex name:groupName icon:[iconId intValue] iconRes:[Global getIconResolution]];
-    
-    [self updateView];
 }
 
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
@@ -324,6 +322,19 @@
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
+            }
+        } else if ([resultName isEqualToString:WS_DEV_IR_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"IR set success");
+                
+                WebService *ws = [WebService new];
+                ws.delegate = self;
+                [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
+            } else {
+                // Failure
+                NSLog(@"IR set failed");
             }
         }
     }

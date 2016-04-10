@@ -151,7 +151,7 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:YES];
+                                                  repeats:NO];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
@@ -724,6 +724,12 @@
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
                 NSString *snooze = [jsonObject objectForKey:@"snooze"];
                 
+                NSString *title = [jsonObject objectForKey:@"title"];
+                NSString *icon = [jsonObject objectForKey:@"icon"];
+
+                [[SQLHelper getInstance] updatePlugName:title sid:g_DeviceMac];
+                [[SQLHelper getInstance] updatePlugIcon:g_DeviceMac icon:icon];
+                
                 NSLog(@"Devget returned: relay=%@, nightlight=%@, co_sensor=%@, hall_sensor=%@, snooze=%@",
                       relay, nightlight, co_sensor, hall_sensor, snooze);
                 
@@ -757,6 +763,8 @@
                                                                     object:self
                                                                   userInfo:nil];
                 
+                [self updateUI:nil];
+
                 // Update alarms from server
                 [self updateAlarms];
             } else {

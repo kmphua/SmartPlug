@@ -216,7 +216,7 @@ static SQLHelper *instance;
 - (IrGroup *)getIRGroupBySID:(int)sid
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE _id = ?", [NSNumber numberWithInt:sid]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
     IrGroup *irGroup;
     while ([results next]) {
         irGroup = [IrGroup new];
@@ -233,7 +233,7 @@ static SQLHelper *instance;
 - (BOOL)deleteIRGroupById:(int)groupId
 {
     [db open];
-    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE _id = ?", [NSNumber numberWithInt:groupId]];
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:groupId]];
     if (toReturn){
         if ([self deleteIRCodes:groupId]){
             toReturn = true;
@@ -256,7 +256,7 @@ static SQLHelper *instance;
 - (BOOL)deleteIRGroupBySID:(int)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    BOOL result = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
     if (result) {
         result = [self deleteIRCodesBySID:sid];
     }
@@ -284,7 +284,7 @@ static SQLHelper *instance;
 - (NSArray *)getIRGroup:(int)groupId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE _id = ?", [NSNumber numberWithInt:groupId]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:groupId]];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
         IrGroup *irGroup = [IrGroup new];

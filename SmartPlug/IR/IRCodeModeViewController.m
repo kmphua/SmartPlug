@@ -54,10 +54,7 @@
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-    
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
+    [self updateView];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -152,7 +149,12 @@
         
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
         //__weak IRCodeModeViewController *weakself = self;
-        [manager downloadImageWithURL:[NSURL URLWithString:code.icon]
+        
+        NSString *icon = @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png";
+        if (code.icon && code.icon.length>0) {
+            icon = code.icon;
+        }
+        [manager downloadImageWithURL:[NSURL URLWithString:icon]
                               options:0
                              progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                  // progression tracking code
@@ -180,7 +182,7 @@
             UIButton *btnDelete = [[UIButton alloc] initWithFrame:CGRectMake(90, 0, 30, 30)];
             [btnDelete setBackgroundImage:[UIImage imageNamed:@"btn_warn_close"] forState:UIControlStateNormal];
             [btnDelete addTarget:self action:@selector(onBtnDelete:) forControlEvents:UIControlEventTouchUpInside];
-            btnDelete.tag = code.code_id;
+            btnDelete.tag = code.sid;
             [viewIr addSubview:btnDelete];
         }
         
@@ -217,12 +219,7 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE buttonId:codeId name:@"" icon:iconId iconRes:[Global getIconResolution]];
-    /*
-    [[SQLHelper getInstance] deleteIRCode:codeId];
-    */
-    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
-    [_gmGridView reloadData];
+    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE groupId:groupId buttonId:codeId name:@"" icon:iconId code:0 iconRes:[Global getIconResolution]];
 }
 
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
@@ -346,6 +343,10 @@
             if (result == 0) {
                 // Success
                 NSLog(@"IR set success");
+                
+                WebService *ws = [WebService new];
+                ws.delegate = self;
+                [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
             } else {
                 // Failure
                 NSLog(@"IR set failed");
@@ -354,31 +355,40 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                NSLog(@"IR get success");
                 NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
-                for (NSDictionary *group in groups) {
-                    int groupId = [[group objectForKey:@"id"] intValue];
-                    NSString *title = [group objectForKey:@"title"];
-                    NSString *icon = [group objectForKey:@"icon"];
+                if (groups) {
+                    NSLog(@"Total %ld groups", (unsigned long)groups.count);
                     
-                    [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
-                    [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
-                    
-                    NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
-                    for (NSDictionary *button in buttons) {
-                        NSString *title = [button objectForKey:@"title"];
-                        int code = [[button objectForKey:@"code"] intValue];
-                        NSString *icon = [button objectForKey:@"icon"];
-                        int sid = [[button objectForKey:@"id"] intValue];
+                    for (NSDictionary *group in groups) {
+                        int groupId = [[group objectForKey:@"id"] intValue];
+                        NSString *title = [group objectForKey:@"title"];
+                        NSString *icon = [group objectForKey:@"icon"];
                         
-                        [[SQLHelper getInstance] insertIRCodes:groupId name:title filename:code icon:icon mac:g_DeviceMac sid:sid];
+                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        
+                        NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
+                        for (NSDictionary *button in buttons) {
+                            int sid = [[button objectForKey:@"id"] intValue];
+                            NSString *title = [button objectForKey:@"title"];
+                            NSString *icon = [button objectForKey:@"icon"];
+                            int code = [[button objectForKey:@"code"] intValue];
+                            
+                            [[SQLHelper getInstance] insertIRCodes:groupId name:title filename:code icon:icon mac:g_DeviceMac sid:sid];
+                        }
                     }
+                    
+                    [self updateView];
                 }
-                
-                [self updateView];
             } else {
                 // Failure
-                NSLog(@"IR get failed");
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
             }
         }
     }

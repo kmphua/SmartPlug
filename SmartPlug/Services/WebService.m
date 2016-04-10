@@ -302,10 +302,10 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action buttonId:(int)buttonId name:(NSString *)name icon:(int)icon iconRes:(IconResolution)iconRes
+- (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId buttonId:(int)buttonId name:(NSString *)name icon:(int)icon code:(int)code iconRes:(IconResolution)iconRes
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=button&action=%@&buttonid=%d&name=%@&icon=%d&code=base64string&res=%d", userToken, lang, devId, serviceId, action, buttonId, name, icon, iconRes];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=button&action=%@&groupid=%d&buttonid=%d&name=%@&icon=%d&code=%d&res=%d", userToken, lang, devId, serviceId, action, groupId, buttonId, name, icon, code, iconRes];
     self.resultName = WS_DEV_IR_SET;
     [self postData:apiUrl params:params];
 }

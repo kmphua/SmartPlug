@@ -126,9 +126,7 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD buttonId:0 name:_name icon:iconId iconRes:[Global getIconResolution]];
-    
-    //[[SQLHelper getInstance] insertIRCodes:_groupId name:_name filename:ir_filename icon:_icon mac:g_DeviceMac];
+    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:groupId buttonId:0 name:_name icon:iconId code:ir_filename iconRes:[Global getIconResolution]];
     [self.navigationController popViewControllerAnimated:YES];
 }
 
@@ -136,5 +134,93 @@
     NSLog(@"CANCELING IR SCANNING");
     [[UDPCommunication getInstance] cancelIRMode];
 }
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error) {
+        NSLog(@"Error received: %@", [error localizedDescription]);
+    }
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName compare:WS_DEV_CTRL] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"Set device status success");
+            } else {
+                // Failure
+                NSLog(@"Set device status failed");
+            }
+        } else if ([resultName isEqualToString:WS_DEV_IR_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"IR set success");
+                
+                WebService *ws = [WebService new];
+                ws.delegate = self;
+                [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
+            } else {
+                // Failure
+                NSLog(@"IR set failed");
+            }
+        } else if ([resultName isEqualToString:WS_DEV_IR_GET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
+                if (groups) {
+                    NSLog(@"Total %ld groups", (unsigned long)groups.count);
+                    
+                    for (NSDictionary *group in groups) {
+                        int groupId = [[group objectForKey:@"id"] intValue];
+                        NSString *title = [group objectForKey:@"title"];
+                        NSString *icon = [group objectForKey:@"icon"];
+                        
+                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        
+                        NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
+                        for (NSDictionary *button in buttons) {
+                            int sid = [[button objectForKey:@"id"] intValue];
+                            NSString *title = [button objectForKey:@"title"];
+                            NSString *icon = [button objectForKey:@"icon"];
+                            
+                            [[SQLHelper getInstance] insertIRCodes:groupId name:title filename:ir_filename icon:icon mac:g_DeviceMac sid:sid];
+                        }
+                    }
+                }
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
+}
+
 
 @end
