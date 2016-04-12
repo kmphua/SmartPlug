@@ -84,7 +84,7 @@
                                                            target:self
                                                          selector:@selector(checkStatus:)
                                                          userInfo:nil
-                                                          repeats:YES];
+                                                          repeats:NO];
     
     [self showWaitingIndicator];
 }
@@ -211,6 +211,14 @@
 }
 
 - (void)checkStatus:(id)sender {
+    // Remove all plugs
+    [[SQLHelper getInstance] deletePlugs];
+    
+    // Get device list
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
+
     if (g_DeviceIp) {
         if ([[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
             //[_crashTimer startTimer];
@@ -220,10 +228,12 @@
     }
     
     [self getDeviceStatus:g_DeviceMac];
-    
+
+    /*
     self.plugs = [[SQLHelper getInstance] getPlugData];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
+    */
 }
 
 //==================================================================

@@ -31,6 +31,7 @@
 - (BOOL)deleteIRGroupBySID:(int)sid;
 - (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position sid:(int)sid;
 - (BOOL)updateIRGroup:(IrGroup *)group;
+- (BOOL)deleteIRGroups;
 
 // IR Codes
 - (NSArray *)getIRCodes;
@@ -42,6 +43,7 @@
 - (BOOL)deleteIRCodes:(int)groupId;
 - (BOOL)deleteIRCodesBySID:(int)groupId;
 - (BOOL)deleteIRCode:(int)groupId;
+- (BOOL)deleteAllIRCodes;
 
 // Plugs
 //- (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip;

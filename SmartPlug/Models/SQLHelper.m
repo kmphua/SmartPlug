@@ -245,6 +245,29 @@ static SQLHelper *instance;
     return toReturn;
 }
 
+- (BOOL)deleteIRGroups
+{
+    [db open];
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups"];
+    if (toReturn){
+        if ([self deleteAllIRCodes]){
+            toReturn = true;
+        } else {
+            toReturn = false;
+        }
+    }
+    [db close];
+    return toReturn;
+}
+
+- (BOOL)deleteAllIRCodes
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"DELETE FROM ircodes"];
+    [db close];
+    return result;
+}
+
 - (BOOL)deleteIRCodes:(int)groupId
 {
     [db open];

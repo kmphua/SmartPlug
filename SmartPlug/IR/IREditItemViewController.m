@@ -70,7 +70,6 @@
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text icon:iconId iconRes:[Global getIconResolution]];
-    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //==================================================================
@@ -171,6 +170,46 @@
         [self.navigationController pushViewController:iconVC animated:YES];
     }
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
+}
+
+//==================================================================
+#pragma WebServiceDelegate
+//==================================================================
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error) {
+        NSLog(@"Error received: %@", [error localizedDescription]);
+    }
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName isEqualToString:WS_DEV_IR_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"IR set success");
+                [self.navigationController popViewControllerAnimated:YES];
+                [self.delegate onAddedIRGroup];
+            } else {
+                // Failure
+                NSLog(@"IR set failed");
+            }
+        }
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
 }
 
 

@@ -51,12 +51,29 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];    
+    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
+
+    // Register notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePush:) name:NOTIFICATION_PUSH object:nil];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+    [super viewWillDisappear:animated];
+    
+    // Deregister notifications 
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)handlePush:(NSNotification *)notification {
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
 }
 
 - (void)updateView
@@ -287,6 +304,8 @@
         if ([resultName isEqualToString:WS_DEV_IR_GET]) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
+                [[SQLHelper getInstance] deleteIRGroups];
+
                 // Success
                 NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
                 if (groups) {

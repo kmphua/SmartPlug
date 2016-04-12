@@ -19,22 +19,6 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/DeviceMainViewController.m"
-            timestampString = "482167063.202592"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "213"
-            endingLineNumber = "213"
-            landmarkName = "-handlePushNotification:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
             filePath = "SmartPlug/MainViewController.m"
             timestampString = "482169901.074809"
             startingColumnNumber = "9223372036854775807"
@@ -52,7 +36,7 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/DeviceMainViewController.m"
-            timestampString = "482170687.474698"
+            timestampString = "482175403.770065"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "799"
@@ -67,13 +51,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/AppDelegate.m"
-            timestampString = "482170905.091099"
+            filePath = "SmartPlug/DeviceMainViewController.m"
+            timestampString = "482175403.770065"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "172"
-            endingLineNumber = "172"
-            landmarkName = "-handleRemoteNotification:"
+            startingLineNumber = "803"
+            endingLineNumber = "803"
+            landmarkName = "-didReceiveData:resultName:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

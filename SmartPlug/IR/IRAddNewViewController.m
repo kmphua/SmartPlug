@@ -10,7 +10,7 @@
 #import "IRDetectIRViewController.h"
 #import "IREditItemViewController.h"
 
-@interface IRAddNewViewController ()
+@interface IRAddNewViewController ()<IREditItemDelegate>
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
@@ -72,7 +72,17 @@
 
 - (void)onTapViewRecord:(UITapGestureRecognizer *)tapGestureRecognizer {
     IREditItemViewController *irEditVC = [[IREditItemViewController alloc] initWithNibName:@"IREditItemViewController" bundle:nil];
+    irEditVC.delegate = self;
     [self.navigationController pushViewController:irEditVC animated:YES];
+}
+
+//==================================================================
+#pragma IREditItemDelegate
+//==================================================================
+
+- (void)onAddedIRGroup
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 @end

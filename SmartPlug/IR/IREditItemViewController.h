@@ -8,6 +8,14 @@
 
 #import "BaseViewController.h"
 
+@protocol IREditItemDelegate <NSObject>
+
+- (void)onAddedIRGroup;
+
+@end
+
 @interface IREditItemViewController : BaseViewController<WebServiceDelegate>
+
+@property (nonatomic, assign) id<IREditItemDelegate> delegate;
 
 @end
