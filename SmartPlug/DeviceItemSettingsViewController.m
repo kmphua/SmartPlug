@@ -425,6 +425,7 @@
             if (result == 0) {
                 // Success
                 //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                [self.navigationController popViewControllerAnimated:YES];
                 
             } else {
                 // Failure
