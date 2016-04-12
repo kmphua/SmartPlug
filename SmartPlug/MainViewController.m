@@ -41,7 +41,6 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws galleryList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
@@ -55,10 +54,12 @@
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithImage:[UIImage imageNamed:@"ic_menu_settings"] style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
-    // Get plugs
-    self.plugs = [[SQLHelper getInstance] getPlugData];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
+    // Remove all plugs
+    [[SQLHelper getInstance] deletePlugs];
+    
+    //self.plugs = [[SQLHelper getInstance] getPlugData];
+    //[self.tableView reloadData];
+    //[self adjustHeightOfTableview];
     
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceInfo:) name:NOTIFICATION_DEVICE_INFO object:nil];
@@ -474,9 +475,10 @@
                 
                 if (!devices || devices.count == 0) {
                     // Jump to add device page
+                    g_DeviceMac = nil;
+                    g_DeviceIp = nil;
                     AddDeviceViewController *addDeviceController = [[AddDeviceViewController alloc] initWithNibName:@"AddDeviceViewController" bundle:nil];
                     [self.navigationController pushViewController:addDeviceController animated:YES];
-                    return;
                 }
                 
                 if (devices) {

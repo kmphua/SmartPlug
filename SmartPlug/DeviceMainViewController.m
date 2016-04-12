@@ -155,7 +155,7 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:NO];
+                                                  repeats:YES];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
@@ -795,14 +795,16 @@
                 NSLog(@"Set device status failed");
             }
         } else if ([resultName isEqualToString:WS_ALARM_GET]) {
-            long result = [[jsonObject objectForKey:@"r"] longValue];
-            if (result == 0) {
-                // Success
-                NSLog(@"Get alarm success");
-                [self handleUpdateAlarm:data];
-            } else {
-                // Failure
-                NSLog(@"Set alarm failed");
+            if (jsonObject) {
+                long result = [[jsonObject objectForKey:@"r"] longValue];
+                if (result == 0) {
+                    // Success
+                    NSLog(@"Get alarm success");
+                    [self handleUpdateAlarm:data];
+                } else {
+                    // Failure
+                    NSLog(@"Set alarm failed");
+                }
             }
         }
     }

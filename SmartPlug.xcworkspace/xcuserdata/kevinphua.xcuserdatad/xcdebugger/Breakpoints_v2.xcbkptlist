@@ -16,16 +16,16 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "No"
+            shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/Models/SQLHelper.m"
-            timestampString = "482162529.971724"
+            filePath = "SmartPlug/DeviceMainViewController.m"
+            timestampString = "482167063.202592"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "403"
-            endingLineNumber = "403"
-            landmarkName = "-insertPlug:active:"
+            startingLineNumber = "213"
+            endingLineNumber = "213"
+            landmarkName = "-handlePushNotification:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -35,13 +35,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/Models/SQLHelper.m"
-            timestampString = "482162526.403645"
+            filePath = "SmartPlug/MainViewController.m"
+            timestampString = "482169901.074809"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "403"
-            endingLineNumber = "403"
-            landmarkName = "-insertPlug:active:"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
+            landmarkName = "-handlePush:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -51,13 +51,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/AddDeviceViewController.m"
-            timestampString = "482164635.61776"
+            filePath = "SmartPlug/DeviceMainViewController.m"
+            timestampString = "482170687.474698"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "232"
-            endingLineNumber = "232"
-            landmarkName = "-handleDeviceFound:"
+            startingLineNumber = "799"
+            endingLineNumber = "799"
+            landmarkName = "-didReceiveData:resultName:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SmartPlug/AppDelegate.m"
+            timestampString = "482170905.091099"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "172"
+            endingLineNumber = "172"
+            landmarkName = "-handleRemoteNotification:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
