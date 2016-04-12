@@ -262,10 +262,13 @@
         cell.lblDeviceName.text = plug.name;
     }
     
+    NSString *imagePath;
     if (plug.icon && plug.icon.length>0) {
-        NSString *imagePath = plug.icon;
-        [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+        imagePath = plug.icon;
+    } else {
+        imagePath = @"http://flutehuang-001-site2.ctempurl.com/Images/see_Electric_ight_1_white_bkgnd.png";
     }
+    [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     
     if ([[SQLHelper getInstance] getAlarmDataById:plug.dbid]) {
         [cell.btnTimer setHidden:NO];
@@ -434,9 +437,11 @@
 
 - (void)getDeviceStatus:(NSString *)devId
 {
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:devId];
+    if (devId) {
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:devId];
+    }
 }
 
 //==================================================================
@@ -466,6 +471,14 @@
                 // Success
                 //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
+                
+                if (!devices || devices.count == 0) {
+                    // Jump to add device page
+                    AddDeviceViewController *addDeviceController = [[AddDeviceViewController alloc] initWithNibName:@"AddDeviceViewController" bundle:nil];
+                    [self.navigationController pushViewController:addDeviceController animated:YES];
+                    return;
+                }
+                
                 if (devices) {
                     NSLog(@"Total %ld devices", (unsigned long)devices.count);
                     

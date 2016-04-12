@@ -114,6 +114,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
     
     self.plugs = [[mDNSService getInstance] plugs];
+    
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     
@@ -201,7 +202,7 @@
     int flag = [[userInfo objectForKey:@"flag"] intValue];
     
     for (JSmartPlug *plug in _plugs) {
-        if ([plug.name isEqualToString:_name]) {
+        if ([plug.name isEqualToString:_plug.name]) {
             plug.sid = _devId;
             plug.model = model;
             plug.buildno = buildno;
@@ -213,12 +214,10 @@
         }
     }
     
-    /*
     // Activate device
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:_devId title:g_DeviceName model:model];
-    */
 }
 
 - (void)handleDeviceFound:(NSNotification*)notification {
@@ -561,14 +560,14 @@
     // Set temp device name
     g_DeviceName = plug.name;
     
+    /*
     // Activate device
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:plug.sid title:g_DeviceName model:plug.model];
+    */
     
-    /*
-    [[UDPCommunication getInstance] queryDevices:device.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
-     */
+    [[UDPCommunication getInstance] queryDevices:plug.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
      
     [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
                 duration:3.0

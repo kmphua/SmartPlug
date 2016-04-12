@@ -91,10 +91,14 @@
     
     [[UDPCommunication getInstance] queryDevices:_device.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
     
+    NSString *imagePath;
     if (self.device.icon && self.device.icon.length > 0) {
-        NSString *imagePath = self.device.icon;
-        [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+        imagePath = self.device.icon;
+    } else {
+        imagePath = @"http://flutehuang-001-site2.ctempurl.com/Images/see_Electric_ight_1_white_bkgnd.png";
     }
+    [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+
     
     if (self.device.givenName && self.device.givenName.length > 0) {
         self.lblDeviceName.text = self.device.givenName;
