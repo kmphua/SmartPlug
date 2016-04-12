@@ -8,10 +8,17 @@
 
 #import "BaseViewController.h"
 
+@protocol IRRecordDelegate <NSObject>
+
+- (void)onSaveIRRecord;
+
+@end
+
 @interface IRRecordViewController : BaseViewController<WebServiceDelegate>
 
 @property (nonatomic, assign) int groupId;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *icon;
+@property (nonatomic, assign) id<IRRecordDelegate> delegate;
 
 @end

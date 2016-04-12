@@ -84,7 +84,7 @@
                                                            target:self
                                                          selector:@selector(checkStatus:)
                                                          userInfo:nil
-                                                          repeats:NO];
+                                                          repeats:YES];
     
     [self showWaitingIndicator];
 }
@@ -204,6 +204,8 @@
         NSLog(@"Updating plug %@ with ip %@", plug.name, plug.ip);
         [[SQLHelper getInstance] updatePlugIP:plug.name ip:plug.ip];
     }
+    
+    self.plugs = [[SQLHelper getInstance] getPlugData];
 }
 
 - (void)m1UpdateUI:(NSNotification *)notification {
@@ -218,22 +220,18 @@
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
+}
 
-    if (g_DeviceIp) {
-        if ([[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
+- (void)updateStatus {
+    for (JSmartPlug *plug in _plugs) {
+        if ([[UDPCommunication getInstance] queryDevices:plug.ip udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
             //[_crashTimer startTimer];
         } else {
             NSLog(@"IP IS NULL");
         }
+        
+        [self getDeviceStatus:plug.sid];
     }
-    
-    [self getDeviceStatus:g_DeviceMac];
-
-    /*
-    self.plugs = [[SQLHelper getInstance] getPlugData];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
-    */
 }
 
 //==================================================================
@@ -520,6 +518,7 @@
                 self.plugs = [[SQLHelper getInstance] getPlugData];
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
+                [self updateStatus];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
@@ -602,9 +601,16 @@
                     [[SQLHelper getInstance] updateSnooze:0 sid:g_DeviceMac];
                 }
                 
+                // Get devices from database
+                self.plugs = [[SQLHelper getInstance] getPlugData];
+                [self.tableView reloadData];
+                [self adjustHeightOfTableview];
+
+                /*
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS
                                                                     object:self
                                                                   userInfo:nil];
+                 */
                 
             } else {
                 // Failure

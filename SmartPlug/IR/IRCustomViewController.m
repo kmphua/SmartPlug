@@ -12,7 +12,7 @@
 
 #define FILE_PATH   @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
 
-@interface IRCustomViewController()<UITextFieldDelegate, DeviceIconDelegate>
+@interface IRCustomViewController()<UITextFieldDelegate, DeviceIconDelegate, IRRecordDelegate>
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UITextField *txtName;
@@ -62,6 +62,7 @@
     irRecordVC.name = _txtName.text;
     irRecordVC.groupId = _groupId;
     irRecordVC.icon = _filePath;
+    irRecordVC.delegate = self;
     [self.navigationController pushViewController:irRecordVC animated:YES];
 }
 
@@ -74,6 +75,15 @@
     // Update group icon
     _filePath = icon;
     [self.tableView reloadData];
+}
+
+//==================================================================
+#pragma mark - IRRecordDelegate
+//==================================================================
+
+- (void)onSaveIRRecord
+{
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //==================================================================
@@ -166,6 +176,5 @@
     }     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
-
 
 @end

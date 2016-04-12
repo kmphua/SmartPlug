@@ -252,6 +252,14 @@
         _lblDeviceName.text = device.name;
     }
     
+    NSString *imagePath;
+    if (device.icon && device.icon.length > 0) {
+        imagePath = device.icon;
+    } else {
+        imagePath = @"http://flutehuang-001-site2.ctempurl.com/Images/see_Electric_ight_1_white_bkgnd.png";
+    }
+    [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+    
     // Relay
     if (device.relay == 0) {
         _relay = 0;
@@ -795,16 +803,8 @@
                 NSLog(@"Set device status failed");
             }
         } else if ([resultName isEqualToString:WS_ALARM_GET]) {
-            if (jsonObject) {
-                long result = [[jsonObject objectForKey:@"r"] longValue];
-                if (result == 0) {
-                    // Success
-                    NSLog(@"Get alarm success");
-                    [self handleUpdateAlarm:data];
-                } else {
-                    // Failure
-                    NSLog(@"Set alarm failed");
-                }
+            if (data) {
+                [self handleUpdateAlarm:data];
             }
         }
     }
