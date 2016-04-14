@@ -34,17 +34,17 @@
 "update_alarms_on_server" = "更新鬧鐘裝置";
 "alarms_sent_success" = "成功送出鬧鐘";
 "ShowModifyTimer" = "顯示／編輯定時";
-"Snooze5Minutes" = "睡眠 5 分鐘";
-"Snooze10Minutes" = "睡眠 10 分鐘";
-"Snooze30Minutes" = "睡眠 30 分鐘";
-"Snooze1Hour" = "睡眠 1 小時";
-"Snoozing" = "睡眠中";
-"Snooze5MoreMinutes" = "睡眠多 5 分鐘";
-"Snooze10MoreMinutes" = "睡眠多 10 分鐘";
-"Snooze30MoreMinutes" = "睡眠多 30 分鐘";
-"Snooze1MoreHour" = "睡眠多 1 小時";
-"CancelSnooze" = "取消睡眠";
-"SnoozeSentSuccess" = "傳送睡眠設定成功";
+"Snooze5Minutes" = "延遲 5 分鐘";
+"Snooze10Minutes" = "延遲 10 分鐘";
+"Snooze30Minutes" = "延遲 30 分鐘";
+"Snooze1Hour" = "延遲 1 小時";
+"Snoozing" = "延遲中";
+"Snooze5MoreMinutes" = "延遲多 5 分鐘";
+"Snooze10MoreMinutes" = "延遲多 10 分鐘";
+"Snooze30MoreMinutes" = "延遲多 30 分鐘";
+"Snooze1MoreHour" = "延遲多 1 小時";
+"CancelSnooze" = "取消延遲";
+"SnoozeSentSuccess" = "傳送延遲設定成功";
 "ErrorPleaseTryAgain" = "傳送錯誤，請再試一下";
 
 

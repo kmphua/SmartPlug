@@ -10,6 +10,7 @@
 #import "DeviceIconViewController.h"
 #import "FirstTimeConfig.h"
 #import "UDPCommunication.h"
+#import "MBProgressHUD.h"
 
 @interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
 {
@@ -21,6 +22,7 @@
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic) BOOL deviceInRange;
 @property (nonatomic, strong) UITextField *txtName;
+@property (strong, nonatomic) MBProgressHUD *hud;
 
 @end
 
@@ -66,7 +68,24 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showWaitingIndicator {
+    _hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    _hud.mode = MBProgressHUDModeIndeterminate;
+    _hud.labelText = NSLocalizedString(@"processing_command", nil);
+    [_hud show:YES];
+}
+
+- (void)dismissWaitingIndicator {
+    [_hud hide:YES];
+}
+
 - (void)onRightBarButton:(id)sender {
+    // Disable user interaction
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    
+    // Show waiting view
+    [self showWaitingIndicator];
+    
     if (_device.notify_power) {
         notify_on_power_outage = 1;
     } else {
@@ -103,12 +122,16 @@
             WebService *ws = [WebService new];
             ws.delegate = self;
             [ws devSet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac icon:iconId title:name notifyPower:[NSString stringWithFormat:@"%d", notify_on_power_outage] notifyTimer:[NSString stringWithFormat:@"%d", notify_on_timer_activated] notifyDanger:[NSString stringWithFormat:@"%d",notify_on_co_warning]];
-            
-            NSLog(@"DB UPDATED SUCCESSFULLY");
+            return;
         } else {
             NSLog(@"CHECK IF MAC ADDRESS IS NULL");
+            self.navigationItem.rightBarButtonItem.enabled = YES;
+            [self dismissWaitingIndicator];
         }
     }
+    
+    self.navigationItem.rightBarButtonItem.enabled = YES;
+    [self dismissWaitingIndicator];
 }
 
 //==================================================================
@@ -424,11 +447,15 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"DB UPDATED SUCCESSFULLY");
+                self.navigationItem.rightBarButtonItem.enabled = YES;
+                [self dismissWaitingIndicator];
                 [self.navigationController popViewControllerAnimated:YES];
-                
             } else {
                 // Failure
+                self.navigationItem.rightBarButtonItem.enabled = YES;
+                [self dismissWaitingIndicator];
+
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
                                                                     message:message
