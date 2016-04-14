@@ -111,6 +111,7 @@ extern int g_UdpCommand;
 
 @interface Global : NSObject
 
++ (BOOL)isNetworkReady;
 + (UIColor *)colorWithType:(ColorType)type;
 + (UIColor *)colorWithHelpPage:(int)pageNo;
 + (NSString *)getCurrentLang;

@@ -197,3 +197,6 @@
 "help_6_title" = "Add the Device";
 "help_6_desc" = "Your JSPlug should now be listed in the list. Simply tap it to add the device to your account";
 "help_7_title" = "Ready to Begin!";
+
+"msg_network_error" = "Network Error";
+"msg_unable_to_connect" = "You need a network connection to use this application. Please turn on mobile network in Settings.";

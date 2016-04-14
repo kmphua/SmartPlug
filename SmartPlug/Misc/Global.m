@@ -10,8 +10,31 @@
 #import "Global.h"
 #include <sys/socket.h>
 #include <netdb.h>
+#import <netinet/in.h>
+#import <SystemConfiguration/SystemConfiguration.h>
 
 @implementation Global
+
++ (BOOL)isNetworkReady
+{
+    struct sockaddr_in Addr;
+    bzero(&Addr, sizeof(Addr));
+    Addr.sin_len = sizeof(Addr);
+    Addr.sin_family = AF_INET;
+    
+    SCNetworkReachabilityRef target = SCNetworkReachabilityCreateWithAddress(NULL, (struct sockaddr *)&Addr);
+    SCNetworkReachabilityFlags flags = 0;
+    SCNetworkReachabilityGetFlags(target, &flags);
+    CFRelease(target);
+    
+    if (flags & kSCNetworkReachabilityFlagsReachable) {
+        NSLog(@"Data network is ready.");
+        return YES;
+    } else {
+        NSLog(@"Data network is NOT ready.");
+        return NO;
+    }
+}
 
 + (UIColor *)colorWithType:(ColorType)type
 {
