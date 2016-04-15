@@ -12,7 +12,7 @@
 #import "UDPCommunication.h"
 #import "MBProgressHUD.h"
 
-@interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
+@interface DeviceItemSettingsViewController ()<DeviceIconDelegate, UITextFieldDelegate>
 {
     int notify_on_power_outage;
     int notify_on_co_warning;
@@ -215,11 +215,16 @@
                 _txtName.backgroundColor = [UIColor whiteColor];
                 _txtName.borderStyle = UITextBorderStyleNone;
                 _txtName.textAlignment = NSTextAlignmentRight;
-                _txtName.text = _device.givenName;
                 _txtName.delegate = self;
                 _txtName.placeholder = @"TV on/off";
                 _txtName.font = [UIFont systemFontOfSize:18];
                 _txtName.adjustsFontSizeToFitWidth = YES;
+            }
+            
+            if (_device.givenName && _device.givenName.length > 0) {
+                _txtName.text = _device.givenName;
+            } else {
+                _txtName.text = _device.name;
             }
             [cell.contentView addSubview:_txtName];
             break;
