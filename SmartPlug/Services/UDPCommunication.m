@@ -27,8 +27,9 @@
     uint8_t iMsg[22];
     uint8_t kMsg[46];
     uint8_t ir[128];
-    uint8_t delayT[18];
+    uint8_t delayT[22];
     uint8_t ir2[1];
+    uint8_t timers[512];
     int previous_msgid;
     BOOL process_data;
     short code;
@@ -110,7 +111,7 @@ static UDPCommunication *instance;
 #pragma mark - Public methods
 //==================================================================
 
-- (BOOL)delayTimer:(int)seconds protocol:(int)protocol
+- (BOOL)delayTimer:(int)seconds protocol:(int)protocol serviceId:(int)serviceId send:(int)send
 {
     g_UdpCommand = UDP_CMD_DELAY_TIMER;
     NSString *ip = g_DeviceIp;
@@ -124,6 +125,17 @@ static UDPCommunication *instance;
         for (int i = 0; i < 14; i++) {
             delayT[i] = hMsg[i];
         }
+        
+        delayT[17] = (uint8_t) (serviceId & 0xff);
+        delayT[16] = (uint8_t) ((serviceId >> 8) & 0xff);
+        delayT[15] = (uint8_t) ((serviceId >> 16) & 0xff);
+        delayT[14] = (uint8_t) ((serviceId >> 24) & 0xff);
+        
+        delayT[21] = (uint8_t) (seconds & 0xff);
+        delayT[20] = (uint8_t) ((seconds >> 8) & 0xff);
+        delayT[19] = (uint8_t) ((seconds >> 16) & 0xff);
+        delayT[18] = (uint8_t) ((seconds >> 24) & 0xff);
+        
         
         delayT[17] = (uint8_t) (seconds & 0xff);
         delayT[16] = (uint8_t) ((seconds >> 8) & 0xff);

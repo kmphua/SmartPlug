@@ -172,7 +172,7 @@ static UDPListenerService *instance;
     if(g_UdpCommand == UDP_CMD_DEVICE_QUERY){
         if(code == 0){
             [self process_query_device_command];
-            [[SQLHelper getInstance] updatePlugServices:_js];
+            //[[SQLHelper getInstance] updatePlugServices:_js];
             
             NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
                                       ipAddress, @"ip",
@@ -195,8 +195,13 @@ static UDPListenerService *instance;
         }
     }
     
+    if(g_UdpCommand == UDP_CMD_WIFI_SCAN) {
+         NSLog(@"I got a broadcast yeah.....");
+    }
+    
     if(g_UdpCommand == UDP_CMD_DELAY_TIMER){
         if(code == 0){
+            code = 1;
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:@"code"];
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SET_TIMER_DELAY
                                                                 object:self
