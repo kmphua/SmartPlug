@@ -11,6 +11,6 @@
 
 @interface DeviceMainViewController : BaseViewController
 
-@property (nonatomic, assign) JSmartPlug *device;
+@property (nonatomic, strong) JSmartPlug *device;
 
 @end

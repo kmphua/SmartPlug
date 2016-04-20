@@ -322,6 +322,7 @@
     }
     
     JSmartPlug *device = [devices firstObject];
+    self.device = device;
     
     if (device.givenName && device.givenName.length>0) {
         _lblDeviceName.text = device.givenName;
@@ -791,20 +792,10 @@
     
     if(serviceId == RELAY_SERVICE){
         snooze = [[SQLHelper getInstance] getRelaySnooze];
-        if(minutes > 0) {
-            snooze += minutes;
-        } else {
-            snooze = 0;
-        }
     }
     
     if(serviceId == NIGHTLED_SERVICE){
         snooze = [[SQLHelper getInstance] getLedSnooze];
-        if(minutes > 0) {
-            snooze += minutes;
-        } else {
-            snooze = 0;
-        }
     }
     
     if ([[UDPCommunication getInstance] delayTimer:snooze protocol:1 serviceId:serviceId send:0]) {
@@ -841,7 +832,7 @@
             
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
 
-            NSString *toastMsg = [NSString stringWithFormat:@"%@ %@ %d %@", NSLocalizedString(@"timer", nil), NSLocalizedString(@"snooze", nil), snooze, NSLocalizedString(@"minutes", nil)];
+            NSString *toastMsg = [NSString stringWithFormat:@"%@ %@ %d %@", NSLocalizedString(@"timer", nil), NSLocalizedString(@"snooze", nil), minutes, NSLocalizedString(@"minutes", nil)];
             
             [self.view makeToast:toastMsg
                         duration:3.0
@@ -874,7 +865,7 @@
         
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
         
-        NSString *toastMsg = [NSString stringWithFormat:@"%@ %@ %d %@", NSLocalizedString(@"timer", nil), NSLocalizedString(@"snooze", nil), snooze, NSLocalizedString(@"minutes", nil)];
+        NSString *toastMsg = [NSString stringWithFormat:@"%@ %@ %d %@", NSLocalizedString(@"timer", nil), NSLocalizedString(@"snooze", nil), minutes, NSLocalizedString(@"minutes", nil)];
         
         [self.view makeToast:toastMsg
                     duration:3.0

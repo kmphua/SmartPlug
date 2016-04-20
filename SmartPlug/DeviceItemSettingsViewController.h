@@ -11,6 +11,6 @@
 
 @interface DeviceItemSettingsViewController : BaseViewController<WebServiceDelegate>
 
-@property (nonatomic, assign) JSmartPlug *device;
+@property (nonatomic, strong) JSmartPlug *device;
 
 @end

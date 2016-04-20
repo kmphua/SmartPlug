@@ -35,7 +35,7 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    if (self.device.ip && self.device.ip.length>0) {
+    if (g_DeviceIp && g_DeviceIp.length>0) {
         _deviceInRange = YES;
     } else {
         _deviceInRange = NO;
@@ -48,19 +48,6 @@
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"btn_done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
-}
-
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-
-    /*
-    // Get Device Status
-    NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:g_DeviceMac];
-    if (plugs && plugs.count>0) {
-        _device = [plugs firstObject];
-        [self.tableView reloadData];
-    }
-     */
 }
 
 - (void)didReceiveMemoryWarning {
