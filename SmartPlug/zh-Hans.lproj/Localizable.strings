@@ -194,3 +194,14 @@
 "help_6_title" = "添加设备";
 "help_6_desc" = "您的JSPlug应该显示在列表上。您只需点击它以添加它到您的帐户";
 "help_7_title" = "准备开始！";
+
+"msg_network_error" = "网路错误";
+"msg_unable_to_connect" = "本App需要网路连线才能使用。请在设定中打开网路服务。";
+"timer_set" = "设置定时";
+"error_adding_device" = "无法新增装置，请确认装置未在另外的帐号启用。";
+"error_adding_new_device" = "无法新增装置，请在几秒后重试";
+"connection_error" = "网路错误，无法和装置连线，请确认您有网路连线或者处于和装置一样的网域";
+"general_error" = "发生错误，请重试";
+"timer" = "定时";
+"snooze" = "延迟";
+"minutes" = "分钟";

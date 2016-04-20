@@ -21,13 +21,17 @@
 #define STATUS_CHECKER_TIMER_INTERVAL       7
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, MainViewCellDelegate>
+{
+    NSString *_ipParam;
+    NSString *_macParam;
+}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *plugs;
 @property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
-@property (strong, nonatomic) NSTimer *statusCheckerTimer;
 @property (strong, nonatomic) MBProgressHUD *hud;
+@property (nonatomic) BOOL deviceStatusChangedFlag;
 
 @end
 
@@ -40,6 +44,8 @@
     self.tableView.backgroundColor = [UIColor clearColor];
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
+    
+    _deviceStatusChangedFlag = false;
     
     WebService *ws = [WebService new];
     ws.delegate = self;
@@ -68,9 +74,11 @@
     // Remove all plugs
     [[SQLHelper getInstance] deletePlugs];
     
-    //self.plugs = [[SQLHelper getInstance] getPlugData];
-    //[self.tableView reloadData];
-    //[self adjustHeightOfTableview];
+    // Get device list
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
+    [self showWaitingIndicator];
     
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceInfo:) name:NOTIFICATION_DEVICE_INFO object:nil];
@@ -84,20 +92,10 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(repeatingTaskDone:) name:NOTIFICATION_REPEATING_TASK_DONE object:nil];
     
-    // Get device list
-    WebService *ws = [WebService new];
-    ws.delegate = self;
-    [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
-    
-    // Start status checker timer
-    _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
-                                                           target:self
-                                                         selector:@selector(checkStatus:)
-                                                         userInfo:nil
-                                                          repeats:YES];
-    
-    [self showWaitingIndicator];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusChangedUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -111,17 +109,19 @@
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
-    
-    // Stop status checker timer
-    if (_statusCheckerTimer) {
-        [_statusCheckerTimer invalidate];
-        _statusCheckerTimer = nil;
-    }
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_REPEATING_TASK_DONE object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)getData {
+    self.plugs = [[SQLHelper getInstance] getPlugData];
+    [self.tableView reloadData];
+    [self adjustHeightOfTableview];
 }
 
 - (void)showWaitingIndicator {
@@ -170,6 +170,12 @@
     [self.navigationController pushViewController:settingsVc animated:YES];
 }
 
+- (void)statusChangedUpdateUI:(NSNotification *)notification {
+    NSLog(@"DEVICE STATUS CHANGED UI");
+    _deviceStatusChangedFlag = true;
+    [self getData];
+}
+
 - (void)deviceInfo:(NSNotification *)notification {
     NSDictionary *userInfo = [notification userInfo];
     NSString *ip = [userInfo objectForKey:@"ip"];
@@ -178,34 +184,62 @@
     jsTemp.ip = ip;
     if (jsTemp.ip != nil && jsTemp.ip.length>0) {
         if(jsTemp.sid != nil && jsTemp.sid.length>0) {
-            [[SQLHelper getInstance] updatePlugID:jsTemp.sid ip:jsTemp.ip];
+            //[[SQLHelper getInstance] updatePlugID:jsTemp.sid ip:jsTemp.ip];
             [[SQLHelper getInstance] updatePlugServices:jsTemp];
         }
     }
     
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
+    [self getData];
 }
 
 - (void)handleDeviceFound:(NSNotification*)notification {
-    self.plugs = [[SQLHelper getInstance] getPlugData];
-    [self syncDeviceIpAddresses];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
+    [self startRepeatingTask];
+    NSLog(@"NEW DEVICE FOUND");
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
-    self.plugs = [[SQLHelper getInstance] getPlugData];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
+    //self.plugs = [[SQLHelper getInstance] getPlugData];
+    //[self.tableView reloadData];
+    //[self adjustHeightOfTableview];
 }
 
 - (void)handlePush:(NSNotification *)notification {
-    [self checkStatus:nil];
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *getDeviceFlag = [userInfo objectForKey:@"getDeviceFlag"];
+        if ([getDeviceFlag isEqualToString:@"true"]) {
+            [self checkStatus:nil];
+        }
+        
+        NSString *getDataFlag = [userInfo objectForKey:@"getDataFlag"];
+        if ([getDataFlag isEqualToString:@"true"]) {
+            [self startRepeatingTask];
+        }
+    }
 }
 
 - (void)deviceStatusChanged:(NSNotification *)notification {
-    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
+    NSLog(@"DEVICE STATUS CHANGED");
+    _deviceStatusChangedFlag = true;
+    [self getData];
+}
+
+- (void)repeatingTaskDone:(NSNotification *)notification {
+    NSLog(@"Repeating TASK DONE");
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *error = [userInfo objectForKey:@"errorMessage"];
+        if (error != nil && error.length>0) {
+            [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                        duration:3.0
+                        position:CSToastPositionCenter];
+        } else {
+            NSLog(@"ERROR MESSAGE IS NULL");
+        }
+        
+        [self getData];
+        [self dismissWaitingIndicator];
+    }
 }
 
 - (void)syncDeviceIpAddresses {
@@ -233,6 +267,32 @@
     [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
 }
 
+- (void)statusChecker {
+    if (_ipParam != nil && _ipParam.length>0) {
+        short command = UDP_CMD_GET_DEVICE_STATUS;
+        if ([[UDPCommunication getInstance] queryDevices:_ipParam udpMsg_param:command]) {
+            int counter = 10000;
+            while (!_deviceStatusChangedFlag && counter > 0) {
+                counter--;
+                //waiting time
+            }
+        } else {
+            if(!_deviceStatusChangedFlag) {
+                [self getDeviceStatus:_macParam];
+            }
+        }
+    } else {
+        NSLog(@"IP IS NULL");
+        if(!_deviceStatusChangedFlag) {
+            [self getDeviceStatus:_macParam];
+        }
+    }
+    
+    _deviceStatusChangedFlag = false;
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_REPEATING_TASK_DONE object:nil];
+}
+
 - (void)updateStatus {
     for (JSmartPlug *plug in _plugs) {
         if ([[UDPCommunication getInstance] queryDevices:plug.ip udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
@@ -242,6 +302,17 @@
         }
         
         [self getDeviceStatus:plug.sid];
+    }
+}
+
+- (void)startRepeatingTask {
+    NSArray *plugs = [[SQLHelper getInstance] getPlugData];
+    if (plugs && plugs.count > 0) {
+        for (JSmartPlug *plug in plugs) {
+            _ipParam = plug.ip;
+            _macParam = plug.sid;
+            [self statusChecker];
+        }
     }
 }
 
@@ -349,13 +420,11 @@
         // Remove device
         JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
         if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
+            NSLog(@"Device removed successfully %@", plug.sid);
             WebService *ws = [WebService new];
             ws.delegate = self;
             [ws devDel:g_UserToken lang:[Global getCurrentLang] devId:plug.sid];
-            
-            self.plugs = [[SQLHelper getInstance] getPlugData];
-            [self.tableView reloadData];
-            [self adjustHeightOfTableview];
+            [self getData];
         }
     }
 }
@@ -390,25 +459,34 @@
     }
     
     [[UDPCommunication getInstance] setDeviceStatus:plug.ip serviceId:serviceId action:action];
-    g_DeviceIp = plug.ip;
-    g_DeviceMac = plug.sid;
-    
-    NSLog(@"CURRENTLY ON LISTDEVICEADAPTER: %@, MAC: %@", g_DeviceIp, g_DeviceMac);
-    
-    if ([[UDPListenerService getInstance] setDeviceStatusProcess:plug.ip serviceId:serviceId action:action]) {
-        NSLog(@"SET DEVICE STATUS PROCESS");
+    //g_DeviceIp = plug.ip;
+    //g_DeviceMac = plug.sid;
+
+    int counter = 1;
+    while (!_deviceStatusChangedFlag && counter > 0) {
+        [NSThread sleepForTimeInterval:1];
+        counter--;
+        // waiting time
     }
     
-    [self setDeviceStatus:plug.sid serviceId:serviceId action:action];
-    [self getDeviceStatus:plug.sid];
-
-    // Update plugs
-    self.plugs = [[SQLHelper getInstance] getPlugData];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
+    if (_deviceStatusChangedFlag) {
+        [[SQLHelper getInstance] updatePlugRelayService:action sid:plug.sid];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_REPEATING_TASK_DONE object:nil];
+        
+        [self setDeviceStatus:plug.sid serviceId:serviceId action:action send:1];
+    } else {
+        [self setDeviceStatus:plug.sid serviceId:serviceId action:action send:0];
+        
+        [[SQLHelper getInstance] updatePlugRelayService:action sid:plug.sid];
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_REPEATING_TASK_DONE object:nil];
+    }
+    
+    _deviceStatusChangedFlag = false;
 }
      
-- (void)setDeviceStatus:(NSString *)devId serviceId:(int)serviceId action:(uint8_t)action
+- (void)setDeviceStatus:(NSString *)devId serviceId:(int)serviceId action:(uint8_t)action send:(int)send
 {
     int header = 0x534D5254;
     uint8_t sMsg[24];
@@ -452,7 +530,7 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:1 data:deviceData];
+    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:send data:deviceData];
 }
 
 - (void)getDeviceStatus:(NSString *)devId
@@ -500,6 +578,8 @@
                     [self.navigationController pushViewController:addDeviceController animated:YES];
                 }
                 
+                [[SQLHelper getInstance] deletePlugs];
+                
                 if (devices) {
                     NSLog(@"Total %ld devices", (unsigned long)devices.count);
                     
@@ -509,6 +589,38 @@
                         plug.givenName = [device objectForKey:@"title"];
                         plug.sid = [device objectForKey:@"devid"];
                         plug.icon = [device objectForKey:@"icon"];
+                        
+                        id relay = [device objectForKey:@"relay"];
+                        if ([relay isKindOfClass:[NSNull class]]) {
+                            plug.relay = 0;
+                        } else {
+                            plug.relay = [relay intValue];
+                        }
+
+                        id nightlight = [device objectForKey:@"nightlight"];
+                        if ([nightlight isKindOfClass:[NSNull class]]) {
+                            plug.relay = 0;
+                        } else {
+                            plug.relay = [nightlight intValue];
+                        }
+
+                        id cosensor = [device objectForKey:@"cosensor"];
+                        if ([cosensor isKindOfClass:[NSNull class]]) {
+                            plug.relay = 0;
+                        } else {
+                            plug.relay = [cosensor intValue];
+                        }
+                        
+                        id hallsensor = [device objectForKey:@"hallsensor"];
+                        if ([hallsensor isKindOfClass:[NSNull class]]) {
+                            plug.relay = 0;
+                        } else {
+                            plug.relay = [hallsensor intValue];
+                        }
+                        
+                        if (plug.name == nil || plug.name.length == 0) {
+                            plug.name = plug.givenName;
+                        }
 
                         NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:plug.sid];
                         if (!plugs || plugs.count == 0) {

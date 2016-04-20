@@ -428,27 +428,7 @@
         NSDictionary *jsonDict = (NSDictionary *)jsonObject;
         NSLog(@"jsonDict - %@", jsonDict);
         
-        if ([resultName isEqualToString:WS_DEV_LIST]) {
-            long result = [[jsonObject objectForKey:@"r"] longValue];
-            if (result == 0) {
-                // Success
-                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
-                if (devices) {
-                    NSLog(@"Total %ld actions", devices.count);
-                }
-                [self.tableView reloadData];
-            } else {
-                // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        } else if ([resultName isEqualToString:WS_DEV_SET]) {
+        if ([resultName isEqualToString:WS_DEV_SET]) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success

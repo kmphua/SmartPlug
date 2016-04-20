@@ -81,7 +81,7 @@
 
 // Timer methods
 - (void)alarmGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
-- (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId data:(NSData *)data;
+- (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId send:(int)send data:(NSData *)data;
 
 // IR methods
 - (void)irList:(NSString *)userToken lang:(NSString *)lang;

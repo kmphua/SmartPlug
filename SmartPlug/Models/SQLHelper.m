@@ -66,6 +66,10 @@
 #define COLUMN_URL              @"url"
 #define COLUMN_SIZE             @"size"
 
+//SNOOZE
+#define COLUMN_RELAY_SNOOZE     @"relay_snooze"
+#define COLUMN_LED_SNOOZE       @"led_snooze"
+
 #define DATABASE_NAME           @"jsplugs"
 #define DATABASE_FILE           @"jsplugs.db"
 #define DATABASE_VERSION        1
@@ -127,6 +131,48 @@ static SQLHelper *instance;
 //==================================================================
 #pragma mark - Public methods
 //==================================================================
+- (BOOL)updateRelaySnooze:(int)snooze
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE params SET relay_snooze = ?",
+                   [NSNumber numberWithInt:snooze]];
+    [db close];
+    return result;
+}
+
+- (BOOL)updateLedSnooze:(int)snooze
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE params SET led_snooze = ?",
+                   [NSNumber numberWithInt:snooze]];
+    [db close];
+    return result;
+}
+
+- (int)getRelaySnooze
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT relay_snooze FROM params"];
+    int snooze = 0;
+    if ([results next]) {
+        snooze = [results intForColumn:COLUMN_ID];
+    }
+    [db close];
+    return snooze;
+}
+
+- (int)getLedSnooze
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT led_snooze FROM params"];
+    int snooze = 0;
+    if ([results next]) {
+        snooze = [results intForColumn:COLUMN_ID];
+    }
+    [db close];
+    return snooze;
+}
+
 - (BOOL)insertIcons:(NSString *)url size:(int)size sid:(NSString *)sid
 {
     [db open];
@@ -213,6 +259,21 @@ static SQLHelper *instance;
     return irGroups;
 }
 
+- (BOOL)deleteIRGroups
+{
+    [db open];
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups"];
+    if (toReturn){
+        if ([self deleteAllIRCodes]){
+            toReturn = true;
+        } else {
+            toReturn = false;
+        }
+    }
+    [db close];
+    return toReturn;
+}
+
 - (IrGroup *)getIRGroupBySID:(int)sid
 {
     [db open];
@@ -236,21 +297,6 @@ static SQLHelper *instance;
     BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:groupId]];
     if (toReturn){
         if ([self deleteIRCodes:groupId]){
-            toReturn = true;
-        } else {
-            toReturn = false;
-        }
-    }
-    [db close];
-    return toReturn;
-}
-
-- (BOOL)deleteIRGroups
-{
-    [db open];
-    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups"];
-    if (toReturn){
-        if ([self deleteAllIRCodes]){
             toReturn = true;
         } else {
             toReturn = false;
@@ -405,17 +451,6 @@ static SQLHelper *instance;
     return irCodes;
 }
 
-/*
-- (BOOL)insertPlug:(NSString *)name sid:(NSString *)sid ip:(NSString *)ip
-{
-    [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO smartplugs (name, sid, ip, server, active) VALUES (?, ?, ?, ?, ?)",
-                   name, sid, ip, @"undefined", [NSNumber numberWithInt:1]];
-    [db close];
-    return result;
-}
-*/
-
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active
 {
     [db open];
@@ -423,8 +458,8 @@ static SQLHelper *instance;
     FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE name = ?", js.name];
     if (!results || !results.next) {
         // Plug doesn't exist, can insert
-        result = [db executeUpdate:@"INSERT INTO smartplugs (name, given_name, icon, sid, ip, model, build_no, prot_ver, hw_ver, fw_ver, fw_date, flag, relay, hsensor, csensor, nightlight, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                js.name, js.givenName, js.icon, js.sid, js.ip, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active]];
+        result = [db executeUpdate:@"INSERT INTO smartplugs (name, given_name, icon, sid, model, build_no, prot_ver, hw_ver, fw_ver, fw_date, flag, relay, hsensor, csensor, nightlight, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                js.name, js.givenName, js.icon, js.sid, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active]];
     }
     [db close];
     return result;
@@ -494,8 +529,7 @@ static SQLHelper *instance;
 - (BOOL)updatePlugServices:(JSmartPlug *)js
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET sid = ?, relay = ?, hsensor = ?, csensor = ?, nightlight = ?, hw_ver = ?, fw_ver = ? WHERE ip = ?",
-            js.sid,
+    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET relay = ?, hsensor = ?, csensor = ?, nightlight = ?, hw_ver = ?, fw_ver = ? WHERE ip = ?",
             [NSNumber numberWithInt:js.relay],
             [NSNumber numberWithInt:js.hall_sensor],
             [NSNumber numberWithInt:js.co_sensor],
@@ -515,26 +549,6 @@ static SQLHelper *instance;
     [db close];
     return result;
 }
-
-/*
-- (BOOL)updatePlugRelay:(NSString *)sid relay:(int)relay
-{
-    [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET relay = ? WHERE sid = ?",
-                   [NSNumber numberWithInt:relay], sid];
-    [db close];
-    return result;
-}
-
-- (BOOL)updatePlugNightlight:(NSString *)sid nl:(int)nl
-{
-    [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET nightlight = ? WHERE sid = ?",
-                   [NSNumber numberWithInt:nl], sid];
-    [db close];
-    return result;
-}
-*/
 
 - (BOOL)updatePlugIcon:(NSString *)sid icon:(NSString *)icon
 {
@@ -573,24 +587,6 @@ static SQLHelper *instance;
     [db close];
     return tokens;
 }
-
-/*
-- (BOOL)removePlugsIP
-{
-    [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET ip = ?", @""];
-    [db close];
-    return result;
-}
-
-- (BOOL)removePlugIP:(NSString *)serviceName
-{
-    [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET ip = ?", @"0"];
-    [db close];
-    return result;
-}
-*/
 
 - (NSArray *)getPlugData:(NSString *)ip
 {
@@ -764,10 +760,10 @@ static SQLHelper *instance;
     return plugs;
 }
 
-- (BOOL)deletePlugData:(NSString *)ip
+- (BOOL)deletePlugData:(NSString *)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM smartplugs WHERE ip = ?", ip];
+    BOOL result = [db executeUpdate:@"DELETE FROM smartplugs WHERE sid = ?", sid];
     [db close];
     return result;
 }
@@ -798,7 +794,7 @@ static SQLHelper *instance;
 {
     BOOL result;
     [db open];
-    result = [db executeUpdate:@"DELETE FROM smartplugs"];
+    result = [db executeUpdate:@"DELETE FROM smartplugs WHERE active = 1"];
     [db close];
     return result;
 }

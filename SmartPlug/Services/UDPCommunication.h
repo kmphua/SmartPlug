@@ -24,7 +24,7 @@
 
 + (UDPCommunication *)getInstance;
 
-- (BOOL)delayTimer:(int)seconds protocol:(int)protocol;
+- (BOOL)delayTimer:(int)seconds protocol:(int)protocol serviceId:(int)serviceId send:(int)send;
 - (BOOL)listenForIRCodes;
 - (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param;
 - (BOOL)sendIRMode:(NSString *)ip;
@@ -34,6 +34,8 @@
 - (void)sendIRHeader:(int)filename;
 - (BOOL)setDeviceTimersHTTP:(NSString *)devId send:(int)send;
 - (BOOL)setDeviceTimersUDP:(NSString *)devId;
+- (BOOL)sendTimers:(NSString *)devId ip:(NSString *)ip;
+- (BOOL)sendTimersHTTP:(NSString *)devId send:(int)send;
 - (BOOL)sendTimerTerminator:(NSString *)ip protocol:(int)protocol;
 - (BOOL)sendTimerHeaders:(NSString *)ip protocol:(int)protocol;
 - (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol;

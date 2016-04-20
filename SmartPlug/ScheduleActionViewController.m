@@ -33,6 +33,7 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceAction;
 
+@property (assign, nonatomic) BOOL deviceStatusChangedFlag;
 @property (assign, nonatomic) BOOL udpConnection;
 
 @end
@@ -42,6 +43,7 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     
+    _deviceStatusChangedFlag = false;
     _udpConnection = false;
 
     // Do any additional setup after loading the view from its nib.
@@ -98,6 +100,8 @@
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timersSentSuccess:) name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceNotReached:) name:NOTIFICATION_DEVICE_NOT_REACHED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -106,6 +110,8 @@
     
     // Deregister notifications
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
+    
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_NOT_REACHED object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -114,7 +120,26 @@
 }
 
 - (void)timersSentSuccess:(NSNotification *)notification {
+    NSLog(@"TIMERS SENT SUCCESSFULLY BROADCAST");
+    _deviceStatusChangedFlag = true;
     _udpConnection = true;
+}
+
+- (void)deviceNotReached:(NSNotification *)notification {
+    NSLog(@"BROADCAST DEVICE NOT REACHED");
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *error = [userInfo objectForKey:@"error"];
+        if (error != nil && error.length>0){
+            [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                        duration:3.0
+                        position:CSToastPositionCenter];
+        } else {
+            [self.view makeToast:NSLocalizedString(@"please_wait", nil)
+                        duration:3.0
+                        position:CSToastPositionCenter];
+        }
+    }
 }
 
 - (void)setDOW {
@@ -152,6 +177,8 @@
 
 
 - (void)onRightBarButton:(id)sender {
+    self.navigationItem.rightBarButtonItem.enabled = NO;
+    
     // Save to database
     Alarm *a = [Alarm new];
     a.device_id = _deviceId;
@@ -179,19 +206,33 @@
         [[SQLHelper getInstance] insertAlarm:a];
     }
     
-    [self.view makeToast:NSLocalizedString(@"please_wait", nil)
-                duration:3.0
-                position:CSToastPositionCenter];
+    if ([[UDPCommunication getInstance] sendTimers:g_DeviceMac ip:g_DeviceIp]) {
+        int counter = 10000;
+        while (!_deviceStatusChangedFlag && counter > 0) {
+            counter--;
+            //waiting time
+        }
+    }
     
-    // This is sending both UDP and HTTP to server
-    [[UDPCommunication getInstance] setDeviceTimersUDP:g_DeviceMac];
+    NSDictionary *userInfo;
+    if(!_deviceStatusChangedFlag) {
+        if (![[UDPCommunication getInstance] sendTimersHTTP:g_DeviceMac send:0]) {
+            userInfo = [NSDictionary dictionaryWithObject:@"yes" forKey:@"error"];
+        } else {
+            userInfo = [NSDictionary dictionaryWithObject:@"" forKey:@"error"];
+            _deviceStatusChangedFlag = false;
+        }
+    } else {
+        [[UDPCommunication getInstance] sendTimersHTTP:g_DeviceMac send:1];
+        userInfo = [NSDictionary dictionaryWithObject:@"" forKey:@"error"];
+        _deviceStatusChangedFlag = false;
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:self userInfo:userInfo];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceMac send:1];
         [self.navigationController popViewControllerAnimated:YES];
         [self.delegate didUpdateAlarms];
-
     });
 }
 

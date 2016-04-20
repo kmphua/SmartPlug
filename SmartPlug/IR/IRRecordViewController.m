@@ -184,6 +184,8 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
+                [[SQLHelper getInstance] deleteIRGroups];
+                
                 NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
                 if (groups) {
                     NSLog(@"Total %ld groups", (unsigned long)groups.count);
@@ -194,6 +196,7 @@
                         NSString *icon = [group objectForKey:@"icon"];
                         
                         [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        [[SQLHelper getInstance] deleteIRCodes:groupId];
                         [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];

@@ -69,18 +69,10 @@
                 duration:3.0
                 position:CSToastPositionCenter];
     
-    // This is sending both UDP and HTTP to server
-    [[UDPCommunication getInstance] setDeviceTimersUDP:g_DeviceMac];
-    
-    //if(UDPListenerService.code == 0){
-      //  udpconnection = true;
-    //} else {
-      //  udpconnection = false;
-    //}
-
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
-        
-        [[UDPCommunication getInstance] setDeviceTimersHTTP:g_DeviceMac send:1];
+
+        [[UDPCommunication getInstance] sendTimers:g_DeviceMac ip:g_DeviceIp];
+        [[UDPCommunication getInstance] sendTimersHTTP:g_DeviceMac send:0];
         
     });
 }
@@ -247,56 +239,5 @@
 - (void)didUpdateAlarms {
     [self.navigationController popViewControllerAnimated:YES];
 }
-
-//==================================================================
-#pragma WebServiceDelegate
-//==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
-    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
-    NSLog(@"Received data for %@: %@", resultName, dataString);
-    
-    NSError *error = nil;
-    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
-    
-    if (error) {
-        NSLog(@"Error received: %@", [error localizedDescription]);
-    }
-    
-    if ([jsonObject isKindOfClass:[NSArray class]]) {
-        NSArray *jsonArray = (NSArray *)jsonObject;
-        NSLog(@"jsonArray - %@", jsonArray);
-    } else {
-        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
-        NSLog(@"jsonDict - %@", jsonDict);
-        
-        if ([resultName compare:WS_DEV_LIST] == NSOrderedSame) {
-            long result = [[jsonObject objectForKey:@"r"] longValue];
-            if (result == 0) {
-                // Success
-                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                NSArray *devices = (NSArray *)[jsonObject objectForKey:@"devs"];
-                if (devices) {
-                    NSLog(@"Total %ld actions", devices.count);
-                    //[self.alarms setArray:devices];
-                }
-                [self.tableView reloadData];
-            } else {
-                // Failure
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
-                                                                    message:message
-                                                                   delegate:nil
-                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
-                                                          otherButtonTitles:nil, nil];
-                [alertView show];
-            }
-        }
-    }
-}
-
-- (void)connectFail:(NSString*)resultName {
-    NSLog(@"Connect fail for %@", resultName);
-}
-
 
 @end

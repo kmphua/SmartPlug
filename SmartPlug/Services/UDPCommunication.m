@@ -136,17 +136,11 @@ static UDPCommunication *instance;
         delayT[19] = (uint8_t) ((seconds >> 16) & 0xff);
         delayT[18] = (uint8_t) ((seconds >> 24) & 0xff);
         
-        
-        delayT[17] = (uint8_t) (seconds & 0xff);
-        delayT[16] = (uint8_t) ((seconds >> 8) & 0xff);
-        delayT[15] = (uint8_t) ((seconds >> 16) & 0xff);
-        delayT[14] = (uint8_t) ((seconds >> 24) & 0xff);
-        
         if (protocol == PROTOCOL_HTTP) {
             WebService *ws = [WebService new];
             ws.delegate = self;
             NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
-            [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac data:data];
+            [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:send data:data];
         } else if (protocol == PROTOCOL_UDP) {
             if (!udpSocket) {
                 udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
@@ -325,6 +319,110 @@ static UDPCommunication *instance;
     return result;
 }
 
+- (BOOL)sendTimers:(NSString *)devId ip:(NSString *)ip
+{
+    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
+    
+    [self generate_header];
+    
+    int i;
+    for(i = 0; i < sizeof(hMsg); i++){
+        timers[i] = hMsg[i];
+    }
+    
+    long time = (long)[[NSDate date] timeIntervalSince1970];
+    
+    timers[i++] = (uint8_t) ((time >> 24) & 0xff);
+    timers[i++] = (uint8_t) ((time >> 16) & 0xff);
+    timers[i++] = (uint8_t) ((time >> 8) & 0xff);
+    timers[i++] = (uint8_t) (time & 0xff);
+
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
+    if(alarms && alarms.count > 0) {
+        for (Alarm *alarm in alarms) {
+            int serviceId = alarm.service_id;
+            if(serviceId == RELAY_SERVICE || serviceId == NIGHTLED_SERVICE) {
+                timers[i++] = (uint8_t) ((serviceId >> 24) & 0xff);
+                timers[i++] = (uint8_t) ((serviceId >> 16) & 0xff);
+                timers[i++] = (uint8_t) ((serviceId >> 8) & 0xff);
+                timers[i++] = (uint8_t) (serviceId & 0xff);
+                timers[i++] = 0x01;
+                timers[i++] = 0x01;
+                timers[i++] = 0x00;
+                int dow = alarm.dow;
+                timers[i++] = (uint8_t) (dow & 0xff);
+                int initHour = alarm.initial_hour;
+                timers[i++] = (uint8_t) (initHour & 0xff);
+                int initMin = alarm.initial_minute;
+                timers[i++] = (uint8_t) (initMin & 0xff);
+                int endHour = alarm.end_hour;
+                timers[i++] = (uint8_t) (endHour & 0xff);
+                int endMinu = alarm.end_minute;
+                timers[i++] = (uint8_t) (endMinu & 0xff);
+            }
+        }
+    }
+    
+    NSData *data = [NSData dataWithBytes:timers length:sizeof(timers)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    return true;
+}
+
+- (BOOL)sendTimersHTTP:(NSString *)devId send:(int)send
+{
+    BOOL toReturn = false;
+    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
+    [self generate_header_http];
+    
+    int i = 0;
+    for(i = 0; i < sizeof(hMsg); i++){
+        timers[i] = hMsg[i];
+    }
+    
+    long time = (long)[[NSDate date] timeIntervalSince1970];
+    
+    timers[i++] = (uint8_t) (time & 0xff);
+    timers[i++] = (uint8_t) ((time >> 8) & 0xff);
+    timers[i++] = (uint8_t) ((time >> 16) & 0xff);
+    timers[i++] = (uint8_t) ((time >> 24) & 0xff);
+    
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
+    if(alarms && alarms.count > 0) {
+        for (Alarm *alarm in alarms) {
+            int serviceId = alarm.service_id;
+            if(serviceId == RELAY_SERVICE || serviceId == NIGHTLED_SERVICE) {
+                
+                timers[i++] = (uint8_t) ((serviceId >> 24) & 0xff);
+                timers[i++] = (uint8_t) ((serviceId >> 16) & 0xff);
+                timers[i++] = (uint8_t) ((serviceId >> 8) & 0xff);
+                timers[i++] = (uint8_t) (serviceId & 0xff);
+                timers[i++] = 0x01;
+                timers[i++] = 0x01;
+                timers[i++] = 0x00;
+                
+                int dow = alarm.dow;
+                timers[i++] = (uint8_t) (dow & 0xff);
+                int initHour = alarm.initial_hour;
+                timers[i++] = (uint8_t) (initHour & 0xff);
+                int initMin = alarm.initial_minute;
+                timers[i++] = (uint8_t) (initMin & 0xff);
+                int endHour = alarm.end_hour;
+                timers[i++] = (uint8_t) (endHour & 0xff);
+                int endMinu = alarm.end_minute;
+                timers[i++] = (uint8_t) (endMinu & 0xff);
+            }
+        }
+    }
+    
+    NSData *timerData = [NSData dataWithBytes:timers length:sizeof(timers)];
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:send data:timerData];
+    
+    return toReturn;
+}
+
+
 - (BOOL)setDeviceTimersUDP:(NSString *)devId
 {
     BOOL result = true;
@@ -491,7 +589,7 @@ static UDPCommunication *instance;
                 ws.delegate = self;
                 [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
             } else if(protocol == PROTOCOL_UDP) {
-                [self sendUDP:ip data:data];
+                //[self sendUDP:ip data:data];
             }
         }
     }

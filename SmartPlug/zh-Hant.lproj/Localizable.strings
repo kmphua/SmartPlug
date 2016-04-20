@@ -197,3 +197,14 @@
 "help_6_title" = "添加設備";
 "help_6_desc" = "您的JSPlug應該顯示在列表上。您只需點擊它以添加它到您的帳戶";
 "help_7_title" = "準備開始！";
+
+"msg_network_error" = "網路錯誤";
+"msg_unable_to_connect" = "本App需要網路連線才能使用。請在設定中打開網路服務。";
+"timer_set" = "設置定時";
+"error_adding_device" = "無法新增裝置，請確認裝置未在另外的帳號啟用。";
+"error_adding_new_device" = "無法新增裝置，請在幾秒後重試";
+"connection_error" = "網路錯誤，無法和裝置連線，請確認您有網路連線或者處於和裝置一樣的網域";
+"general_error" = "發生錯誤，請重試";
+"timer" = "定時";
+"snooze" = "延遲";
+"minutes" = "分鐘";

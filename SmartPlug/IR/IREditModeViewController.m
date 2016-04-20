@@ -166,7 +166,12 @@
         
         SDWebImageManager *manager = [SDWebImageManager sharedManager];
         //__weak IRCodeModeViewController *weakself = self;
-        [manager downloadImageWithURL:[NSURL URLWithString:group.icon]
+        
+        NSString *icon = @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png";
+        if (group.icon && group.icon.length>0) {
+            icon = group.icon;
+        }
+        [manager downloadImageWithURL:[NSURL URLWithString:icon]
                               options:0
                              progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                  // progression tracking code
@@ -317,6 +322,7 @@
                         NSString *icon = [group objectForKey:@"icon"];
                         
                         [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        [[SQLHelper getInstance] deleteIRCodes:groupId];
                         [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];

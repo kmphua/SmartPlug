@@ -200,3 +200,11 @@
 
 "msg_network_error" = "Network Error";
 "msg_unable_to_connect" = "You need a network connection to use this application. Please turn on mobile network in Settings.";
+"timer_set" = "Set Timer";
+"error_adding_device" = "Error adding device, make sure the device was has not been activated in another account.";
+"error_adding_new_device" = "Error adding device, please try again in a few seconds";
+"connection_error" = "Network Error, device unreachable, please make sure you have internet or you are in the same network as your device";
+"general_error" = "An Error Occurred, please try again";
+"timer" = "Timer";
+"snooze" = "Snoozed";
+"minutes" = "Minutes";
