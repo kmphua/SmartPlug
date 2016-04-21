@@ -268,20 +268,11 @@
         if (getDataFlag && getDataFlag.length>0) {
             NSLog(@"%@", getDataFlag);
             if ([getDataFlag isEqualToString:@"true"]) {
-                // TODO: What is this doing?
-                /*
-                try {
-                    httpHelper.updateAlarms();
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
+                [self updateAlarms];
                 
-                try {
-                    httpHelper.getDeviceStatus("devget?token=" + token + "&hl=" + Locale.getDefault().getLanguage() + "&res=0&devid=" + mac, mac);
-                } catch (Exception e){
-                    e.printStackTrace();
-                }
-                 */
+                WebService *ws = [WebService new];
+                ws.delegate = self;
+                [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
             }
         }
     }
