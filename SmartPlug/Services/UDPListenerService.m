@@ -245,11 +245,11 @@ static UDPListenerService *instance;
     }
     
     if(code == 0x1000 && process_data == true){
+        code = 1;
         NSLog(@"I GOT A BROADCAST");
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
                                                             object:self
                                                           userInfo:nil];
-        code = 1;
     }
 }
 

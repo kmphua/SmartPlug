@@ -361,8 +361,12 @@ static UDPCommunication *instance;
                 timers[i++] = (uint8_t) (endMinu & 0xff);
             }
         }
+    } else {
+        for (int ix = 0; ix < 11; ix++) {
+            timers[i++] = 0;
+        }
     }
-    
+
     NSData *data = [NSData dataWithBytes:timers length:sizeof(timers)];
     [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
     return true;
@@ -411,6 +415,11 @@ static UDPCommunication *instance;
                 int endMinu = alarm.end_minute;
                 timers[i++] = (uint8_t) (endMinu & 0xff);
             }
+        }
+    } else {
+        NSLog(@"SENDING ALL ZERO TIMER");
+        for(int x = 0; x < 11; x++){
+            timers[i++] = 0;
         }
     }
     

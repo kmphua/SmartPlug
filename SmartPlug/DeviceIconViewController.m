@@ -29,6 +29,9 @@
     _gmGridView.minEdgeInsets = UIEdgeInsetsMake(spacing, spacing, spacing, spacing);
     _gmGridView.centerGrid = YES;
     _gmGridView.dataSource = self;
+    _gmGridView.backgroundColor = [UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0];
+    
+    self.view.backgroundColor = [UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0];
 }
 
 - (void)viewWillAppear:(BOOL)animated {

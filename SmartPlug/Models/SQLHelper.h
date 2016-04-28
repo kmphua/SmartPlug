@@ -20,10 +20,9 @@
 + (SQLHelper *)getInstance;
 
 // Snooze
-- (BOOL)updateRelaySnooze:(int)snooze;
-- (BOOL)updateLedSnooze:(int)snooze;
-- (int)getRelaySnooze;
-- (int)getLedSnooze;
+- (BOOL)updateDeviceSnooze:(NSString *)sid serviceId:(int)serviceId snooze:(int)snooze;
+- (int)getRelaySnooze:(NSString *)sid;
+- (int)getLedSnooze:(NSString *)sid;
 
 // Icons
 - (BOOL)insertIcons:(NSString *)url size:(int)size sid:(NSString *)sid;
@@ -45,7 +44,8 @@
 - (NSArray *)getIRCodesByGroup:(int)groupid;
 - (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
                  icon:(NSString *)icon mac:(NSString *)mac sid:(int)sid;
-- (BOOL)updateIRCodeSID:(int)codeId sid:(int)sid;
+- (BOOL)updateIRCodeSID:(int)filename sid:(int)sid;
+- (BOOL)updateIRGroupID:(int)groupId sid:(int)sid;
 - (BOOL)updateIRCode:(IrCode *)code;
 - (BOOL)deleteIRCodes:(int)groupId;
 - (BOOL)deleteIRCodesBySID:(int)groupId;

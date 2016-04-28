@@ -195,9 +195,11 @@
                         NSString *title = [group objectForKey:@"title"];
                         NSString *icon = [group objectForKey:@"icon"];
                         
-                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
-                        [[SQLHelper getInstance] deleteIRCodes:groupId];
-                        [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        [[SQLHelper getInstance] updateIRCodeSID:0 sid:groupId];
+                        
+                        //[[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        //[[SQLHelper getInstance] deleteIRCodes:groupId];
+                        //[[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
                         for (NSDictionary *button in buttons) {

@@ -417,12 +417,12 @@
     [_viewNightLight setUserInteractionEnabled:YES];
     [_viewOutlet setUserInteractionEnabled:YES];
     
-    _relaySnooze = [[SQLHelper getInstance] getRelaySnooze];
+    _relaySnooze = [[SQLHelper getInstance] getRelaySnooze:g_DeviceMac];
     if (_relaySnooze > 0) {
         [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
 
-    _ledSnooze = [[SQLHelper getInstance] getLedSnooze];
+    _ledSnooze = [[SQLHelper getInstance] getLedSnooze:g_DeviceMac];
     if (_ledSnooze > 0) {
         [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
@@ -716,7 +716,7 @@
     }
     
     if (_alarms.count > 0) {
-        [[SQLHelper getInstance] removeAlarms:g_DeviceMac];
+        //[[SQLHelper getInstance] removeAlarms:g_DeviceMac];
         for(int i = 0; i < _alarms.count; i++){
             Alarm *a = [_alarms objectAtIndex:i];
             if ([[SQLHelper getInstance] insertAlarm:a]) {
@@ -782,11 +782,11 @@
     int snooze = 0;
     
     if(serviceId == RELAY_SERVICE){
-        snooze = [[SQLHelper getInstance] getRelaySnooze];
+        snooze = [[SQLHelper getInstance] getRelaySnooze:g_DeviceMac];
     }
     
     if(serviceId == NIGHTLED_SERVICE){
-        snooze = [[SQLHelper getInstance] getLedSnooze];
+        snooze = [[SQLHelper getInstance] getLedSnooze:g_DeviceMac];
     }
     
     if ([[UDPCommunication getInstance] delayTimer:snooze protocol:1 serviceId:serviceId send:0]) {
@@ -804,19 +804,19 @@
         } else {
             if(serviceId == RELAY_SERVICE){
                 if(minutes > 0) {
-                    [[SQLHelper getInstance] updateRelaySnooze:snooze];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:snooze];
                     snooze += minutes;
                 } else {
-                    [[SQLHelper getInstance] updateRelaySnooze:0];
-                    snooze = 0;
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
+                   snooze = 0;
                 }
             }
             if(serviceId == NIGHTLED_SERVICE){
                 if(minutes > 0) {
-                    [[SQLHelper getInstance] updateLedSnooze:snooze];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:snooze];
                     snooze += minutes;
                 } else {
-                    [[SQLHelper getInstance] updateLedSnooze:0];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                     snooze = 0;
                 }
             }
@@ -837,19 +837,19 @@
         
         if(serviceId == RELAY_SERVICE){
             if(minutes > 0) {
-                [[SQLHelper getInstance] updateRelaySnooze:snooze];
+                [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:snooze];
                 snooze += minutes;
             } else {
-                [[SQLHelper getInstance] updateRelaySnooze:0];
+                [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
                 snooze = 0;
             }
         }
         if(serviceId == NIGHTLED_SERVICE){
             if(minutes > 0) {
-                [[SQLHelper getInstance] updateLedSnooze:snooze];
+                [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:snooze];
                 snooze += minutes;
             } else {
-                [[SQLHelper getInstance] updateLedSnooze:0];
+                [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                 snooze = 0;
             }
         }
@@ -872,19 +872,19 @@
     
     if(serviceId == RELAY_SERVICE){
         if(minutes > 0) {
-            [[SQLHelper getInstance] updateRelaySnooze:snooze];
+            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:snooze];
             snooze += minutes;
         } else {
-            [[SQLHelper getInstance] updateRelaySnooze:0];
+            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
             snooze = 0;
         }
     }
     if(serviceId == NIGHTLED_SERVICE){
         if(minutes > 0) {
-            [[SQLHelper getInstance] updateLedSnooze:snooze];
+            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:snooze];
             snooze += minutes;
         } else {
-            [[SQLHelper getInstance] updateLedSnooze:0];
+            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
             snooze = 0;
         }
     }
@@ -920,6 +920,7 @@
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
                 NSString *snooze = [jsonObject objectForKey:@"snooze"];
+                NSString *led_snooze = [jsonObject objectForKey:@"led_snooze"];
                 
                 NSString *title = [jsonObject objectForKey:@"title"];
                 NSString *icon = [jsonObject objectForKey:@"icon"];
@@ -951,9 +952,14 @@
                     [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:g_DeviceMac];
                 }
                 if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
-                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:[snooze intValue]];
                 } else {
-                    [[SQLHelper getInstance] updateSnooze:0 sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
+                }
+                if(![led_snooze isKindOfClass:[NSNull class]] && led_snooze != nil && led_snooze.length>0) {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:[led_snooze intValue]];
+                } else {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                 }
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS

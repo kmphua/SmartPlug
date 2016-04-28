@@ -16,6 +16,9 @@
 #import "UDPCommunication.h"
 
 @interface IRCodeModeViewController()<GMGridViewDataSource, GMGridViewActionDelegate>
+{
+    int _codeId;
+}
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (nonatomic, assign) IBOutlet UILabel *lblTitle;
@@ -227,7 +230,7 @@
 
 - (void)onBtnDelete:(id)sender {
     UIButton *btnDelete = (UIButton *)sender;
-    int codeId = (int)btnDelete.tag;
+    _codeId = (int)btnDelete.tag;
     
     int groupId = 0;
     IrGroup *irGroup = [[SQLHelper getInstance] getIRGroupBySID:_groupId];
@@ -238,7 +241,7 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE groupId:groupId buttonId:codeId name:@"" icon:iconId code:0 iconRes:[Global getIconResolution]];
+    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_DELETE groupId:groupId buttonId:_codeId name:@"" icon:iconId code:0 iconRes:[Global getIconResolution]];
 }
 
 - (BOOL)GMGridView:(GMGridView *)gridView canDeleteItemAtIndex:(NSInteger)index
@@ -385,9 +388,11 @@
                         NSString *title = [group objectForKey:@"title"];
                         NSString *icon = [group objectForKey:@"icon"];
                         
-                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
-                        [[SQLHelper getInstance] deleteIRCodes:groupId];
-                        [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        [[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId];
+                        
+                        //[[SQLHelper getInstance] deleteIRGroupBySID:groupId];
+                        //[[SQLHelper getInstance] deleteIRCodes:groupId];
+                        //[[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
                         for (NSDictionary *button in buttons) {

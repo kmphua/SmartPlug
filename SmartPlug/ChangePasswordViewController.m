@@ -131,7 +131,7 @@
 
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws changePassword:g_UserToken lang:[Global getCurrentLang] newPassword:self.txtNewPassword.text ];
+    [ws changePassword:g_UserToken lang:[Global getCurrentLang] password:self.txtOldPassword.text newPassword:self.txtNewPassword.text];
     [ws showWaitingView:self.view];
 }
 

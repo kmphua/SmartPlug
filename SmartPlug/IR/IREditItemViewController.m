@@ -198,6 +198,11 @@
             if (result == 0) {
                 // Success
                 NSLog(@"IR set success");
+                
+                int sid = [[jsonObject objectForKey:@"id"] intValue];
+                int groupId = [[jsonObject objectForKey:@"groupid"] intValue];
+                [[SQLHelper getInstance] updateIRGroupID:groupId sid:sid];
+                
                 [self.navigationController popViewControllerAnimated:YES];
                 [self.delegate onAddedIRGroup];
             } else {

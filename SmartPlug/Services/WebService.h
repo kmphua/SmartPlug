@@ -27,6 +27,7 @@
 #define WS_DEV_DEL                  @"devdel"
 
 #define WS_ALARM_GET                @"alarmget"
+#define WS_ALARM_DEL                @"alarmdel"
 
 #define WS_GALLERY_LIST             @"gallery"
 
@@ -63,7 +64,7 @@
 - (void)newUser:(NSString *)username password:(NSString *)password email:(NSString *)email lang:(NSString *)lang;
 - (void)verifyAcct:(NSString *)username verificationKey:(NSString *)verificationKey lang:(NSString *)lang;
 - (void)login:(NSString *)username password:(NSString *)password lang:(NSString *)lang;
-- (void)changePassword:(NSString *)userToken lang:(NSString *)lang newPassword:(NSString *)newPassword;
+- (void)changePassword:(NSString *)userToken lang:(NSString *)lang password:(NSString *)password newPassword:(NSString *)newPassword;
 - (void)regPush:(NSString *)userToken lang:(NSString *)lang devToken:(NSString *)devToken;
 
 // Device methods
@@ -80,6 +81,7 @@
 - (void)devDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 
 // Timer methods
+- (void)alarmDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 - (void)alarmGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 - (void)setTimerDelay:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId send:(int)send data:(NSData *)data;
 

@@ -131,40 +131,36 @@ static SQLHelper *instance;
 //==================================================================
 #pragma mark - Public methods
 //==================================================================
-- (BOOL)updateRelaySnooze:(int)snooze
+- (BOOL)updateDeviceSnooze:(NSString *)sid serviceId:(int)serviceId snooze:(int)snooze
 {
+    BOOL result = false;
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE params SET relay_snooze = ?",
-                   [NSNumber numberWithInt:snooze]];
+    if (serviceId == RELAY_SERVICE) {
+        result = [db executeUpdate:@"UPDATE smartplugs SET snooze = ? WHERE sid = ?", [NSNumber numberWithInt:snooze], sid];
+    }
+    if (serviceId == NIGHTLED_SERVICE){
+        result = [db executeUpdate:@"UPDATE smartplugs SET led_snooze = ? WHERE sid = ?", [NSNumber numberWithInt:snooze], sid];
+    }
     [db close];
     return result;
 }
 
-- (BOOL)updateLedSnooze:(int)snooze
+- (int)getRelaySnooze:(NSString *)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE params SET led_snooze = ?",
-                   [NSNumber numberWithInt:snooze]];
-    [db close];
-    return result;
-}
-
-- (int)getRelaySnooze
-{
-    [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM params"];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE sid = ?", sid];
     int snooze = 0;
     if ([results next]) {
-        snooze = [results intForColumn:COLUMN_RELAY_SNOOZE];
+        snooze = [results intForColumn:COLUMN_SNOOZE];
     }
     [db close];
     return snooze;
 }
 
-- (int)getLedSnooze
+- (int)getLedSnooze:(NSString *)sid
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM params"];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE sid = ?", sid];
     int snooze = 0;
     if ([results next]) {
         snooze = [results intForColumn:COLUMN_LED_SNOOZE];
@@ -378,12 +374,22 @@ static SQLHelper *instance;
     return result;
 }
 
-- (BOOL)updateIRCodeSID:(int)codeId sid:(int)sid
+- (BOOL)updateIRCodeSID:(int)filename sid:(int)sid
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE ircodes SET sid = ? WHERE _id = ?",
+    BOOL result = [db executeUpdate:@"UPDATE ircodes SET sid = ? WHERE filename = ?",
                    [NSNumber numberWithInt:sid],
-                   [NSNumber numberWithInt:codeId]];
+                   [NSNumber numberWithInt:filename]];
+    [db close];
+    return result;
+}
+
+- (BOOL)updateIRGroupID:(int)groupId sid:(int)sid
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE irgroups SET sid = ? WHERE _id = ?",
+                   [NSNumber numberWithInt:sid],
+                   [NSNumber numberWithInt:groupId]];
     [db close];
     return result;
 }

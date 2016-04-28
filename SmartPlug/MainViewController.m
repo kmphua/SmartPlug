@@ -694,6 +694,7 @@
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
                 NSString *snooze = [jsonObject objectForKey:@"snooze"];
+                NSString *led_snooze = [jsonObject objectForKey:@"led_snooze"];
                 
                 NSLog(@"Devget returned: relay=%@, nightlight=%@, co_sensor=%@, hall_sensor=%@, snooze=%@",
                       relay, nightlight, co_sensor, hall_sensor, snooze);
@@ -719,9 +720,14 @@
                     [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:g_DeviceMac];
                 }
                 if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
-                    [[SQLHelper getInstance] updateSnooze:[snooze intValue] sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:[snooze intValue]];
                 } else {
-                    [[SQLHelper getInstance] updateSnooze:0 sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
+                }
+                if(![led_snooze isKindOfClass:[NSNull class]] && led_snooze != nil && led_snooze.length>0) {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:[led_snooze intValue]];
+                } else {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                 }
                 
                 // Get devices from database

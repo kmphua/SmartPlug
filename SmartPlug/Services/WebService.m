@@ -144,10 +144,10 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)changePassword:(NSString *)userToken lang:(NSString *)lang newPassword:(NSString *)newPassword
+- (void)changePassword:(NSString *)userToken lang:(NSString *)lang password:(NSString *)password newPassword:(NSString *)newPassword
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_CHANGE_PWD];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&newpwd=%@", userToken, lang, newPassword];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&pwd=%@&newpwd=%@", userToken, lang, password, newPassword];
     self.resultName = WS_CHANGE_PWD;
     [self postData:apiUrl params:params];
 }
@@ -241,6 +241,14 @@
 /*=========================================================================
  * Timer methods
  *========================================================================*/
+
+- (void)alarmDel:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ALARM_DEL];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
+    self.resultName = WS_ALARM_DEL;
+    [self postData:apiUrl params:params];
+}
 
 - (void)alarmGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
 {
