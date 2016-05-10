@@ -104,17 +104,17 @@
 "btn_cancel" = "取消";
 "btn_save" = "儲存";
 "title_scheduleAction" = "計劃操作";
-"msg_daysofWeek" = "一周";
-"msg_timeEachDay" = "每一天時間";
+"msg_daysofWeek" = "設定週期";
+"msg_timeEachDay" = "設定時間";
 "msg_action" = "動作";
 "btn_select" = "選擇";
 "id_sevice" = "設備";
 "id_jsPlug" = "JP Plug";
 "id_icon" = "圖示";
-"id_name" = "名稱";
-"id_wifi" = "WIFI";
-"id_macID" = "Mac ID";
-"msg_deskLampBtn" = "配置此設備，請加入設備連接到網絡。";
+"id_name" = "裝置名稱";
+"id_wifi" = "無線網路";
+"id_macID" = "網卡位置";
+"msg_deskLampBtn" = "如需設定裝置相關內容，請和拆做於同個網路中。";
 "lnk_removeAndReset" = "刪除並重置設備";
 "title_removeAndReset" = "刪除並重置設備";
 "msg_removeAndResetBtn" = "你確定你想要重置設備，並從您的賬戶中刪除嗎？";
@@ -158,7 +158,7 @@
 "no_timer_set" = "無定時設入";
 "title_add_new" = "加入";
 "ir_recorded" = "(已錄製)";
-"title_device" = "裝置";
+"title_device" = "裝置類型";
 "notify_on_power_outage" = "停電通知";
 "notify_on_co_warning" = "一氧化碳通知";
 "notify_on_timer_activated" = "計時激活通知";
@@ -183,6 +183,15 @@
 "processing_command" = "指令進行中";
 "password_reset" = "密碼已修改完成";
 
+// Days of week
+"sunday" = "日";
+"monday" = "一";
+"tuesday" = "二";
+"wednesday" = "三";
+"thursday" = "四";
+"friday" = "五";
+"saturday" = "六";
+
 // Help
 "help_1_title" = "快速入門指南";
 "help_1_desc" = "使用這個程序，您可以輕鬆地從世界任何地方訪問您的新JSPlug！";
@@ -203,8 +212,22 @@
 "timer_set" = "設置定時";
 "error_adding_device" = "無法新增裝置，請確認裝置未在另外的帳號啟用。";
 "error_adding_new_device" = "無法新增裝置，請在幾秒後重試";
-"connection_error" = "網路錯誤，無法和裝置連線，請確認您有網路連線或者處於和裝置一樣的網域";
+"connection_error" = "無法連到裝置，請查網路設定";
 "general_error" = "發生錯誤，請重試";
 "timer" = "定時";
 "snooze" = "延遲";
-"minutes" = "分鐘";
+"minutes" = "分";
+
+"timer_set_snoozing" = "延時定時";
+"minutes" = "分";
+"timer" = "定時";
+"snooze" = "已延時";
+"error_adding_new_device" = "增加裝置失敗，請稍候再試";
+"error_adding_device" = "增加裝置失敗，請確認裝置沒跟其他帳號配對";
+"general_error" = "發生錯誤，請稍候再試";
+"error_logout" = "警告: 登出伺服器失敗";
+"password_badchar_error" = "密碼不能有 # 或 &";
+"password_length_error" = "密碼至少要六個字以上";
+"warning" = "注意";
+"warning_logout_baduser" = "已被登出，因為您的帳號或密碼已經無效了";
+"warning_logout_changepwd" = "已被登出，因為您更改您的密碼了";

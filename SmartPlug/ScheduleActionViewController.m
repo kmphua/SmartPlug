@@ -59,6 +59,13 @@
     self.lblDeviceName.text = _deviceName;
     
     // Init segemented control
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"sunday", nil) forSegmentAtIndex:0];
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"monday", nil) forSegmentAtIndex:1];
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"tuesday", nil) forSegmentAtIndex:2];
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"wednesday", nil) forSegmentAtIndex:3];
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"thursday", nil) forSegmentAtIndex:4];
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"friday", nil) forSegmentAtIndex:5];
+    [self.segCtrlDaysOfWeek setTitle:NSLocalizedString(@"saturday", nil) forSegmentAtIndex:6];
     self.segCtrlDaysOfWeek.delegate = self;
     
     // Add navigation buttons

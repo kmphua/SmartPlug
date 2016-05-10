@@ -110,9 +110,9 @@
 "id_sevice" = "Device";
 "id_jsPlug" = "JS Plug";
 "id_icon" = "Icon";
-"id_name" = "Name";
+"id_name" = "Device Name";
 "id_wifi" = "WIFI";
-"id_macID" = "Mac ID";
+"id_macID" = "Mac Address";
 "msg_deskLampBtn" = "To configure this device, please join the network the device is connected to.";
 "lnk_removeAndReset" = "Remove And Reset Device";
 "title_removeAndReset" = "Remove And Reset Device";
@@ -144,7 +144,7 @@
 "btn_chooseBrand" = "Choose brand and model";
 "btn_detectBrand" = "Detect brand and model";
 "btn_recordCustom" = "Record custom command";
-"msg_delectIr" = "Please point your remote at the JSPlug and press the indicated buttons.\n\n1.Press the “power” button\n2.Press the “Volume” button\n3.Device recognized as: Hitachi A/C";
+"msg_delectIr" = "Please point your remote at the JSPlug and press the indicated buttons.\n\n1.Press the \"power\" button\n2.Press the \"Volume\" button\n3.Device recognized as: Hitachi A/C";
 "btn_addNow" = "Add now";
 "title_customCommand" = "Custom Command";
 "id_recordIrCommand" = "Record IR command";
@@ -166,6 +166,9 @@
 "connect_to_wifi" = "Connect to WiFi";
 "create_account_error" = "Error Creating New Account";
 "password_compare_error" = "Passwords are not the same";
+"password_length_error" = "Passwords must be 6 characters or longer";
+"password_badchar_error" = "Passwords must not contain # or &";
+"password_change_failed" = "Server error occurred while changing the password";
 "no_udp_Connection" = "No UDP Connection";
 "new_device_found" = "New Device Found";
 "USB_not_plugged_in" = "USB not plugged in";
@@ -182,6 +185,15 @@
 "processing_ir_command" = "Processing IR Command";
 "processing_command" = "Processing Command";
 "password_reset" = "Password has been changed successfully";
+
+// Days of week
+"sunday" = "Sun";
+"monday" = "Mon";
+"tuesday" = "Tue";
+"wednesday" = "Wed";
+"thursday" = "Thu";
+"friday" = "Fri";
+"saturday" = "Sat";
 
 // Help
 "help_1_title" = "Quick Start Guide";
@@ -201,6 +213,11 @@
 "msg_network_error" = "Network Error";
 "msg_unable_to_connect" = "You need a network connection to use this application. Please turn on mobile network in Settings.";
 "timer_set" = "Set Timer";
+"timer_set_snoozing" = "Set Timer Snoozing";
+"warning" = "Warning";
+"warning_logout_baduser" = "You will be logged out because your user/password is no longer valid.";
+"warning_logout_changepwd" = "You will need to log in again because you changed your password.";
+"error_logout" = "Warning: Failed to unregister from server.";
 "error_adding_device" = "Error adding device, make sure the device was has not been activated in another account.";
 "error_adding_new_device" = "Error adding device, please try again in a few seconds";
 "connection_error" = "Network Error, device unreachable, please make sure you have internet or you are in the same network as your device";
@@ -208,3 +225,4 @@
 "timer" = "Timer";
 "snooze" = "Snoozed";
 "minutes" = "Minutes";
+"ir_code" = "IR CODE";

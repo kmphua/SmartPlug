@@ -105,7 +105,7 @@
         for (Alarm *alarm in alarms) {
             NSString *service = @"";
             NSMutableString *dow = [NSMutableString new];
-            int background = 0;
+            //int background = 0;
             
             if (alarm.service_id == RELAY_SERVICE) {
                 service = NSLocalizedString(@"btn_outlet", nil);
@@ -116,25 +116,25 @@
             int intdow = alarm.dow;
             /* returns 1-7. Sun-1, Mon-2 ... Sat-7 */
             if(((intdow >> 1) & 1) == 1){
-                [dow appendString:@"Su"];
+                [dow appendString:NSLocalizedString(@"sunday", nil)];
             }
             if(((intdow >> 2) & 1) == 1){
-                [dow appendString:@"Mo"];
+                [dow appendString:NSLocalizedString(@"monday", nil)];
             }
             if(((intdow >> 3) & 1) == 1){
-                [dow appendString:@"Tu"];
+                [dow appendString:NSLocalizedString(@"tuesday", nil)];
             }
             if(((intdow >> 4) & 1) == 1){
-                [dow appendString:@"We"];
+                [dow appendString:NSLocalizedString(@"wednesday", nil)];
             }
             if(((intdow >> 5) & 1) == 1){
-                [dow appendString:@"Th"];
+                [dow appendString:NSLocalizedString(@"thursday", nil)];
             }
             if(((intdow >> 6) & 1) == 1){
-                [dow appendString:@"Fr"];
+                [dow appendString:NSLocalizedString(@"friday", nil)];
             }
             if(((intdow >> 7) & 1) == 1){
-                [dow appendString:@"Sa"];
+                [dow appendString:NSLocalizedString(@"saturday", nil)];
             }
             
             [timerStr appendFormat:@"%02d:%02d   %02d:%02d   %@   %@\n", alarm.initial_hour, alarm.initial_minute, alarm.end_hour, alarm.end_minute, service, dow];

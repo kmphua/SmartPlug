@@ -11,6 +11,7 @@
 #import "DeviceItemSettingsViewController.h"
 #import "IRAddNewViewController.h"
 #import "IRCodeModeViewController.h"
+#import "IREditItemViewController.h"
 #import "GMGridView.h"
 
 @interface IREditModeViewController ()<GMGridViewDataSource, GMGridViewActionDelegate>
@@ -99,8 +100,13 @@
 }
 
 - (void)onBtnAddNew:(id)sender {
+    IREditItemViewController *irEditItemVC = [[IREditItemViewController alloc] initWithNibName:@"IREditItemViewController" bundle:nil];
+    [self.navigationController pushViewController:irEditItemVC animated:YES];
+
+    /*
     IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
     [self.navigationController pushViewController:irAddNewVC animated:YES];
+     */
 }
 
 //////////////////////////////////////////////////////////////
