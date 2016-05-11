@@ -186,12 +186,15 @@
             cell.detailTextLabel.text = @"";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
+            NSString *imagePath = DEFAULT_ICON_PATH;
             if (self.device.icon && self.device.icon.length>0) {
-                UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
-                NSString *imagePath = self.device.icon;
-                [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-                [cell addSubview:imageView];
+                imagePath = self.device.icon;
             }
+            
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
+            [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+            [imageView setBackgroundColor:[UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0]];
+            [cell addSubview:imageView];
         }
             break;
         case 2:

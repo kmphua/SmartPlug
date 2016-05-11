@@ -718,6 +718,8 @@ static SQLHelper *instance;
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         plug.snooze = [results intForColumn:COLUMN_SNOOZE];
+        plug.led_snooze = [results intForColumn:COLUMN_LED_SNOOZE];
+        plug.ir_snooze = [results intForColumn:COLUMN_IR_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -753,6 +755,8 @@ static SQLHelper *instance;
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         plug.snooze = [results intForColumn:COLUMN_SNOOZE];
+        plug.led_snooze = [results intForColumn:COLUMN_LED_SNOOZE];
+        plug.ir_snooze = [results intForColumn:COLUMN_IR_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -787,6 +791,8 @@ static SQLHelper *instance;
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         plug.snooze = [results intForColumn:COLUMN_SNOOZE];
+        plug.led_snooze = [results intForColumn:COLUMN_LED_SNOOZE];
+        plug.ir_snooze = [results intForColumn:COLUMN_IR_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -822,6 +828,8 @@ static SQLHelper *instance;
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         plug.snooze = [results intForColumn:COLUMN_SNOOZE];
+        plug.led_snooze = [results intForColumn:COLUMN_LED_SNOOZE];
+        plug.ir_snooze = [results intForColumn:COLUMN_IR_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];
@@ -856,6 +864,8 @@ static SQLHelper *instance;
         plug.notify_power = [results intForColumn:COLUMN_NOTIFY_POWER];
         plug.notify_timer = [results intForColumn:COLUMN_NOTIFY_TIMER];
         plug.snooze = [results intForColumn:COLUMN_SNOOZE];
+        plug.led_snooze = [results intForColumn:COLUMN_LED_SNOOZE];
+        plug.ir_snooze = [results intForColumn:COLUMN_IR_SNOOZE];
         [plugs addObject:plug];
     }
     [db close];

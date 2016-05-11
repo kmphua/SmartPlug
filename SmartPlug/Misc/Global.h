@@ -28,6 +28,8 @@
 #define SMARTCONFIG_IDENTIFIER          @"JSPlug"
 #define SMARTCONFIG_BROADCAST_TIME      30  // seconds
 
+#define DEFAULT_ICON_PATH               @"http://flutehuang-001-site2.ctempurl.com/Images/see_Electric_ight_1_white_bkgnd.png"
+
 // User defaults
 #define UD_KEY_PHONE                    @"phone"
 #define UD_KEY_PASSWORD                 @"password"

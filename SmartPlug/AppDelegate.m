@@ -183,7 +183,7 @@ int g_UdpCommand;
             // Send push notification
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
                                                                 object:self
-                                                              userInfo:nil];
+                                                              userInfo:userInfo];
         }
     }
 }
