@@ -30,6 +30,8 @@
 - (BOOL)sendIRMode:(NSString *)ip;
 - (BOOL)cancelIRMode;
 - (BOOL)sendOTACommand:(NSString *)ip;
+- (BOOL)sendReformatCommand:(NSString *)ip;
+- (BOOL)sendResetCommand:(NSString *)ip;
 - (BOOL)sendIRFileName:(int)filename;
 - (void)sendIRHeader:(int)filename;
 - (BOOL)setDeviceTimersHTTP:(NSString *)devId send:(int)send;

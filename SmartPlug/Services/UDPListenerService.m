@@ -244,12 +244,43 @@ static UDPListenerService *instance;
         }
     }
     
+    if(g_UdpCommand == 0x000F){
+        if(code == 0){
+            NSLog(@"OTA SENT SUCCESSFULLY");
+            code = 1;
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_SENT
+                                                                object:self
+                                                              userInfo:nil];
+            g_UdpCommand = 0;   // Reset command after processing
+        }
+    }
+    
+    if(g_UdpCommand == 0x010F){
+        if(code == 0){
+            NSLog(@"DELETE SEND SUCCESSFULLY");
+            code = 1;
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_SENT
+                                                                object:self
+                                                              userInfo:nil];
+            g_UdpCommand = 0;   // Reset command after processing
+        }
+    }
+    
     if(code == 0x1000 && process_data == true){
         code = 1;
         NSLog(@"I GOT A BROADCAST");
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
                                                             object:self
                                                           userInfo:nil];
+    }
+    
+    if(code == 0x001F && process_data == true){
+        code = 1;
+        NSLog(@"OTA FINISHED");
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
+                                                            object:self
+                                                          userInfo:nil];
+        g_UdpCommand = 0;   // Reset command after processing
     }
 }
 

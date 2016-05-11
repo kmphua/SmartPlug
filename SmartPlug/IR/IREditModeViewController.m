@@ -329,7 +329,7 @@
                         
                         [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
                         [[SQLHelper getInstance] deleteIRCodes:groupId];
-                        [[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        [[SQLHelper getInstance] insertIRGroup:title devId:g_DeviceMac icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
                         for (NSDictionary *button in buttons) {

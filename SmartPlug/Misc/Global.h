@@ -64,6 +64,7 @@
 #define NOTIFICATION_DEVICE_INFO                @"device_info"
 #define NOTIFICATION_SET_TIMER_DELAY            @"set_timer_delay"
 #define NOTIFICATION_DEVICE_STATUS_CHANGED      @"device_status_changed"
+#define NOTIFICATION_DEVICE_STATUS_SET          @"device_status_set"
 #define NOTIFICATION_STATUS_CHANGED_UPDATE_UI   @"status_changed_update_ui"
 #define NOTIFICATION_M1_UPDATE_UI               @"m1updateui"
 #define NOTIFICATION_IR_FILENAME                @"ir_filename"
@@ -76,6 +77,9 @@
 #define NOTIFICATION_ALARM_LIST_CHANGED         @"alarm_list_changed"
 #define NOTIFICATION_DEVICE_NOT_REACHED         @"device_not_reached"
 #define NOTIFICATION_REPEATING_TASK_DONE        @"repeating_task_done"
+#define NOTIFICATION_OTA_SENT                   @"ota_sent"
+#define NOTIFICATION_DELETE_SENT                @"delete_sent"
+#define NOTIFICATION_OTA_FINISHED               @"ota_finished"
 
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,

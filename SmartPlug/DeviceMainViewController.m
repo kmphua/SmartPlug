@@ -26,6 +26,7 @@
     int _action;
     int _relaySnooze;
     int _ledSnooze;
+    int _irSnooze;
     int _serviceId;
     BOOL _deviceStatusChangedFlag;
 }
@@ -144,7 +145,6 @@
     // Init UI
     [_imgOutletWarning setHidden:YES];
     [_imgCoWarning setHidden:YES];
-    [_btnIrTimer setHidden:YES];
     
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
@@ -160,13 +160,15 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceNotReached:) name:NOTIFICATION_DEVICE_NOT_REACHED object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timersSentSuccess:) name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusSet:) name:NOTIFICATION_DEVICE_STATUS_SET object:nil];
     
     // Start status checker timer
     _statusCheckerTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_CHECKER_TIMER_INTERVAL
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:YES];
+                                                  repeats:NO];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
@@ -259,8 +261,15 @@
     [self dismissWaitingIndicator];
 }
 
+- (void)deviceStatusSet:(NSNotification *)notification {
+    NSLog(@"DEVICE STATUS SET");
+    _deviceStatusChangedFlag = true;
+    [self dismissWaitingIndicator];
+}
+
 - (void)handlePushNotification:(NSNotification *)notification {
     NSLog(@"RECEIVED PUSH");
+    [self updateUI:nil];
     
     NSDictionary *userInfo = notification.userInfo;
     if (userInfo) {
@@ -392,7 +401,7 @@
         [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
     }
     
-    // Snooze
+    // Relay snooze
     if (device.snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:RELAY_SERVICE];
         if (alarms && alarms.count>0) {
@@ -400,32 +409,36 @@
         } else {
             [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_off"] forState:UIControlStateNormal];
         }
-
-        alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:NIGHTLED_SERVICE];
+    } else {
+        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
+    }
+    
+    // Led snooze
+    if (device.led_snooze == 0) {
+        NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:NIGHTLED_SERVICE];
         if (alarms && alarms.count>0) {
             [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {
             [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_off"] forState:UIControlStateNormal];
         }
+    } else {
+        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
-    
-    if (device.icon && device.icon.length>0) {
-        NSString *imagePath = self.device.icon;
-        [_imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+
+    // Ir snooze
+    if (device.ir_snooze == 0) {
+        NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:IR_SERVICE];
+        if (alarms && alarms.count>0) {
+            [_btnIrTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
+        } else {
+            [_btnIrTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_off"] forState:UIControlStateNormal];
+        }
+    } else {
+        [_btnIrTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
     }
     
     [_viewNightLight setUserInteractionEnabled:YES];
     [_viewOutlet setUserInteractionEnabled:YES];
-    
-    _relaySnooze = [[SQLHelper getInstance] getRelaySnooze:g_DeviceMac];
-    if (_relaySnooze > 0) {
-        [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-    }
-
-    _ledSnooze = [[SQLHelper getInstance] getLedSnooze:g_DeviceMac];
-    if (_ledSnooze > 0) {
-        [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
-    }
 }
 
 - (void)sendService:(int)serviceId
@@ -648,7 +661,40 @@
 }
 
 - (void)onBtnIRTimer:(UITapGestureRecognizer *)recognizer {
-    // TODO: Handle IR timers
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:IR_SERVICE];
+    if (alarms && alarms.count>0) {
+        // Snooze
+        SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+        setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+        setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+        setTimerSnoozeVC.devId = _device.sid;
+        setTimerSnoozeVC.serviceId = IR_SERVICE;
+        setTimerSnoozeVC.delegate = self;
+        setTimerSnoozeVC.snooze = _ledSnooze;
+        [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
+    } else {
+        // Add new timer
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
+                                              message:NSLocalizedString(@"add_timer", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            
+            ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
+            scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+            scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+            scheduleActionVC.deviceId = _device.sid;
+            scheduleActionVC.deviceName = _device.givenName;
+            scheduleActionVC.serviceId = IR_SERVICE;
+            [self.navigationController pushViewController:scheduleActionVC animated:YES];
+            
+        }];
+        [alertController addAction:actionYes];
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        }];
+        [alertController addAction:actionNo];
+        [self presentViewController:alertController animated:YES completion:nil];
+    }
 }
 
 - (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
@@ -701,10 +747,14 @@
                 a.service_id = RELAY_SERVICE;
             } else if(serviceId == NIGHTLED_SERVICE){
                 a.service_id = NIGHTLED_SERVICE;
+            } else if(serviceId == IR_SERVICE){
+                a.service_id = IR_SERVICE;
             }
             
             NSLog(@"SERVICE FROM SERVER: %d", a.service_id);
             
+            a.init_ir = array[i + 5];
+            a.end_ir = array[i + 6];
             a.dow = array[i + 7];
             a.initial_hour = array[i + 8];
             a.initial_minute = array[i + 9];
@@ -725,7 +775,7 @@
                 NSLog(@"ALARM INSERTION FAILURE");
             }
         }
-    }
+    } 
 }
 
 //==================================================================
@@ -920,8 +970,38 @@
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
                 NSString *snooze = [jsonObject objectForKey:@"snooze"];
-                NSString *led_snooze = [jsonObject objectForKey:@"led_snooze"];
+                NSString *led_snooze = [jsonObject objectForKey:@"nightlightsnooze"];
+                NSString *ir_snooze = [jsonObject objectForKey:@"irsnooze"];
                 
+                NSString *model = [jsonObject objectForKey:@"model"];
+                
+                int buildNumber = 0;
+                id sBuildNumber = [jsonObject objectForKey:@"buildnumber"];
+                if (![sBuildNumber isKindOfClass:[NSNull class]]) {
+                    buildNumber = 0;
+                } else {
+                    buildNumber = [sBuildNumber intValue];
+                }
+
+                int protocol = 0;
+                id sProtocol = [jsonObject objectForKey:@"protocol"];
+                if (![sProtocol isKindOfClass:[NSNull class]]) {
+                    protocol = 0;
+                } else {
+                    protocol = [sProtocol intValue];
+                }
+                
+                NSString *hardware_version = [jsonObject objectForKey:@"hardware"];
+                NSString *firmware_version = [jsonObject objectForKey:@"firmware"];
+                                              
+                int firmwareDate = 0;
+                id sfirmwaredate = [jsonObject objectForKey:@"firmwaredate"];
+                if (![sfirmwaredate isKindOfClass:[NSNull class]]) {
+                    firmwareDate = 0;
+                } else {
+                    firmwareDate = [sfirmwaredate intValue];
+                }
+
                 NSString *title = [jsonObject objectForKey:@"title"];
                 NSString *icon = [jsonObject objectForKey:@"icon"];
 
@@ -961,10 +1041,17 @@
                 } else {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                 }
+                if(![ir_snooze isKindOfClass:[NSNull class]] && ir_snooze != nil && ir_snooze.length>0) {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:[led_snooze intValue]];
+                } else {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:0];
+                }
                 
-                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS
-                                                                    object:self
-                                                                  userInfo:nil];
+                [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
+                
+                //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS
+                //                                                    object:self
+                //                                                  userInfo:nil];
                 
                 [self updateUI:nil];
 

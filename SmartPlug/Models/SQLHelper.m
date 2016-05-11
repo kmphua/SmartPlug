@@ -33,6 +33,8 @@
 #define COLUMN_NOTIFY_POWER     @"notify_power"
 #define COLUMN_NOTIFY_CO        @"notify_co"
 #define COLUMN_NOTIFY_TIMER     @"notify_timer"
+#define COLUMN_INIT_IR          @"init_ir";
+#define COLUMN_END_IR           @"end_ir";
 
 // alarm table
 #define TABLE_ALARMS            @"alarms"
@@ -69,6 +71,7 @@
 //SNOOZE
 #define COLUMN_RELAY_SNOOZE     @"relay_snooze"
 #define COLUMN_LED_SNOOZE       @"led_snooze"
+#define COLUMN_IR_SNOOZE        @"ir_snooze"
 
 #define DATABASE_NAME           @"jsplugs"
 #define DATABASE_FILE           @"jsplugs.db"
@@ -141,6 +144,9 @@ static SQLHelper *instance;
     if (serviceId == NIGHTLED_SERVICE){
         result = [db executeUpdate:@"UPDATE smartplugs SET led_snooze = ? WHERE sid = ?", [NSNumber numberWithInt:snooze], sid];
     }
+    if (serviceId == IR_SERVICE){
+        result = [db executeUpdate:@"UPDATE smartplugs SET ir_snooze = ? WHERE sid = ?", [NSNumber numberWithInt:snooze], sid];
+    }
     [db close];
     return result;
 }
@@ -164,6 +170,18 @@ static SQLHelper *instance;
     int snooze = 0;
     if ([results next]) {
         snooze = [results intForColumn:COLUMN_LED_SNOOZE];
+    }
+    [db close];
+    return snooze;
+}
+
+- (int)getIRSnooze:(NSString *)sid
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE sid = ?", sid];
+    int snooze = 0;
+    if ([results next]) {
+        snooze = [results intForColumn:COLUMN_IR_SNOOZE];
     }
     [db close];
     return snooze;
@@ -210,14 +228,14 @@ static SQLHelper *instance;
     return icons;
 }
 
-- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position sid:(int)sid
+- (BOOL)insertIRGroup:(NSString *)name devId:(NSString *)devId icon:(NSString *)icon position:(int)position sid:(int)sid
 {
     [db open];
     BOOL result = NO;
     FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
     if (!results || !results.next) {
-        result = [db executeUpdate:@"INSERT INTO irgroups (name, icon, position, sid) VALUES (?, ?, ?, ?)",
-                       name, icon, [NSNumber numberWithInt:position], [NSNumber numberWithInt:sid]];
+        result = [db executeUpdate:@"INSERT INTO irgroups (name, icon, position, sid, mac) VALUES (?, ?, ?, ?, ?)",
+                       name, icon, [NSNumber numberWithInt:position], [NSNumber numberWithInt:sid], devId];
     } else {
         NSLog(@"RECORD EXIST - IR GROUP NOT ADDED");
     }
@@ -237,6 +255,24 @@ static SQLHelper *instance;
     return result;
 }
 
+- (IrGroup *)getIRGroupByName:(NSString *)groupName
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ?", groupName];
+    IrGroup *irGroup;
+    while ([results next]) {
+        irGroup = [IrGroup new];
+        irGroup.group_id = [results intForColumn:COLUMN_ID];
+        irGroup.name = [results stringForColumn:COLUMN_NAME];
+        irGroup.icon = [results stringForColumn:COLUMN_ICON];
+        irGroup.position = [results intForColumn:COLUMN_POSITION];
+        irGroup.sid = [results intForColumn:COLUMN_SID];
+        irGroup.mac = [results stringForColumn:COLUMN_MAC];
+    }
+    [db close];
+    return irGroup;
+}
+
 - (NSArray *)getIRGroups
 {
     [db open];
@@ -249,6 +285,7 @@ static SQLHelper *instance;
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
         irGroup.sid = [results intForColumn:COLUMN_SID];
+        irGroup.mac = [results stringForColumn:COLUMN_MAC];
         [irGroups addObject:irGroup];
     }
     [db close];
@@ -282,6 +319,25 @@ static SQLHelper *instance;
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
         irGroup.sid = [results intForColumn:COLUMN_SID];
+        irGroup.mac = [results stringForColumn:COLUMN_MAC];
+    }
+    [db close];
+    return irGroup;
+}
+
+- (IrGroup *)getIRGroupByMac:(NSString *)mac
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE mac = ?", mac];
+    IrGroup *irGroup;
+    while ([results next]) {
+        irGroup = [IrGroup new];
+        irGroup.group_id = [results intForColumn:COLUMN_ID];
+        irGroup.name = [results stringForColumn:COLUMN_NAME];
+        irGroup.icon = [results stringForColumn:COLUMN_ICON];
+        irGroup.position = [results intForColumn:COLUMN_POSITION];
+        irGroup.sid = [results intForColumn:COLUMN_SID];
+        irGroup.mac = [results stringForColumn:COLUMN_MAC];
     }
     [db close];
     return irGroup;
@@ -337,11 +393,11 @@ static SQLHelper *instance;
     return result;
 }
 
-- (BOOL)deleteIRCode:(int)groupId
+- (BOOL)deleteIRCode:(int)sid
 {
     BOOL result;
     [db open];
-    result = [db executeUpdate:@"DELETE FROM ircodes WHERE _id = ?", [NSNumber numberWithInt:groupId]];
+    result = [db executeUpdate:@"DELETE FROM ircodes WHERE sid = ?", [NSNumber numberWithInt:sid]];
     [db close];
     return result;
 }
@@ -358,6 +414,7 @@ static SQLHelper *instance;
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
         irGroup.sid = [results intForColumn:COLUMN_SID];
+        irGroup.mac = [results stringForColumn:COLUMN_MAC];
         [irGroups addObject:irGroup];
     }
     [db close];
@@ -438,6 +495,29 @@ static SQLHelper *instance;
 {
     [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE group_id = ?", [NSNumber numberWithInt:groupId]];
+    NSMutableArray *irCodes = [NSMutableArray new];
+    while ([results next]) {
+        IrCode *irCode = [IrCode new];
+        irCode.code_id = [results intForColumn:COLUMN_ID];
+        irCode.group_id = [results intForColumn:COLUMN_GROUPID];
+        irCode.name = [results stringForColumn:COLUMN_NAME];
+        irCode.filename = [results intForColumn:COLUMN_FILENAME];
+        irCode.icon = [results stringForColumn:COLUMN_ICON];
+        irCode.mac = [results stringForColumn:COLUMN_MAC];
+        irCode.position = [results intForColumn:COLUMN_POSITION];
+        irCode.brand = [results stringForColumn:COLUMN_IRBRAND];
+        irCode.model = [results stringForColumn:COLUMN_IRMODEL];
+        irCode.sid = [results intForColumn:COLUMN_SID];
+        [irCodes addObject:irCode];
+    }
+    [db close];
+    return irCodes;
+}
+
+- (NSArray *)getIRCodeById:(int)filename
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE filename = ?", [NSNumber numberWithInt:filename]];
     NSMutableArray *irCodes = [NSMutableArray new];
     while ([results next]) {
         IrCode *irCode = [IrCode new];
@@ -543,6 +623,22 @@ static SQLHelper *instance;
             js.hw_ver,
             js.fw_ver,
             js.ip];
+    [db close];
+    return result;
+}
+
+- (BOOL)updateDeviceVersions:(NSString *)idLocal model:(NSString *)model build_no:(int)build_no
+ prot_ver:(int)prot_ver hw_ver:(NSString *)hw_ver fw_ver:(NSString *)fw_ver fw_date:(int)fw_date
+{
+    [db open];
+    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET model = ?, build_no = ?, prot_ver = ?, hw_ver = ?, fw_ver = ?, fw_date = ? WHERE sid = ?",
+                   model,
+                   [NSNumber numberWithInt:build_no],
+                   [NSNumber numberWithInt:prot_ver],
+                   hw_ver,
+                   fw_ver,
+                   [NSNumber numberWithInt:fw_date],
+                   idLocal];
     [db close];
     return result;
 }
@@ -837,8 +933,8 @@ static SQLHelper *instance;
 - (BOOL)insertAlarm:(Alarm *)a
 {
     [db open];
-    BOOL result = [db executeUpdate:@"INSERT INTO alarms (device_id, service_id, dow, init_hour, init_minutes, end_hour, end_minutes, snooze) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-            a.device_id, [NSNumber numberWithInt:a.service_id], [NSNumber numberWithInt:a.dow], [NSNumber numberWithInt:a.initial_hour], [NSNumber numberWithInt:a.initial_minute], [NSNumber numberWithInt:a.end_hour], [NSNumber numberWithInt:a.end_minute], [NSNumber numberWithInt:a.snooze]];
+    BOOL result = [db executeUpdate:@"INSERT INTO alarms (device_id, service_id, dow, init_hour, init_minutes, end_hour, end_minutes, snooze, init_ir, end_ir) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+            a.device_id, [NSNumber numberWithInt:a.service_id], [NSNumber numberWithInt:a.dow], [NSNumber numberWithInt:a.initial_hour], [NSNumber numberWithInt:a.initial_minute], [NSNumber numberWithInt:a.end_hour], [NSNumber numberWithInt:a.end_minute], [NSNumber numberWithInt:a.snooze], [NSNumber numberWithInt:a.init_ir], [NSNumber numberWithInt:a.end_ir]];
     [db close];
     return result;
 }
@@ -846,7 +942,7 @@ static SQLHelper *instance;
 - (BOOL)updateAlarm:(Alarm *)a
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE alarms SET device_id = ?, service_id = ?, dow = ?, init_hour = ?, init_minutes = ?, end_hour = ?, end_minutes = ?, snooze = ? WHERE _id = ?",
+    BOOL result = [db executeUpdate:@"UPDATE alarms SET device_id = ?, service_id = ?, dow = ?, init_hour = ?, init_minutes = ?, end_hour = ?, end_minutes = ?, snooze = ?, init_ir = ?, end_ir = ? WHERE _id = ?",
             a.device_id,
             [NSNumber numberWithInt:a.service_id],
             [NSNumber numberWithInt:a.dow],
@@ -855,7 +951,9 @@ static SQLHelper *instance;
             [NSNumber numberWithInt:a.end_hour],
             [NSNumber numberWithInt:a.end_minute],
             [NSNumber numberWithInt:a.snooze],
-            [NSNumber numberWithInt:a.alarm_id]];
+            [NSNumber numberWithInt:a.alarm_id],
+            [NSNumber numberWithInt:a.init_ir],
+            [NSNumber numberWithInt:a.end_ir]];
     [db close];
     return result;
 }

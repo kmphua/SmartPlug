@@ -15,5 +15,6 @@
 @property (nonatomic, copy) NSString *icon;
 @property (nonatomic, assign) int position;
 @property (nonatomic, assign) int sid;
+@property (nonatomic, copy) NSString *mac;
 
 @end

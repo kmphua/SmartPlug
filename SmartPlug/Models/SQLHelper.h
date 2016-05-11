@@ -23,6 +23,7 @@
 - (BOOL)updateDeviceSnooze:(NSString *)sid serviceId:(int)serviceId snooze:(int)snooze;
 - (int)getRelaySnooze:(NSString *)sid;
 - (int)getLedSnooze:(NSString *)sid;
+- (int)getIRSnooze:(NSString *)sid;
 
 // Icons
 - (BOOL)insertIcons:(NSString *)url size:(int)size sid:(NSString *)sid;
@@ -34,14 +35,16 @@
 - (BOOL)deleteIRGroups;
 - (NSArray *)getIRGroup:(int)groupId;
 - (IrGroup *)getIRGroupBySID:(int)sid;
+- (IrGroup *)getIRGroupByMac:(NSString *)mac;
 - (BOOL)deleteIRGroupById:(int)groupId;
 - (BOOL)deleteIRGroupBySID:(int)sid;
-- (BOOL)insertIRGroup:(NSString *)name icon:(NSString *)icon position:(int)position sid:(int)sid;
+- (BOOL)insertIRGroup:(NSString *)name devId:(NSString *)devId icon:(NSString *)icon position:(int)position sid:(int)sid;
 - (BOOL)updateIRGroup:(IrGroup *)group;
 
 // IR Codes
 - (NSArray *)getIRCodes;
 - (NSArray *)getIRCodesByGroup:(int)groupid;
+- (IrCode *)getIRCodeById:(int)filename;
 - (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
                  icon:(NSString *)icon mac:(NSString *)mac sid:(int)sid;
 - (BOOL)updateIRCodeSID:(int)filename sid:(int)sid;
@@ -49,11 +52,14 @@
 - (BOOL)updateIRCode:(IrCode *)code;
 - (BOOL)deleteIRCodes:(int)groupId;
 - (BOOL)deleteIRCodesBySID:(int)groupId;
-- (BOOL)deleteIRCode:(int)groupId;
+
+- (BOOL)deleteIRCode:(int)sid;
 - (BOOL)deleteAllIRCodes;
 
 // Plugs
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active;
+- (BOOL)updateDeviceVersions:(NSString *)idLocal model:(NSString *)model build_no:(int)build_no
+                    prot_ver:(int)prot_ver hw_ver:(NSString *)hw_ver fw_ver:(NSString *)fw_ver fw_date:(int)fw_date;
 - (BOOL)updatePlugID:(NSString *)mac ip:(NSString *)ip;
 - (BOOL)updatePlugName:(NSString *)data sid:(NSString *)sid;
 - (BOOL)updatePlugIcon:(NSString *)sid icon:(NSString *)icon;

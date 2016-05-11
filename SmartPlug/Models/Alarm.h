@@ -19,5 +19,7 @@
 @property (nonatomic, assign) int end_hour;
 @property (nonatomic, assign) int end_minute;
 @property (nonatomic, assign) int snooze;
+@property (nonatomic, assign) int init_ir;
+@property (nonatomic, assign) int end_ir;
 
 @end

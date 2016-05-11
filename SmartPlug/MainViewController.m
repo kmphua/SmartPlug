@@ -618,6 +618,32 @@
                             plug.relay = [hallsensor intValue];
                         }
                         
+                        plug.model = [device objectForKey:@"model"];
+                        
+                        id buildNumber = [device objectForKey:@"buildnumber"];
+                        if (![buildNumber isKindOfClass:[NSNull class]]) {
+                            plug.buildno = 0;
+                        } else {
+                            plug.buildno = [buildNumber intValue];
+                        }
+                        
+                        id protocol = [device objectForKey:@"protocol"];
+                        if (![protocol isKindOfClass:[NSNull class]]) {
+                            plug.prot_ver = 0;
+                        } else {
+                            plug.prot_ver = [protocol intValue];
+                        }
+                        
+                        plug.hw_ver = [device objectForKey:@"hardware"];
+                        plug.fw_ver = [device objectForKey:@"firmware"];
+                        
+                        id firmwaredate = [device objectForKey:@"firmwaredate"];
+                        if (![firmwaredate isKindOfClass:[NSNull class]]) {
+                            plug.fw_date = 0;
+                        } else {
+                            plug.fw_date = [firmwaredate intValue];
+                        }
+                        
                         if (plug.name == nil || plug.name.length == 0) {
                             plug.name = plug.givenName;
                         }
@@ -694,7 +720,37 @@
                 NSString *co_sensor = [jsonObject objectForKey:@"cosensor"];
                 NSString *hall_sensor = [jsonObject objectForKey:@"hallsensor"];
                 NSString *snooze = [jsonObject objectForKey:@"snooze"];
-                NSString *led_snooze = [jsonObject objectForKey:@"led_snooze"];
+                NSString *led_snooze = [jsonObject objectForKey:@"nightlightsnooze"];
+                NSString *ir_snooze = [jsonObject objectForKey:@"irsnooze"];
+                
+                NSString *model = [jsonObject objectForKey:@"model"];
+                
+                int buildNumber = 0;
+                id sBuildNumber = [jsonObject objectForKey:@"buildnumber"];
+                if (![sBuildNumber isKindOfClass:[NSNull class]]) {
+                    buildNumber = 0;
+                } else {
+                    buildNumber = [sBuildNumber intValue];
+                }
+                
+                int protocol = 0;
+                id sProtocol = [jsonObject objectForKey:@"protocol"];
+                if (![sProtocol isKindOfClass:[NSNull class]]) {
+                    protocol = 0;
+                } else {
+                    protocol = [sProtocol intValue];
+                }
+                
+                NSString *hardware_version = [jsonObject objectForKey:@"hardware"];
+                NSString *firmware_version = [jsonObject objectForKey:@"firmware"];
+                
+                int firmwareDate = 0;
+                id sfirmwaredate = [jsonObject objectForKey:@"firmwaredate"];
+                if (![sfirmwaredate isKindOfClass:[NSNull class]]) {
+                    firmwareDate = 0;
+                } else {
+                    firmwareDate = [sfirmwaredate intValue];
+                }
                 
                 NSLog(@"Devget returned: relay=%@, nightlight=%@, co_sensor=%@, hall_sensor=%@, snooze=%@",
                       relay, nightlight, co_sensor, hall_sensor, snooze);
@@ -729,6 +785,13 @@
                 } else {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                 }
+                if(![ir_snooze isKindOfClass:[NSNull class]] && ir_snooze != nil && ir_snooze.length>0) {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:[led_snooze intValue]];
+                } else {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:0];
+                }
+                
+                [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
                 
                 // Get devices from database
                 self.plugs = [[SQLHelper getInstance] getPlugData];

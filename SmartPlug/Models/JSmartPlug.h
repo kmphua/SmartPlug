@@ -33,5 +33,7 @@
 @property (nonatomic, assign) int notify_co;
 @property (nonatomic, assign) int notify_timer;
 @property (nonatomic, assign) int snooze;
+@property (nonatomic, assign) int led_snooze;
+@property (nonatomic, assign) int ir_snooze;
 
 @end

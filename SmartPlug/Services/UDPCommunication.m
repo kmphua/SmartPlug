@@ -275,6 +275,36 @@ static UDPCommunication *instance;
     return YES;
 }
 
+- (BOOL)sendReformatCommand:(NSString *)ip
+{
+    g_UdpCommand = 0x010F;
+    [self generate_header];
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+    
+    NSData *data = [NSData dataWithBytes:hMsg length:sizeof(hMsg)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    NSLog(@"REFORMAT COMMAND SENT");
+    return YES;
+}
+
+- (BOOL)sendResetCommand:(NSString *)ip
+{
+    g_UdpCommand = 0x0FFF;
+    [self generate_header];
+    
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+    
+    NSData *data = [NSData dataWithBytes:hMsg length:sizeof(hMsg)];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    NSLog(@"RESET COMMAND SENT");
+    return YES;
+}
+
 - (BOOL)sendIRFileName:(int)filename
 {
     [self sendIRHeader:filename];
@@ -347,8 +377,10 @@ static UDPCommunication *instance;
                 timers[i++] = (uint8_t) ((serviceId >> 8) & 0xff);
                 timers[i++] = (uint8_t) (serviceId & 0xff);
                 timers[i++] = 0x01;
-                timers[i++] = 0x01;
-                timers[i++] = 0x00;
+                int init_ir = alarm.init_ir;
+                timers[i++] = (uint8_t)init_ir;
+                int end_ir = alarm.end_ir;
+                timers[i++] = (uint8_t)end_ir;
                 int dow = alarm.dow;
                 timers[i++] = (uint8_t) (dow & 0xff);
                 int initHour = alarm.initial_hour;
@@ -401,9 +433,10 @@ static UDPCommunication *instance;
                 timers[i++] = (uint8_t) ((serviceId >> 8) & 0xff);
                 timers[i++] = (uint8_t) (serviceId & 0xff);
                 timers[i++] = 0x01;
-                timers[i++] = 0x01;
-                timers[i++] = 0x00;
-                
+                int init_ir = alarm.init_ir;
+                timers[i++] = (uint8_t)init_ir;
+                int end_ir = alarm.end_ir;
+                timers[i++] = (uint8_t)end_ir;                
                 int dow = alarm.dow;
                 timers[i++] = (uint8_t) (dow & 0xff);
                 int initHour = alarm.initial_hour;
