@@ -31,6 +31,8 @@
 "NoTimersSet" = "无设置定时";
 "AddNewTimer" = "新增定时";
 "TimersSet" = "已设置定时";
+"update_alarms_on_server" = "更新鬧鐘裝置";
+"alarms_sent_success" = "成功送出鬧鐘";
 "ShowModifyTimer" = "显示/编辑定时";
 "Snooze5Minutes" = "延迟 5 分钟";
 "Snooze10Minutes" = "延迟 10 分钟";
@@ -42,8 +44,8 @@
 "Snooze30MoreMinutes" = "延迟多 30 分钟";
 "Snooze1MoreHour" = "延迟多 1 小时";
 "CancelSnooze" = "取消延迟";
-"Snooze Send Success" = "传送延迟设定成功";
-"Error Please Try Again" = "传送错误,请再试一下";
+"SnoozeSentSuccess" = "传送延迟设定成功";
+"ErrorPleaseTryAgain" = "传送错误,请再试一下";
 
 "id_username" = "使用者";
 "id_password" = "密码";
@@ -149,8 +151,8 @@
 "msg_recordIr" = "请指向远程的JSPlug并按要录制按钮。\n\n1.按钮录制。";
 "btn_recordAgain" = "再次记录";
 "btn_testCommand" = "测试命令";
-"msg co warning" = "一氧化碳警告";
-"msg ha warning" = "过电警告";
+"msg_co_warning" = "一氧化碳警告";
+"msg_ha_warning" = "过电警告";
 "add_timer" = "加入定时?";
 "no_timer_set" = "无定时设入";
 "title_add_new" = "加入";
@@ -176,9 +178,18 @@
 "please_wait_done" = "载入中...请稍候";
 "cancelir" = "停止扫描";
 "ir_timeout" = "IR扫瞄逾时";
-"processing ir command" = "红外线指令进行中";
-"processing command" = "指令进行中";
+"processing_ir_command" = "红外线指令进行中";
+"processing_command" = "指令进行中";
 "password_reset" = "密码已修改完成";
+
+// Days of week
+"sunday" = "日";
+"monday" = "一";
+"tuesday" = "二";
+"wednesday" = "三";
+"thursday" = "四";
+"friday" = "五";
+"saturday" = "六";
 
 // Help
 "help_1_title" = "快速入门指南";
@@ -196,12 +207,20 @@
 "help_7_title" = "准备开始！";
 
 "msg_network_error" = "网路错误";
-"msg_unable_to_connect" = "本App需要网路连线才能使用。请在设定中打开网路服务。";
+"msg_unable_to_connect" = "本应用程序需要网路连线才能使用请在设定中打开网路服务。";
 "timer_set" = "设置定时";
-"error_adding_device" = "无法新增装置，请确认装置未在另外的帐号启用。";
-"error_adding_new_device" = "无法新增装置，请在几秒后重试";
-"connection_error" = "网路错误，无法和装置连线，请确认您有网路连线或者处于和装置一样的网域";
+"timer_set_snoozing" = "延时定时";
+"warning" = "注意";
+"warning_logout_baduser" = "已被登出，因为您的帐号或密码已经无效了";
+"warning_logout_changepwd" = "已被登出，因为您更改您的密码了";
+"error_logout" = "警告：登出伺服器失败";
+"error_adding_new_device" = "增加装置失败，请稍候再试";
+"error_adding_device" = "增加装置失败，请确认装置没跟其他帐号配对";
+"connection_error" = "无法连到装置，请查网路设定";
 "general_error" = "发生错误，请重试";
 "timer" = "定时";
 "snooze" = "延迟";
-"minutes" = "分钟";
+"minutes" = "分";
+"ir_code" = "IR CODE";
+"password_badchar_error" = "密码不能包含＃或＆";
+"password_length_error" = "密码必须至少6个字符";
