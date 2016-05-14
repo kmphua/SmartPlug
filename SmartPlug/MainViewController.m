@@ -357,7 +357,7 @@
     if (plug.icon && plug.icon.length>0) {
         imagePath = plug.icon;
     } else {
-        imagePath = @"http://flutehuang-001-site2.ctempurl.com/Images/see_Electric_ight_1_white_bkgnd.png";
+        imagePath = DEFAULT_ICON_PATH;
     }
     [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     
