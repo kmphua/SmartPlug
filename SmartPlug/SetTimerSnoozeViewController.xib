@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9532" systemVersion="15D21" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9530"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="SetTimerSnoozeViewController">
@@ -16,8 +17,8 @@
                 <outlet property="btnSnooze30Mins" destination="Blw-tx-TmE" id="Bei-HP-0XT"/>
                 <outlet property="btnSnooze5Mins" destination="uau-aa-PQU" id="Z2S-dc-O2g"/>
                 <outlet property="imgBackground" destination="soG-BM-L3a" id="ctA-jX-gWL"/>
-                <outlet property="lblTimer" destination="HIq-YA-god" id="UqW-mz-68O"/>
                 <outlet property="lblTitle" destination="zWH-BZ-uvm" id="7ah-cs-nmb"/>
+                <outlet property="txtTimer" destination="xWk-BF-CbJ" id="anJ-Lo-y8z"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="22E-tj-l2A"/>
             </connections>
         </placeholder>
@@ -27,13 +28,13 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ZVe-b0-SFY">
-                    <rect key="frame" x="30" y="32" width="260" height="415"/>
+                    <rect key="frame" x="30" y="-45" width="260" height="570"/>
                     <subviews>
                         <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="soG-BM-L3a">
-                            <rect key="frame" x="0.0" y="0.0" width="260" height="415"/>
+                            <rect key="frame" x="0.0" y="0.0" width="260" height="570"/>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Timers Set (Snoozing 01h00m)" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="zWH-BZ-uvm">
-                            <rect key="frame" x="15" y="0.0" width="230" height="30"/>
+                            <rect key="frame" x="15" y="10" width="230" height="30"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="21" id="bEh-xC-zJy"/>
                                 <constraint firstAttribute="height" constant="30" id="gS5-tX-VlU"/>
@@ -47,19 +48,19 @@
                                 </mask>
                             </variation>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10:30 - 12:00 TWM" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="HIq-YA-god">
-                            <rect key="frame" x="15" y="40" width="230" height="50"/>
+                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" text="10:30-12:00 SMTWTFS" translatesAutoresizingMaskIntoConstraints="NO" id="xWk-BF-CbJ">
+                            <rect key="frame" x="15" y="60" width="230" height="80"/>
+                            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="50" id="RmA-7p-tXv"/>
+                                <constraint firstAttribute="height" constant="80" id="T8A-9t-hfQ"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
-                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                            <nil key="highlightedColor"/>
-                        </label>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                        </textView>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BcP-iF-6hf">
-                            <rect key="frame" x="15" y="100" width="230" height="35"/>
+                            <rect key="frame" x="50" y="150" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="0sV-0x-BwT"/>
+                                <constraint firstAttribute="height" constant="50" id="0sV-0x-BwT"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Add New Timer" backgroundImage="btn_bkgnd.png">
@@ -70,9 +71,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="nJc-ff-fvs">
-                            <rect key="frame" x="15" y="145" width="230" height="35"/>
+                            <rect key="frame" x="50" y="210" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="8Lm-kZ-Uof"/>
+                                <constraint firstAttribute="height" constant="50" id="8Lm-kZ-Uof"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Show/Modify Timer" backgroundImage="btn_bkgnd.png">
@@ -83,9 +84,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="uau-aa-PQU">
-                            <rect key="frame" x="15" y="190" width="230" height="35"/>
+                            <rect key="frame" x="50" y="270" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="LMH-rH-X7R"/>
+                                <constraint firstAttribute="height" constant="50" id="LMH-rH-X7R"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Snooze 5 Minutes" backgroundImage="btn_bkgnd.png">
@@ -96,9 +97,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="B8g-SQ-F5J">
-                            <rect key="frame" x="15" y="235" width="230" height="35"/>
+                            <rect key="frame" x="50" y="330" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="u3z-7R-JUI"/>
+                                <constraint firstAttribute="height" constant="50" id="u3z-7R-JUI"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Snooze 10 Minutes" backgroundImage="btn_bkgnd.png">
@@ -109,9 +110,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Blw-tx-TmE">
-                            <rect key="frame" x="15" y="280" width="230" height="35"/>
+                            <rect key="frame" x="50" y="390" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="xoq-eK-cA6"/>
+                                <constraint firstAttribute="height" constant="50" id="xoq-eK-cA6"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Snooze 30 Minutes" backgroundImage="btn_bkgnd.png">
@@ -122,9 +123,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="EnZ-R5-LbB">
-                            <rect key="frame" x="15" y="325" width="230" height="35"/>
+                            <rect key="frame" x="50" y="450" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="BGl-bK-JAK"/>
+                                <constraint firstAttribute="height" constant="50" id="BGl-bK-JAK"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Snooze 1 Hour" backgroundImage="btn_bkgnd.png">
@@ -135,9 +136,9 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="UEq-S0-jSe">
-                            <rect key="frame" x="15" y="370" width="230" height="35"/>
+                            <rect key="frame" x="50" y="510" width="160" height="50"/>
                             <constraints>
-                                <constraint firstAttribute="height" constant="35" id="jd0-y4-aup"/>
+                                <constraint firstAttribute="height" constant="50" id="jd0-y4-aup"/>
                             </constraints>
                             <fontDescription key="fontDescription" type="system" pointSize="20"/>
                             <state key="normal" title="Cancel Snooze" backgroundImage="btn_bkgnd.png">
@@ -152,55 +153,45 @@
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstAttribute="trailing" secondItem="zWH-BZ-uvm" secondAttribute="trailing" constant="15" id="1vP-ye-Flo"/>
-                        <constraint firstAttribute="bottom" secondItem="BcP-iF-6hf" secondAttribute="bottom" constant="30" id="52W-zc-ihg"/>
-                        <constraint firstItem="uau-aa-PQU" firstAttribute="centerY" secondItem="soG-BM-L3a" secondAttribute="centerY" id="8Ij-WA-VYn"/>
+                        <constraint firstItem="B8g-SQ-F5J" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="3hT-no-YzI"/>
+                        <constraint firstItem="uau-aa-PQU" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="44V-HI-TYu"/>
+                        <constraint firstAttribute="trailing" secondItem="xWk-BF-CbJ" secondAttribute="trailing" constant="15" id="4Uh-BG-v2Y"/>
                         <constraint firstItem="Blw-tx-TmE" firstAttribute="top" secondItem="B8g-SQ-F5J" secondAttribute="bottom" constant="10" id="94t-mL-Xka"/>
                         <constraint firstItem="zWH-BZ-uvm" firstAttribute="leading" secondItem="ZVe-b0-SFY" secondAttribute="leading" constant="15" id="9LN-6c-H9R"/>
-                        <constraint firstItem="nJc-ff-fvs" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="BQa-b1-5wA"/>
+                        <constraint firstItem="B8g-SQ-F5J" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="C9n-JU-Ppn"/>
+                        <constraint firstItem="nJc-ff-fvs" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="E8K-KA-sXa"/>
                         <constraint firstItem="EnZ-R5-LbB" firstAttribute="top" secondItem="Blw-tx-TmE" secondAttribute="bottom" constant="10" id="ETR-Y7-r3S"/>
                         <constraint firstItem="uau-aa-PQU" firstAttribute="top" secondItem="nJc-ff-fvs" secondAttribute="bottom" constant="10" id="FNI-rh-ips"/>
-                        <constraint firstItem="HIq-YA-god" firstAttribute="top" secondItem="zWH-BZ-uvm" secondAttribute="bottom" constant="20" id="H7f-XK-trU"/>
+                        <constraint firstItem="EnZ-R5-LbB" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="FSn-XO-L0E"/>
                         <constraint firstItem="UEq-S0-jSe" firstAttribute="top" secondItem="EnZ-R5-LbB" secondAttribute="bottom" constant="10" id="Hmg-jg-7cq"/>
-                        <constraint firstItem="BcP-iF-6hf" firstAttribute="top" secondItem="EnZ-R5-LbB" secondAttribute="bottom" constant="10" id="L2s-tQ-HIP"/>
+                        <constraint firstItem="Blw-tx-TmE" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="IDh-Js-2Xi"/>
+                        <constraint firstItem="xWk-BF-CbJ" firstAttribute="top" secondItem="zWH-BZ-uvm" secondAttribute="bottom" constant="20" id="Mbe-JL-62C"/>
                         <constraint firstItem="B8g-SQ-F5J" firstAttribute="top" secondItem="uau-aa-PQU" secondAttribute="bottom" constant="10" id="NPc-JO-OZs"/>
-                        <constraint firstItem="BcP-iF-6hf" firstAttribute="top" secondItem="HIq-YA-god" secondAttribute="bottom" constant="10" id="OjT-fs-szE"/>
+                        <constraint firstItem="Blw-tx-TmE" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="RIr-Zi-FLC"/>
                         <constraint firstAttribute="bottom" secondItem="soG-BM-L3a" secondAttribute="bottom" id="S1D-wT-L7p"/>
-                        <constraint firstItem="EnZ-R5-LbB" firstAttribute="trailing" secondItem="Blw-tx-TmE" secondAttribute="trailing" id="UI1-rn-JUg"/>
+                        <constraint firstItem="BcP-iF-6hf" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="Sio-Bq-CtO"/>
                         <constraint firstItem="soG-BM-L3a" firstAttribute="top" secondItem="ZVe-b0-SFY" secondAttribute="top" id="V8g-XC-vhH"/>
-                        <constraint firstItem="HIq-YA-god" firstAttribute="top" secondItem="zWH-BZ-uvm" secondAttribute="bottom" constant="10" id="bGP-Kf-ADi"/>
-                        <constraint firstItem="uau-aa-PQU" firstAttribute="leading" secondItem="ZVe-b0-SFY" secondAttribute="leading" constant="15" id="cRS-Hh-bhP"/>
-                        <constraint firstItem="BcP-iF-6hf" firstAttribute="leading" secondItem="EnZ-R5-LbB" secondAttribute="leading" id="dKE-kP-n9u"/>
-                        <constraint firstItem="uau-aa-PQU" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="eGL-yp-c7B"/>
-                        <constraint firstItem="B8g-SQ-F5J" firstAttribute="leading" secondItem="uau-aa-PQU" secondAttribute="leading" id="eJw-jc-WgW"/>
+                        <constraint firstItem="BcP-iF-6hf" firstAttribute="top" secondItem="xWk-BF-CbJ" secondAttribute="bottom" constant="10" id="Vle-Q9-6KH"/>
+                        <constraint firstItem="UEq-S0-jSe" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="aDW-hH-ELc"/>
                         <constraint firstAttribute="bottom" secondItem="EnZ-R5-LbB" secondAttribute="bottom" constant="10" id="eq3-XO-LWV"/>
                         <constraint firstItem="nJc-ff-fvs" firstAttribute="top" secondItem="BcP-iF-6hf" secondAttribute="bottom" constant="10" id="fcA-RA-QJ3"/>
-                        <constraint firstItem="nJc-ff-fvs" firstAttribute="leading" secondItem="ZVe-b0-SFY" secondAttribute="leading" constant="15" id="g3i-oO-4u9"/>
-                        <constraint firstAttribute="trailing" secondItem="HIq-YA-god" secondAttribute="trailing" constant="15" id="gW0-6X-Di0"/>
-                        <constraint firstItem="EnZ-R5-LbB" firstAttribute="leading" secondItem="Blw-tx-TmE" secondAttribute="leading" id="iDh-zc-ota"/>
+                        <constraint firstItem="uau-aa-PQU" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="h3D-5D-D2h"/>
                         <constraint firstAttribute="trailing" secondItem="soG-BM-L3a" secondAttribute="trailing" id="j0T-d5-4dm"/>
-                        <constraint firstItem="UEq-S0-jSe" firstAttribute="leading" secondItem="EnZ-R5-LbB" secondAttribute="leading" id="jLT-K5-PPz"/>
-                        <constraint firstItem="HIq-YA-god" firstAttribute="leading" secondItem="ZVe-b0-SFY" secondAttribute="leading" constant="15" id="kxA-D4-kzU"/>
-                        <constraint firstAttribute="trailing" secondItem="uau-aa-PQU" secondAttribute="trailing" constant="15" id="m6L-Rp-PPj"/>
+                        <constraint firstItem="nJc-ff-fvs" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="lrA-n1-doW"/>
                         <constraint firstItem="soG-BM-L3a" firstAttribute="centerY" secondItem="ZVe-b0-SFY" secondAttribute="centerY" id="mo3-Dc-PIi"/>
                         <constraint firstAttribute="bottom" secondItem="UEq-S0-jSe" secondAttribute="bottom" constant="10" id="nOb-Ey-H0L"/>
                         <constraint firstItem="soG-BM-L3a" firstAttribute="leading" secondItem="ZVe-b0-SFY" secondAttribute="leading" id="oJ6-S9-2S0"/>
-                        <constraint firstItem="UEq-S0-jSe" firstAttribute="trailing" secondItem="EnZ-R5-LbB" secondAttribute="trailing" id="ovO-0N-8fg"/>
-                        <constraint firstItem="B8g-SQ-F5J" firstAttribute="trailing" secondItem="uau-aa-PQU" secondAttribute="trailing" id="pNx-t1-RzH"/>
-                        <constraint firstItem="nJc-ff-fvs" firstAttribute="top" secondItem="HIq-YA-god" secondAttribute="bottom" constant="10" id="pUV-kg-vJO"/>
+                        <constraint firstItem="xWk-BF-CbJ" firstAttribute="leading" secondItem="ZVe-b0-SFY" secondAttribute="leading" constant="15" id="oXa-2d-sMW"/>
                         <constraint firstAttribute="bottom" secondItem="UEq-S0-jSe" secondAttribute="bottom" constant="10" id="qvY-XE-Dca"/>
-                        <constraint firstItem="BcP-iF-6hf" firstAttribute="trailing" secondItem="EnZ-R5-LbB" secondAttribute="trailing" id="s1t-al-f9d"/>
-                        <constraint firstAttribute="trailing" secondItem="nJc-ff-fvs" secondAttribute="trailing" constant="15" id="uw8-Yk-LNN"/>
-                        <constraint firstItem="Blw-tx-TmE" firstAttribute="leading" secondItem="B8g-SQ-F5J" secondAttribute="leading" id="vF3-Be-WaG"/>
-                        <constraint firstItem="zWH-BZ-uvm" firstAttribute="top" secondItem="ZVe-b0-SFY" secondAttribute="top" id="xcI-VW-Prr"/>
-                        <constraint firstItem="Blw-tx-TmE" firstAttribute="trailing" secondItem="B8g-SQ-F5J" secondAttribute="trailing" id="ywr-kV-oNl"/>
+                        <constraint firstItem="nJc-ff-fvs" firstAttribute="width" secondItem="BcP-iF-6hf" secondAttribute="width" id="tmn-sT-crB"/>
+                        <constraint firstItem="EnZ-R5-LbB" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="ucs-6q-J9D"/>
+                        <constraint firstItem="xWk-BF-CbJ" firstAttribute="top" secondItem="zWH-BZ-uvm" secondAttribute="bottom" constant="10" id="x7O-bR-Knk"/>
+                        <constraint firstItem="zWH-BZ-uvm" firstAttribute="top" secondItem="ZVe-b0-SFY" secondAttribute="top" constant="10" id="xcI-VW-Prr"/>
+                        <constraint firstItem="UEq-S0-jSe" firstAttribute="centerX" secondItem="ZVe-b0-SFY" secondAttribute="centerX" id="zj3-kG-VLG"/>
                     </constraints>
                     <variation key="default">
                         <mask key="constraints">
-                            <exclude reference="H7f-XK-trU"/>
-                            <exclude reference="52W-zc-ihg"/>
-                            <exclude reference="L2s-tQ-HIP"/>
-                            <exclude reference="pUV-kg-vJO"/>
-                            <exclude reference="8Ij-WA-VYn"/>
+                            <exclude reference="x7O-bR-Knk"/>
                             <exclude reference="eq3-XO-LWV"/>
                             <exclude reference="nOb-Ey-H0L"/>
                         </mask>
@@ -217,6 +208,7 @@
                 <constraint firstAttribute="bottom" secondItem="ZVe-b0-SFY" secondAttribute="bottom" constant="20" id="bpF-QS-d6b"/>
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="e8V-ey-ccH"/>
                 <constraint firstItem="ZVe-b0-SFY" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="20" id="eRt-q6-xTU"/>
+                <constraint firstItem="BcP-iF-6hf" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.5" id="nHF-oZ-3JH"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics"/>
             <variation key="default">

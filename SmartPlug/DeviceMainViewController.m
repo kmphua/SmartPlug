@@ -576,76 +576,30 @@
 
 - (IBAction)onBtnOutletTimer:(id)sender {
     NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:RELAY_SERVICE];
-    if (alarms && alarms.count>0) {
-        // Snooze
-        SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
-        setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-        setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        setTimerSnoozeVC.devId = _device.sid;
-        setTimerSnoozeVC.serviceId = RELAY_SERVICE;
-        setTimerSnoozeVC.snooze = _relaySnooze;
-        setTimerSnoozeVC.delegate = self;
-        [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
-    } else {
-        // Add new timer
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
-                                              message:NSLocalizedString(@"add_timer", nil)
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            
-            ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-            scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-            scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            scheduleActionVC.deviceId = _device.sid;
-            scheduleActionVC.deviceName = _device.givenName;
-            scheduleActionVC.serviceId = RELAY_SERVICE;
-            [self.navigationController pushViewController:scheduleActionVC animated:YES];
-            
-        }];
-        [alertController addAction:actionYes];
-        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        }];
-        [alertController addAction:actionNo];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
+
+    SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+    setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    setTimerSnoozeVC.devId = _device.sid;
+    setTimerSnoozeVC.serviceId = RELAY_SERVICE;
+    setTimerSnoozeVC.snooze = _relaySnooze;
+    setTimerSnoozeVC.alarmCount = (int)alarms.count;
+    setTimerSnoozeVC.delegate = self;
+    [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
 }
 
 - (IBAction)onBtnNightLightTimer:(id)sender {
     NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:NIGHTLED_SERVICE];
-    if (alarms && alarms.count>0) {
-        // Snooze
-        SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
-        setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-        setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        setTimerSnoozeVC.devId = _device.sid;
-        setTimerSnoozeVC.serviceId = NIGHTLED_SERVICE;
-        setTimerSnoozeVC.delegate = self;
-        setTimerSnoozeVC.snooze = _ledSnooze;
-        [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
-    } else {
-        // Add new timer
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
-                                              message:NSLocalizedString(@"add_timer", nil)
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            
-            ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-            scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-            scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            scheduleActionVC.deviceId = _device.sid;
-            scheduleActionVC.deviceName = _device.givenName;
-            scheduleActionVC.serviceId = NIGHTLED_SERVICE;
-            [self.navigationController pushViewController:scheduleActionVC animated:YES];
-            
-        }];
-        [alertController addAction:actionYes];
-        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        }];
-        [alertController addAction:actionNo];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
+
+    SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+    setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    setTimerSnoozeVC.devId = _device.sid;
+    setTimerSnoozeVC.serviceId = NIGHTLED_SERVICE;
+    setTimerSnoozeVC.alarmCount = (int)alarms.count;
+    setTimerSnoozeVC.delegate = self;
+    setTimerSnoozeVC.snooze = _ledSnooze;
+    [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
 }
 
 - (void)onTapOutletButton:(UITapGestureRecognizer *)recognizer {
@@ -658,39 +612,16 @@
 
 - (void)onBtnIRTimer:(UITapGestureRecognizer *)recognizer {
     NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:_device.sid serviceId:IR_SERVICE];
-    if (alarms && alarms.count>0) {
-        // Snooze
-        SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
-        setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-        setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-        setTimerSnoozeVC.devId = _device.sid;
-        setTimerSnoozeVC.serviceId = IR_SERVICE;
-        setTimerSnoozeVC.delegate = self;
-        setTimerSnoozeVC.snooze = _ledSnooze;
-        [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
-    } else {
-        // Add new timer
-        UIAlertController *alertController = [UIAlertController
-                                              alertControllerWithTitle:NSLocalizedString(@"no_timer_set",nil)
-                                              message:NSLocalizedString(@"add_timer", nil)
-                                              preferredStyle:UIAlertControllerStyleAlert];
-        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            
-            ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
-            scheduleActionVC.modalPresentationStyle = UIModalPresentationCurrentContext;
-            scheduleActionVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
-            scheduleActionVC.deviceId = _device.sid;
-            scheduleActionVC.deviceName = _device.givenName;
-            scheduleActionVC.serviceId = IR_SERVICE;
-            [self.navigationController pushViewController:scheduleActionVC animated:YES];
-            
-        }];
-        [alertController addAction:actionYes];
-        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-        }];
-        [alertController addAction:actionNo];
-        [self presentViewController:alertController animated:YES completion:nil];
-    }
+
+    SetTimerSnoozeViewController *setTimerSnoozeVC = [[SetTimerSnoozeViewController alloc] initWithNibName:@"SetTimerSnoozeViewController" bundle:nil];
+    setTimerSnoozeVC.modalPresentationStyle = UIModalPresentationCurrentContext;
+    setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
+    setTimerSnoozeVC.devId = _device.sid;
+    setTimerSnoozeVC.serviceId = IR_SERVICE;
+    setTimerSnoozeVC.alarmCount = (int)alarms.count;
+    setTimerSnoozeVC.delegate = self;
+    setTimerSnoozeVC.snooze = _ledSnooze;
+    [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
 }
 
 - (void)onTapIRButton:(UITapGestureRecognizer *)tapGestureRecognizer {
@@ -725,6 +656,9 @@
     ws.delegate = self;
     [ws alarmGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac];
     [_alarms removeAllObjects];
+    if(![[SQLHelper getInstance] removeAlarms:g_DeviceMac]) {
+        NSLog(@"ALARM WAS NOT ABLE TO BE REMOVED WITH DEVID: %@", g_DeviceMac);
+    }
 }
 
 - (void)handleUpdateAlarm:(NSData *)data {
@@ -836,7 +770,11 @@
     if(serviceId == NIGHTLED_SERVICE){
         snooze = [[SQLHelper getInstance] getLedSnooze:g_DeviceMac];
     }
-    
+
+    if(serviceId == IR_SERVICE){
+        snooze = [[SQLHelper getInstance] getIRSnooze:g_DeviceMac];
+    }
+
     if ([[UDPCommunication getInstance] delayTimer:snooze protocol:1 serviceId:serviceId send:0]) {
         int counter = 10000;
         while (!_deviceStatusChangedFlag && counter > 0) {
@@ -865,6 +803,15 @@
                     snooze += minutes;
                 } else {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
+                    snooze = 0;
+                }
+            }
+            if(serviceId == IR_SERVICE){
+                if(minutes > 0) {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:snooze];
+                    snooze += minutes;
+                } else {
+                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:0];
                     snooze = 0;
                 }
             }
@@ -901,6 +848,15 @@
                 snooze = 0;
             }
         }
+        if(serviceId == IR_SERVICE){
+            if(minutes > 0) {
+                [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:snooze];
+                snooze += minutes;
+            } else {
+                [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:0];
+                snooze = 0;
+            }
+        }
         
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
         
@@ -918,23 +874,17 @@
 {
     int snooze = 0;
     
-    if(serviceId == RELAY_SERVICE){
-        if(minutes > 0) {
-            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:snooze];
-            snooze += minutes;
-        } else {
-            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
-            snooze = 0;
-        }
+    if (serviceId != RELAY_SERVICE && serviceId != NIGHTLED_SERVICE && serviceId != IR_SERVICE) {
+        NSLog(@"Invalid service ID!!!");
+        return;
     }
-    if(serviceId == NIGHTLED_SERVICE){
-        if(minutes > 0) {
-            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:snooze];
-            snooze += minutes;
-        } else {
-            [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
-            snooze = 0;
-        }
+    
+    if(minutes > 0) {
+        [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:serviceId snooze:snooze];
+        snooze += minutes;
+    } else {
+        [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:serviceId snooze:0];
+        snooze = 0;
     }
 }
 

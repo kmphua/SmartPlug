@@ -28,5 +28,6 @@
 @property (nonatomic, assign) int serviceId;
 @property (nonatomic, assign) int alarmId;
 @property (nonatomic, assign) int snooze;
+@property (nonatomic, assign) int alarmCount;
 
 @end

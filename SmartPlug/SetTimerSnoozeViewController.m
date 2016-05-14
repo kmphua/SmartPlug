@@ -13,7 +13,7 @@
 @property (weak, nonatomic) IBOutlet UIView *bgView;
 @property (weak, nonatomic) IBOutlet UIImageView *imgBackground;
 @property (weak, nonatomic) IBOutlet UILabel *lblTitle;
-@property (weak, nonatomic) IBOutlet UILabel *lblTimer;
+@property (weak, nonatomic) IBOutlet UITextView *txtTimer;
 @property (weak, nonatomic) IBOutlet UIButton *btnAddTimer;
 @property (weak, nonatomic) IBOutlet UIButton *btnShowModifyTimer;
 @property (weak, nonatomic) IBOutlet UIButton *btnSnooze5Mins;
@@ -55,18 +55,37 @@
     [self.btnShowModifyTimer setTitle:NSLocalizedString(@"ShowModifyTimer", nil) forState:UIControlStateNormal];
     [self.btnCancelSnooze setTitle:NSLocalizedString(@"CancelSnooze", nil) forState:UIControlStateNormal];
     
-    if (_snooze > 0) {
-        [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5MoreMinutes", nil) forState:UIControlStateNormal];
-        [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10MoreMinutes", nil) forState:UIControlStateNormal];
-        [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30MoreMinutes", nil) forState:UIControlStateNormal];
-        [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1MoreHour", nil) forState:UIControlStateNormal];
-        [self.btnCancelSnooze setHidden:NO];
-    } else {
-        [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5Minutes", nil) forState:UIControlStateNormal];
-        [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10Minutes", nil) forState:UIControlStateNormal];
-        [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30Minutes", nil) forState:UIControlStateNormal];
-        [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1Hour", nil) forState:UIControlStateNormal];
+    if (_alarmCount <= 0) {
+        self.lblTitle.text = NSLocalizedString(@"no_timer_set", nil);
+        [self.btnShowModifyTimer setHidden:YES];
+        [self.btnSnooze5Mins setHidden:YES];
+        [self.btnSnooze10Mins setHidden:YES];
+        [self.btnSnooze30Mins setHidden:YES];
+        [self.btnSnooze1Hour setHidden:YES];
         [self.btnCancelSnooze setHidden:YES];
+        [self.btnAddTimer setHidden:NO];
+    } else {
+        [self.btnShowModifyTimer setHidden:NO];
+        [self.btnSnooze5Mins setHidden:NO];
+        [self.btnSnooze10Mins setHidden:NO];
+        [self.btnSnooze30Mins setHidden:NO];
+        [self.btnSnooze1Hour setHidden:NO];
+        [self.btnCancelSnooze setHidden:NO];
+        [self.btnAddTimer setHidden:YES];
+        
+        if (_snooze > 0) {
+            [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5MoreMinutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10MoreMinutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30MoreMinutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1MoreHour", nil) forState:UIControlStateNormal];
+            [self.btnCancelSnooze setHidden:NO];
+        } else {
+            [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5Minutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10Minutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30Minutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1Hour", nil) forState:UIControlStateNormal];
+            [self.btnCancelSnooze setHidden:YES];
+        }
     }
     
     UITapGestureRecognizer *tapView = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(onTapView:)];
@@ -102,6 +121,7 @@
     NSMutableString *timerStr = [NSMutableString new];
     
     if (alarms && alarms.count>0) {
+        NSLog(@"No. of alarms = %ld", alarms.count);
         for (Alarm *alarm in alarms) {
             NSString *service = @"";
             NSMutableString *dow = [NSMutableString new];
@@ -137,13 +157,13 @@
                 [dow appendString:NSLocalizedString(@"saturday", nil)];
             }
             
-            [timerStr appendFormat:@"%02d:%02d   %02d:%02d   %@   %@\n", alarm.initial_hour, alarm.initial_minute, alarm.end_hour, alarm.end_minute, service, dow];
+            [timerStr appendFormat:@"%02d:%02d-%02d:%02d   %@\n", alarm.initial_hour, alarm.initial_minute, alarm.end_hour, alarm.end_minute, dow];
         }
     }
     
-    self.lblTimer.text = timerStr;
-    self.lblTimer.numberOfLines = 0;
-    [self.lblTimer sizeToFit];
+    self.txtTimer.text = timerStr;
+    [self.txtTimer sizeToFit];
+    [self.txtTimer setScrollsToTop:YES];
 }
 
 - (void)handleSetTimerDelay:(NSNotification *)notification
