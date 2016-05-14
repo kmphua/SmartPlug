@@ -360,6 +360,7 @@
         imagePath = DEFAULT_ICON_PATH;
     }
     [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+    [cell.imgDeviceIcon setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
     
     if ([[SQLHelper getInstance] getAlarmDataById:plug.dbid]) {
         [cell.btnTimer setHidden:NO];

@@ -46,10 +46,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Llu-xo-mFh">
-                    <rect key="frame" x="16" y="80" width="287.5" height="380"/>
+                    <rect key="frame" x="16" y="80" width="288" height="380"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="3S7-IA-YYk">
-                            <rect key="frame" x="100" y="20" width="167.5" height="60"/>
+                            <rect key="frame" x="100" y="20" width="168" height="60"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="42" id="xHD-Vv-vbe"/>
                             </constraints>
@@ -113,7 +113,7 @@
                                     </connections>
                                 </button>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Outlet" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ace-jt-r2V">
-                                    <rect key="frame" x="8" y="82" width="89" height="19.5"/>
+                                    <rect key="frame" x="8" y="82" width="89" height="20"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <nil key="highlightedColor"/>
@@ -153,7 +153,7 @@
                                     <rect key="frame" x="0.0" y="0.0" width="105" height="105"/>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Night Light" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CI7-QV-zyM">
-                                    <rect key="frame" x="8" y="82" width="89" height="19.5"/>
+                                    <rect key="frame" x="8" y="82" width="89" height="20"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <nil key="highlightedColor"/>
@@ -215,7 +215,7 @@
                                     </constraints>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="CO normal" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Zlh-e4-QWw">
-                                    <rect key="frame" x="8" y="82" width="89" height="19.5"/>
+                                    <rect key="frame" x="8" y="82" width="89" height="20"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                     <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                     <nil key="highlightedColor"/>
@@ -347,7 +347,7 @@
                             </variation>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vYG-cf-QVu">
-                            <rect key="frame" x="0.0" y="340" width="287.5" height="40"/>
+                            <rect key="frame" x="0.0" y="340" width="288" height="40"/>
                             <subviews>
                                 <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn2.png" translatesAutoresizingMaskIntoConstraints="NO" id="P96-7L-qnq">
                                     <rect key="frame" x="10" y="8" width="24" height="24"/>
@@ -356,7 +356,7 @@
                                         <constraint firstAttribute="width" constant="24" id="tiG-a9-T8B"/>
                                     </constraints>
                                 </imageView>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_warn_close.png" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-Wq-rvc">
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="btn_warn_close.png" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-Wq-rvc">
                                     <rect key="frame" x="253" y="8" width="24" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="width" constant="24" id="Ngv-9f-x0j"/>
@@ -364,7 +364,7 @@
                                     </constraints>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Warning text" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cn-CU-zKc">
-                                    <rect key="frame" x="39" y="8" width="209.5" height="20"/>
+                                    <rect key="frame" x="39" y="8" width="210" height="20"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="20" id="Yeb-Xh-gNL"/>
                                     </constraints>

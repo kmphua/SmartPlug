@@ -17,6 +17,7 @@
 #import "CrashCountDown.h"
 #import "MBProgressHUD.h"
 
+
 #define STATUS_CHECKER_TIMER_INTERVAL       7
 
 @interface DeviceMainViewController ()<SetSnoozeTimerDelegate, WebServiceDelegate>
@@ -104,7 +105,7 @@
         imagePath = DEFAULT_ICON_PATH;
     }
     [self.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-
+    [self.imgDeviceIcon setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
     
     if (self.device.givenName && self.device.givenName.length > 0) {
         self.lblDeviceName.text = self.device.givenName;

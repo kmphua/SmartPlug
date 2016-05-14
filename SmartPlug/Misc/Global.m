@@ -75,6 +75,11 @@
             color = [UIColor colorWithRed:255/255.0f green:190/255.0f blue:21/255.0f alpha:1.0f];
             break;
         }
+        case COLOR_TYPE_ICON_BG:
+        {
+            color = [UIColor colorWithRed:134.0/255.0f green:211.0/255.0f blue:209.0/255.0f alpha:1.0f];
+            break;
+        }
         default:
             break;
     }
