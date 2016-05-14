@@ -599,23 +599,23 @@
 
                         id nightlight = [device objectForKey:@"nightlight"];
                         if ([nightlight isKindOfClass:[NSNull class]]) {
-                            plug.relay = 0;
+                            plug.nightlight = 0;
                         } else {
-                            plug.relay = [nightlight intValue];
+                            plug.nightlight = [nightlight intValue];
                         }
 
                         id cosensor = [device objectForKey:@"cosensor"];
                         if ([cosensor isKindOfClass:[NSNull class]]) {
-                            plug.relay = 0;
+                            plug.co_sensor = 0;
                         } else {
-                            plug.relay = [cosensor intValue];
+                            plug.co_sensor = [cosensor intValue];
                         }
                         
                         id hallsensor = [device objectForKey:@"hallsensor"];
                         if ([hallsensor isKindOfClass:[NSNull class]]) {
-                            plug.relay = 0;
+                            plug.hall_sensor = 0;
                         } else {
-                            plug.relay = [hallsensor intValue];
+                            plug.hall_sensor = [hallsensor intValue];
                         }
                         
                         plug.model = [device objectForKey:@"model"];
@@ -755,37 +755,37 @@
                 NSLog(@"Devget returned: relay=%@, nightlight=%@, co_sensor=%@, hall_sensor=%@, snooze=%@",
                       relay, nightlight, co_sensor, hall_sensor, snooze);
                 
-                if(![relay isKindOfClass:[NSNull class]] && relay != nil && relay.length>0) {
+                if(![relay isKindOfClass:[NSNull class]] && relay != nil) {
                     [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:g_DeviceMac];
                 } else {
                     [[SQLHelper getInstance] updatePlugRelayService:0 sid:g_DeviceMac];
                 }
-                if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil && nightlight.length>0) {
+                if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil) {
                     [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:g_DeviceMac];
                 } else {
                     [[SQLHelper getInstance] updatePlugNightlightService:0 sid:g_DeviceMac];
                 }
-                if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil && co_sensor.length>0) {
+                if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil) {
                     [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:g_DeviceMac];
                 } else {
                     [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:g_DeviceMac];
                 }
-                if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil && hall_sensor.length>0) {
+                if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil) {
                     [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:g_DeviceMac];
                 } else {
                     [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:g_DeviceMac];
                 }
-                if(![snooze isKindOfClass:[NSNull class]] && snooze != nil && snooze.length>0) {
+                if(![snooze isKindOfClass:[NSNull class]] && snooze != nil) {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:[snooze intValue]];
                 } else {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
                 }
-                if(![led_snooze isKindOfClass:[NSNull class]] && led_snooze != nil && led_snooze.length>0) {
+                if(![led_snooze isKindOfClass:[NSNull class]] && led_snooze != nil) {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:[led_snooze intValue]];
                 } else {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
                 }
-                if(![ir_snooze isKindOfClass:[NSNull class]] && ir_snooze != nil && ir_snooze.length>0) {
+                if(![ir_snooze isKindOfClass:[NSNull class]] && ir_snooze != nil) {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:[led_snooze intValue]];
                 } else {
                     [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:0];
