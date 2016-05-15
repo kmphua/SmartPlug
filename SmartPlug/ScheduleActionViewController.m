@@ -18,6 +18,10 @@
     int init_minute;
     int end_minute;
     int dow;
+    NSString *init_ir_name;
+    NSString *end_ir_name;
+    int init_ir_code;
+    int end_ir_code;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
@@ -32,6 +36,8 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblDeviceName;
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceIcon;
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceAction;
+@property (weak, nonatomic) IBOutlet UIButton *btnInitIR;
+@property (weak, nonatomic) IBOutlet UIButton *btnEndIR;
 
 @property (assign, nonatomic) BOOL deviceStatusChangedFlag;
 @property (assign, nonatomic) BOOL udpConnection;
@@ -45,6 +51,8 @@
     
     _deviceStatusChangedFlag = false;
     _udpConnection = false;
+    init_ir_code = -1;
+    end_ir_code = -1;
 
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
@@ -76,6 +84,11 @@
                                            action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
     
+    if (self.serviceId != IR_SERVICE) {
+        [self.btnInitIR setHidden:YES];
+        [self.btnEndIR setHidden:YES];
+    }
+    
     dow = 0b00000000;
 }
 
@@ -97,6 +110,8 @@
             init_minute = a.initial_minute;
             end_hour = a.end_hour;
             end_minute = a.end_minute;
+            init_ir_code = a.init_ir;
+            end_ir_code = a.end_ir;
             dow = a.dow;
             [self setDOW];
             [self setTime];
@@ -104,6 +119,25 @@
     } else {
         dow |= (1 << 2);
         [self setDOW];
+    }
+    
+    // Init IR buttons
+    if(self.alarmId != -1){
+        NSString *init_name = @"";
+        NSArray *irCodes = [[SQLHelper getInstance] getIRCodeById:init_ir_code];
+        if (irCodes && irCodes.count>0) {
+            IrCode *irCode = [irCodes firstObject];
+            init_name = irCode.name;
+        }
+        _btnInitIR.titleLabel.text = init_name;
+        
+        NSString *end_name = @"";
+        irCodes = [[SQLHelper getInstance] getIRCodeById:end_ir_code];
+        if (irCodes && irCodes.count>0) {
+            IrCode *irCode = [irCodes firstObject];
+            end_name = irCode.name;
+        }
+        _btnEndIR.titleLabel.text = end_name;
     }
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timersSentSuccess:) name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
@@ -241,6 +275,14 @@
         [self.navigationController popViewControllerAnimated:YES];
         [self.delegate didUpdateAlarms];
     });
+}
+
+- (IBAction)onBtnInitIR:(id)sender {
+    // Open IRListCommands, status = 0
+}
+
+- (IBAction)onBtnEndIR:(id)sender {
+    // Open IRListCommands, status = 1
 }
 
 //==================================================================

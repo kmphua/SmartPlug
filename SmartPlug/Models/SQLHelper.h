@@ -44,7 +44,7 @@
 // IR Codes
 - (NSArray *)getIRCodes;
 - (NSArray *)getIRCodesByGroup:(int)groupid;
-- (IrCode *)getIRCodeById:(int)filename;
+- (NSArray *)getIRCodeById:(int)filename;
 - (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
                  icon:(NSString *)icon mac:(NSString *)mac sid:(int)sid;
 - (BOOL)updateIRCodeSID:(int)filename sid:(int)sid;
