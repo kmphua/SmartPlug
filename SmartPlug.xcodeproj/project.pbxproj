@@ -7,7 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		5C4250D80E775A77BC40B8DE /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 62D82ED1822711BD8405B3DF /* libPods.a */; };
+		2291147BD6336A84911D5D48 /* libPods-SmartPlug.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9FD6CEE72F648265F82515C3 /* libPods-SmartPlug.a */; };
 		75084A781C8A7082002F456A /* IrGroupViewCell.m in Sources */ = {isa = PBXBuildFile; fileRef = 75084A761C8A7082002F456A /* IrGroupViewCell.m */; };
 		75084A791C8A7082002F456A /* IrGroupViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75084A771C8A7082002F456A /* IrGroupViewCell.xib */; };
 		7508AA421C32195100EB88D1 /* InitDevicesViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA401C32195100EB88D1 /* InitDevicesViewController.m */; };
@@ -67,6 +67,8 @@
 		75229A451C816BB7002FCAEB /* Icon.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A441C816BB7002FCAEB /* Icon.m */; };
 		75229A481C816C07002FCAEB /* IrCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A471C816C07002FCAEB /* IrCode.m */; };
 		75229A4B1C816F34002FCAEB /* IrGroup.m in Sources */ = {isa = PBXBuildFile; fileRef = 75229A4A1C816F34002FCAEB /* IrGroup.m */; };
+		752946EB1CE975CE00F2588E /* IRListCommandsViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 752946E91CE975CE00F2588E /* IRListCommandsViewController.m */; };
+		752946EC1CE975CE00F2588E /* IRListCommandsViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 752946EA1CE975CE00F2588E /* IRListCommandsViewController.xib */; };
 		754ADE721C338449006F86B2 /* JSmartPlug.m in Sources */ = {isa = PBXBuildFile; fileRef = 754ADE701C338449006F86B2 /* JSmartPlug.m */; };
 		7552689C1C334B6900602B58 /* UDPListenerService.m in Sources */ = {isa = PBXBuildFile; fileRef = 7552689B1C334B6900602B58 /* UDPListenerService.m */; };
 		755F33F51C993406003D162C /* HelpPageViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 755F33F01C993406003D162C /* HelpPageViewController.m */; };
@@ -331,7 +333,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		62D82ED1822711BD8405B3DF /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
+		3321DDF3252B390AD3B644B9 /* Pods-SmartPlug.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartPlug.release.xcconfig"; path = "Pods/Target Support Files/Pods-SmartPlug/Pods-SmartPlug.release.xcconfig"; sourceTree = "<group>"; };
 		75084A751C8A7082002F456A /* IrGroupViewCell.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrGroupViewCell.h; sourceTree = "<group>"; };
 		75084A761C8A7082002F456A /* IrGroupViewCell.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrGroupViewCell.m; sourceTree = "<group>"; };
 		75084A771C8A7082002F456A /* IrGroupViewCell.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IrGroupViewCell.xib; sourceTree = "<group>"; };
@@ -438,6 +440,9 @@
 		75229A471C816C07002FCAEB /* IrCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrCode.m; sourceTree = "<group>"; };
 		75229A491C816F34002FCAEB /* IrGroup.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IrGroup.h; sourceTree = "<group>"; };
 		75229A4A1C816F34002FCAEB /* IrGroup.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IrGroup.m; sourceTree = "<group>"; };
+		752946E81CE975CE00F2588E /* IRListCommandsViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = IRListCommandsViewController.h; path = IR/IRListCommandsViewController.h; sourceTree = "<group>"; };
+		752946E91CE975CE00F2588E /* IRListCommandsViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = IRListCommandsViewController.m; path = IR/IRListCommandsViewController.m; sourceTree = "<group>"; };
+		752946EA1CE975CE00F2588E /* IRListCommandsViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; name = IRListCommandsViewController.xib; path = IR/IRListCommandsViewController.xib; sourceTree = "<group>"; };
 		754ADE6F1C338449006F86B2 /* JSmartPlug.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = JSmartPlug.h; sourceTree = "<group>"; };
 		754ADE701C338449006F86B2 /* JSmartPlug.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = JSmartPlug.m; sourceTree = "<group>"; };
 		7552689A1C334B6900602B58 /* UDPListenerService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UDPListenerService.h; sourceTree = "<group>"; };
@@ -704,8 +709,8 @@
 		75E926831C2106EF004C476C /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		75E926851C210716004C476C /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		75E926861C210722004C476C /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
-		C43B044C437BBCAB233747D2 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
-		E92DE8F1E828AF01BB6EB734 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
+		760C57A3E03B0B0D3AEBA4A9 /* Pods-SmartPlug.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-SmartPlug.debug.xcconfig"; path = "Pods/Target Support Files/Pods-SmartPlug/Pods-SmartPlug.debug.xcconfig"; sourceTree = "<group>"; };
+		9FD6CEE72F648265F82515C3 /* libPods-SmartPlug.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-SmartPlug.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -715,7 +720,7 @@
 			files = (
 				75DC2CFD1C81451500F108EE /* libsqlite3.tbd in Frameworks */,
 				7508AA551C323C5800EB88D1 /* libFTC_RELEASE_ARM_64.a in Frameworks */,
-				5C4250D80E775A77BC40B8DE /* libPods.a in Frameworks */,
+				2291147BD6336A84911D5D48 /* libPods-SmartPlug.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -736,15 +741,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		60D3D7776DBD82A5431909EA /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				E92DE8F1E828AF01BB6EB734 /* Pods.debug.xcconfig */,
-				C43B044C437BBCAB233747D2 /* Pods.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		7508AA4A1C323C5800EB88D1 /* SmartConfig */ = {
 			isa = PBXGroup;
 			children = (
@@ -780,6 +776,9 @@
 				7508AA661C32625A00EB88D1 /* SelectActionViewController.h */,
 				7508AA671C32625A00EB88D1 /* SelectActionViewController.m */,
 				7508AA681C32625A00EB88D1 /* SelectActionViewController.xib */,
+				752946E81CE975CE00F2588E /* IRListCommandsViewController.h */,
+				752946E91CE975CE00F2588E /* IRListCommandsViewController.m */,
+				752946EA1CE975CE00F2588E /* IRListCommandsViewController.xib */,
 			);
 			name = Schedule;
 			sourceTree = "<group>";
@@ -791,8 +790,8 @@
 				7512C1391C1BA3B900489091 /* SmartPlugTests */,
 				7512C1441C1BA3B900489091 /* SmartPlugUITests */,
 				7512C11E1C1BA3B900489091 /* Products */,
-				60D3D7776DBD82A5431909EA /* Pods */,
 				B86E301AB5C7D2EDFCD3B268 /* Frameworks */,
+				D81E660BC34206E4B0DD8CAD /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -1302,9 +1301,18 @@
 			isa = PBXGroup;
 			children = (
 				75DC2CFC1C81451500F108EE /* libsqlite3.tbd */,
-				62D82ED1822711BD8405B3DF /* libPods.a */,
+				9FD6CEE72F648265F82515C3 /* libPods-SmartPlug.a */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D81E660BC34206E4B0DD8CAD /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				760C57A3E03B0B0D3AEBA4A9 /* Pods-SmartPlug.debug.xcconfig */,
+				3321DDF3252B390AD3B644B9 /* Pods-SmartPlug.release.xcconfig */,
+			);
+			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -1314,13 +1322,13 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7512C14A1C1BA3B900489091 /* Build configuration list for PBXNativeTarget "SmartPlug" */;
 			buildPhases = (
-				F250ED272FF0EE6C9FFA6311 /* Check Pods Manifest.lock */,
+				16963A5089221404EEB80AD1 /* 📦 Check Pods Manifest.lock */,
 				7512C1191C1BA3B900489091 /* Sources */,
 				7512C11A1C1BA3B900489091 /* Frameworks */,
 				7512C11B1C1BA3B900489091 /* Resources */,
-				3C60663754F1A931AE1BD504 /* Copy Pods Resources */,
 				7581AD9F1C21817300DF8BD2 /* ShellScript */,
-				46D228C834E48909E6795CAD /* Embed Pods Frameworks */,
+				65856015C308A401FF20C0EA /* 📦 Embed Pods Frameworks */,
+				9AA8D9BF1240C07DDB4F598A /* 📦 Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -1554,6 +1562,7 @@
 				75DC2D081C82EFC100F108EE /* DeviceIconViewController.xib in Resources */,
 				75667B251C1F864C001B30B2 /* title_bkgnd_yellow@2x.png in Resources */,
 				75667A9E1C1F864C001B30B2 /* ic_delete@2x.png in Resources */,
+				752946EC1CE975CE00F2588E /* IRListCommandsViewController.xib in Resources */,
 				75667AB11C1F864C001B30B2 /* ir_detect@1x.png in Resources */,
 				75667B231C1F864C001B30B2 /* title_bkgnd_red@2x.png in Resources */,
 				75667AFD1C1F864C001B30B2 /* Shadow@2x.png in Resources */,
@@ -1683,34 +1692,34 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		3C60663754F1A931AE1BD504 /* Copy Pods Resources */ = {
+		16963A5089221404EEB80AD1 /* 📦 Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "📦 Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-resources.sh\"\n";
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
 			showEnvVarsInLog = 0;
 		};
-		46D228C834E48909E6795CAD /* Embed Pods Frameworks */ = {
+		65856015C308A401FF20C0EA /* 📦 Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Embed Pods Frameworks";
+			name = "📦 Embed Pods Frameworks";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods/Pods-frameworks.sh\"\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartPlug/Pods-SmartPlug-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		7581AD9F1C21817300DF8BD2 /* ShellScript */ = {
@@ -1726,19 +1735,19 @@
 			shellPath = /bin/sh;
 			shellScript = "# Increment build number\nbuildNum=$(/usr/libexec/PlistBuddy -c \"Print CFBundleVersion\" \"$INFOPLIST_FILE\")\nbuildNum=$((buildNum+1))\n/usr/libexec/PlistBuddy -c \"Set :CFBundleVersion $buildNum\" \"$INFOPLIST_FILE\"";
 		};
-		F250ED272FF0EE6C9FFA6311 /* Check Pods Manifest.lock */ = {
+		9AA8D9BF1240C07DDB4F598A /* 📦 Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "📦 Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-SmartPlug/Pods-SmartPlug-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
@@ -1765,6 +1774,7 @@
 				7512C1811C1BB3B700489091 /* WebService.m in Sources */,
 				7512C17B1C1BB3B700489091 /* LoginViewController.m in Sources */,
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
+				752946EB1CE975CE00F2588E /* IRListCommandsViewController.m in Sources */,
 				75A02F5E1C99C29A007B461B /* IREditModeViewController.m in Sources */,
 				7508AA641C325FFC00EB88D1 /* ScheduleActionViewController.m in Sources */,
 				75C4CD861C731DA600E8C629 /* Alarm.m in Sources */,
@@ -1942,7 +1952,7 @@
 		};
 		7512C14B1C1BA3B900489091 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E92DE8F1E828AF01BB6EB734 /* Pods.debug.xcconfig */;
+			baseConfigurationReference = 760C57A3E03B0B0D3AEBA4A9 /* Pods-SmartPlug.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -1963,7 +1973,7 @@
 		};
 		7512C14C1C1BA3B900489091 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = C43B044C437BBCAB233747D2 /* Pods.release.xcconfig */;
+			baseConfigurationReference = 3321DDF3252B390AD3B644B9 /* Pods-SmartPlug.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;

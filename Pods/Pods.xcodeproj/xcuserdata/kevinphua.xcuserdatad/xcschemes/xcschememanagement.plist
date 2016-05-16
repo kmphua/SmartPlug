@@ -34,12 +34,17 @@
 			<key>isShown</key>
 			<false/>
 		</dict>
-		<key>Pods.xcscheme</key>
+		<key>Pods-SmartPlug.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 		</dict>
 		<key>SDWebImage+ExtensionSupport.xcscheme</key>
+		<dict>
+			<key>isShown</key>
+			<false/>
+		</dict>
+		<key>SLExpandableTableView.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
@@ -52,7 +57,7 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
-		<key>149456B91F1611241D1A5251E22A60F4</key>
+		<key>2F6E583B824C5B87DCBE4E4EBE0D6474</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -67,6 +72,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>5BA4F4555B4101E1B55EC520005E0108</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>695839A356C61BDDE527F97CC16D44F4</key>
 		<dict>
 			<key>primary</key>
@@ -77,17 +87,17 @@
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>A05C6A9F83EDDB85426F1969E9D508E7</key>
-		<dict>
-			<key>primary</key>
-			<true/>
-		</dict>
 		<key>B7BAF5E0D95762FD26AAE834A871A017</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
-		<key>F42F9A2BA75A4E5DBC611803E6620D95</key>
+		<key>C43CF77ED66A5763E3EC7B68A78303EC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E78EA9816BA574B53227B8899F3FBDC9</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -35,7 +35,8 @@
 - (BOOL)deleteIRGroups;
 - (NSArray *)getIRGroup:(int)groupId;
 - (IrGroup *)getIRGroupBySID:(int)sid;
-- (IrGroup *)getIRGroupByMac:(NSString *)mac;
+- (NSArray *)getIRGroupByMac:(NSString *)mac;
+- (NSArray *)getIRGroupByName:(NSString *)groupName;
 - (BOOL)deleteIRGroupById:(int)groupId;
 - (BOOL)deleteIRGroupBySID:(int)sid;
 - (BOOL)insertIRGroup:(NSString *)name devId:(NSString *)devId icon:(NSString *)icon position:(int)position sid:(int)sid;

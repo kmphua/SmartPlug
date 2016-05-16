@@ -9,9 +9,10 @@
 #import "ScheduleActionViewController.h"
 #import "SelectActionViewController.h"
 #import "MultiSelectSegmentedControl.h"
+#import "IRListCommandsViewController.h"
 #import "UDPCommunication.h"
 
-@interface ScheduleActionViewController () <MultiSelectSegmentedControlDelegate, SelectActionDelegate>
+@interface ScheduleActionViewController () <MultiSelectSegmentedControlDelegate, SelectActionDelegate, IRListCommandsDelegate>
 {
     int init_hour;
     int end_hour;
@@ -278,11 +279,17 @@
 }
 
 - (IBAction)onBtnInitIR:(id)sender {
-    // Open IRListCommands, status = 0
+    IRListCommandsViewController *irListCmdVC = [IRListCommandsViewController new];
+    irListCmdVC.status = 0;
+    irListCmdVC.delegate = self;
+    [self.navigationController pushViewController:irListCmdVC animated:YES];
 }
 
 - (IBAction)onBtnEndIR:(id)sender {
-    // Open IRListCommands, status = 1
+    IRListCommandsViewController *irListCmdVC = [IRListCommandsViewController new];
+    irListCmdVC.status = 1;
+    irListCmdVC.delegate = self;
+    [self.navigationController pushViewController:irListCmdVC animated:YES];
 }
 
 //==================================================================
@@ -316,5 +323,43 @@
  
 }
  */
+
+//==================================================================
+#pragma mark - IRListCommandsDelegate
+//==================================================================
+
+- (void)onSelectIRCommand:(int)status group:(NSString *)group irName:(NSString *)irName
+{
+    int groupId = 0;
+    int IRId = -1;
+    
+    NSArray *irGroups = [[SQLHelper getInstance] getIRGroupByName:group];
+    if (irGroups && irGroups.count > 0) {
+        for (IrGroup *group in irGroups) {
+            groupId = group.group_id;
+            NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:groupId];
+            if (codes && codes.count > 0) {
+                for (IrCode *code in codes) {
+                    if ([irName isEqualToString:code.name]) {
+                        IRId = code.filename;
+                    }
+                }
+            }
+        }
+    }
+    
+    switch (status){
+        case 0:
+            init_ir_name = irName;
+            [_btnInitIR setTitle:irName forState:UIControlStateNormal];
+            init_ir_code = (uint8_t)IRId;
+            break;
+        case 1:
+            end_ir_name = irName;
+            [_btnEndIR setTitle:irName forState:UIControlStateNormal];
+            end_ir_code = (uint8_t)IRId;
+            break;
+    }
+}
 
 @end

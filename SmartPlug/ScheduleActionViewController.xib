@@ -167,7 +167,7 @@
                                 <constraint firstAttribute="width" constant="100" id="iKP-Vb-nIZ"/>
                                 <constraint firstAttribute="height" constant="40" id="uPk-wb-a3W"/>
                             </constraints>
-                            <state key="normal" title="Button" backgroundImage="btn_bkgnd.png"/>
+                            <state key="normal" title="IR CODE" backgroundImage="btn_bkgnd.png"/>
                             <connections>
                                 <action selector="onBtnInitIR:" destination="-1" eventType="touchUpInside" id="rvM-Hf-avI"/>
                             </connections>
@@ -178,7 +178,7 @@
                                 <constraint firstAttribute="height" constant="40" id="JBb-dz-CGD"/>
                                 <constraint firstAttribute="width" constant="100" id="JLc-XH-mzO"/>
                             </constraints>
-                            <state key="normal" title="Button" backgroundImage="btn_bkgnd.png"/>
+                            <state key="normal" title="IR CODE" backgroundImage="btn_bkgnd.png"/>
                             <connections>
                                 <action selector="onBtnEndIR:" destination="-1" eventType="touchUpInside" id="wlz-70-QhS"/>
                             </connections>

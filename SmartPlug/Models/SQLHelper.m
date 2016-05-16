@@ -255,24 +255,6 @@ static SQLHelper *instance;
     return result;
 }
 
-- (IrGroup *)getIRGroupByName:(NSString *)groupName
-{
-    [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ?", groupName];
-    IrGroup *irGroup;
-    while ([results next]) {
-        irGroup = [IrGroup new];
-        irGroup.group_id = [results intForColumn:COLUMN_ID];
-        irGroup.name = [results stringForColumn:COLUMN_NAME];
-        irGroup.icon = [results stringForColumn:COLUMN_ICON];
-        irGroup.position = [results intForColumn:COLUMN_POSITION];
-        irGroup.sid = [results intForColumn:COLUMN_SID];
-        irGroup.mac = [results stringForColumn:COLUMN_MAC];
-    }
-    [db close];
-    return irGroup;
-}
-
 - (NSArray *)getIRGroups
 {
     [db open];
@@ -325,22 +307,42 @@ static SQLHelper *instance;
     return irGroup;
 }
 
-- (IrGroup *)getIRGroupByMac:(NSString *)mac
+- (NSArray *)getIRGroupByMac:(NSString *)mac
 {
     [db open];
     FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE mac = ?", mac];
-    IrGroup *irGroup;
+    NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
-        irGroup = [IrGroup new];
+        IrGroup *irGroup = [IrGroup new];
         irGroup.group_id = [results intForColumn:COLUMN_ID];
         irGroup.name = [results stringForColumn:COLUMN_NAME];
         irGroup.icon = [results stringForColumn:COLUMN_ICON];
         irGroup.position = [results intForColumn:COLUMN_POSITION];
         irGroup.sid = [results intForColumn:COLUMN_SID];
         irGroup.mac = [results stringForColumn:COLUMN_MAC];
+        [irGroups addObject:irGroup];
     }
     [db close];
-    return irGroup;
+    return irGroups;
+}
+
+- (NSArray *)getIRGroupByName:(NSString *)groupName
+{
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ?", groupName];
+    NSMutableArray *irGroups = [NSMutableArray new];
+    while ([results next]) {
+        IrGroup * irGroup = [IrGroup new];
+        irGroup.group_id = [results intForColumn:COLUMN_ID];
+        irGroup.name = [results stringForColumn:COLUMN_NAME];
+        irGroup.icon = [results stringForColumn:COLUMN_ICON];
+        irGroup.position = [results intForColumn:COLUMN_POSITION];
+        irGroup.sid = [results intForColumn:COLUMN_SID];
+        irGroup.mac = [results stringForColumn:COLUMN_MAC];
+        [irGroups addObject:irGroup];
+    }
+    [db close];
+    return irGroups;
 }
 
 - (BOOL)deleteIRGroupById:(int)groupId
