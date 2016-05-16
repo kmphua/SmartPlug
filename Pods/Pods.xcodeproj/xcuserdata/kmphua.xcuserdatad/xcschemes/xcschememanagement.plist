@@ -44,6 +44,11 @@
 			<key>orderHint</key>
 			<integer>9</integer>
 		</dict>
+		<key>Pods-SmartPlug.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>10</integer>
+		</dict>
 		<key>Pods.xcscheme</key>
 		<dict>
 			<key>isShown</key>
@@ -57,6 +62,11 @@
 			<false/>
 			<key>orderHint</key>
 			<integer>7</integer>
+		</dict>
+		<key>SLExpandableTableView.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>11</integer>
 		</dict>
 		<key>Toast.xcscheme</key>
 		<dict>
@@ -83,6 +93,11 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>2F6E583B824C5B87DCBE4E4EBE0D6474</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>30041BA2C05F40F1081A70370B599E76</key>
 		<dict>
 			<key>primary</key>
@@ -99,6 +114,11 @@
 			<true/>
 		</dict>
 		<key>55F7A9FA18D797218B78952AF04C4493</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>5BA4F4555B4101E1B55EC520005E0108</key>
 		<dict>
 			<key>primary</key>
 			<true/>
@@ -128,12 +148,22 @@
 			<key>primary</key>
 			<true/>
 		</dict>
+		<key>C43CF77ED66A5763E3EC7B68A78303EC</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>C4B7346ECEFEC8189960E600DB9201C0</key>
 		<dict>
 			<key>primary</key>
 			<true/>
 		</dict>
 		<key>DB35A3E19E784F493449C606F710C3D7</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>E78EA9816BA574B53227B8899F3FBDC9</key>
 		<dict>
 			<key>primary</key>
 			<true/>

@@ -316,6 +316,15 @@
     }
 }
 
+- (BOOL)deviceHasAlarm:(int)deviceId {
+    BOOL toReturn = false;
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataById:deviceId];
+    if (alarms && alarms.count > 0) {
+        toReturn = true;
+    }
+    return toReturn;
+}
+
 //==================================================================
 #pragma mark - Table view delegate
 //==================================================================
@@ -362,7 +371,7 @@
     [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     [cell.imgDeviceIcon setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
     
-    if ([[SQLHelper getInstance] getAlarmDataById:plug.dbid]) {
+    if ([self deviceHasAlarm:plug.dbid]) {
         [cell.btnTimer setHidden:NO];
         if (plug.snooze > 0) {
             [cell.btnTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];
