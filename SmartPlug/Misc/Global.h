@@ -29,6 +29,7 @@
 #define SMARTCONFIG_BROADCAST_TIME      30  // seconds
 
 #define DEFAULT_ICON_PATH               @"http://flutehuang-001-site2.ctempurl.com/Images/see_Electric_ight_1_white_bkgnd.png"
+#define DEFAULT_IR_ICON_PATH            @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
 
 // User defaults
 #define UD_KEY_PHONE                    @"phone"

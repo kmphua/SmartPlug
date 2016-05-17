@@ -55,7 +55,7 @@
 "id_chooseNetwork" = "選擇網路…";
 "id_other" = "其他...";
 "title_deviceAdded" = "裝置已加入";
-"btn_done" = "完成!";
+"btn_done" = "完成";
 "title_deskLamp" = "桌燈";
 "btn_nightLight" = "小夜燈";
 "btn_coNormal" = "一氧化碳";

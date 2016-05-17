@@ -149,13 +149,15 @@
         // Add icon
         if (!_iconImageView) {
             _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20, 7, 40, 40)];
+            [_iconImageView setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
             [cell addSubview:_iconImageView];
         }
         
+        NSString *imagePath = DEFAULT_IR_ICON_PATH;
         if (_icon && _icon.length>0) {
-            NSString *imagePath = _icon;
-            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:[UIImage imageNamed:@"btn_power_pressed_2"]];
+            imagePath = _icon;
         }
+        [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
     
     return cell;

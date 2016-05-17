@@ -53,6 +53,10 @@
                                     target:self
                                     action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = self.rightBarBtn;
+    
+    // Setup grid view
+    self.gmGridView.clipsToBounds = YES;
+    self.gmGridView.centerGrid = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -96,9 +100,15 @@
 }
 
 - (void)onBtnAddNew:(id)sender {
-    IRCustomViewController *irCustomVC = [[IRCustomViewController alloc] initWithNibName:@"IRCustomViewController" bundle:nil];
-    irCustomVC.groupId = _groupId;
-    [self.navigationController pushViewController:irCustomVC animated:YES];
+    if (g_DeviceIp) {
+        IRCustomViewController *irCustomVC = [[IRCustomViewController alloc] initWithNibName:@"IRCustomViewController" bundle:nil];
+        irCustomVC.groupId = _groupId;
+        [self.navigationController pushViewController:irCustomVC animated:YES];
+    } else {
+        [self.view makeToast:NSLocalizedString(@"msg_deskLampBtn", nil)
+                    duration:3.0
+                    position:CSToastPositionBottom];
+    }
 }
 
 - (void)updateView

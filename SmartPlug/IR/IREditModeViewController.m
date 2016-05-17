@@ -33,7 +33,7 @@
     
     // Do any additional setup after loading the view from its nib.
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
-    self.lblTitle.text = NSLocalizedString(@"title_editCommand", nil);
+    self.lblTitle.text = NSLocalizedString(@"title_irControl", nil);
     self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
@@ -44,6 +44,10 @@
                         target:self
                         action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = self.rightBarBtn;
+    
+    // Setup grid view
+    self.gmGridView.clipsToBounds = YES;
+    self.gmGridView.centerGrid = YES;
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -219,13 +223,9 @@
     UIButton *btnIr = (UIButton *)sender;
     int groupId = (int)btnIr.tag;
 
-    if (g_DeviceIp) {
-        IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
-        irCodeModeVC.groupId = groupId;
-        [self.navigationController pushViewController:irCodeModeVC animated:YES];
-    } else {
-        NSLog(@"NO DEVICE IP!!!");
-    }
+    IRCodeModeViewController *irCodeModeVC = [[IRCodeModeViewController alloc] initWithNibName:@"IRCodeModeViewController" bundle:nil];
+    irCodeModeVC.groupId = groupId;
+    [self.navigationController pushViewController:irCodeModeVC animated:YES];
 }
 
 - (void)onBtnDelete:(id)sender {

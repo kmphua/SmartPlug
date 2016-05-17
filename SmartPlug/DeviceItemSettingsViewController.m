@@ -35,12 +35,6 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    if (g_DeviceIp && g_DeviceIp.length>0) {
-        _deviceInRange = YES;
-    } else {
-        _deviceInRange = NO;
-    }
-    
     notify_on_power_outage = 0;
     notify_on_co_warning = 0;
     notify_on_timer_activated = 0;
@@ -48,6 +42,16 @@
     // Add navigation buttons
     UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"btn_done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
     self.navigationItem.rightBarButtonItem = rightBarBtn;
+}
+
+- (void)viewWillAppear:(BOOL)animated {
+    [super viewWillAppear:animated];
+    
+    if (g_DeviceIp && g_DeviceIp.length>0) {
+        _deviceInRange = YES;
+    } else {
+        _deviceInRange = NO;
+    }
 }
 
 - (void)didReceiveMemoryWarning {

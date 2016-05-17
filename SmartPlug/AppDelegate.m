@@ -41,6 +41,8 @@ int g_UdpCommand;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
+    NSLog(@"Device name = %@", [[UIDevice currentDevice] name]);
+    
     // Init database
     [SQLHelper getInstance];
     

@@ -32,6 +32,10 @@
     _gmGridView.backgroundColor = [UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0];
     
     self.view.backgroundColor = [UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0];
+    
+    // Setup grid view
+    self.gmGridView.clipsToBounds = YES;
+    self.gmGridView.centerGrid = NO;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -60,17 +64,9 @@
 - (CGSize)GMGridView:(GMGridView *)gridView sizeForItemsInInterfaceOrientation:(UIInterfaceOrientation)orientation
 {
     if (IS_IPHONE) {
-        if (UIInterfaceOrientationIsLandscape(orientation)) {
-            return CGSizeMake(170, 170);
-        } else {
-            return CGSizeMake(140, 140);
-        }
+        return CGSizeMake(120, 120);
     } else {
-        if (UIInterfaceOrientationIsLandscape(orientation)) {
-            return CGSizeMake(285, 285);
-        } else {
-            return CGSizeMake(230, 230);
-        }
+        return CGSizeMake(230, 230);
     }
 }
 
