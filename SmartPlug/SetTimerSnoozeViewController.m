@@ -48,12 +48,12 @@
     [self.btnSnooze1Hour setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
     [self.btnCancelSnooze setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
     
-    NSString *title = [NSString stringWithFormat:@"%@",NSLocalizedString(@"TimersSet", nil)];
+    NSString *title = [NSString stringWithFormat:@"%@",NSLocalizedString(@"timers_set", nil)];
     
     self.lblTitle.text = title;
-    [self.btnAddTimer setTitle:NSLocalizedString(@"AddNewTimer", nil) forState:UIControlStateNormal];
-    [self.btnShowModifyTimer setTitle:NSLocalizedString(@"ShowModifyTimer", nil) forState:UIControlStateNormal];
-    [self.btnCancelSnooze setTitle:NSLocalizedString(@"CancelSnooze", nil) forState:UIControlStateNormal];
+    [self.btnAddTimer setTitle:NSLocalizedString(@"add_new_timer", nil) forState:UIControlStateNormal];
+    [self.btnShowModifyTimer setTitle:NSLocalizedString(@"show_modify_timer", nil) forState:UIControlStateNormal];
+    [self.btnCancelSnooze setTitle:NSLocalizedString(@"cancel_snooze", nil) forState:UIControlStateNormal];
     
     if (_alarmCount <= 0) {
         self.lblTitle.text = NSLocalizedString(@"no_timer_set", nil);
@@ -74,16 +74,16 @@
         [self.btnAddTimer setHidden:YES];
         
         if (_snooze > 0) {
-            [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5MoreMinutes", nil) forState:UIControlStateNormal];
-            [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10MoreMinutes", nil) forState:UIControlStateNormal];
-            [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30MoreMinutes", nil) forState:UIControlStateNormal];
-            [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1MoreHour", nil) forState:UIControlStateNormal];
+            [self.btnSnooze5Mins setTitle:NSLocalizedString(@"delay_plus_five", nil) forState:UIControlStateNormal];
+            [self.btnSnooze10Mins setTitle:NSLocalizedString(@"delay_plus_ten", nil) forState:UIControlStateNormal];
+            [self.btnSnooze30Mins setTitle:NSLocalizedString(@"delay_plus_thirty", nil) forState:UIControlStateNormal];
+            [self.btnSnooze1Hour setTitle:NSLocalizedString(@"delay_plus_sixty", nil) forState:UIControlStateNormal];
             [self.btnCancelSnooze setHidden:NO];
         } else {
-            [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze5Minutes", nil) forState:UIControlStateNormal];
-            [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze10Minutes", nil) forState:UIControlStateNormal];
-            [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze30Minutes", nil) forState:UIControlStateNormal];
-            [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze1Hour", nil) forState:UIControlStateNormal];
+            [self.btnSnooze5Mins setTitle:NSLocalizedString(@"Snooze_5_Minutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze10Mins setTitle:NSLocalizedString(@"Snooze_10_Minutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze30Mins setTitle:NSLocalizedString(@"Snooze_30_Minutes", nil) forState:UIControlStateNormal];
+            [self.btnSnooze1Hour setTitle:NSLocalizedString(@"Snooze_1_Hour", nil) forState:UIControlStateNormal];
             [self.btnCancelSnooze setHidden:YES];
         }
     }

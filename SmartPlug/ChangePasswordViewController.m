@@ -108,7 +108,27 @@
         [self presentViewController:alertController animated:YES completion:nil];
         return NO;
     }
-    
+    if (self.txtNewPassword.text.length < 6) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"password_length_error", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
+    if ([self.txtNewPassword.text containsString:@"#"] ||
+        [self.txtNewPassword.text containsString:@"&"]) {
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:NSLocalizedString(@"Error",nil)
+                                              message:NSLocalizedString(@"password_badchar_error", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        UIAlertAction* ok = [UIAlertAction actionWithTitle:@"OK" style:UIAlertActionStyleDefault handler:nil];
+        [alertController addAction:ok];
+        [self presentViewController:alertController animated:YES completion:nil];
+        return NO;
+    }
     if ([self.txtNewPassword.text compare:self.txtConfirmNewPassword.text] != NSOrderedSame) {
         UIAlertController *alertController = [UIAlertController
                                               alertControllerWithTitle:NSLocalizedString(@"Error",nil)

@@ -14,10 +14,10 @@
             buildForArchiving = "YES">
             <BuildableReference
                BuildableIdentifier = 'primary'
-               BlueprintIdentifier = '2F6E583B824C5B87DCBE4E4EBE0D6474'
-               BlueprintName = 'SDWebImage+ExtensionSupport'
+               BlueprintIdentifier = '5BA4F4555B4101E1B55EC520005E0108'
+               BlueprintName = 'SLExpandableTableView'
                ReferencedContainer = 'container:Pods.xcodeproj'
-               BuildableName = 'libSDWebImage+ExtensionSupport.a'>
+               BuildableName = 'libSLExpandableTableView.a'>
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>

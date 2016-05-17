@@ -6,59 +6,35 @@
   Copyright © 2015 Kevin Phua. All rights reserved.
 */
 
-// General
-"AppName" = "JSPlug";
-"OK" = "OK";
-"Cancel" = "Cancel";
-"Error" = "Error";
-"No" = "No";
-"Yes" = "Yes";
-
-"EmailEmpty" = "Email field is empty";
-"UsernameEmpty" = "Username field is empty";
-"PasswordEmpty" = "Password field is empty";
-"ConfirmPasswordEmpty" = "Confirm password field is empty";
-"PasswordsNotMatch" = "Passwords do not match";
-"LoginFailed" = "Login failed";
-"RegisterFailed" = "Register failed";
-"OldPasswordEmpty" = "Old password field is empty";
-"NewPasswordEmpty" = "New Password field is empty";
-"DeviceAlreadyAdded" = "Device already added";
-"DeviceAddressUpdated" = "Device IP address updated";
-"NameEmptyMsg" = "Name field must not be empty";
-
-// Timers
-"NoTimersSet" = "No Timers Set";
-"AddNewTimer" = "Add New Timer";
-"TimersSet" = "Timers Set";
-"ShowModifyTimer" = "Show/Modify Timer";
-"Snooze5Minutes" = "Snooze 5 minutes";
-"Snooze10Minutes" = "Snooze 10 minutes";
-"Snooze30Minutes" = "Snooze 30 minutes";
-"Snooze1Hour" = "Snooze 1 hour";
-"Snoozing" = "Snoozing";
-"Snooze5MoreMinutes" = "Snooze 5 More Min.";
-"Snooze10MoreMinutes" = "Snooze 10 More Min.";
-"Snooze30MoreMinutes" = "Snooze 30 More Min.";
-"Snooze1MoreHour" = "Snooze 1 More Hr.";
-"CancelSnooze" = "Cancel Snooze";
-"SnoozeSentSuccess" = "Snooze sent successfully";
-"ErrorPleaseTryAgain" = "Error, please try again";
-"update_alarms_on_server" = "Update Alarms on Device";
-"alarms_sent_success" = "Alarms Sent Successfully";
-
+"app_name" = "Smart Plug";
+"str_create_account" = "<u>Create Account</u>";
+"str_forgot_password" = "<u>Forgot Password ?</u>";
+"title_activity_reset_password" = "Reset Password";
+"submit" = "Submit";
+"login" = "Login";
+"reset" = "Reset Password";
+"title_activity_create_account" = "Create Account";
+"ok" = "Ok";
+"cancel" = "Cancel";
+"deviceList" = "List of Devices";
+"startSmartConfig" = "Initialize Device";
+"account_sent" = "Please check your e-mail for the activation url. This account will be disable after 7 days if you do not activate it. In the meantime, you may start using the account.";
+"create_account_dialog_text" = "Account Created";
+"reset_password_dialog_text" = "Password Reset Sent";
+"reset_password" = "Password reset details has been sent to your email, please check the email for further instructions.";
+"add_device" = "To start, please make sure you are connected to the WiFi that the JSmartPlug will be connected to. Then Click on te button below.";
 "id_username" = "Username";
 "id_password" = "Password";
 "btn_login" = "Login";
 "lnk_createAccount" = "Create Account";
-"lnk_forgetPassword" = "Forgot Password";
+"lnk_forgetPassword" = "Forget Password";
 "title_passwordResetSent" = "Password Reset Sent";
 "msg_passwordResetBtn" = "Password reset details has been sent to your email, please check the email for further instructions.";
 "title_resetPassword" = "Reset Password";
 "title_initializeDevices" = "Initialize Devices";
-"msg_enterSSID&password" = "Please enter your current SSID & password. ";
-"msg_pleaseWait" = "Please wait.";
-"msg_enterNewUserName" = "Enter A New User Name";
+"msg_enterSSID_password." = "Please enter your current SSID and password. ";
+"msg_pleaseWait." = "Please wait.";
+"msg_enterNewUserName" = "Enter User Name";
 "btn_submit" = "Submit";
 "title_accountCreated" = "Account Created";
 "msg_accountCreatedBtn" = "Please check your e-mail for the activation url. This account will be disable after 7 days if you do not activate it. In the meantime, you may start using the account.";
@@ -82,7 +58,7 @@
 "btn_done" = "Done";
 "title_deskLamp" = "Desk Lamp";
 "btn_nightLight" = "Night Light";
-"btn_coNormal" = "CO normal";
+"btn_coNormal" = "CO";
 "btn_outlet" = "Outlet";
 "btn_ir" = "IR";
 "title_bedroom" = "Bedroom";
@@ -114,7 +90,7 @@
 "id_wifi" = "WIFI";
 "id_macID" = "Mac Address";
 "msg_deskLampBtn" = "To configure this device, please join the network the device is connected to.";
-"lnk_removeAndReset" = "Remove And Reset Device";
+"lnk_removeAndReset" = "<u>Remove And Reset Device</u>";
 "title_removeAndReset" = "Remove And Reset Device";
 "msg_removeAndResetBtn" = "Are you sure you want reset the device and remove it from your account?";
 "id_irTransmitter" = "IR Transmitter";
@@ -135,16 +111,16 @@
 "id_security" = "Security";
 "id_none" = "None";
 "btn_join" = "Join";
-"title_irControl" = "IR Control";
-"btn_tvOn/off" = "TV on/off";
-"btn_acOn/off" = "AC on/off";
+"title_irControl" = "IR Groups";
+"btn_tvOn_off" = "TV on/off";
+"btn_acOn_off" = "AC on/off";
 "btn_acFullPwr" = "AC full pwr";
 "title_title" = "Title";
-"title_editCommand" = "Edit Command";
+"title_editCommand" = "Add Group";
 "btn_chooseBrand" = "Choose brand and model";
 "btn_detectBrand" = "Detect brand and model";
 "btn_recordCustom" = "Record custom command";
-"msg_delectIr" = "Please point your remote at the JSPlug and press the indicated buttons.\n\n1.Press the \"power\" button\n2.Press the \"Volume\" button\n3.Device recognized as: Hitachi A/C";
+"msg_delectIr" = "Please point your remote at the JSPlug and press the indicated buttons.\n1.Press the “power” button\n2.Press the “Volume” button\n3.Device recognized as: Hitachi A/C";
 "btn_addNow" = "Add now";
 "title_customCommand" = "Custom Command";
 "id_recordIrCommand" = "Record IR command";
@@ -157,17 +133,18 @@
 "no_timer_set" = "No Timer Set";
 "title_add_new" = "Add New";
 "ir_recorded" = "(Recorded)";
-"title_device" = "Device";
+"title_device" = "Device Type";
 "notify_on_power_outage" = "Notify on Power Outage";
 "notify_on_co_warning" = "Notify on CO Warning";
 "notify_on_timer_activated" = "Notify on Timer Activated";
 "gcm_send_message" = "GCM send message";
 "token_error_message" = "Token Error Message";
-"connect_to_wifi" = "Connect to WiFi";
+"connect_to_wifi" = "<u>Connect to WiFi</u>";
+//"gcm_defaultSenderId" = "725253730549";
 "create_account_error" = "Error Creating New Account";
 "password_compare_error" = "Passwords are not the same";
 "password_length_error" = "Passwords must be 6 characters or longer";
-"password_badchar_error" = "Passwords must not contain # or &";
+"password_badchar_error" = "Passwords must not contain # or &amp;";
 "password_change_failed" = "Server error occurred while changing the password";
 "no_udp_Connection" = "No UDP Connection";
 "new_device_found" = "New Device Found";
@@ -177,16 +154,18 @@
 "delay_60_minutes" = "Timer Delay 1 Hour Sent";
 "delay_30_minutes" = "Timer Delay 30 Minutes Sent";
 "please_wait" = "Wait a moment while we process your request, thank you";
-"btn_ota" = "Update Firmware";
+"btn_ota" = "<u>Update Firmware</u>";
 "ip_not_found" = "Device Not Connected, Please refresh APP within device local network";
 "please_wait_done" = "Loading... Please wait";
-"cancelir" = "Stop Scanning";
-"ir_timeout" = "IR Scanning Time Out";
-"processing_ir_command" = "Processing IR Command";
-"processing_command" = "Processing Command";
-"password_reset" = "Password has been changed successfully";
+"update_alarms_on_server" = "Update Alarms on Device";
+"alarms_sent_success" = "Alarms Sent Successfully";
+"add_new_timer" = "Add New Timer";
+"show_modify_timer" = "Show/Modify Timer";
+"Snooze_5_Minutes" = "Snooze 5 Minutes";
+"Snooze_10_Minutes" = "Snooze 10 Minutes";
+"Snooze_30_Minutes" = "Snooze 30 Minutes";
+"Snooze_1_Hour" = "Snooze 1 Hour";
 
-// Days of week
 "sunday" = "Sun";
 "monday" = "Mon";
 "tuesday" = "Tue";
@@ -195,7 +174,6 @@
 "friday" = "Fri";
 "saturday" = "Sat";
 
-// Help
 "help_1_title" = "Quick Start Guide";
 "help_1_desc" = "Using this app, you can easily access your new JSPlug from anywhere in the world！";
 "help_2_title" = "Login";
@@ -210,10 +188,22 @@
 "help_6_desc" = "Your JSPlug should now be listed in the list. Simply tap it to add the device to your account";
 "help_7_title" = "Ready to Begin!";
 
-"msg_network_error" = "Network Error";
-"msg_unable_to_connect" = "You need a network connection to use this application. Please turn on mobile network in Settings.";
+"cancelir" = "Stop Scanning";
+"ir_timeout" = "IR Scanning Time Out";
+"processing_ir_command" = "Processing IR Command";
+"processing_command" = "Processing Command";
+
+"password_reseted" = "Password has been changed successfully";
+"delay_plus_five" = "Snooze 5 More Minutes";
+"delay_plus_ten" = "Snooze 10 More Minutes";
+"delay_plus_thirty" = "Snooze 30 More Minutes";
+"delay_plus_sixty" = "Snooze 1 More Hour";
+"delay_cancel" = "Cancel Snooze";
+"msg_snooze_cancel" = "Snooze Cancelled";
+
 "timer_set" = "Set Timer";
-"timer_set_snoozing" = "Set Timer Snoozing";
+"timer_set_snoozing" = "Set Timer Snoozing ";
+
 "warning" = "Warning";
 "warning_logout_baduser" = "You will be logged out because your user/password is no longer valid.";
 "warning_logout_changepwd" = "You will need to log in again because you changed your password.";
@@ -226,3 +216,17 @@
 "snooze" = "Snoozed";
 "minutes" = "Minutes";
 "ir_code" = "IR CODE";
+
+"Error" = "Error";
+"EmailEmpty" = "Email field is empty";
+"UsernameEmpty" = "Username field is empty";
+"PasswordEmpty" = "Password field is empty";
+"ConfirmPasswordEmpty" = "Confirm password field is empty";
+"PasswordsNotMatch" = "Passwords do not match";
+"LoginFailed" = "Login failed";
+"RegisterFailed" = "Register failed";
+"OldPasswordEmpty" = "Old password field is empty";
+"NewPasswordEmpty" = "New Password field is empty";
+"DeviceAlreadyAdded" = "Device already added";
+"DeviceAddressUpdated" = "Device IP address updated";
+"NameEmptyMsg" = "Name field must not be empty";
