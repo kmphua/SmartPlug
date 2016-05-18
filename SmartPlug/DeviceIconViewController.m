@@ -10,7 +10,7 @@
 #import "GMGridView.h"
 #import "UIImageView+WebCache.h"
 
-@interface DeviceIconViewController ()<WebServiceDelegate, GMGridViewDataSource>
+@interface DeviceIconViewController ()<WebServiceDelegate, GMGridViewDataSource, UIImagePickerControllerDelegate>
 
 @property (nonatomic, assign) IBOutlet GMGridView *gmGridView;
 @property (nonatomic, strong) NSArray *icons;
@@ -36,6 +36,27 @@
     // Setup grid view
     self.gmGridView.clipsToBounds = YES;
     self.gmGridView.centerGrid = NO;
+    
+    // Camera button
+    int navBarWidth = self.navigationController.navigationBar.frame.size.width;
+    UIButton *btnCamera = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnCamera setAutoresizesSubviews:YES];
+    [btnCamera setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
+    [btnCamera setImage:[UIImage imageNamed:@"ic_camera.png"] forState:UIControlStateNormal];
+    [btnCamera addTarget:self action:@selector(onBtnCamera:) forControlEvents:UIControlEventTouchUpInside];
+    btnCamera.frame = CGRectMake(navBarWidth-90, 4, 35, 35);
+    [btnCamera.titleLabel setHidden:YES];
+    [self.navigationController.navigationBar addSubview:btnCamera];
+    
+    // Gallery button
+    UIButton *btnGallery = [UIButton buttonWithType:UIButtonTypeCustom];
+    [btnGallery setAutoresizesSubviews:YES];
+    [btnGallery setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
+    [btnGallery setImage:[UIImage imageNamed:@"ic_gallery.png"] forState:UIControlStateNormal];
+    [btnGallery addTarget:self action:@selector(onBtnGallery:) forControlEvents:UIControlEventTouchUpInside];
+    btnGallery.frame = CGRectMake(navBarWidth-42, 5, 35, 35);
+    [btnGallery.titleLabel setHidden:YES];
+    [self.navigationController.navigationBar addSubview:btnGallery];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -50,6 +71,24 @@
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+- (void)onBtnCamera:(id)sender {
+    // Take photo
+    UIImagePickerController *imagePicker = [UIImagePickerController new];
+    imagePicker.delegate = self;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypeCamera;
+    imagePicker.allowsEditing = NO;
+    [self presentViewController:imagePicker animated:YES completion:nil];
+}
+
+- (void)onBtnGallery:(id)sender {
+    // Choose from library
+    UIImagePickerController *imagePicker = [UIImagePickerController new];
+    imagePicker.delegate = self;
+    imagePicker.sourceType = UIImagePickerControllerSourceTypePhotoLibrary;
+    imagePicker.allowsEditing = NO;
+    [self presentViewController:imagePicker animated:YES completion:nil];
 }
 
 //////////////////////////////////////////////////////////////
@@ -133,6 +172,16 @@
         //[_currentData removeObjectAtIndex:_lastDeleteItemIndexAsked];
         //[_gmGridView removeObjectAtIndex:_lastDeleteItemIndexAsked withAnimation:GMGridViewItemAnimationFade];
     }
+}
+
+//==================================================================
+#pragma UIImagePickerControllerDelegate
+//==================================================================
+
+-(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
+{
+    [picker dismissViewControllerAnimated:YES completion:nil];
+    //[self performSelector:@selector(editedImage:) withObject:image afterDelay:.5];
 }
 
 //==================================================================
