@@ -201,7 +201,15 @@
 - (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=%@&title=%@&notify_power=%@&notify_timer=%@&notify_danger=%@", userToken, lang, devId, icon, title, notifyPower, notifyTimer, notifyDanger];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=%@&title=%@&notify_power=%@&notify_timer=%@&notify_danger=%@&send=1", userToken, lang, devId, icon, title, notifyPower, notifyTimer, notifyDanger];
+    self.resultName = WS_DEV_SET;
+    [self postData:apiUrl params:params];
+}
+
+- (void)devSet2:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId model:(NSString *)model buildNumber:(int)buildNumber protocol:(int)protocol hardware:(NSString *)hardware firmware:(NSString *)firmware firmwareDate:(int)firmwareDate
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&model=%@&buildnumber=%d&protocol=%d&hardware=%@&firmware=%@&firmwaredate=%d&send=1", userToken, lang, devId, model, buildNumber, protocol, hardware, firmware, firmwareDate];
     self.resultName = WS_DEV_SET;
     [self postData:apiUrl params:params];
 }

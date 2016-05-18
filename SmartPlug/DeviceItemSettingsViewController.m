@@ -10,13 +10,32 @@
 #import "DeviceIconViewController.h"
 #import "FirstTimeConfig.h"
 #import "UDPCommunication.h"
+#import "UDPListenerService.h"
 #import "MBProgressHUD.h"
+
+#define ROW_DEVICE_TYPE             0
+#define ROW_DEVICE_ICON             1
+#define ROW_DEVICE_NAME             2
+#define ROW_WIFI                    3
+#define ROW_CO_SENSOR               4
+#define ROW_HARDWARE                5
+#define ROW_FIRMWARE                6
+#define ROW_MAC_ADDRESS             7
+#define ROW_CONFIG_MSG              8
+#define ROW_UPDATE_FIRMWARE         9
 
 @interface DeviceItemSettingsViewController ()<DeviceIconDelegate, UITextFieldDelegate>
 {
-    int notify_on_power_outage;
-    int notify_on_co_warning;
-    int notify_on_timer_activated;
+    NSString *model;
+    int buildnumber;
+    int protocol;
+    NSString *hardware;
+    NSString *firmware;
+    int firmwaredate;
+    NSString *wifi;
+    //int notify_on_power_outage;
+    //int notify_on_co_warning;
+    //int notify_on_timer_activated;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -35,23 +54,45 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    notify_on_power_outage = 0;
-    notify_on_co_warning = 0;
-    notify_on_timer_activated = 0;
-    
-    // Add navigation buttons
-    UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"btn_done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
-    self.navigationItem.rightBarButtonItem = rightBarBtn;
+    //notify_on_power_outage = 0;
+    //notify_on_co_warning = 0;
+    //notify_on_timer_activated = 0;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
     
+    wifi = [FirstTimeConfig getSSID];
+    
     if (g_DeviceIp && g_DeviceIp.length>0) {
         _deviceInRange = YES;
+
+        // Add navigation buttons
+        UIBarButtonItem *rightBarBtn = [[UIBarButtonItem alloc] initWithTitle:NSLocalizedString(@"btn_done", nil) style:UIBarButtonItemStylePlain target:self action:@selector(onRightBarButton:)];
+        self.navigationItem.rightBarButtonItem = rightBarBtn;
     } else {
         _deviceInRange = NO;
+        self.navigationItem.rightBarButtonItem = nil;
     }
+    
+    // Register notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(otaSent:) name:NOTIFICATION_OTA_SENT object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(otaFinished:) name:NOTIFICATION_OTA_FINISHED object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceInfo:) name:NOTIFICATION_DEVICE_INFO object:nil];
+    
+    short command = 0x0001;
+    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:command];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    // Deregister notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_OTA_SENT object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_OTA_FINISHED object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_INFO object:nil];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -77,6 +118,7 @@
     // Show waiting view
     [self showWaitingIndicator];
     
+    /*
     if (_device.notify_power) {
         notify_on_power_outage = 1;
     } else {
@@ -120,9 +162,56 @@
             [self dismissWaitingIndicator];
         }
     }
+     */
     
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self dismissWaitingIndicator];
+}
+
+- (void)otaSent:(NSNotification *)notification {
+    [self showWaitingIndicator];
+}
+
+- (void)otaFinished:(NSNotification *)notification {
+    int count = 10;
+    while(count > 0){
+        count--;
+        [NSThread sleepForTimeInterval:1000];
+    }
+    
+    short command = 0x0001;
+    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:command];
+    [self dismissWaitingIndicator];
+}
+
+- (void)deviceInfo:(NSNotification *)notification {
+    NSLog(@"DEVICE INFO BROADCAST RECEIVED");
+    
+    UDPListenerService *udp = [UDPListenerService getInstance];
+    [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac
+                                            model:udp.js.model
+                                         build_no:udp.js.buildno
+                                         prot_ver:udp.js.prot_ver
+                                           hw_ver:udp.js.hw_ver
+                                           fw_ver:udp.js.fw_ver
+                                          fw_date:udp.js.fw_date];
+    
+    NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:g_DeviceMac];
+    if (plugs && plugs.count > 0){
+        JSmartPlug *plug = [plugs firstObject];
+        model = plug.model;
+        buildnumber = plug.buildno;
+        protocol = plug.prot_ver;
+        hardware = plug.hw_ver;
+        firmware = plug.fw_ver;
+        firmwaredate = plug.fw_date;
+        
+        [self.tableView reloadData];
+        
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        [ws devSet2:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac model:model buildNumber:buildnumber protocol:protocol hardware:hardware firmware:firmware firmwareDate:firmwaredate];
+    }
 }
 
 //==================================================================
@@ -147,7 +236,21 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 55;
+    if (g_DeviceIp && g_DeviceIp.length>0) {
+        if (indexPath.row == ROW_HARDWARE ||
+            indexPath.row == ROW_FIRMWARE ||
+            indexPath.row == ROW_CO_SENSOR) {
+            return 55;
+        }
+        return 55;
+    } else {
+        if (indexPath.row == ROW_HARDWARE ||
+            indexPath.row == ROW_FIRMWARE ||
+            indexPath.row == ROW_CO_SENSOR) {
+            return 0;
+        }
+        return 55;
+    }
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -176,15 +279,15 @@
     
     NSInteger row = indexPath.row;
     switch (row) {
-        case 0:
+        case ROW_DEVICE_TYPE:
             cell.textLabel.text = NSLocalizedString(@"id_sevice", nil);
-            if (self.device.model) {
+            if (model && model.length>0) {
                 cell.detailTextLabel.text = self.device.model;
             } else {
                 cell.detailTextLabel.text = @"JSPlug";
             }
             break;
-        case 1:
+        case ROW_DEVICE_ICON:
         {
             cell.textLabel.text = NSLocalizedString(@"id_icon", nil);
             cell.detailTextLabel.text = @"";
@@ -201,7 +304,7 @@
             [cell addSubview:imageView];
         }
             break;
-        case 2:
+        case ROW_DEVICE_NAME:
             cell.textLabel.text = NSLocalizedString(@"id_name", nil);
             
             if (!_txtName) {
@@ -222,91 +325,58 @@
             }
             [cell.contentView addSubview:_txtName];
             break;
-        case 3:
+        case ROW_WIFI:
             cell.textLabel.text = NSLocalizedString(@"id_wifi", nil);
-            cell.detailTextLabel.text = [FirstTimeConfig getSSID];
+            if (wifi && wifi.length > 0) {
+                cell.detailTextLabel.text = wifi;
+            } else {
+                //cell.detailTextLabel.text = NSLocalizedString(@"connect_to_wifi", nil);
+            }
             break;
-        case 4:
-            if (_deviceInRange) {
+        case ROW_CO_SENSOR:
+            if (g_DeviceIp && g_DeviceIp.length>0 && self.device.co_sensor) {
                 cell.textLabel.text = NSLocalizedString(@"id_cosensor", nil);
-                if (self.device.co_sensor) {
-                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
-                }
-            } else {
-                cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
-                
-                // Add colons to mac address
-                if (self.device.sid && self.device.sid.length == 12) {
-                    NSString *mac = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",
-                                     [_device.sid substringWithRange:NSMakeRange(0, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(2, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(4, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(6, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(8, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(10, 2)]];
-                    cell.detailTextLabel.text = mac;
-                } else {
-                    cell.detailTextLabel.text = self.device.sid;
-                }
+                cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
             }
             break;
-        case 5:
-            if (_deviceInRange) {
+        case ROW_HARDWARE:
+            if (hardware && hardware.length > 0) {
                 cell.textLabel.text = NSLocalizedString(@"id_hardware", nil);
-                cell.detailTextLabel.text = self.device.hw_ver;
-            } else {
-                cell.textLabel.text = NSLocalizedString(@"notify_on_power_outage", nil);
-                if (self.device.notify_power) {
-                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
-                }
+                cell.detailTextLabel.text = hardware;
             }
             break;
-        case 6:
-            if (_deviceInRange) {
+        case ROW_FIRMWARE:
+            if (firmware && firmware.length > 0) {
                 cell.textLabel.text = NSLocalizedString(@"id_firmware", nil);
-                cell.detailTextLabel.text = self.device.fw_ver;
-            } else {
-                cell.textLabel.text = NSLocalizedString(@"notify_on_co_warning", nil);
-                if (self.device.notify_co) {
-                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
-                }
+                cell.detailTextLabel.text = firmware;
             }
             break;
-        case 7:
-            if (_deviceInRange) {
-                cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
-                
-                // Add colons to mac address
-                if (self.device.sid && self.device.sid.length == 12) {
-                    NSString *mac = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",
-                                     [_device.sid substringWithRange:NSMakeRange(0, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(2, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(4, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(6, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(8, 2)],
-                                     [_device.sid substringWithRange:NSMakeRange(10, 2)]];
-                    cell.detailTextLabel.text = mac;
-                } else {
-                    cell.detailTextLabel.text = self.device.sid;
-                }
+        case ROW_MAC_ADDRESS:
+            cell.textLabel.text = NSLocalizedString(@"id_macID", nil);
+            
+            // Add colons to mac address
+            if (self.device.sid && self.device.sid.length == 12) {
+                NSString *macAddString = [_device.sid uppercaseString];
+                NSString *mac = [NSString stringWithFormat:@"%@:%@:%@:%@:%@:%@",
+                                 [macAddString substringWithRange:NSMakeRange(0, 2)],
+                                 [macAddString substringWithRange:NSMakeRange(2, 2)],
+                                 [macAddString substringWithRange:NSMakeRange(4, 2)],
+                                 [macAddString substringWithRange:NSMakeRange(6, 2)],
+                                 [macAddString substringWithRange:NSMakeRange(8, 2)],
+                                 [macAddString substringWithRange:NSMakeRange(10, 2)]];
+                cell.detailTextLabel.text = mac;
             } else {
-                cell.textLabel.text = NSLocalizedString(@"notify_on_timer_activated", nil);
-                if (self.device.notify_timer) {
-                    cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
-                }
+                cell.detailTextLabel.text = self.device.sid;
             }
             break;
-        case 8:
-            if (_deviceInRange) {
-                cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
-            }
+        case ROW_CONFIG_MSG:
+            cell.textLabel.text = NSLocalizedString(@"msg_deskLampBtn", nil);
+            cell.textLabel.adjustsFontSizeToFitWidth = YES;
             break;
-        case 9:
-            if (_deviceInRange) {
-                cell.textLabel.text = NSLocalizedString(@"btn_ota", nil);
-            } else {
-                cell.textLabel.text = NSLocalizedString(@"lnk_removeAndReset", nil);
-            }
+        case ROW_UPDATE_FIRMWARE:{
+            NSAttributedString* attribStrBtnOta = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"btn_ota", nil) attributes:@{NSForegroundColorAttributeName:[Global colorWithType:COLOR_TYPE_LINK],NSFontAttributeName:[UIFont systemFontOfSize:18], NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle)}];
+            cell.textLabel.attributedText = attribStrBtnOta;
+        }
             break;
     }
     return cell;
@@ -314,75 +384,45 @@
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (indexPath.row == 1) {
+    if (indexPath.row == ROW_DEVICE_ICON) {
         // Get device icons
         DeviceIconViewController *iconVC = [[DeviceIconViewController alloc] initWithNibName:@"DeviceIconViewController" bundle:nil];
         iconVC.delegate = self;
         [self.navigationController pushViewController:iconVC animated:YES];
-    } else if (indexPath.row == 5) {
-        if (!_deviceInRange) {
-            if (self.device.notify_power) {
-                self.device.notify_timer = 0;
+    } else if (indexPath.row == ROW_CONFIG_MSG) {
+        // Remove and reset
+        UIAlertController *alertController = [UIAlertController
+                                              alertControllerWithTitle:nil
+                                              message:NSLocalizedString(@"msg_removeAndResetBtn", nil)
+                                              preferredStyle:UIAlertControllerStyleAlert];
+        
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+            [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
+        }];
+        [alertController addAction:actionYes];
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        }];
+        [alertController addAction:actionNo];
+        [self presentViewController:alertController animated:YES completion:nil];
+    } else if (indexPath.row == ROW_UPDATE_FIRMWARE) {
+        // Update firmare
+        if (g_DeviceIp && g_DeviceIp.length>0) {
+            if ([Global isNetworkReady]) {
+                [[UDPCommunication getInstance] sendOTACommand:g_DeviceIp];
+                
+                [self.view makeToast:NSLocalizedString(@"please_wait", nil)
+                            duration:3.0
+                            position:CSToastPositionCenter];
             } else {
-                self.device.notify_timer = 1;
+                [self.view makeToast:NSLocalizedString(@"no_udp_Connection", nil)
+                            duration:3.0
+                            position:CSToastPositionCenter];
             }
-        }
-    } else if (indexPath.row == 6) {
-        if (!_deviceInRange) {
-            if (self.device.notify_co) {
-                self.device.notify_co = 0;
-            } else {
-                self.device.notify_co = 1;
-            }
-        }
-    } else if (indexPath.row == 7) {
-        if (!_deviceInRange) {
-            if (self.device.notify_co) {
-                self.device.notify_co = 0;
-            } else {
-                self.device.notify_co = 1;
-            }
-        }
-    } else if (indexPath.row == 8) {
-        if (_deviceInRange) {
-            // Remove and reset
-            UIAlertController *alertController = [UIAlertController
-                                                  alertControllerWithTitle:nil
-                                                  message:NSLocalizedString(@"msg_removeAndResetBtn", nil)
-                                                  preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
-            }];
-            [alertController addAction:actionYes];
-            UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            }];
-            [alertController addAction:actionNo];
-            [self presentViewController:alertController animated:YES completion:nil];
-        }
-    } else if (indexPath.row == 9) {
-        if (_deviceInRange) {
-            // Update firmare
-            [[UDPCommunication getInstance] sendOTACommand:g_DeviceIp];
-            
-            [self.view makeToast:NSLocalizedString(@"please_wait", nil)
-                        duration:3.0
-                        position:CSToastPositionCenter];
         } else {
-            // Remove and reset
-            UIAlertController *alertController = [UIAlertController
-                                                  alertControllerWithTitle:nil
-                                                  message:NSLocalizedString(@"msg_removeAndResetBtn", nil)
-                                                  preferredStyle:UIAlertControllerStyleAlert];
-            
-            UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-                [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
-            }];
-            [alertController addAction:actionYes];
-            UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            }];
-            [alertController addAction:actionNo];
-            [self presentViewController:alertController animated:YES completion:nil];
+            [self.view makeToast:NSLocalizedString(@"ip_not_found", nil)
+                        duration:3.0
+                        position:CSToastPositionBottom];
+
         }
     }
     

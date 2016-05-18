@@ -7,8 +7,8 @@
 */
 
 "app_name" = "Smart Plug";
-"str_create_account" = "<u>建立帳號</u>";
-"str_forgot_password" = "<u>忘記密碼嗎?</u>";
+"str_create_account" = "建立帳號";
+"str_forgot_password" = "忘記密碼嗎?";
 "title_activity_reset_password" = "重設密碼";
 "submit" = "提交";
 "login" = "登入";
@@ -90,7 +90,7 @@
 "id_wifi" = "無線網路";
 "id_macID" = "網卡位址";
 "msg_deskLampBtn" = "如需設定裝置相關內容，請和拆做於同個網路中。";
-"lnk_removeAndReset" = "<u>移除與重設裝置</u>";
+"lnk_removeAndReset" = "移除與重設裝置";
 "title_removeAndReset" = "移除與重設裝置";
 "msg_removeAndResetBtn" = "您確認要重設裝置並從您的裝置移除?";
 "id_irTransmitter" = "紅外線接收器";
@@ -139,7 +139,7 @@
 "notify_on_timer_activated" = "計時激活通知";
 "gcm_send_message" = "GCM 寄出訊息";
 "token_error_message" = "權限錯誤訊息";
-"connect_to_wifi" = "<u>連結至WiFi</u>";
+"connect_to_wifi" = "連結至WiFi";
 //"gcm_defaultSenderId" = "725253730549";
 "create_account_error" = "新帳號建立錯誤";
 "password_compare_error" = "密碼不同";
@@ -151,7 +151,7 @@
 "delay_60_minutes" = "延時1小時已送出";
 "delay_30_minutes" = "延時30分鐘已送出";
 "please_wait" = "請您稍後，我們正處理中，感謝!";
-"btn_ota" = "<u>韌體更新</u>";
+"btn_ota" = "韌體更新";
 "ip_not_found" = "裝置無連結上，請重整APP內部網路裝置。";
 "please_wait_done" = "裝載中…請稍後";
 "update_alarms_on_server" = "更新鬧鐘裝置";
