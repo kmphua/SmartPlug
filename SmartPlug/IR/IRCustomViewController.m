@@ -77,6 +77,12 @@
     [self.tableView reloadData];
 }
 
+- (void)selectedImage:(UIImage *)image
+{
+    // Update device icon with picker image
+    
+}
+
 //==================================================================
 #pragma mark - IRRecordDelegate
 //==================================================================

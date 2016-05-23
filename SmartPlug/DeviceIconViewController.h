@@ -11,6 +11,7 @@
 @protocol DeviceIconDelegate <NSObject>
 
 - (void)selectedIcon:(NSString *)icon;
+- (void)selectedImage:(UIImage *)image;
 
 @end
 

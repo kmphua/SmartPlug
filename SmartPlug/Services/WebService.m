@@ -9,6 +9,9 @@
 #import "WebService.h"
 #import "UIWaitingView.h"
 
+#define UPLOAD_IMAGE_QUALITY                0.8
+#define UPLOAD_IMAGE_SCALE                  0.25
+
 @interface WebService ()
 
 @property (nonatomic, strong) NSMutableData *webData;
@@ -54,6 +57,55 @@
     [request setHTTPMethod:@"POST"];
     [request setTimeoutInterval:20.0];
     [request setHTTPBody:body];
+    
+    NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
+    if (connection) {
+        self.webData = [NSMutableData data];
+    } else {
+        NSLog(@"Connection is NULL");
+    }
+}
+
+- (void)postImageData:(NSString *)serverUrl params:(NSString *)params image:(UIImage *)image
+{
+    NSString *requestUrl = [NSString stringWithFormat:@"%@?%@", serverUrl, params];
+    NSString *encodedUrl = [requestUrl stringByAddingPercentEncodingWithAllowedCharacters:NSCharacterSet.URLQueryAllowedCharacterSet];
+    
+    NSMutableURLRequest *request = [NSMutableURLRequest requestWithURL:[NSURL URLWithString:encodedUrl]];
+    [request setHTTPMethod:@"POST"];
+    [request setTimeoutInterval:20.0];
+    [request setCachePolicy:NSURLRequestReloadIgnoringLocalCacheData];
+    [request setHTTPShouldHandleCookies:NO];
+    
+    // Set Content-Type in HTTP header
+    NSString *boundary = @"---------------------------SmartPlug_14737809831466499882746641449";
+    NSString *contentType = [NSString stringWithFormat:@"multipart/form-data; boundary=%@", boundary];
+    [request setValue:contentType forHTTPHeaderField: @"Content-Type"];
+    
+    // post body
+    NSMutableData *body = [NSMutableData new];
+    
+    // add image data
+    CGSize uploadImageSize;
+    uploadImageSize.width = image.size.width * UPLOAD_IMAGE_SCALE;
+    uploadImageSize.height = image.size.height * UPLOAD_IMAGE_SCALE;
+    
+    UIImage *uploadImage = [UIImage imageWithCGImage:image.CGImage scale:UPLOAD_IMAGE_SCALE orientation:image.imageOrientation];
+    NSData *imageData = UIImageJPEGRepresentation(uploadImage, UPLOAD_IMAGE_QUALITY);
+    
+    [body appendData:[[NSString stringWithFormat:@"--%@\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"Content-Disposition: form-data; name=\"%@\"; filename=\"image.jpg\"\r\n", @"test"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[@"Content-Type: image/jpeg\r\n\r\n" dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:imageData];
+    [body appendData:[[NSString stringWithFormat:@"\r\n"] dataUsingEncoding:NSUTF8StringEncoding]];
+    [body appendData:[[NSString stringWithFormat:@"--%@--\r\n", boundary] dataUsingEncoding:NSUTF8StringEncoding]];
+    
+    // setting the body of the post to the reqeust
+    [request setHTTPBody:body];
+    
+    // set the content-length
+    NSString *postLength = [NSString stringWithFormat:@"%ld", [body length]];
+    [request setValue:postLength forHTTPHeaderField:@"Content-Length"];
     
     NSURLConnection *connection = [[NSURLConnection alloc] initWithRequest:request delegate:self];
     if (connection) {
@@ -212,6 +264,14 @@
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&model=%@&buildnumber=%d&protocol=%d&hardware=%@&firmware=%@&firmwaredate=%d&send=1", userToken, lang, devId, model, buildNumber, protocol, hardware, firmware, firmwareDate];
     self.resultName = WS_DEV_SET;
     [self postData:apiUrl params:params];
+}
+
+- (void)uploadImage:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId image:(UIImage *)image
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=upload", userToken, lang, devId];
+    self.resultName = WS_DEV_SET;
+    [self postImageData:apiUrl params:params image:image];
 }
 
 - (void)devLog:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId

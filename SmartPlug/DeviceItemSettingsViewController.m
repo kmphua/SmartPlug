@@ -42,6 +42,7 @@
 @property (nonatomic) BOOL deviceInRange;
 @property (nonatomic, strong) UITextField *txtName;
 @property (strong, nonatomic) MBProgressHUD *hud;
+@property (nonatomic, strong) UIImage *pickerImage;
 
 @end
 
@@ -293,14 +294,20 @@
             cell.detailTextLabel.text = @"";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
+            [imageView setBackgroundColor:[UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0]];
+
             NSString *imagePath = DEFAULT_ICON_PATH;
             if (self.device.icon && self.device.icon.length>0) {
+                // Server icon
                 imagePath = self.device.icon;
+                [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+            } else {
+                // Selected image from picker
+                if (self.pickerImage) {
+                    [imageView setImage:self.pickerImage];
+                }
             }
-            
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
-            [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-            [imageView setBackgroundColor:[UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0]];
             [cell addSubview:imageView];
         }
             break;
@@ -441,6 +448,14 @@
     [self.tableView reloadData];
 }
 
+- (void)selectedImage:(UIImage *)image
+{
+    // Update device icon with picker image
+    _device.icon = nil;
+    _pickerImage = [image copy];
+    [self.tableView reloadData];
+}
+
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
@@ -469,7 +484,7 @@
                 NSLog(@"DB UPDATED SUCCESSFULLY");
                 self.navigationItem.rightBarButtonItem.enabled = YES;
                 [self dismissWaitingIndicator];
-                [self.navigationController popViewControllerAnimated:YES];
+                //[self.navigationController popViewControllerAnimated:YES];
             } else {
                 // Failure
                 self.navigationItem.rightBarButtonItem.enabled = YES;

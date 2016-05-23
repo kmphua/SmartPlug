@@ -14,6 +14,8 @@
 
 @property (nonatomic, assign) IBOutlet GMGridView *gmGridView;
 @property (nonatomic, strong) NSArray *icons;
+@property (nonatomic, strong) UIButton *btnCamera;
+@property (nonatomic, strong) UIButton *btnGallery;
 
 @end
 
@@ -39,24 +41,24 @@
     
     // Camera button
     int navBarWidth = self.navigationController.navigationBar.frame.size.width;
-    UIButton *btnCamera = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btnCamera setAutoresizesSubviews:YES];
-    [btnCamera setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
-    [btnCamera setImage:[UIImage imageNamed:@"ic_camera.png"] forState:UIControlStateNormal];
-    [btnCamera addTarget:self action:@selector(onBtnCamera:) forControlEvents:UIControlEventTouchUpInside];
-    btnCamera.frame = CGRectMake(navBarWidth-90, 4, 35, 35);
-    [btnCamera.titleLabel setHidden:YES];
-    [self.navigationController.navigationBar addSubview:btnCamera];
+    self.btnCamera = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_btnCamera setAutoresizesSubviews:YES];
+    [_btnCamera setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
+    [_btnCamera setImage:[UIImage imageNamed:@"ic_camera.png"] forState:UIControlStateNormal];
+    [_btnCamera addTarget:self action:@selector(onBtnCamera:) forControlEvents:UIControlEventTouchUpInside];
+    _btnCamera.frame = CGRectMake(navBarWidth-90, 4, 35, 35);
+    [_btnCamera.titleLabel setHidden:YES];
+    [self.navigationController.navigationBar addSubview:_btnCamera];
     
     // Gallery button
-    UIButton *btnGallery = [UIButton buttonWithType:UIButtonTypeCustom];
-    [btnGallery setAutoresizesSubviews:YES];
-    [btnGallery setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
-    [btnGallery setImage:[UIImage imageNamed:@"ic_gallery.png"] forState:UIControlStateNormal];
-    [btnGallery addTarget:self action:@selector(onBtnGallery:) forControlEvents:UIControlEventTouchUpInside];
-    btnGallery.frame = CGRectMake(navBarWidth-42, 5, 35, 35);
-    [btnGallery.titleLabel setHidden:YES];
-    [self.navigationController.navigationBar addSubview:btnGallery];
+    self.btnGallery = [UIButton buttonWithType:UIButtonTypeCustom];
+    [_btnGallery setAutoresizesSubviews:YES];
+    [_btnGallery setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
+    [_btnGallery setImage:[UIImage imageNamed:@"ic_gallery.png"] forState:UIControlStateNormal];
+    [_btnGallery addTarget:self action:@selector(onBtnGallery:) forControlEvents:UIControlEventTouchUpInside];
+    _btnGallery.frame = CGRectMake(navBarWidth-42, 5, 35, 35);
+    [_btnGallery.titleLabel setHidden:YES];
+    [self.navigationController.navigationBar addSubview:_btnGallery];
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -66,6 +68,17 @@
     ws.delegate = self;
     [ws galleryList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
     [ws showWaitingView:self.view];
+}
+
+- (void)viewWillDisappear:(BOOL)animated {
+    [super viewWillDisappear:animated];
+    
+    if (_btnCamera) {
+        [_btnCamera removeFromSuperview];
+    }
+    if (_btnGallery) {
+        [_btnGallery removeFromSuperview];
+    }
 }
 
 - (void)didReceiveMemoryWarning {
@@ -181,7 +194,10 @@
 -(void)imagePickerController:(UIImagePickerController *)picker didFinishPickingImage:(UIImage *)image editingInfo:(NSDictionary *)editingInfo
 {
     [picker dismissViewControllerAnimated:YES completion:nil];
-    //[self performSelector:@selector(editedImage:) withObject:image afterDelay:.5];
+    if (self.delegate) {
+        [self.delegate selectedImage:image];
+    }
+    [self.navigationController popViewControllerAnimated:YES];
 }
 
 //==================================================================
@@ -216,6 +232,22 @@
                     _icons = icons;
                     [_gmGridView reloadData];
                 }
+            } else {
+                // Failure
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
+            }
+        } else if ([resultName isEqualToString:WS_DEV_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                NSLog(@"Upload image success - %@", message);
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
