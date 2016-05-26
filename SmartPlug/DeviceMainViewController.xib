@@ -349,22 +349,22 @@
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="vYG-cf-QVu">
                             <rect key="frame" x="0.0" y="340" width="288" height="40"/>
                             <subviews>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn2.png" translatesAutoresizingMaskIntoConstraints="NO" id="P96-7L-qnq">
-                                    <rect key="frame" x="10" y="8" width="24" height="24"/>
+                                <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="marker_warn2.png" translatesAutoresizingMaskIntoConstraints="NO" id="P96-7L-qnq">
+                                    <rect key="frame" x="10" y="10" width="24" height="24"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="24" id="UFS-my-K90"/>
                                         <constraint firstAttribute="width" constant="24" id="tiG-a9-T8B"/>
                                     </constraints>
                                 </imageView>
-                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="btn_warn_close.png" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-Wq-rvc">
-                                    <rect key="frame" x="253" y="8" width="24" height="24"/>
+                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="btn_warn_close.png" translatesAutoresizingMaskIntoConstraints="NO" id="gZ7-Wq-rvc">
+                                    <rect key="frame" x="242" y="2" width="36" height="36"/>
                                     <constraints>
-                                        <constraint firstAttribute="width" constant="24" id="Ngv-9f-x0j"/>
-                                        <constraint firstAttribute="height" constant="24" id="zJ8-sm-A1r"/>
+                                        <constraint firstAttribute="width" constant="36" id="Ngv-9f-x0j"/>
+                                        <constraint firstAttribute="height" constant="36" id="zJ8-sm-A1r"/>
                                     </constraints>
                                 </imageView>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Warning text" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="9cn-CU-zKc">
-                                    <rect key="frame" x="39" y="8" width="210" height="20"/>
+                                    <rect key="frame" x="39" y="10" width="198" height="20"/>
                                     <constraints>
                                         <constraint firstAttribute="height" constant="20" id="Yeb-Xh-gNL"/>
                                     </constraints>
@@ -377,13 +377,23 @@
                             <constraints>
                                 <constraint firstItem="9cn-CU-zKc" firstAttribute="top" secondItem="P96-7L-qnq" secondAttribute="top" id="3GB-9y-orr"/>
                                 <constraint firstItem="P96-7L-qnq" firstAttribute="leading" secondItem="vYG-cf-QVu" secondAttribute="leading" constant="10" id="Fir-jh-vmN"/>
+                                <constraint firstItem="9cn-CU-zKc" firstAttribute="centerY" secondItem="vYG-cf-QVu" secondAttribute="centerY" id="L2E-fK-8JO"/>
+                                <constraint firstItem="gZ7-Wq-rvc" firstAttribute="centerY" secondItem="vYG-cf-QVu" secondAttribute="centerY" id="NsA-cv-Pc1"/>
                                 <constraint firstItem="gZ7-Wq-rvc" firstAttribute="leading" secondItem="9cn-CU-zKc" secondAttribute="trailing" constant="5" id="USF-BF-WKY"/>
                                 <constraint firstAttribute="height" constant="40" id="geQ-aX-oAN"/>
                                 <constraint firstItem="9cn-CU-zKc" firstAttribute="leading" secondItem="P96-7L-qnq" secondAttribute="trailing" constant="5" id="hDH-eT-5c6"/>
                                 <constraint firstItem="9cn-CU-zKc" firstAttribute="top" secondItem="vYG-cf-QVu" secondAttribute="topMargin" id="qJ3-WO-bTs"/>
+                                <constraint firstItem="P96-7L-qnq" firstAttribute="top" secondItem="9cn-CU-zKc" secondAttribute="top" id="uD7-4I-vPQ"/>
                                 <constraint firstItem="gZ7-Wq-rvc" firstAttribute="top" secondItem="P96-7L-qnq" secondAttribute="top" id="wyz-Tb-6uC"/>
                                 <constraint firstAttribute="trailing" secondItem="gZ7-Wq-rvc" secondAttribute="trailing" constant="10" id="yL7-Nc-uYq"/>
                             </constraints>
+                            <variation key="default">
+                                <mask key="constraints">
+                                    <exclude reference="3GB-9y-orr"/>
+                                    <exclude reference="qJ3-WO-bTs"/>
+                                    <exclude reference="wyz-Tb-6uC"/>
+                                </mask>
+                            </variation>
                         </view>
                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="liR-wT-u88">
                             <rect key="frame" x="143" y="100" width="1" height="200"/>

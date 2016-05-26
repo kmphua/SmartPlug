@@ -8,7 +8,7 @@
 
 #import "CrashCountDown.h"
 
-#define CRASH_TIMER_INTERVAL       3
+#define CRASH_TIMER_INTERVAL       2
 
 @interface CrashCountDown()
 

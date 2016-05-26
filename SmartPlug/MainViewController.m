@@ -90,12 +90,22 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePush:) name:NOTIFICATION_PUSH object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
-    
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusChangedUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(adapterOnClick:) name:NOTIFICATION_ADAPTER_ON_CLICK object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(repeatingTaskDone:) name:NOTIFICATION_REPEATING_TASK_DONE object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusChangedUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateAlarmServiceDone:) name:NOTIFICATION_UPDATE_ALARM_SERVICE_DONE object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(httpDeviceStatus:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
+    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteSent:) name:NOTIFICATION_DELETE_SENT object:nil];
+    
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -103,14 +113,7 @@
     [super viewWillDisappear:animated];
     
     // Deregister notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_INFO object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_M1_UPDATE_UI object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_REPEATING_TASK_DONE object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -170,57 +173,17 @@
     [self.navigationController pushViewController:settingsVc animated:YES];
 }
 
-- (void)statusChangedUpdateUI:(NSNotification *)notification {
-    NSLog(@"DEVICE STATUS CHANGED UI");
-    _deviceStatusChangedFlag = true;
-    [self getData];
-}
-
-- (void)deviceInfo:(NSNotification *)notification {
-    NSDictionary *userInfo = [notification userInfo];
-    NSString *ip = [userInfo objectForKey:@"ip"];
-    //NSString *devId = [userInfo objectForKey:@"id"];
-    JSmartPlug *jsTemp = [UDPListenerService getInstance].js;
-    jsTemp.ip = ip;
-    if (jsTemp.ip != nil && jsTemp.ip.length>0) {
-        if(jsTemp.sid != nil && jsTemp.sid.length>0) {
-            //[[SQLHelper getInstance] updatePlugID:jsTemp.sid ip:jsTemp.ip];
-            [[SQLHelper getInstance] updatePlugServices:jsTemp];
-        }
-    }
-    
-    [self getData];
-}
-
-- (void)handleDeviceFound:(NSNotification*)notification {
-    [self startRepeatingTask];
-    NSLog(@"NEW DEVICE FOUND");
-}
-
-- (void)handleDeviceRemoved:(NSNotification*)notification {
-    //self.plugs = [[SQLHelper getInstance] getPlugData];
-    //[self.tableView reloadData];
-    //[self adjustHeightOfTableview];
-}
-
-- (void)handlePush:(NSNotification *)notification {
+- (void)httpDeviceStatus:(NSNotification *)notification {
     NSDictionary *userInfo = notification.userInfo;
     if (userInfo) {
-        NSString *getDeviceFlag = [userInfo objectForKey:@"getDeviceFlag"];
-        if ([getDeviceFlag isEqualToString:@"true"]) {
-            [self checkStatus:nil];
-        }
-        
-        NSString *getDataFlag = [userInfo objectForKey:@"getDataFlag"];
-        if ([getDataFlag isEqualToString:@"true"]) {
-            [self startRepeatingTask];
+        NSString *error = [userInfo objectForKey:@"error"];
+        if (error && error.length>0) {
+            [self dismissWaitingIndicator];
+            [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                        duration:3.0
+                        position:CSToastPositionBottom];
         }
     }
-}
-
-- (void)deviceStatusChanged:(NSNotification *)notification {
-    NSLog(@"DEVICE STATUS CHANGED");
-    _deviceStatusChangedFlag = true;
     [self getData];
 }
 
@@ -239,6 +202,70 @@
         
         [self getData];
         [self dismissWaitingIndicator];
+    }
+}
+
+- (void)handlePush:(NSNotification *)notification {
+    [self getData];
+}
+
+- (void)updateAlarmServiceDone:(NSNotification *)notification {
+    [self getData];
+}
+
+- (void)statusChangedUpdateUI:(NSNotification *)notification {
+    NSLog(@"DEVICE STATUS CHANGED UI");
+    _deviceStatusChangedFlag = true;
+    [self getData];
+}
+
+- (void)deviceStatusChanged:(NSNotification *)notification {
+    _deviceStatusChangedFlag = true;
+    [self startRepeatingTask];
+}
+
+- (void)deviceInfo:(NSNotification *)notification {
+    NSDictionary *userInfo = [notification userInfo];
+    NSString *ip = [userInfo objectForKey:@"ip"];
+    //NSString *devId = [userInfo objectForKey:@"id"];
+    
+    JSmartPlug *jsTemp = [UDPListenerService getInstance].js;
+    jsTemp.ip = ip;
+    if (jsTemp.ip != nil && jsTemp.ip.length>0) {
+        if(jsTemp.sid != nil && jsTemp.sid.length>0) {
+            [[SQLHelper getInstance] updatePlugServices:jsTemp];
+        }
+    }
+    
+    NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:g_DeviceMac];
+    if (plugs && plugs.count > 0) {
+        JSmartPlug *plug = [plugs firstObject];
+        NSString *model = plug.model;
+        int buildnumber = plug.buildno;
+        int protocol = plug.prot_ver;
+        NSString *hardware = plug.hw_ver;
+        NSString *firmware = plug.fw_ver;
+        int firmwaredate = plug.fw_date;
+        
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        [ws devSet2:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac model:model buildNumber:buildnumber protocol:protocol hardware:hardware firmware:firmware firmwareDate:firmwaredate];
+    }
+    
+    [self getData];
+}
+
+- (void)handleDeviceFound:(NSNotification*)notification {
+    [self startRepeatingTask];
+    NSLog(@"NEW DEVICE FOUND");
+}
+
+- (void)handleDeviceRemoved:(NSNotification*)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *serviceName = [userInfo objectForKey:@"name"];
+        [[SQLHelper getInstance] updatePlugIP:serviceName ip:@""];
+        NSLog(@"%@", serviceName);
     }
 }
 
@@ -837,6 +864,27 @@
                         [[SQLHelper getInstance] insertIcons:url size:0 sid:idParam];
                     }
                 }
+            }
+        } else if ([resultName isEqualToString:WS_DEV_SET]) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                // Success
+                NSLog(@"DB UPDATED SUCCESSFULLY");
+                self.navigationItem.rightBarButtonItem.enabled = YES;
+                [self dismissWaitingIndicator];
+                //[self.navigationController popViewControllerAnimated:YES];
+            } else {
+                // Failure
+                self.navigationItem.rightBarButtonItem.enabled = YES;
+                [self dismissWaitingIndicator];
+                
+                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"Error", nil)
+                                                                    message:message
+                                                                   delegate:nil
+                                                          cancelButtonTitle:NSLocalizedString(@"OK", nil)
+                                                          otherButtonTitles:nil, nil];
+                [alertView show];
             }
         }
         

@@ -153,6 +153,7 @@
     // Init UI
     [_imgOutletWarning setHidden:YES];
     [_imgCoWarning setHidden:YES];
+    [_imgLeftWarning setHidden:YES];
     
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
@@ -171,6 +172,8 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusSet:) name:NOTIFICATION_DEVICE_STATUS_SET object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
+    
     [self updateDeviceStatusFromServer];
     
     // Start status checker timer
@@ -188,13 +191,7 @@
     [super viewWillDisappear:animated];
     
     // Deregister notifications
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_PUSH object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_DEVICE_NOT_REACHED object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_TIMERS_SENT_SUCCESS object:nil];
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
     
     // Stop status checker timer
     if (_statusCheckerTimer) {
@@ -219,6 +216,30 @@
     [_hud hide:YES];
 }
 
+- (void)timersSentSuccess:(NSNotification *)notification {
+    NSLog(@"TIMERS SENT SUCCESSFULLY BROADCAST");
+    _deviceStatusChangedFlag = true;
+}
+
+- (void)timerCrashReached:(NSNotification *)notification {
+    if (!_deviceStatusChangedFlag) {
+        [self setDeviceStatus:_serviceId send:0];
+    } else {
+        if (_serviceId == RELAY_SERVICE) {
+            [[SQLHelper getInstance] updatePlugRelayService:_action sid:g_DeviceMac];
+        }
+        if (_serviceId == NIGHTLED_SERVICE) {
+            [[SQLHelper getInstance] updatePlugNightlightService:_action sid:g_DeviceMac];
+        }
+        
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
+        
+        [self setDeviceStatus:_serviceId send:1];
+    }
+    
+    _deviceStatusChangedFlag = false;
+}
+
 - (void)httpDeviceStatus:(NSNotification *)notification {
     NSDictionary *userInfo = notification.userInfo;
     if (userInfo) {
@@ -231,6 +252,34 @@
         }
     }
     [self updateUI:nil];
+}
+
+- (void)deviceStatusSet:(NSNotification *)notification {
+    [self startRepeatingTask];
+}
+
+- (void)handlePushNotification:(NSNotification *)notification {
+    [self updateUI:notification];
+}
+
+- (void)udpUpdateUI:(NSNotification *)notification {
+    [self dismissWaitingIndicator];
+    [self updateUI:nil];
+}
+
+- (void)deviceStatusChanged:(NSNotification *)notification {
+    _deviceStatusChangedFlag = true;
+    [self startRepeatingTask];
+    [self dismissWaitingIndicator];
+}
+
+- (void)handleDeviceRemoved:(NSNotification*)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *serviceName = [userInfo objectForKey:@"name"];
+        [[SQLHelper getInstance] updatePlugIP:serviceName ip:@""];
+        NSLog(@"%@", serviceName);
+    }
 }
 
 - (void)deviceNotReached:(NSNotification *)notification {
@@ -249,58 +298,6 @@
         }
         [self dismissWaitingIndicator];
     }
-}
-
-- (void)timersSentSuccess:(NSNotification *)notification {
-    NSLog(@"TIMERS SENT SUCCESSFULLY BROADCAST");
-    _deviceStatusChangedFlag = true;
-}
-
-- (void)udpUpdateUI:(NSNotification *)notification {
-    _udpConnection = true;
-    if(_crashTimer) {
-        [_crashTimer stopTimer];
-    }
-    [self dismissWaitingIndicator];
-    [self updateUI:nil];
-}
-
-- (void)deviceStatusChanged:(NSNotification *)notification {
-    NSLog(@"DEVICE STATUS CHANGED");
-    _deviceStatusChangedFlag = true;
-    [self dismissWaitingIndicator];
-}
-
-- (void)deviceStatusSet:(NSNotification *)notification {
-    NSLog(@"DEVICE STATUS SET");
-    _deviceStatusChangedFlag = true;
-    [self dismissWaitingIndicator];
-}
-
-- (void)handlePushNotification:(NSNotification *)notification {
-    NSLog(@"RECEIVED PUSH");
-    
-    [self updateDeviceStatusFromServer];
-
-    /*
-    NSDictionary *userInfo = notification.userInfo;
-    if (userInfo) {
-        int getDataFlag = [[userInfo objectForKey:@"getDataFlag"] intValue];
-        if (getDataFlag == 1) {
-            [self updateAlarms];
-        }
-    }
-    */
-    
-    //[self checkStatus:nil];
-}
-
-- (void)timerCrashReached:(NSNotification *)notification {
-    [_imgLeftWarning setHidden:NO];
-    [_lblWarning setText:NSLocalizedString(@"no_udp_Connection", nil)];
-    [_lblWarning setHidden:NO];
-    [_imgRightWarning setHidden:NO];
-    _udpConnection = false;
 }
 
 - (void)broadcastUdpUpdateUi:(NSNotification *)notification {
@@ -380,11 +377,11 @@
     // CO sensor
     if (device.co_sensor == 0) {
         [_imgCoWarning setHidden:YES];
-        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
-        [_imgCoWarning stopAnimating];
+        //[_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
+        //[_imgCoWarning stopAnimating];
         [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
-        [_imgLeftWarning setHidden:YES];
-        [_imgRightWarning setHidden:YES];
+        //[_imgLeftWarning setHidden:YES];
+        //[_imgRightWarning setHidden:YES];
         [_lblWarning setHidden:YES];
     } else if (device.co_sensor == 1) {
         [_imgCoWarning setHidden:NO];
@@ -457,6 +454,7 @@
 {
     [self showWaitingIndicator:NSLocalizedString(@"processing_command", nil)];
     
+    _serviceId = serviceId;
     if (serviceId == RELAY_SERVICE) {
         if (_relay == 0) {
             _action = 0x01;
@@ -483,10 +481,11 @@
     [_viewOutlet setUserInteractionEnabled:NO];
     [_viewNightLight setUserInteractionEnabled:NO];
     
+    [_crashTimer startTimer];
+
+    /*
     _udpConnection = false;
-    
-    _deviceStatusChangedFlag = false;
-    
+
     if ([[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action]) {
         int counter = 2;
         while (!_deviceStatusChangedFlag && counter > 0) {
@@ -510,6 +509,7 @@
         
         [self setDeviceStatus:serviceId send:1];
     }
+     */
 }
 
 - (void)setDeviceStatus:(int)serviceId send:(int)send
@@ -566,6 +566,20 @@
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
+}
+
+- (void)startRepeatingTask {
+    if (g_DeviceIp) {
+        short command = UDP_CMD_GET_DEVICE_STATUS;
+        if ([[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:command]) {
+            [self dismissWaitingIndicator];
+        } else {
+            NSLog(@"IP IS NULL");
+        }
+        _udpConnection = false;
+    }
+    [self dismissWaitingIndicator];
+    [self updateUI:nil];
 }
 
 - (void)onRightBarButton:(id)sender {
@@ -1039,6 +1053,10 @@
             } else {
                 // Failure
                 NSLog(@"Set device status failed");
+                
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"yes" forKey:@"error"];
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS object:nil userInfo:userInfo];
             }
         } else if ([resultName isEqualToString:WS_ALARM_GET]) {
             if (data) {
