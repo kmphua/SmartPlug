@@ -939,7 +939,7 @@
                 
                 int buildNumber = 0;
                 id sBuildNumber = [jsonObject objectForKey:@"buildnumber"];
-                if (![sBuildNumber isKindOfClass:[NSNull class]]) {
+                if ([sBuildNumber isKindOfClass:[NSNull class]]) {
                     buildNumber = 0;
                 } else {
                     buildNumber = [sBuildNumber intValue];
@@ -947,7 +947,7 @@
 
                 int protocol = 0;
                 id sProtocol = [jsonObject objectForKey:@"protocol"];
-                if (![sProtocol isKindOfClass:[NSNull class]]) {
+                if ([sProtocol isKindOfClass:[NSNull class]]) {
                     protocol = 0;
                 } else {
                     protocol = [sProtocol intValue];
@@ -958,7 +958,7 @@
                                               
                 int firmwareDate = 0;
                 id sfirmwaredate = [jsonObject objectForKey:@"firmwaredate"];
-                if (![sfirmwaredate isKindOfClass:[NSNull class]]) {
+                if ([sfirmwaredate isKindOfClass:[NSNull class]]) {
                     firmwareDate = 0;
                 } else {
                     firmwareDate = [sfirmwaredate intValue];
