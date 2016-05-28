@@ -481,6 +481,9 @@
     [_viewOutlet setUserInteractionEnabled:NO];
     [_viewNightLight setUserInteractionEnabled:NO];
     
+    _deviceStatusChangedFlag = false;
+    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:_serviceId action:_action];
+    
     [_crashTimer startTimer];
 
     /*
