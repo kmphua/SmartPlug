@@ -212,7 +212,7 @@ int g_UdpCommand;
             if (result == 0) {
                 // Success
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
-                NSLog(@"Register push success!");
+                NSLog(@"Register push success! %@", message);
             } else {
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSLog(@"Register push failed! %@", message);

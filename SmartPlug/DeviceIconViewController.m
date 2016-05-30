@@ -44,7 +44,7 @@
     self.btnCamera = [UIButton buttonWithType:UIButtonTypeCustom];
     [_btnCamera setAutoresizesSubviews:YES];
     [_btnCamera setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
-    [_btnCamera setImage:[UIImage imageNamed:@"ic_camera.png"] forState:UIControlStateNormal];
+    [_btnCamera setImage:[UIImage imageNamed:@"ic_menu_camera.png"] forState:UIControlStateNormal];
     [_btnCamera addTarget:self action:@selector(onBtnCamera:) forControlEvents:UIControlEventTouchUpInside];
     _btnCamera.frame = CGRectMake(navBarWidth-90, 4, 35, 35);
     [_btnCamera.titleLabel setHidden:YES];
@@ -54,7 +54,7 @@
     self.btnGallery = [UIButton buttonWithType:UIButtonTypeCustom];
     [_btnGallery setAutoresizesSubviews:YES];
     [_btnGallery setAutoresizingMask:UIViewAutoresizingFlexibleHeight|UIViewAutoresizingFlexibleLeftMargin];
-    [_btnGallery setImage:[UIImage imageNamed:@"ic_gallery.png"] forState:UIControlStateNormal];
+    [_btnGallery setImage:[UIImage imageNamed:@"ic_menu_gallery.png"] forState:UIControlStateNormal];
     [_btnGallery addTarget:self action:@selector(onBtnGallery:) forControlEvents:UIControlEventTouchUpInside];
     _btnGallery.frame = CGRectMake(navBarWidth-42, 5, 35, 35);
     [_btnGallery.titleLabel setHidden:YES];

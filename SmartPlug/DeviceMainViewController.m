@@ -259,7 +259,7 @@
 }
 
 - (void)handlePushNotification:(NSNotification *)notification {
-    [self updateUI:notification];
+    [self updateDeviceStatusFromServer];
 }
 
 - (void)udpUpdateUI:(NSNotification *)notification {
@@ -679,6 +679,11 @@
 }
 
 - (void)handleUpdateAlarm:(NSData *)data {
+    if (!data || data.length == 0) {
+        NSLog(@"NULL alarm data!!!");
+        return;
+    }
+    
     uint8_t array[512];
     memset(array, 0, 512);
     //I need to delete all the alarms
