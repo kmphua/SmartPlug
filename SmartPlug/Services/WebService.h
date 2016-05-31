@@ -74,7 +74,7 @@
 - (void)devGet:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes devId:(NSString *)devId;
 - (void)devSet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId icon:(NSString *)icon title:(NSString *)title notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger;
 - (void)devSet2:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId model:(NSString *)model buildNumber:(int)buildNumber protocol:(int)protocol hardware:(NSString *)hardware firmware:(NSString *)firmware firmwareDate:(int)firmwareDate;
-- (void)uploadImage:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId image:(UIImage *)image;
+- (void)uploadImage:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId image:(UIImage *)image notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger;
 - (void)devLog:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId;
 - (void)galleryList:(NSString *)userToken lang:(NSString *)lang iconRes:(IconResolution)iconRes;
 

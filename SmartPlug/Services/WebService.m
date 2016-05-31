@@ -9,7 +9,7 @@
 #import "WebService.h"
 #import "UIWaitingView.h"
 
-#define UPLOAD_IMAGE_QUALITY                0.8
+#define UPLOAD_IMAGE_QUALITY                0.6
 #define UPLOAD_IMAGE_SCALE                  0.25
 
 @interface WebService ()
@@ -266,10 +266,10 @@
     [self postData:apiUrl params:params];
 }
 
-- (void)uploadImage:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId image:(UIImage *)image
+- (void)uploadImage:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId image:(UIImage *)image notifyPower:(NSString *)notifyPower notifyTimer:(NSString *)notifyTimer notifyDanger:(NSString *)notifyDanger
 {
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
-    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=upload", userToken, lang, devId];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=upload&notify_power=%@&notify_timer=%@&notify_danger=%@&send=1", userToken, lang, devId, notifyPower, notifyTimer, notifyDanger];
     self.resultName = WS_DEV_SET;
     [self postImageData:apiUrl params:params image:image];
 }

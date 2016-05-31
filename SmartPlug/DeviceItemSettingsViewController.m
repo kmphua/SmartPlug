@@ -33,9 +33,10 @@
     NSString *firmware;
     int firmwaredate;
     NSString *wifi;
-    //int notify_on_power_outage;
-    //int notify_on_co_warning;
-    //int notify_on_timer_activated;
+    int notify_on_power_outage;
+    int notify_on_co_warning;
+    int notify_on_timer_activated;
+    BOOL customIcon;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -55,9 +56,10 @@
     self.tableView.layer.cornerRadius = CORNER_RADIUS;
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
-    //notify_on_power_outage = 0;
-    //notify_on_co_warning = 0;
-    //notify_on_timer_activated = 0;
+    notify_on_power_outage = 0;
+    notify_on_co_warning = 0;
+    notify_on_timer_activated = 0;
+    customIcon = false;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -135,6 +137,7 @@
     } else {
         notify_on_timer_activated = 0;
     }
+    */
     
     NSString *name = _txtName.text;
     if (g_DeviceMac && _deviceInRange) {
@@ -155,7 +158,12 @@
             
             WebService *ws = [WebService new];
             ws.delegate = self;
-            [ws devSet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac icon:iconId title:name notifyPower:[NSString stringWithFormat:@"%d", notify_on_power_outage] notifyTimer:[NSString stringWithFormat:@"%d", notify_on_timer_activated] notifyDanger:[NSString stringWithFormat:@"%d",notify_on_co_warning]];
+            
+            if (!customIcon) {
+                [ws devSet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac icon:iconId title:name notifyPower:[NSString stringWithFormat:@"%d", notify_on_power_outage] notifyTimer:[NSString stringWithFormat:@"%d", notify_on_timer_activated] notifyDanger:[NSString stringWithFormat:@"%d",notify_on_co_warning]];
+            } else {
+                [ws uploadImage:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac image:_pickerImage notifyPower:[NSString stringWithFormat:@"%d", notify_on_power_outage] notifyTimer:[NSString stringWithFormat:@"%d", notify_on_timer_activated] notifyDanger:[NSString stringWithFormat:@"%d",notify_on_co_warning]];
+            }
             return;
         } else {
             NSLog(@"CHECK IF MAC ADDRESS IS NULL");
@@ -163,8 +171,7 @@
             [self dismissWaitingIndicator];
         }
     }
-     */
-    
+     
     self.navigationItem.rightBarButtonItem.enabled = YES;
     [self dismissWaitingIndicator];
 }
@@ -446,6 +453,7 @@
     _device.icon = icon;
     [[SQLHelper getInstance] updatePlugIcon:_device.sid icon:icon];
     [self.tableView reloadData];
+    customIcon = false;
 }
 
 - (void)selectedImage:(UIImage *)image
@@ -454,6 +462,7 @@
     _device.icon = nil;
     _pickerImage = [image copy];
     [self.tableView reloadData];
+    customIcon = true;
 }
 
 //==================================================================
@@ -484,7 +493,7 @@
                 NSLog(@"DB UPDATED SUCCESSFULLY");
                 self.navigationItem.rightBarButtonItem.enabled = YES;
                 [self dismissWaitingIndicator];
-                //[self.navigationController popViewControllerAnimated:YES];
+                [self.navigationController popViewControllerAnimated:YES];
             } else {
                 // Failure
                 self.navigationItem.rightBarButtonItem.enabled = YES;

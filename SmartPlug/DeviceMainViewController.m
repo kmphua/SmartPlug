@@ -181,7 +181,7 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:NO];
+                                                  repeats:YES];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
