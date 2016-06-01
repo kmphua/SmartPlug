@@ -295,7 +295,7 @@
         [self.delegate didUpdateAlarms];
     });
 
-    //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:self userInfo:userInfo];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:self userInfo:userInfo];
 }
 
 - (IBAction)onBtnInitIR:(id)sender {
