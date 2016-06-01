@@ -206,7 +206,8 @@
 }
 
 - (void)handlePush:(NSNotification *)notification {
-    [self getData];
+    [self checkStatus:nil];
+    //[self getData];
 }
 
 - (void)updateAlarmServiceDone:(NSNotification *)notification {

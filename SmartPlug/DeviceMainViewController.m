@@ -183,7 +183,7 @@
                                                    target:self
                                                  selector:@selector(checkStatus:)
                                                  userInfo:nil
-                                                  repeats:YES];
+                                                  repeats:NO];
     
     [self showWaitingIndicator:NSLocalizedString(@"please_wait_done",nil)];
 }
@@ -1062,7 +1062,7 @@
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
                 
                 // Update device status
-                [self updateDeviceStatusFromServer];
+                //[self updateDeviceStatusFromServer];
 
             } else {
                 // Failure
