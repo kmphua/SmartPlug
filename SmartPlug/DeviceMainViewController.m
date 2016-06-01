@@ -174,6 +174,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    
     [self updateDeviceStatusFromServer];
     
     // Start status checker timer
@@ -259,6 +261,10 @@
 }
 
 - (void)handlePushNotification:(NSNotification *)notification {
+    [self updateDeviceStatusFromServer];
+}
+
+- (void)m1UpdateUI:(NSNotification *)notification {
     [self updateDeviceStatusFromServer];
 }
 
@@ -382,7 +388,7 @@
         [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
         //[_imgLeftWarning setHidden:YES];
         //[_imgRightWarning setHidden:YES];
-        [_lblWarning setHidden:YES];
+        //[_lblWarning setHidden:YES];
     } else if (device.co_sensor == 1) {
         [_imgCoWarning setHidden:NO];
         [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
@@ -807,7 +813,7 @@
     
     if (!_deviceStatusChangedFlag) {
         if (![[UDPCommunication getInstance] delayTimer:snooze protocol:0 serviceId:serviceId send:0]) {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"yes" forKey:@"error"];
+            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"btn_yes" forKey:@"error"];
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:nil userInfo:userInfo];
         } else {
             if(serviceId == RELAY_SERVICE){
@@ -1062,7 +1068,7 @@
                 // Failure
                 NSLog(@"Set device status failed");
                 
-                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"yes" forKey:@"error"];
+                NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"btn_yes" forKey:@"error"];
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS object:nil userInfo:userInfo];
             }

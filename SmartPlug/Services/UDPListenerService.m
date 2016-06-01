@@ -236,7 +236,8 @@ static UDPListenerService *instance;
     
     if(g_UdpCommand == UDP_CMD_SET_DEVICE_TIMERS){
         if(code == 0){
-            //code = 1;
+            NSLog(@"TIMERS SENT SUCCESSFULLY");
+            code = 1;
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMERS_SENT_SUCCESS
                                                                 object:self
                                                               userInfo:nil];

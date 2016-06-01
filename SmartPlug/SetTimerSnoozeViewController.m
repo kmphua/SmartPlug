@@ -48,7 +48,7 @@
     [self.btnSnooze1Hour setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
     [self.btnCancelSnooze setBackgroundImage:stretchableBtnImage forState:UIControlStateNormal];
     
-    NSString *title = [NSString stringWithFormat:@"%@",NSLocalizedString(@"timers_set", nil)];
+    NSString *title = [NSString stringWithFormat:@"%@",NSLocalizedString(@"timer_set", nil)];
     
     self.lblTitle.text = title;
     [self.btnAddTimer setTitle:NSLocalizedString(@"add_new_timer", nil) forState:UIControlStateNormal];
@@ -135,25 +135,25 @@
             
             int intdow = alarm.dow;
             /* returns 1-7. Sun-1, Mon-2 ... Sat-7 */
-            if(((intdow >> 1) & 1) == 1){
+            if(((intdow >> 0) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"sunday", nil)];
             }
-            if(((intdow >> 2) & 1) == 1){
+            if(((intdow >> 1) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"monday", nil)];
             }
-            if(((intdow >> 3) & 1) == 1){
+            if(((intdow >> 2) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"tuesday", nil)];
             }
-            if(((intdow >> 4) & 1) == 1){
+            if(((intdow >> 3) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"wednesday", nil)];
             }
-            if(((intdow >> 5) & 1) == 1){
+            if(((intdow >> 4) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"thursday", nil)];
             }
-            if(((intdow >> 6) & 1) == 1){
+            if(((intdow >> 5) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"friday", nil)];
             }
-            if(((intdow >> 7) & 1) == 1){
+            if(((intdow >> 6) & 1) == 1){
                 [dow appendString:NSLocalizedString(@"saturday", nil)];
             }
             
@@ -174,11 +174,11 @@
         if (code == 0) {
             [self.view makeToast:NSLocalizedString(@"SnoozeSentSuccess", nil)
                         duration:3.0
-                        position:CSToastPositionCenter];
+                        position:CSToastPositionBottom];
         } else {
             [self.view makeToast:NSLocalizedString(@"ErrorPleaseTryAgain", nil)
                         duration:3.0
-                        position:CSToastPositionCenter];
+                        position:CSToastPositionBottom];
         }
     }
 }

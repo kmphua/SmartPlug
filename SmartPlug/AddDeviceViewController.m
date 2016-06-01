@@ -571,7 +571,7 @@
      
     [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
                 duration:3.0
-                position:CSToastPositionCenter];
+                position:CSToastPositionBottom];
     
     [tableView deselectRowAtIndexPath:indexPath animated:YES];
 }
@@ -603,7 +603,7 @@
                 // Success
                 [self.view makeToast:NSLocalizedString(@"title_deviceAdded", nil)
                             duration:3.0
-                            position:CSToastPositionCenter];
+                            position:CSToastPositionBottom];
                 
                 [[SQLHelper getInstance] insertPlug:_plug active:1];
                 

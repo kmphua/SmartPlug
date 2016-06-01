@@ -74,7 +74,7 @@
     if (ir_filename == -1){
         [self.view makeToast:NSLocalizedString(@"ir_timeout", nil)
                     duration:3.0
-                    position:CSToastPositionCenter];
+                    position:CSToastPositionBottom];
         [_btnTestCommand setEnabled:NO];
         [_btnAddNow setEnabled:NO];
     } else {

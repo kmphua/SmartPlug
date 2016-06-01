@@ -11,6 +11,7 @@
 #import "MultiSelectSegmentedControl.h"
 #import "IRListCommandsViewController.h"
 #import "UDPCommunication.h"
+#import "MBProgressHUD.h"
 
 @interface ScheduleActionViewController () <MultiSelectSegmentedControlDelegate, SelectActionDelegate, IRListCommandsDelegate>
 {
@@ -39,6 +40,8 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imgDeviceAction;
 @property (weak, nonatomic) IBOutlet UIButton *btnInitIR;
 @property (weak, nonatomic) IBOutlet UIButton *btnEndIR;
+
+@property (strong, nonatomic) MBProgressHUD *hud;
 
 @property (assign, nonatomic) BOOL deviceStatusChangedFlag;
 @property (assign, nonatomic) BOOL udpConnection;
@@ -161,10 +164,23 @@
     // Dispose of any resources that can be recreated.
 }
 
+- (void)showWaitingIndicator:(NSString *)labelText {
+    _hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    _hud.mode = MBProgressHUDModeIndeterminate;
+    _hud.labelText = labelText;
+    [_hud show:YES];
+}
+
+- (void)dismissWaitingIndicator {
+    [_hud hide:YES];
+}
+
 - (void)timersSentSuccess:(NSNotification *)notification {
     NSLog(@"TIMERS SENT SUCCESSFULLY BROADCAST");
     _deviceStatusChangedFlag = true;
     _udpConnection = true;
+    
+    [[UDPCommunication getInstance] sendTimersHTTP:g_DeviceMac send:1];
 }
 
 - (void)deviceNotReached:(NSNotification *)notification {
@@ -175,20 +191,20 @@
         if (error != nil && error.length>0){
             [self.view makeToast:NSLocalizedString(@"connection_error", nil)
                         duration:3.0
-                        position:CSToastPositionCenter];
+                        position:CSToastPositionBottom];
         } else {
             [self.view makeToast:NSLocalizedString(@"please_wait", nil)
                         duration:3.0
-                        position:CSToastPositionCenter];
+                        position:CSToastPositionBottom];
         }
     }
 }
 
 - (void)setDOW {
     NSMutableIndexSet *indexSet = [NSMutableIndexSet new];
-    for (int i=1; i<=7; i++) {
+    for (int i=0; i<7; i++) {
         if (((dow >> i) & 1) == 1) {
-            [indexSet addIndex:i-1];
+            [indexSet addIndex:i];
         }
     }
     
@@ -219,6 +235,8 @@
 
 
 - (void)onRightBarButton:(id)sender {
+    [self showWaitingIndicator:NSLocalizedString(@"processing_command", nil)];
+    
     self.navigationItem.rightBarButtonItem.enabled = NO;
     
     // Save to database
@@ -259,7 +277,7 @@
     NSDictionary *userInfo;
     if(!_deviceStatusChangedFlag) {
         if (![[UDPCommunication getInstance] sendTimersHTTP:g_DeviceMac send:0]) {
-            userInfo = [NSDictionary dictionaryWithObject:@"yes" forKey:@"error"];
+            userInfo = [NSDictionary dictionaryWithObject:@"btn_yes" forKey:@"error"];
         } else {
             userInfo = [NSDictionary dictionaryWithObject:@"" forKey:@"error"];
             _deviceStatusChangedFlag = false;
@@ -270,12 +288,14 @@
         _deviceStatusChangedFlag = false;
     }
     
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:self userInfo:userInfo];
+    [self dismissWaitingIndicator];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
         [self.navigationController popViewControllerAnimated:YES];
         [self.delegate didUpdateAlarms];
     });
+
+    //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:self userInfo:userInfo];
 }
 
 - (IBAction)onBtnInitIR:(id)sender {
@@ -303,7 +323,7 @@
         NSLog(@"multiSelect with tag %ld deselected button at index: %ld", multiSelectSegmentedControl.tag, index);
     }
     
-    int position = (int)index+1;
+    int position = (int)index;
     dow ^= (1 << position);
     
     NSLog(@"selected: '%@'", [multiSelectSegmentedControl.selectedSegmentTitles componentsJoinedByString:@","]);

@@ -67,7 +67,7 @@
     
     [self.view makeToast:NSLocalizedString(@"please_wait", nil)
                 duration:3.0
-                position:CSToastPositionCenter];
+                position:CSToastPositionBottom];
     
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, (int64_t)(1.0 * NSEC_PER_SEC)), dispatch_get_main_queue(), ^{
 
@@ -81,14 +81,14 @@
     //udpconnection = true;
     [self.view makeToast:NSLocalizedString(@"alarms_sent_success", nil)
                 duration:3.0
-                position:CSToastPositionCenter];
+                position:CSToastPositionBottom];
 }
 
 - (void)onRightBarButton:(id)sender {
     ScheduleActionViewController *scheduleActionVC = [[ScheduleActionViewController alloc] initWithNibName:@"ScheduleActionViewController" bundle:nil];
     scheduleActionVC.deviceId = _devId;
     scheduleActionVC.deviceName = _devName;
-    scheduleActionVC.serviceId = RELAY_SERVICE;
+    scheduleActionVC.serviceId = _serviceId;
     scheduleActionVC.delegate = self;
     [self.navigationController pushViewController:scheduleActionVC animated:YES];
 }
@@ -144,31 +144,40 @@
     Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
     
     NSMutableString *name = [NSMutableString new];
+    
+    [name appendString:[NSString stringWithFormat:@" %.2d:%.2d-%.2d:%.2d  ", alarm.initial_hour,
+                        alarm.initial_minute, alarm.end_hour, alarm.end_minute]];
+
     int dow = alarm.dow;
+    if (((dow >> 0) & 1) == 1){
+        [name appendString:NSLocalizedString(@"sunday", nil)];
+        [name appendString:@" "];
+    }
     if (((dow >> 1) & 1) == 1){
-        [name appendString:@"Sun,"];
+        [name appendString:NSLocalizedString(@"monday", nil)];
+        [name appendString:@" "];
     }
     if (((dow >> 2) & 1) == 1){
-        [name appendString:@"Mon,"];
+        [name appendString:NSLocalizedString(@"tuesday", nil)];
+        [name appendString:@" "];
     }
     if (((dow >> 3) & 1) == 1){
-        [name appendString:@"Tue,"];
+        [name appendString:NSLocalizedString(@"wednesday", nil)];
+        [name appendString:@" "];
     }
     if (((dow >> 4) & 1) == 1){
-        [name appendString:@"Wed,"];
+        [name appendString:NSLocalizedString(@"thursday", nil)];
+        [name appendString:@" "];
     }
     if (((dow >> 5) & 1) == 1){
-        [name appendString:@"Thu,"];
+        [name appendString:NSLocalizedString(@"friday", nil)];
+        [name appendString:@" "];
     }
     if (((dow >> 6) & 1) == 1){
-        [name appendString:@"Fri,"];
-    }
-    if (((dow >> 7) & 1) == 1){
-        [name appendString:@"Sat,"];
+        [name appendString:NSLocalizedString(@"saturday", nil)];
+        [name appendString:@" "];
     }
     
-    [name appendString:[NSString stringWithFormat:@" %.2d:%.2d to %.2d:%.2d", alarm.initial_hour,
-                        alarm.initial_minute, alarm.end_hour, alarm.end_minute]];
     cell.lblScheduleTime.text = name;
     
     int serviceId = alarm.service_id;
@@ -214,7 +223,7 @@
                                           message:NSLocalizedString(@"msg_removeActionBtn", nil)
                                           preferredStyle:UIAlertControllerStyleAlert];
     
-    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+    UIAlertAction* ok = [UIAlertAction actionWithTitle:NSLocalizedString(@"btn_yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         Alarm *alarm = [self.alarms objectAtIndex:[indexPath row]];
         BOOL result = [[SQLHelper getInstance] deleteAlarmData:alarm.alarm_id];
         NSLog(@"Alarm %d deleted = %d", alarm.alarm_id, result);
@@ -227,7 +236,7 @@
     }];
     [alertController addAction:ok];
     
-    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:nil];
+    UIAlertAction* cancel = [UIAlertAction actionWithTitle:NSLocalizedString(@"btn_no", nil) style:UIAlertActionStyleDefault handler:nil];
     [alertController addAction:cancel];
 
     [self presentViewController:alertController animated:YES completion:nil];

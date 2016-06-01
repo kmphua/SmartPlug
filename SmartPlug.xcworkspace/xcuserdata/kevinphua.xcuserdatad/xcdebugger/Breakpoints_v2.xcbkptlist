@@ -4,18 +4,28 @@
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.ExceptionBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            scope = "0"
+            stopOnStyle = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IRCodeModeViewController.m"
-            timestampString = "485169257.590008"
+            filePath = "SmartPlug/ScheduleActionViewController.m"
+            timestampString = "486482469.425425"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "228"
-            endingLineNumber = "228"
-            landmarkName = "-onBtnIr:"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
+            landmarkName = "-onRightBarButton:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -25,13 +35,29 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IRCodeModeViewController.m"
-            timestampString = "485169257.590008"
+            filePath = "SmartPlug/ScheduleActionViewController.m"
+            timestampString = "486482476.257937"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "315"
-            endingLineNumber = "315"
-            landmarkName = "-GMGridView:didTapOnItemAtIndex:"
+            startingLineNumber = "183"
+            endingLineNumber = "183"
+            landmarkName = "-timersSentSuccess:"
+            landmarkType = "5">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "SmartPlug/Services/UDPListenerService.m"
+            timestampString = "486482578.712299"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "238"
+            endingLineNumber = "238"
+            landmarkName = "-udpSocket:didReceiveData:fromAddress:withFilterContext:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -195,7 +195,7 @@
         if (error != nil && error.length>0) {
             [self.view makeToast:NSLocalizedString(@"connection_error", nil)
                         duration:3.0
-                        position:CSToastPositionCenter];
+                        position:CSToastPositionBottom];
         } else {
             NSLog(@"ERROR MESSAGE IS NULL");
         }

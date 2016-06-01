@@ -410,11 +410,11 @@
                                               message:NSLocalizedString(@"msg_removeAndResetBtn", nil)
                                               preferredStyle:UIAlertControllerStyleAlert];
         
-        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"Yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"btn_yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
             [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
         }];
         [alertController addAction:actionYes];
-        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"No", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
+        UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"btn_no", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
         }];
         [alertController addAction:actionNo];
         [self presentViewController:alertController animated:YES completion:nil];
@@ -426,11 +426,11 @@
                 
                 [self.view makeToast:NSLocalizedString(@"please_wait", nil)
                             duration:3.0
-                            position:CSToastPositionCenter];
+                            position:CSToastPositionBottom];
             } else {
                 [self.view makeToast:NSLocalizedString(@"no_udp_Connection", nil)
                             duration:3.0
-                            position:CSToastPositionCenter];
+                            position:CSToastPositionBottom];
             }
         } else {
             [self.view makeToast:NSLocalizedString(@"ip_not_found", nil)

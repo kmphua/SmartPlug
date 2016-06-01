@@ -963,9 +963,9 @@ static SQLHelper *instance;
             [NSNumber numberWithInt:a.end_hour],
             [NSNumber numberWithInt:a.end_minute],
             [NSNumber numberWithInt:a.snooze],
-            [NSNumber numberWithInt:a.alarm_id],
             [NSNumber numberWithInt:a.init_ir],
-            [NSNumber numberWithInt:a.end_ir]];
+            [NSNumber numberWithInt:a.end_ir],
+            [NSNumber numberWithInt:a.alarm_id]];
     [db close];
     return result;
 }
