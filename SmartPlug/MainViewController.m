@@ -238,6 +238,12 @@
         }
     }
     
+    // Update IP address of device
+    if (jsTemp.name && jsTemp.name.length>0 && jsTemp.ip && jsTemp.ip.length>0) {
+        NSLog(@"Updating device %@ IP to %@", jsTemp.name, jsTemp.ip);
+        [[SQLHelper getInstance] updatePlugIP:jsTemp.name ip:jsTemp.ip];
+    }
+    
     NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:g_DeviceMac];
     if (plugs && plugs.count > 0) {
         JSmartPlug *plug = [plugs firstObject];
@@ -275,7 +281,9 @@
     NSArray *plugs = [[mDNSService getInstance] plugs];
     for (JSmartPlug *plug in plugs) {
         NSLog(@"Updating plug %@ with ip %@", plug.name, plug.ip);
-        [[SQLHelper getInstance] updatePlugIP:plug.name ip:plug.ip];
+        if (plug.name && plug.name.length>0 && plug.ip && plug.ip.length>0) {
+            [[SQLHelper getInstance] updatePlugIP:plug.name ip:plug.ip];
+        }
     }
     
     self.plugs = [[SQLHelper getInstance] getPlugData];
