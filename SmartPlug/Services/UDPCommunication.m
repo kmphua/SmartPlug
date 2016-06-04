@@ -122,6 +122,7 @@ static UDPCommunication *instance;
             [self generate_header];
         }
         
+        memset(delayT, 0, sizeof(delayT));
         for (int i = 0; i < 14; i++) {
             delayT[i] = hMsg[i];
         }
@@ -194,6 +195,8 @@ static UDPCommunication *instance;
     }
     
     [self generate_header];
+    
+    memset(rMsg, 0, sizeof(rMsg));
     for(int i=0; i<14;i++){
         rMsg[i] = hMsg[i];
     }
@@ -212,6 +215,8 @@ static UDPCommunication *instance;
     }
 
     [self generate_header];
+    
+    memset(iMsg, 0, sizeof(iMsg));
     for (int i = 0; i < 14; i++){
         iMsg[i] = hMsg[i];
     }
@@ -241,6 +246,8 @@ static UDPCommunication *instance;
     }
 
     [self generate_header];
+    
+    memset(iMsg, 0, sizeof(iMsg));
     for (int i = 0; i < 14; i++){
         iMsg[i] = hMsg[i];
     }
@@ -316,6 +323,8 @@ static UDPCommunication *instance;
     NSString * ip = g_DeviceIp;
     g_UdpCommand = UDP_CMD_GET_DEVICE_TIMERS;
     [self generate_header];
+    
+    memset(irHeader, 0, sizeof(irHeader));
     for(int i = 0; i < sizeof(hMsg); i++){
         irHeader[i] = hMsg[i];
     }
@@ -356,6 +365,7 @@ static UDPCommunication *instance;
     [self generate_header];
     
     int i;
+    memset(timers, 0, sizeof(timers));
     for(i = 0; i < sizeof(hMsg); i++){
         timers[i] = hMsg[i];
     }
@@ -411,6 +421,7 @@ static UDPCommunication *instance;
     [self generate_header_http];
     
     int i = 0;
+    memset(timers, 0, sizeof(timers));
     for(i = 0; i < sizeof(hMsg); i++){
         timers[i] = hMsg[i];
     }
@@ -493,6 +504,8 @@ static UDPCommunication *instance;
     } else {
         [self generate_header];
     }
+    
+    memset(timerHeader, 0, sizeof(timerHeader));
     for (int i = 0; i < sizeof(hMsg); i++) {
         timerHeader[i] = hMsg[i];
     }
@@ -533,6 +546,7 @@ static UDPCommunication *instance;
         [self generate_header];
     }
 
+    memset(timerHeader, 0, sizeof(timerHeader));
     for(int i = 0; i < sizeof(hMsg); i++){
         timerHeader[i] = hMsg[i];
     }
@@ -573,11 +587,12 @@ static UDPCommunication *instance;
         [self generate_header];
     }
 
+    memset(timer, 0, sizeof(timer));
     for(int i = 0; i < sizeof(hMsg); i++){
         timer[i] = hMsg[i];
     }
     
-    NSString *ip = g_DeviceIp;
+    //NSString *ip = g_DeviceIp;
     
     NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
     if (alarms && alarms.count>0) {
@@ -647,8 +662,10 @@ static UDPCommunication *instance;
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
-    
+
     [self generate_header];
+
+    memset(sMsg, 0, sizeof(sMsg));
     for(int i=0; i<14;i++){
         sMsg[i] = hMsg[i];
     }
@@ -775,7 +792,7 @@ static UDPCommunication *instance;
         } else {
             _js.hall_sensor = 0;
         }
-        uint8_t datatype = lMsg[26];
+        //uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if (data == 0x01){
             _js.relay = 1;
@@ -793,8 +810,8 @@ static UDPCommunication *instance;
     int service_id = [Global process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
     if(service_id == NIGHTLED_SERVICE) {
         NSLog(@"NIGHT LIGHT SERVICE");
-        int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
-        uint8_t datatype = lMsg[36];                                                    //always the same 0x01
+        //int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        //uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
             _js.nightlight = 1;
@@ -818,8 +835,8 @@ static UDPCommunication *instance;
         } else {
             _js.co_sensor = 0;                      //NORMAL
         }
-        uint8_t datatype = lMsg[46];
-        uint8_t data = lMsg[47];
+        //uint8_t datatype = lMsg[46];
+        //uint8_t data = lMsg[47];
     }
 }
 
@@ -828,6 +845,7 @@ static UDPCommunication *instance;
     int header = 0x534D5254;
     int msgid = (int)(random() * 429496729) + 1;
     int seq = 0x80000000;
+    memset(hMsg, 0, sizeof(hMsg));
     hMsg[0] = (uint8_t) header;
     hMsg[1] = (uint8_t) (header >> 8);
     hMsg[2] = (uint8_t) (header >> 16);
@@ -847,6 +865,7 @@ static UDPCommunication *instance;
 - (void)generate_header_http
 {
     int header = 0x534D5254;
+    memset(hMsg, 0, sizeof(hMsg));
     hMsg[3] = (uint8_t)(header);
     hMsg[2] = (uint8_t)((header >> 8 ));
     hMsg[1] = (uint8_t)((header >> 16 ));
