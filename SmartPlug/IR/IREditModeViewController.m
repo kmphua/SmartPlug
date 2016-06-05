@@ -263,7 +263,8 @@
 
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
-    //IrGroup *group = [_irGroups objectAtIndex:position];
+    NSLog(@"tapped on index : %d", position);
+    //IrGroup *group = [_irGroups objectAtIndex:position-1];
     //[[UDPCommunication getInstance] sendIRFileName:code.filename];
     //NSLog(@"Sending IR filename %d", code.filename);
 }

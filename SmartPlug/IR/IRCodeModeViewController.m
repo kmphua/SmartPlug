@@ -230,7 +230,7 @@
     for (IrCode *code in _codes) {
         if (code.code_id == codeId) {
             [self setDeviceStatus:g_DeviceMac serviceId:IR_SERVICE action:code.filename];
-            //[[UDPCommunication getInstance] sendIRFileName:code.filename];
+            [[UDPCommunication getInstance] sendIRFileName:g_DeviceMac filename:code.filename];
             NSLog(@"Sending IR filename %d", code.filename);
             break;
         }
