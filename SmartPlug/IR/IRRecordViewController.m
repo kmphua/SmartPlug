@@ -126,7 +126,12 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:groupId buttonId:0 name:_name icon:iconId code:ir_filename iconRes:[Global getIconResolution]];
+    
+    if (!_isCustomIcon) {
+        [ws devIrSetButtons:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:groupId buttonId:0 name:_name icon:iconId code:ir_filename iconRes:[Global getIconResolution]];
+    } else {
+        [ws uploadIrImageButton:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:groupId buttonId:0 name:_name iconRes:[Global getIconResolution] image:_customIcon];
+    }
     
     [self.navigationController popViewControllerAnimated:YES];
     [self.delegate onSaveIRRecord];

@@ -394,4 +394,20 @@
     [self postData:apiUrl params:params];
 }
 
+- (void)uploadIrImageGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId name:(NSString *)name iconRes:(IconResolution)iconRes image:(UIImage *)image
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=group&action=%@&groupid=%d&name=%@&icon=upload&res=%d", userToken, lang, devId, serviceId, action, groupId, name, iconRes];
+    self.resultName = WS_DEV_IR_SET;
+    [self postImageData:apiUrl params:params image:image];
+}
+
+- (void)uploadIrImageButton:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId buttonId:(int)buttonId name:(NSString *)name iconRes:(IconResolution)iconRes image:(UIImage *)image
+{
+    NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
+    NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=group&action=%@&groupid=%d&buttonid=%d&name=%@&icon=upload&res=%d", userToken, lang, devId, serviceId, action, groupId, buttonId, name, iconRes];
+    self.resultName = WS_DEV_IR_SET;
+    [self postImageData:apiUrl params:params image:image];
+}
+
 @end

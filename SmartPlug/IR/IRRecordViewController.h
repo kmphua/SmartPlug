@@ -19,6 +19,8 @@
 @property (nonatomic, assign) int groupId;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *icon;
+@property (nonatomic, strong) UIImage *customIcon;
+@property (nonatomic, assign) BOOL isCustomIcon;
 @property (nonatomic, assign) id<IRRecordDelegate> delegate;
 
 @end

@@ -267,7 +267,7 @@ static UDPListenerService *instance;
         }
     }
     
-    if(code == 0x1000 && process_data == true){
+    if(code == 0x1000 && process_data == false){
         code = 1;
         NSLog(@"I GOT A BROADCAST");
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
@@ -314,11 +314,14 @@ static UDPListenerService *instance;
 {
     code = 1;
     /**********************************************/
-    int header = abs([Global process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
+    int header = abs([Global process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);
     
-    if (header != 1397576276) {
-        process_data = true;
+    if (header == 0x534D5253) {
+        process_data = true;    // Broadcast is 0x534D5254, OTA is 0x534D5254
+    } else {
+        process_data = false;
     }
+    
     //NSLog(@"HEADER: %d", header);
     /**********************************************/
     int msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);

@@ -195,7 +195,9 @@
 {
     [picker dismissViewControllerAnimated:YES completion:nil];
     if (self.delegate) {
-        [self.delegate selectedImage:image];
+        // Crop image to square
+        UIImage *croppedImage = [Global squareCropImageToSideLength:image sideLength:400];
+        [self.delegate selectedImage:croppedImage];
     }
     [self.navigationController popViewControllerAnimated:YES];
 }

@@ -13,11 +13,14 @@
 #define FILE_PATH   @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
 
 @interface IRCustomViewController()<UITextFieldDelegate, DeviceIconDelegate, IRRecordDelegate>
+{
+    BOOL customIcon;
+}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UITextField *txtName;
 @property (nonatomic, strong) UIImageView *iconImageView;
-
+@property (nonatomic, strong) UIImage *pickerImage;
 @property (nonatomic, strong) NSString *filePath;
 
 @end
@@ -26,6 +29,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    customIcon = false;
     
     // Do any additional setup after loading the view from its nib.
     self.tableView.backgroundColor = [UIColor clearColor];
@@ -63,6 +68,8 @@
     irRecordVC.groupId = _groupId;
     irRecordVC.icon = _filePath;
     irRecordVC.delegate = self;
+    irRecordVC.customIcon = _pickerImage;
+    irRecordVC.isCustomIcon = customIcon;
     [self.navigationController pushViewController:irRecordVC animated:YES];
 }
 
@@ -75,12 +82,15 @@
     // Update group icon
     _filePath = icon;
     [self.tableView reloadData];
+    customIcon = false;
 }
 
 - (void)selectedImage:(UIImage *)image
 {
     // Update device icon with picker image
-    
+    _pickerImage = [image copy];
+    [self.tableView reloadData];
+    customIcon = true;
 }
 
 //==================================================================
@@ -165,10 +175,15 @@
         }
         
         NSString *imagePath = DEFAULT_IR_ICON_PATH;
-        if (_filePath && _filePath.length>0) {
+        if (_filePath && _filePath.length>0 && !customIcon) {
             imagePath = _filePath;
+            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+        } else if (self.pickerImage) {
+            [_iconImageView setImage:self.pickerImage];
+        } else {
+            imagePath = DEFAULT_IR_ICON_PATH;
+            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
         }
-        [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
     
     return cell;

@@ -199,6 +199,9 @@ static mDNSService *instance;
 - (NSString *)getNetServiceAddress:(NSArray *)addresses
 {
     NSData *myData = nil;
+    if (!addresses || addresses.count == 0) {
+        return nil;
+    }
     myData = [addresses objectAtIndex:0];
     
     NSString *addressString;

@@ -352,9 +352,9 @@
     }
 }
 
-- (BOOL)deviceHasAlarm:(int)deviceId {
+- (BOOL)deviceHasAlarm:(NSString *)deviceId {
     BOOL toReturn = false;
-    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataById:deviceId];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:deviceId];
     if (alarms && alarms.count > 0) {
         toReturn = true;
     }
@@ -407,7 +407,7 @@
     [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     [cell.imgDeviceIcon setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
     
-    if ([self deviceHasAlarm:plug.dbid]) {
+    if ([self deviceHasAlarm:plug.sid]) {
         [cell.btnTimer setHidden:NO];
         if (plug.snooze > 0) {
             [cell.btnTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_delay"] forState:UIControlStateNormal];

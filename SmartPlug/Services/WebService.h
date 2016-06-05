@@ -95,6 +95,8 @@
 - (void)devIrSetGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId name:(NSString *)name icon:(int)icon iconRes:(IconResolution)iconRes;
 - (void)devIrSetButtons:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId buttonId:(int)buttonId name:(NSString *)name icon:(int)icon code:(int)code iconRes:(IconResolution)iconRes;
 - (void)irDetect:(NSString *)userToken lang:(NSString *)lang;
+- (void)uploadIrImageGroup:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId name:(NSString *)name iconRes:(IconResolution)iconRes image:(UIImage *)image;
+- (void)uploadIrImageButton:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId serviceId:(int)serviceId action:(NSString *)action groupId:(int)groupId buttonId:(int)buttonId name:(NSString *)name iconRes:(IconResolution)iconRes image:(UIImage *)image;
 
 @end
 

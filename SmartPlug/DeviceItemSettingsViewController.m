@@ -37,6 +37,7 @@
     int notify_on_co_warning;
     int notify_on_timer_activated;
     BOOL customIcon;
+    BOOL isSave;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -60,6 +61,7 @@
     notify_on_co_warning = 0;
     notify_on_timer_activated = 0;
     customIcon = false;
+    isSave = false;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -158,6 +160,7 @@
             
             WebService *ws = [WebService new];
             ws.delegate = self;
+            isSave = YES;
             
             if (!customIcon) {
                 [ws devSet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac icon:iconId title:name notifyPower:[NSString stringWithFormat:@"%d", notify_on_power_outage] notifyTimer:[NSString stringWithFormat:@"%d", notify_on_timer_activated] notifyDanger:[NSString stringWithFormat:@"%d",notify_on_co_warning]];
@@ -303,17 +306,18 @@
             
             UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
             [imageView setBackgroundColor:[UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0]];
-
+            
             NSString *imagePath = DEFAULT_ICON_PATH;
             if (self.device.icon && self.device.icon.length>0) {
                 // Server icon
                 imagePath = self.device.icon;
                 [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-            } else {
+            } else if (self.pickerImage) {
                 // Selected image from picker
-                if (self.pickerImage) {
-                    [imageView setImage:self.pickerImage];
-                }
+                [imageView setImage:self.pickerImage];
+            } else {
+                imagePath = DEFAULT_ICON_PATH;
+                [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
             }
             [cell addSubview:imageView];
         }
@@ -348,8 +352,8 @@
             }
             break;
         case ROW_CO_SENSOR:
+            cell.textLabel.text = NSLocalizedString(@"id_cosensor", nil);
             if (g_DeviceIp && g_DeviceIp.length>0 && self.device.co_sensor) {
-                cell.textLabel.text = NSLocalizedString(@"id_cosensor", nil);
                 cell.accessoryView = [[UIImageView alloc] initWithImage:[UIImage imageNamed:@"ic_check"]];
             }
             break;
@@ -493,7 +497,11 @@
                 NSLog(@"DB UPDATED SUCCESSFULLY");
                 self.navigationItem.rightBarButtonItem.enabled = YES;
                 [self dismissWaitingIndicator];
-                [self.navigationController popViewControllerAnimated:YES];
+                
+                if (isSave) {
+                    [self.navigationController popViewControllerAnimated:YES];
+                    isSave = false;
+                }
             } else {
                 // Failure
                 self.navigationItem.rightBarButtonItem.enabled = YES;

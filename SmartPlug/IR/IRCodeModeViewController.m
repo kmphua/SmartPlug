@@ -8,7 +8,6 @@
 
 #import "IRCodeModeViewController.h"
 #import "IREditModeViewController.h"
-#import "DeviceIconViewController.h"
 #import "GMGridView.h"
 
 #import "IRRecordViewController.h"

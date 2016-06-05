@@ -14,11 +14,14 @@
 #define FILE_PATH       @"http://rgbetanco.com/jiEE/icons/btn_power_pressed.png"
 
 @interface IREditItemViewController ()<DeviceIconDelegate, UITextFieldDelegate>
+{
+    BOOL customIcon;
+}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (nonatomic, strong) UITextField *txtName;
 @property (nonatomic, strong) UIImageView *iconImageView;
-
+@property (nonatomic, strong) UIImage *pickerImage;
 @property (nonatomic, strong) NSString *icon;
 
 @end
@@ -27,6 +30,8 @@
 
 - (void)viewDidLoad {
     [super viewDidLoad];
+    
+    customIcon = false;
     
     // Do any additional setup after loading the view from its nib.
     self.tableView.backgroundColor = [UIColor clearColor];
@@ -69,7 +74,12 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text icon:iconId iconRes:[Global getIconResolution]];
+    
+    if (!customIcon) {
+        [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text icon:iconId iconRes:[Global getIconResolution]];
+    } else {
+        [ws uploadIrImageGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text iconRes:[Global getIconResolution] image:_pickerImage];
+    }
 }
 
 //==================================================================
@@ -80,12 +90,15 @@
     // Update device icon
     _icon = icon;
     [self.tableView reloadData];
+    customIcon = false;
 }
 
 - (void)selectedImage:(UIImage *)image
 {
     // Update device icon with picker image
-    
+    _pickerImage = [image copy];
+    [self.tableView reloadData];
+    customIcon = true;
 }
 
 //==================================================================
@@ -162,8 +175,13 @@
         NSString *imagePath = DEFAULT_IR_ICON_PATH;
         if (_icon && _icon.length>0) {
             imagePath = _icon;
+            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
+        } else if (self.pickerImage) {
+            [_iconImageView setImage:self.pickerImage];
+        } else {
+            imagePath = DEFAULT_IR_ICON_PATH;
+            [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
         }
-        [_iconImageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
     }
     
     return cell;
@@ -224,6 +242,5 @@
 - (void)connectFail:(NSString*)resultName {
     NSLog(@"Connect fail for %@", resultName);
 }
-
 
 @end
