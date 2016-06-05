@@ -98,7 +98,7 @@
         if ([resultName compare:WS_CHANGE_PWD] == NSOrderedSame) {
             if (code == 0) {
                 // Success
-                NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"message"];
                 UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:NSLocalizedString(@"title_passwordResetSent", nil)
                                                                     message:NSLocalizedString(@"msg_passwordResetBtn", nil)
                                                                    delegate:nil

@@ -15,6 +15,10 @@
 #define UDP_SERVER_PORT             20004
 #define UDP_TESTING_PORT            20005
 
+@implementation Command
+
+@end
+
 @interface UDPCommunication()<GCDAsyncUdpSocketDelegate, WebServiceDelegate>
 {
     uint8_t lMsg[MAX_UDP_DATAGRAM_LEN];
@@ -40,6 +44,9 @@
     
     GCDAsyncUdpSocket *udpSocket;
     BOOL isRunning;
+    
+    int mLastMsgID;
+    NSMutableDictionary *mQueuedCommands;
 }
 
 @end
@@ -69,18 +76,35 @@ static UDPCommunication *instance;
         irCode = 0;
         _IRCodes = [NSMutableArray new];
         _js = [JSmartPlug new];
+        mLastMsgID = 0;
+        mQueuedCommands = [NSMutableDictionary new];
     }
     return self;
 }
  
-- (void)sendUDP:(NSString *)ip data:(NSData *)data
+- (void)sendUDP:(Command *)cmd data:(NSData *)data
 {
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
+    if (!cmd) {
+        NSLog(@"sendUDP: null command!");
+        return;
+    }
+    if (!data) {
+        NSLog(@"sendUDP: null data!");
+        return;
+    }
 
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
-    NSLog(@"UDP PACKET SENT");
+    NSLog(@"sendUDP: MAC = %@", cmd.macID);
+    NSString *ip = [[SQLHelper getInstance] getPlugIP:cmd.macID];
+    if (ip && ip.length>0) {
+        [self addCommand:cmd];
+        [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
+        NSLog(@"UDP PACKET SENT");
+    } else {
+        NSLog(@"sendUDP: NULL IP!!!");
+    }
 }
 
 //==================================================================
@@ -108,93 +132,90 @@ static UDPCommunication *instance;
 }
 
 //==================================================================
+#pragma mark - Private methods
+//==================================================================
+
+- (void)addCommand:(Command *)command
+{
+    [mQueuedCommands setObject:command forKey:command.macID];
+}
+
+- (Command *)dequeueCommandByIp:(NSString *)ip msgID:(int)msgID
+{
+    NSString *mac = [[SQLHelper getInstance] getPlugMacFromIP:ip];
+    if (!mac) {
+        //mac = ia.getHostAddress();
+    }
+    
+    // convert ia to string
+    return [self dequeueCommand:mac msgID:msgID];
+}
+
+- (Command *)dequeueCommand:(NSString *)macID msgID:(int)msgID
+{
+    if (!macID)
+        return nil;
+    
+    Command *cmd = [mQueuedCommands objectForKey:macID];
+    if(!cmd) {
+        return nil;
+    }
+    
+    if( cmd.msgID!=msgID ) {
+        return nil;
+    }
+    
+    [mQueuedCommands removeObjectForKey:macID];
+    return cmd;
+}
+
+//==================================================================
 #pragma mark - Public methods
 //==================================================================
 
-- (BOOL)delayTimer:(int)seconds protocol:(int)protocol serviceId:(int)serviceId send:(int)send
+- (BOOL)delayTimer:(NSString *)macId snooze:(int)snooze protocol:(int)protocol serviceId:(int)serviceId send:(int)send
 {
-    g_UdpCommand = UDP_CMD_DELAY_TIMER;
-    NSString *ip = g_DeviceIp;
-    if (ip != nil) {
-        if (protocol == PROTOCOL_HTTP) {
-            [self generate_header_http];
-        } else {
-            [self generate_header];
-        }
-        
-        memset(delayT, 0, sizeof(delayT));
-        for (int i = 0; i < 14; i++) {
-            delayT[i] = hMsg[i];
-        }
-        
-        delayT[17] = (uint8_t) (serviceId & 0xff);
-        delayT[16] = (uint8_t) ((serviceId >> 8) & 0xff);
-        delayT[15] = (uint8_t) ((serviceId >> 16) & 0xff);
-        delayT[14] = (uint8_t) ((serviceId >> 24) & 0xff);
-        
-        delayT[21] = (uint8_t) (seconds & 0xff);
-        delayT[20] = (uint8_t) ((seconds >> 8) & 0xff);
-        delayT[19] = (uint8_t) ((seconds >> 16) & 0xff);
-        delayT[18] = (uint8_t) ((seconds >> 24) & 0xff);
-        
-        if (protocol == PROTOCOL_HTTP) {
-            WebService *ws = [WebService new];
-            ws.delegate = self;
-            NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
-            [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:send data:data];
-        } else if (protocol == PROTOCOL_UDP) {
-            if (!udpSocket) {
-                udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
-            }
-            NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
-            [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
-        }
-        return YES;
+    Command *cmd = nil;
+    if (protocol == PROTOCOL_HTTP) {
+        [self generate_header_http:UDP_CMD_DELAY_TIMER];
     } else {
-        return NO;
+        cmd = [self generate_header:macId command:UDP_CMD_DELAY_TIMER];
     }
-}
-
-- (BOOL)listenForIRCodes
-{
-    /*
-    NSData *data = [NSData dataWithBytes:ir length:sizeof(ir)];
     
-    try {
-        ds = new DatagramSocket(UDP_TESTING_PORT);
-        ds.receive(dp);
-        
-        for(int i = 0; i < ir.length; i++){
-            IRCodes.add((int)ir[i]);
-            if(ir[i] == 0){
-                IRFlag = 0;
-            }
-        }
-    } catch (SocketException e) {
-        e.printStackTrace();
-    } catch (IOException e) {
-        e.printStackTrace();
-    } finally {
-        if (ds != null) {
-            ds.close();
-        }
+    memset(delayT, 0, sizeof(delayT));
+    for (int i = 0; i < 14; i++) {
+        delayT[i] = hMsg[i];
     }
-    if(IRFlag == 1){
-        listenForIRCodes();
+    
+    delayT[17] = (uint8_t) (serviceId & 0xff);
+    delayT[16] = (uint8_t) ((serviceId >> 8) & 0xff);
+    delayT[15] = (uint8_t) ((serviceId >> 16) & 0xff);
+    delayT[14] = (uint8_t) ((serviceId >> 24) & 0xff);
+    
+    delayT[21] = (uint8_t) (snooze & 0xff);
+    delayT[20] = (uint8_t) ((snooze >> 8) & 0xff);
+    delayT[19] = (uint8_t) ((snooze >> 16) & 0xff);
+    delayT[18] = (uint8_t) ((snooze >> 24) & 0xff);
+    
+    if (protocol == PROTOCOL_HTTP) {
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
+        [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:send data:data];
+    } else if (protocol == PROTOCOL_UDP) {
+        NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
+        [self sendUDP:cmd data:data];
     }
-     */
     return YES;
 }
 
-- (BOOL)queryDevices:(NSString *)ip udpMsg_param:(short)udpMsg_param
+- (BOOL)queryDevices:(NSString *)macId command:(short)command
 {
-    g_UdpCommand = udpMsg_param;
-    
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
     
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:command];
     
     memset(rMsg, 0, sizeof(rMsg));
     for(int i=0; i<14;i++){
@@ -202,19 +223,17 @@ static UDPCommunication *instance;
     }
     
     NSData *data = [NSData dataWithBytes:rMsg length:sizeof(rMsg)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     return YES;
 }
 
-- (BOOL)sendIRMode:(NSString *)ip
+- (BOOL)sendIRMode:(NSString *)macId
 {
-    g_UdpCommand = UDP_CMD_ADV_DEVICE_SETTINGS;
-    
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
 
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:UDP_CMD_ADV_DEVICE_SETTINGS];
     
     memset(iMsg, 0, sizeof(iMsg));
     for (int i = 0; i < 14; i++){
@@ -232,20 +251,17 @@ static UDPCommunication *instance;
     iMsg[21] = (uint8_t)((flag >> 24) & 0xff);
     
     NSData *data = [NSData dataWithBytes:iMsg length:sizeof(iMsg)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     return YES;
 }
 
-- (BOOL)cancelIRMode
+- (BOOL)cancelIRMode:(NSString *)macId
 {
-    NSString *ip = g_DeviceIp;
-    g_UdpCommand = UDP_CMD_ADV_DEVICE_SETTINGS;
-    
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
 
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:UDP_CMD_ADV_DEVICE_SETTINGS];
     
     memset(iMsg, 0, sizeof(iMsg));
     for (int i = 0; i < 14; i++){
@@ -263,66 +279,61 @@ static UDPCommunication *instance;
     iMsg[21] = (uint8_t)((flag >> 24) & 0xff);
     
     NSData *data = [NSData dataWithBytes:iMsg length:sizeof(iMsg)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     return YES;
 }
 
-- (BOOL)sendOTACommand:(NSString *)ip
+- (BOOL)sendOTACommand:(NSString *)macId
 {
-    g_UdpCommand = 0x000F;
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:0x000F];
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
 
     NSData *data = [NSData dataWithBytes:hMsg length:sizeof(hMsg)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     NSLog(@"OTA COMMAND SENT");
     return YES;
 }
 
-- (BOOL)sendReformatCommand:(NSString *)ip
+- (BOOL)sendReformatCommand:(NSString *)macId
 {
-    g_UdpCommand = 0x010F;
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:0x010F];
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
     
     NSData *data = [NSData dataWithBytes:hMsg length:sizeof(hMsg)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     NSLog(@"REFORMAT COMMAND SENT");
     return YES;
 }
 
-- (BOOL)sendResetCommand:(NSString *)ip
+- (BOOL)sendResetCommand:(NSString *)macId
 {
-    g_UdpCommand = 0x0FFF;
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:0x0FFF];
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
     
     NSData *data = [NSData dataWithBytes:hMsg length:sizeof(hMsg)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     NSLog(@"RESET COMMAND SENT");
     return YES;
 }
 
-- (BOOL)sendIRFileName:(int)filename
+- (BOOL)sendIRFileName:(NSString *)macId filename:(int)filename
 {
-    [self sendIRHeader:filename];
+    [self sendIRHeader:macId filename:filename];
     return YES;
 }
 
-- (void)sendIRHeader:(int)filename
+- (void)sendIRHeader:(NSString *)macId filename:(int)filename
 {
-    NSString * ip = g_DeviceIp;
-    g_UdpCommand = UDP_CMD_GET_DEVICE_TIMERS;
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:UDP_CMD_GET_DEVICE_TIMERS];
     
     memset(irHeader, 0, sizeof(irHeader));
     for(int i = 0; i < sizeof(hMsg); i++){
@@ -335,34 +346,13 @@ static UDPCommunication *instance;
     }
 
     NSData *data = [NSData dataWithBytes:irHeader length:sizeof(irHeader)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     NSLog(@"IR HEADERS SENT");
 }
 
-- (BOOL)setDeviceTimersHTTP:(NSString *)devId send:(int)send
+- (BOOL)sendTimers:(NSString *)macId
 {
-    BOOL result = true;
-    sendFlag = send;
-    NSString *ip = g_DeviceIp;
-    BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_HTTP];
-    [NSThread sleepForTimeInterval:0.5];
-    BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_HTTP];
-    [NSThread sleepForTimeInterval:0.5];
-    BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_HTTP];
-    
-    if (headerOK && timerOK && termiOK) {
-        result = true;
-    } else {
-        result = false;
-    }
-    return result;
-}
-
-- (BOOL)sendTimers:(NSString *)devId ip:(NSString *)ip
-{
-    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
-    
-    [self generate_header];
+    Command *cmd = [self generate_header:macId command:(short)UDP_CMD_SET_DEVICE_TIMERS];
     
     int i;
     memset(timers, 0, sizeof(timers));
@@ -377,7 +367,7 @@ static UDPCommunication *instance;
     timers[i++] = (uint8_t) ((time >> 8) & 0xff);
     timers[i++] = (uint8_t) (time & 0xff);
 
-    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:macId];
     if(alarms && alarms.count > 0) {
         for (Alarm *alarm in alarms) {
             int serviceId = alarm.service_id;
@@ -410,15 +400,14 @@ static UDPCommunication *instance;
     }
 
     NSData *data = [NSData dataWithBytes:timers length:sizeof(timers)];
-    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:data];
     return true;
 }
 
-- (BOOL)sendTimersHTTP:(NSString *)devId send:(int)send
+- (BOOL)sendTimersHTTP:(NSString *)macId send:(int)send
 {
     BOOL toReturn = false;
-    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
-    [self generate_header_http];
+    [self generate_header_http:UDP_CMD_SET_DEVICE_TIMERS];
     
     int i = 0;
     memset(timers, 0, sizeof(timers));
@@ -433,7 +422,7 @@ static UDPCommunication *instance;
     timers[i++] = (uint8_t) ((time >> 16) & 0xff);
     timers[i++] = (uint8_t) ((time >> 24) & 0xff);
     
-    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:macId];
     if(alarms && alarms.count > 0) {
         for (Alarm *alarm in alarms) {
             int serviceId = alarm.service_id;
@@ -470,121 +459,20 @@ static UDPCommunication *instance;
     NSData *timerData = [NSData dataWithBytes:timers length:sizeof(timers)];
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:send data:timerData];
+    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:macId send:send data:timerData];
     
     return toReturn;
 }
 
-
-- (BOOL)setDeviceTimersUDP:(NSString *)devId
-{
-    BOOL result = true;
-    NSString *ip = g_DeviceIp;
-    BOOL headerOK = [self sendTimerHeaders:ip protocol:PROTOCOL_UDP];
-    [NSThread sleepForTimeInterval:0.5];
-    BOOL timerOK = [self sendTimers:devId protocol:PROTOCOL_UDP];
-    [NSThread sleepForTimeInterval:0.5];
-    BOOL termiOK = [self sendTimerTerminator:ip protocol:PROTOCOL_UDP];
-    
-    if (headerOK && timerOK && termiOK) {
-        result = true;
-    } else {
-        result = false;
-    }
-    return result;
-}
-
-- (BOOL)sendTimerTerminator:(NSString *)ip protocol:(int)protocol
+- (BOOL)sendTimers:(NSString *)macId protocol:(int)protocol
 {
     BOOL toReturn = false;
-    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
     
+    Command *cmd = nil;
     if (protocol == PROTOCOL_HTTP) {
-        [self generate_header_http];
+        [self generate_header_http:UDP_CMD_SET_DEVICE_TIMERS];
     } else {
-        [self generate_header];
-    }
-    
-    memset(timerHeader, 0, sizeof(timerHeader));
-    for (int i = 0; i < sizeof(hMsg); i++) {
-        timerHeader[i] = hMsg[i];
-    }
-         
-    int end = 0x00000000;
-    if (protocol == PROTOCOL_HTTP) {
-        timerHeader[14] = (uint8_t) (end & 0xff);
-        timerHeader[15] = (uint8_t) ((end >> 8) & 0xff);
-        timerHeader[16] = (uint8_t) ((end >> 16) & 0xff);
-        timerHeader[17] = (uint8_t) ((end >> 24) & 0xff);
-    }
-    if (protocol == PROTOCOL_UDP) {
-        timerHeader[14] = (uint8_t) (end & 0xff);
-        timerHeader[15] = (uint8_t) ((end >> 8) & 0xff);
-        timerHeader[16] = (uint8_t) ((end >> 16) & 0xff);
-        timerHeader[17] = (uint8_t) ((end >> 24) & 0xff);
-    }
-
-    NSData *data = [NSData dataWithBytes:timerHeader length:sizeof(timerHeader)];
-    if(protocol == PROTOCOL_HTTP) {
-        WebService *ws = [WebService new];
-        ws.delegate = self;
-        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
-    } else if(protocol == PROTOCOL_UDP) {
-        [self sendUDP:ip data:data];
-    }
-    return toReturn;
-}
- 
-- (BOOL)sendTimerHeaders:(NSString *)ip protocol:(int)protocol
-{
-    BOOL toReturn = false;
-    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
-    
-    if (protocol == PROTOCOL_HTTP) {
-        [self generate_header_http];
-    } else {
-        [self generate_header];
-    }
-
-    memset(timerHeader, 0, sizeof(timerHeader));
-    for(int i = 0; i < sizeof(hMsg); i++){
-        timerHeader[i] = hMsg[i];
-    }
-    
-    int time = (int)[[NSDate date] timeIntervalSince1970];
-    if (protocol == PROTOCOL_HTTP) {
-        timerHeader[14] = (uint8_t) (time & 0xff);
-        timerHeader[15] = (uint8_t) ((time >> 8) & 0xff);
-        timerHeader[16] = (uint8_t) ((time >> 16) & 0xff);
-        timerHeader[17] = (uint8_t) ((time >> 24) & 0xff);
-    }
-    if (protocol == PROTOCOL_UDP) {
-        timerHeader[14] = (uint8_t) (time & 0xff);
-        timerHeader[15] = (uint8_t) ((time >> 8) & 0xff);
-        timerHeader[16] = (uint8_t) ((time >> 16) & 0xff);
-        timerHeader[17] = (uint8_t) ((time >> 24) & 0xff);
-    }
-    
-    NSData *data = [NSData dataWithBytes:timerHeader length:sizeof(timerHeader)];
-    if(protocol == PROTOCOL_HTTP) {
-        WebService *ws = [WebService new];
-        ws.delegate = self;
-        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
-    } else if(protocol == PROTOCOL_UDP) {
-        [self sendUDP:ip data:data];
-    }
-    return toReturn;
-}
-
-- (BOOL)sendTimers:(NSString *)devId protocol:(int)protocol
-{
-    BOOL toReturn = false;
-    g_UdpCommand = UDP_CMD_SET_DEVICE_TIMERS;
-    
-    if (protocol == PROTOCOL_HTTP) {
-        [self generate_header_http];
-    } else {
-        [self generate_header];
+        cmd = [self generate_header:macId command:(short)UDP_CMD_SET_DEVICE_TIMERS];
     }
 
     memset(timer, 0, sizeof(timer));
@@ -594,7 +482,7 @@ static UDPCommunication *instance;
     
     //NSString *ip = g_DeviceIp;
     
-    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:devId];
+    NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDevice:macId];
     if (alarms && alarms.count>0) {
         for (Alarm *alarm in alarms) {
             int serviceId = alarm.service_id;
@@ -654,16 +542,13 @@ static UDPCommunication *instance;
     return toReturn;
 }
 
-- (BOOL)setDeviceStatus:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action
+- (BOOL)setDeviceStatus:(NSString *)macID serviceId:(int)serviceId action:(uint8_t)action
 {
-    g_UdpCommand = UDP_CMD_SET_DEVICE_STATUS;     //to generate the header
-    [self generate_header];
+    Command *cmd = [self generate_header:macID command:(short)UDP_CMD_SET_DEVICE_STATUS];
     
     if (!udpSocket) {
         udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
     }
-
-    [self generate_header];
 
     memset(sMsg, 0, sizeof(sMsg));
     for(int i=0; i<14;i++){
@@ -686,164 +571,18 @@ static UDPCommunication *instance;
     sMsg[23] = (uint8_t)((terminator >> 24 ) & 0xff);
     
     NSData *udpData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
-    [udpSocket sendData:udpData toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:1];
+    [self sendUDP:cmd data:udpData];
     return YES;
 }
 
-- (void)process_headers
+- (Command *)generate_header:(NSString *)macID command:(short)command
 {
-    /**********************************************/
-    int header = abs([Global process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);          //1397576276
+    Command *c = [Command new];
+    c.macID = macID;
+    c.command = command;
     
-    if (header != 1397576276) {
-        process_data = true;
-    }
-    NSLog(@"HEADER: %d", header);
-    /**********************************************/
-    int msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
-    if (msgid != previous_msgid){
-        previous_msgid = msgid;
-        process_data = true;
-    } else {
-        process_data = false;
-    }
-    NSLog(@"MSGID: %d", msgid);
-    /**********************************************/
-    int seq = abs([Global process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
-    NSLog(@"SEQ: %d", seq);
-    /**********************************************/
-    int size = [Global process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
-    NSLog(@"SIZE: %d", size);
-    /**********************************************/
-    code = [Global process_short:lMsg[16] b:lMsg[17]];
-    NSLog(@"CODE: %d", code);
-}
-
-- (void)process_query_device_command
-{
-    /**********************************************/
-    NSMutableString *mac = [NSMutableString new];
-    for (int i = 18; i < 24; i++) {
-        [mac appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
-    }
-    _js.sid = mac;
-    NSLog(@"MAC: %@", mac);
-    /**********************************************/
-    NSMutableString *model = [NSMutableString new];
-    for (int i = 24; i < 40; i++) {
-        [model appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
-    }
-    _js.model = model;
-    NSLog(@"MODEL: %@", model);
-    /**********************************************/
-    int buildno = [Global process_long:lMsg[40] b:lMsg[41] c:lMsg[42] d:lMsg[43]];
-    _js.buildno = buildno;
-    NSLog(@"BUILD NO: %d", buildno);
-    /**********************************************/
-    int prot_ver = [Global process_long:lMsg[44] b:lMsg[45] c:lMsg[46] d:lMsg[47]];
-    _js.prot_ver = prot_ver;
-    NSLog(@"PROTOCOL VER: %d", prot_ver);
-    /**********************************************/
-    NSMutableString *hw_ver = [NSMutableString new];
-    for (int i = 48; i < 64; i++) {
-        [hw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
-    }
-    _js.hw_ver = hw_ver;
-    NSLog(@"HARDWARE VERSION: %@", hw_ver);
-    /**********************************************/
-    NSMutableString *fw_ver = [NSMutableString new];
-    for (int i = 64; i < 80; i++) {
-        [fw_ver appendString:[NSString stringWithFormat:@"%c", lMsg[i]]];
-    }
-    _js.fw_ver = fw_ver;
-    NSLog(@"FIRMWARE VERSION: %@", fw_ver);
-    /**********************************************/
-    int fw_date = [Global process_long:lMsg[80] b:lMsg[81] c:lMsg[82] d:lMsg[83]];
-    _js.fw_date = fw_date;
-    NSLog(@"FIRMWARE DATE: %d", fw_date);
-    /**********************************************/
-    int flag = [Global process_long:lMsg[84] b:lMsg[85] c:lMsg[86] d:lMsg[87]];
-    _js.flag = flag;
-    NSLog(@"FLAG: %d", flag);
-}
-
-- (void)process_get_device_status
-{
-    [self get_relay_status];
-    [self get_nightlight_status];
-    [self get_co_status];
-    /**************TERMINATOR**************/
-    int terminator = [Global process_long:lMsg[48] b:lMsg[49] c:lMsg[50] d:lMsg[51]];
-    NSLog(@"TERMINATOR: %d", terminator);
-}
-
-//==================================================================
-#pragma mark - Private methods
-//==================================================================
-- (void)get_relay_status
-{
-    int service_id = [Global process_long:lMsg[18] b:lMsg[19] c:lMsg[20] d:lMsg[21]];
-    if (service_id == RELAY_SERVICE) {
-        NSLog(@"IS OUTLET SERVICE");
-        int flag = [Global process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
-        if(flag == 0x00000010){
-            _js.hall_sensor = 1;
-            NSLog(@"Relay warning");
-        } else {
-            _js.hall_sensor = 0;
-        }
-        //uint8_t datatype = lMsg[26];
-        uint8_t data = lMsg[27];
-        if (data == 0x01){
-            _js.relay = 1;
-            NSLog(@"Relay is on");
-        } else {
-            _js.relay = 0;
-            NSLog(@"Relay is off");
-        }
-        
-    }
-}
-
-- (void)get_nightlight_status
-{
-    int service_id = [Global process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
-    if(service_id == NIGHTLED_SERVICE) {
-        NSLog(@"NIGHT LIGHT SERVICE");
-        //int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
-        //uint8_t datatype = lMsg[36];                                                    //always the same 0x01
-        uint8_t data = lMsg[37];
-        if (data == 0x01){
-            _js.nightlight = 1;
-            NSLog(@"Nighlight is on");
-        } else {
-            _js.nightlight = 0;
-            NSLog(@"Nighlight is off");
-        }
-    }
-}
-
-- (void)get_co_status
-{
-    int service_id = [Global process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
-    if (service_id == CO_SERVICE) {
-        int flag = [Global process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
-        if(flag == 0x00000010){
-            _js.co_sensor = 1;                      //WARNING
-        } else if (flag == 0x00000100){
-            _js.co_sensor = 3;                      //NOT PLUGGED
-        } else {
-            _js.co_sensor = 0;                      //NORMAL
-        }
-        //uint8_t datatype = lMsg[46];
-        //uint8_t data = lMsg[47];
-    }
-}
-
-- (void)generate_header
-{
     int header = 0x534D5254;
-    int msgid = (int)(random() * 429496729) + 1;
+    int msgid = c.msgID = (mLastMsgID++);
     int seq = 0x80000000;
     memset(hMsg, 0, sizeof(hMsg));
     hMsg[0] = (uint8_t) header;
@@ -858,11 +597,13 @@ static UDPCommunication *instance;
     hMsg[9] = (uint8_t) (seq >> 8);
     hMsg[10] = (uint8_t) (seq >> 16);
     hMsg[11] = (uint8_t) (seq >> 24);
-    hMsg[12] = (uint8_t) g_UdpCommand;
-    hMsg[13] = (uint8_t) (g_UdpCommand >> 8);
+    hMsg[12] = (uint8_t) c.command;
+    hMsg[13] = (uint8_t) (c.command >> 8);
+    
+    return c;
 }
          
-- (void)generate_header_http
+- (void)generate_header_http:(short)command
 {
     int header = 0x534D5254;
     memset(hMsg, 0, sizeof(hMsg));
@@ -870,7 +611,7 @@ static UDPCommunication *instance;
     hMsg[2] = (uint8_t)((header >> 8 ));
     hMsg[1] = (uint8_t)((header >> 16 ));
     hMsg[0] = (uint8_t)((header >> 24 ));
-    int msid = (int)(random()*4294967+1);
+    int msid = (mLastMsgID++);
     hMsg[7] = (uint8_t)(msid);
     hMsg[6] = (uint8_t)((msid >> 8 ));
     hMsg[5] = (uint8_t)((msid >> 16 ));
@@ -880,7 +621,6 @@ static UDPCommunication *instance;
     hMsg[10] = (uint8_t)((seq >> 8 ));
     hMsg[9] = (uint8_t)((seq >> 16 ));
     hMsg[8] = (uint8_t)((seq >> 24 ));
-    short command = g_UdpCommand;
     hMsg[13] = (uint8_t)(command);
     hMsg[12] = (uint8_t)((command >> 8 ));
 }

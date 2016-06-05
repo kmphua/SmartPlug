@@ -19,13 +19,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IRRecordViewController.m"
-            timestampString = "486809824.601051"
+            filePath = "SmartPlug/Models/SQLHelper.m"
+            timestampString = "486827665.778111"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
-            landmarkName = "-didReceiveData:resultName:"
+            startingLineNumber = "657"
+            endingLineNumber = "657"
+            landmarkName = "-updatePlugIP:ip:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -35,13 +35,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IRCustomViewController.m"
-            timestampString = "486809903.704486"
+            filePath = "SmartPlug/Models/SQLHelper.m"
+            timestampString = "486827787.679587"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "177"
-            endingLineNumber = "177"
-            landmarkName = "-tableView:cellForRowAtIndexPath:"
+            startingLineNumber = "619"
+            endingLineNumber = "619"
+            landmarkName = "-updatePlugServices:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
@@ -51,13 +51,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IRRecordViewController.m"
-            timestampString = "486810055.518193"
+            filePath = "SmartPlug/Models/SQLHelper.m"
+            timestampString = "486827815.680422"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "130"
-            endingLineNumber = "130"
-            landmarkName = "-onBtnAddNow:"
+            startingLineNumber = "702"
+            endingLineNumber = "702"
+            landmarkName = "-getPlugData:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

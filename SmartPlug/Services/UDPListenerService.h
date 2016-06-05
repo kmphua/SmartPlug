@@ -17,5 +17,7 @@
 - (void)stopUdpBroadcastListener;
 - (BOOL)isRunning;
 - (BOOL)setDeviceStatusProcess:(NSString *)ip serviceId:(int)serviceId action:(uint8_t)action;
+- (void)process_query_device_command;
+- (void)process_get_device_status;
 
 @end

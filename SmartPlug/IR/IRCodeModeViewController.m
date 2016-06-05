@@ -312,7 +312,7 @@
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
     IrCode *code = [_codes objectAtIndex:position-1];
-    [[UDPCommunication getInstance] sendIRFileName:code.filename];
+    [[UDPCommunication getInstance] sendIRFileName:g_DeviceMac filename:code.filename];
     NSLog(@"Sending IR filename %d", code.filename);
 }
 
@@ -394,8 +394,8 @@
                     
                     for (NSDictionary *group in groups) {
                         int groupId = [[group objectForKey:@"id"] intValue];
-                        NSString *title = [group objectForKey:@"title"];
-                        NSString *icon = [group objectForKey:@"icon"];
+                        //NSString *title = [group objectForKey:@"title"];
+                        //NSString *icon = [group objectForKey:@"icon"];
                         
                         [[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId];
                         

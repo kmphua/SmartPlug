@@ -108,7 +108,7 @@
 }
 
 - (IBAction)onBtnTestCommand:(id)sender {
-    [[UDPCommunication getInstance] sendIRFileName:ir_filename];
+    [[UDPCommunication getInstance] sendIRFileName:g_DeviceMac filename:ir_filename];
 }
 
 - (IBAction)onBtnAddNow:(id)sender {
@@ -139,7 +139,7 @@
 
 - (void)cancelIRRecordCommand {
     NSLog(@"CANCELING IR SCANNING");
-    [[UDPCommunication getInstance] cancelIRMode];
+    [[UDPCommunication getInstance] cancelIRMode:g_DeviceMac];
 }
 
 //==================================================================
@@ -197,8 +197,8 @@
                     
                     for (NSDictionary *group in groups) {
                         int groupId = [[group objectForKey:@"id"] intValue];
-                        NSString *title = [group objectForKey:@"title"];
-                        NSString *icon = [group objectForKey:@"icon"];
+                        //NSString *title = [group objectForKey:@"title"];
+                        //NSString *icon = [group objectForKey:@"icon"];
                         
                         [[SQLHelper getInstance] updateIRCodeSID:0 sid:groupId];
                         

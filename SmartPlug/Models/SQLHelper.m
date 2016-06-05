@@ -647,11 +647,16 @@ static SQLHelper *instance;
 
 - (BOOL)updatePlugIP:(NSString *)name ip:(NSString *)ip
 {
-    [db open];
-    BOOL result = [db executeUpdate:@"UPDATE smartplugs SET ip = ? WHERE name = ?",
-                   ip, name];
-    [db close];
-    return result;
+    if (name && name.length>0 && ip && ip.length>0) {
+        [db open];
+        BOOL result = [db executeUpdate:@"UPDATE smartplugs SET ip = ? WHERE name = ?",
+                       ip, name];
+        [db close];
+        return result;
+    } else {
+        NSLog(@"NULL name and IP!!!");
+        return false;
+    }
 }
 
 - (BOOL)updatePlugIcon:(NSString *)sid icon:(NSString *)icon
@@ -1034,6 +1039,37 @@ static SQLHelper *instance;
     }
     [db close];
     return alarms;
+}
+
+- (NSString *)getPlugMacFromIP:(NSString *)ip
+{
+    NSString *mac = nil;
+    NSArray *plugs = [self getPlugData:ip];
+    if (plugs && plugs.count > 0) {
+        JSmartPlug *plug = [plugs firstObject];
+        mac = plug.sid;
+        if (mac.length == 0) {
+            mac = nil;
+        }
+    }
+    return mac;
+}
+
+- (NSString *)getPlugIP:(NSString *)mac
+{
+    NSString *ip = nil;
+    
+    [db open];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE active = 1 AND sid = ?", mac];
+    //NSMutableArray *plugs = [NSMutableArray new];
+    while ([results next]) {
+        ip = [results stringForColumn:COLUMN_IP];
+        if (ip.length == 0)
+            ip = nil;
+        break;
+    }
+    [db close];
+    return ip;
 }
 
 @end

@@ -37,8 +37,6 @@ NSString *g_DeviceIp;
 NSString *g_DeviceName;
 NSString *g_DeviceMac;
 
-int g_UdpCommand;
-
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     NSLog(@"Device name = %@", [[UIDevice currentDevice] name]);

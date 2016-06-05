@@ -94,4 +94,7 @@
 - (NSArray *)getAlarmDataByDevice:(NSString *)deviceId;
 - (NSArray *)getAlarmDataByDeviceAndService:(NSString *)deviceId serviceId:(int)serviceId;
 
+- (NSString *)getPlugMacFromIP:(NSString *)ip;
+- (NSString *)getPlugIP:(NSString *)mac;
+
 @end

@@ -118,9 +118,6 @@ extern NSString *g_DeviceIp;
 extern NSString *g_DeviceName;
 extern NSString *g_DeviceMac;
 
-// UDP command
-extern int g_UdpCommand;
-
 @interface Global : NSObject
 
 + (BOOL)isNetworkReady;

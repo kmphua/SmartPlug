@@ -306,7 +306,7 @@
 - (void)statusChecker {
     if (_ipParam != nil && _ipParam.length>0) {
         short command = UDP_CMD_GET_DEVICE_STATUS;
-        if ([[UDPCommunication getInstance] queryDevices:_ipParam udpMsg_param:command]) {
+        if ([[UDPCommunication getInstance] queryDevices:_macParam command:command]) {
             int counter = 10000;
             while (!_deviceStatusChangedFlag && counter > 0) {
                 counter--;
@@ -331,7 +331,7 @@
 
 - (void)updateStatus {
     for (JSmartPlug *plug in _plugs) {
-        if ([[UDPCommunication getInstance] queryDevices:plug.ip udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
+        if ([[UDPCommunication getInstance] queryDevices:plug.sid command:UDP_CMD_GET_DEVICE_STATUS]) {
             //[_crashTimer startTimer];
         } else {
             NSLog(@"IP IS NULL");

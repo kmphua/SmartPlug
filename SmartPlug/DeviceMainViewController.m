@@ -96,7 +96,7 @@
     g_DeviceIp = _device.ip;
     g_DeviceMac = _device.sid;
     
-    [[UDPCommunication getInstance] queryDevices:_device.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
+    [[UDPCommunication getInstance] queryDevices:_device.sid command:UDP_CMD_DEVICE_QUERY];
     
     NSString *imagePath;
     if (self.device.icon && self.device.icon.length > 0) {
@@ -488,37 +488,9 @@
     [_viewNightLight setUserInteractionEnabled:NO];
     
     _deviceStatusChangedFlag = false;
-    [[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:_serviceId action:_action];
+    [[UDPCommunication getInstance] setDeviceStatus:_device.sid serviceId:_serviceId action:_action];
     
     [_crashTimer startTimer];
-
-    /*
-    _udpConnection = false;
-
-    if ([[UDPCommunication getInstance] setDeviceStatus:_device.ip serviceId:serviceId action:_action]) {
-        int counter = 2;
-        while (!_deviceStatusChangedFlag && counter > 0) {
-            [NSThread sleepForTimeInterval:1];
-            counter--;
-            //waiting time
-        }
-    }
-    
-    if (!_deviceStatusChangedFlag) {
-        [self setDeviceStatus:serviceId send:0];
-    } else {
-        if (serviceId == RELAY_SERVICE) {
-            [[SQLHelper getInstance] updatePlugRelayService:_action sid:g_DeviceMac];
-        }
-        if (serviceId == NIGHTLED_SERVICE) {
-            [[SQLHelper getInstance] updatePlugNightlightService:_action sid:g_DeviceMac];
-        }
-        
-        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
-        
-        [self setDeviceStatus:serviceId send:1];
-    }
-     */
 }
 
 - (void)setDeviceStatus:(int)serviceId send:(int)send
@@ -580,7 +552,7 @@
 - (void)startRepeatingTask {
     if (g_DeviceIp) {
         short command = UDP_CMD_GET_DEVICE_STATUS;
-        if ([[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:command]) {
+        if ([[UDPCommunication getInstance] queryDevices:g_DeviceMac command:command]) {
             [self dismissWaitingIndicator];
         } else {
             NSLog(@"IP IS NULL");
@@ -654,7 +626,7 @@
 
 - (void)checkStatus:(id)sender {
     if (g_DeviceIp) {
-        if ([[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS]) {
+        if ([[UDPCommunication getInstance] queryDevices:g_DeviceMac command:UDP_CMD_GET_DEVICE_STATUS]) {
             [self dismissWaitingIndicator];
             //[_crashTimer startTimer];
         } else {
@@ -728,9 +700,9 @@
         for(int i = 0; i < _alarms.count; i++){
             Alarm *a = [_alarms objectAtIndex:i];
             if ([[SQLHelper getInstance] insertAlarm:a]) {
-                NSLog(@"ALARM INSERTED");
+                //NSLog(@"ALARM INSERTED");
             } else {
-                NSLog(@"ALARM INSERTION FAILURE");
+                //NSLog(@"ALARM INSERTION FAILURE");
             }
         }
     }
@@ -803,7 +775,7 @@
         snooze = [[SQLHelper getInstance] getIRSnooze:g_DeviceMac];
     }
 
-    if ([[UDPCommunication getInstance] delayTimer:snooze protocol:1 serviceId:serviceId send:0]) {
+    if ([[UDPCommunication getInstance] delayTimer:g_DeviceMac snooze:snooze protocol:1 serviceId:serviceId send:0]) {
         int counter = 10000;
         while (!_deviceStatusChangedFlag && counter > 0) {
             counter--;
@@ -812,7 +784,7 @@
     }
     
     if (!_deviceStatusChangedFlag) {
-        if (![[UDPCommunication getInstance] delayTimer:snooze protocol:0 serviceId:serviceId send:0]) {
+        if (![[UDPCommunication getInstance] delayTimer:g_DeviceMac snooze:snooze protocol:0 serviceId:serviceId send:0]) {
             NSDictionary *userInfo = [NSDictionary dictionaryWithObject:@"btn_yes" forKey:@"error"];
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:nil userInfo:userInfo];
         } else {
@@ -856,7 +828,7 @@
         }
         
     } else {
-        [[UDPCommunication getInstance] delayTimer:snooze protocol:0 serviceId:serviceId send:1];
+        [[UDPCommunication getInstance] delayTimer:g_DeviceMac snooze:snooze protocol:0 serviceId:serviceId send:1];
         
         if(serviceId == RELAY_SERVICE){
             if(minutes > 0) {
@@ -1088,8 +1060,8 @@
                     
                     for (NSDictionary *group in groups) {
                         int groupId = [[group objectForKey:@"id"] intValue];
-                        NSString *title = [group objectForKey:@"title"];
-                        NSString *icon = [group objectForKey:@"icon"];
+                        //NSString *title = [group objectForKey:@"title"];
+                        //NSString *icon = [group objectForKey:@"icon"];
                         
                         //[[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId];
                         

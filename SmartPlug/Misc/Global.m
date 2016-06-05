@@ -171,6 +171,13 @@
     
     // Convert C string to NSString:
     NSString *ipAddress = [[NSString alloc] initWithBytes:host length:strlen(host) encoding:NSUTF8StringEncoding];
+    
+    // Remove extra parts
+    NSRange lastOccurence = [ipAddress rangeOfString:@":" options:NSBackwardsSearch];
+    if (lastOccurence.location != NSNotFound) {
+        ipAddress = [ipAddress substringFromIndex:lastOccurence.location+1];
+    }
+    
     return ipAddress;
 }
 

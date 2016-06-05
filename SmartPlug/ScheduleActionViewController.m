@@ -266,7 +266,7 @@
         [[SQLHelper getInstance] insertAlarm:a];
     }
     
-    if ([[UDPCommunication getInstance] sendTimers:g_DeviceMac ip:g_DeviceIp]) {
+    if ([[UDPCommunication getInstance] sendTimers:g_DeviceMac]) {
         int counter = 10000;
         while (!_deviceStatusChangedFlag && counter > 0) {
             counter--;

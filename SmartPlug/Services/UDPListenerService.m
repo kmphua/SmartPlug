@@ -35,11 +35,11 @@
     BOOL process_data;
     short code;
     BOOL shouldRestartSocketListen;
-    short command;
     int IRFlag;
     int IRSendFlag;
     int irCode;
     NSMutableArray *IRCodes;
+    Command *mCurrentCommand;
 }
 
 @property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
@@ -154,135 +154,11 @@ static UDPListenerService *instance;
 {
     // Do something with receive data
     NSString *ipAddress = [Global convertIpAddressToString:address];
-    //NSLog(@"Received data %ld from address %@", data.length, ipAddress);
+    NSLog(@"Received data %ld from address %@", data.length, ipAddress);
     
     memcpy(lMsg, [data bytes], data.length);
     
-    [self process_headers];
-    
-    if(g_UdpCommand == UDP_CMD_ADV_DEVICE_SETTINGS){
-        NSLog(@"Entering IR Mode");
-        if(code == 0) {
-            [self listenForIRFileName];
-            code = 1;
-        }
-        g_UdpCommand = 0;   // Reset command after processing
-    }
-    
-    if(g_UdpCommand == UDP_CMD_DEVICE_QUERY){
-        if(code == 0){
-            [self process_query_device_command];
-            //[[SQLHelper getInstance] updatePlugServices:_js];
-            
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
-                                      ipAddress, @"ip",
-                                      _js.sid, @"id",
-                                      _js.model, @"model",
-                                      [NSNumber numberWithInt:_js.buildno], @"buildno",
-                                      [NSNumber numberWithInt:_js.prot_ver], @"prot_ver",
-                                      _js.hw_ver, @"hw_ver",
-                                      _js.fw_ver, @"fw_ver",
-                                      [NSNumber numberWithInt:_js.fw_date], @"fw_date",
-                                      [NSNumber numberWithInt:_js.flag], @"flag",
-                                      nil];
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_INFO
-                                                                object:self
-                                                              userInfo:userInfo];
-            
-            code = 1;
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(g_UdpCommand == UDP_CMD_WIFI_SCAN) {
-         NSLog(@"I got a broadcast yeah.....");
-    }
-    
-    if(g_UdpCommand == UDP_CMD_DELAY_TIMER){
-        if(code == 0){
-            code = 1;
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:@"code"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SET_TIMER_DELAY
-                                                                object:self
-                                                              userInfo:userInfo];
-            code = 1;
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(g_UdpCommand == UDP_CMD_SET_DEVICE_STATUS){
-        if(code == 0){
-            code = 1;
-            NSLog(@"DEVICE STATUS CHANGED");
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_STATUS_CHANGED
-                                                                object:self
-                                                              userInfo:nil];
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(g_UdpCommand == UDP_CMD_GET_DEVICE_STATUS){
-        if(code == 0){
-            code = 1;
-            [self process_get_device_status];
-            [[SQLHelper getInstance] updatePlugServices:_js];
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
-                                                                object:self
-                                                              userInfo:nil];
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(g_UdpCommand == UDP_CMD_SET_DEVICE_TIMERS){
-        if(code == 0){
-            NSLog(@"TIMERS SENT SUCCESSFULLY");
-            code = 1;
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMERS_SENT_SUCCESS
-                                                                object:self
-                                                              userInfo:nil];
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(g_UdpCommand == 0x000F){
-        if(code == 0){
-            NSLog(@"OTA SENT SUCCESSFULLY");
-            code = 1;
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_SENT
-                                                                object:self
-                                                              userInfo:nil];
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(g_UdpCommand == 0x010F){
-        if(code == 0){
-            NSLog(@"DELETE SEND SUCCESSFULLY");
-            code = 1;
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_SENT
-                                                                object:self
-                                                              userInfo:nil];
-            g_UdpCommand = 0;   // Reset command after processing
-        }
-    }
-    
-    if(code == 0x1000 && process_data == false){
-        code = 1;
-        NSLog(@"I GOT A BROADCAST");
-        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
-                                                            object:self
-                                                          userInfo:nil];
-    }
-    
-    if(code == 0x001F && process_data == true){
-        code = 1;
-        NSLog(@"OTA FINISHED");
-        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
-                                                            object:self
-                                                          userInfo:nil];
-        g_UdpCommand = 0;   // Reset command after processing
-    }
+    [self process_headers:ipAddress];
 }
 
 //==================================================================
@@ -310,37 +186,173 @@ static UDPListenerService *instance;
     return true;
 }
 
-- (void)process_headers
+- (void)process_headers:(NSString *)ipAddress
 {
     code = 1;
     /**********************************************/
     int header = abs([Global process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);
     
+    NSLog(@"HEADER: %d", header);
+    
+    BOOL isCommand;
+    
     if (header == 0x534D5253) {
-        process_data = true;    // Broadcast is 0x534D5254, OTA is 0x534D5254
+        // reply
+        isCommand = false;
+    } else if( header== 0x534D5254 ) {
+        // command
+        isCommand = true;
     } else {
-        process_data = false;
+        // failed
+        return;
     }
     
-    //NSLog(@"HEADER: %d", header);
     /**********************************************/
     int msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
-    if (msgid != previous_msgid){
-        previous_msgid = msgid;
-        process_data = true;
-    } else {
-        process_data = false;
-    }
-    //NSLog(@"MSGID: %d", msgid);
+    
+    NSLog(@"MSGID: %d", msgid);
     /**********************************************/
     int seq = abs([Global process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
-    //NSLog(@"SEQ: %d", seq);
+    NSLog(@"SEQ: %d", seq);
     /**********************************************/
     int size = [Global process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
-    //NSLog(@"SIZE: %d", size);
+    NSLog(@"SIZE: %d", size);
     /**********************************************/
     code = [Global process_short:lMsg[16] b:lMsg[17]];
-    //NSLog(@"CODE: %d", code);
+    NSLog(@"CODE: %d", code);
+    
+    if (isCommand) {
+
+        if(code == 0x1000){
+            code = 1;
+            NSLog(@"I GOT A BROADCAST");
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
+                                                                object:self
+                                                              userInfo:nil];
+        }
+        
+        if(code == 0x001F && process_data == true){
+            code = 1;
+            NSLog(@"OTA FINISHED");
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
+                                                                object:self
+                                                              userInfo:nil];
+        }
+        
+    } else {
+        
+        if(msgid == previous_msgid){
+            return; // ignore repeated command
+        }
+        
+        previous_msgid = msgid;
+        
+        mCurrentCommand = [[UDPCommunication getInstance] dequeueCommand:ipAddress msgID:msgid];
+        if( !mCurrentCommand ) {
+            return;
+        }
+        
+        switch ( mCurrentCommand.command ) {
+        
+            case UDP_CMD_ADV_DEVICE_SETTINGS:
+                NSLog(@"Entering IR Mode");
+                if(code == 0) {
+                    [self listenForIRFileName];
+                    code = 1;
+                }
+                break;
+        
+            case UDP_CMD_DEVICE_QUERY:
+                if(code == 0){
+                    [self process_query_device_command];
+                    //[[SQLHelper getInstance] updatePlugServices:_js];
+                    
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObjectsAndKeys:
+                                              ipAddress, @"ip",
+                                              _js.sid, @"id",
+                                              _js.model, @"model",
+                                              [NSNumber numberWithInt:_js.buildno], @"buildno",
+                                              [NSNumber numberWithInt:_js.prot_ver], @"prot_ver",
+                                              _js.hw_ver, @"hw_ver",
+                                              _js.fw_ver, @"fw_ver",
+                                              [NSNumber numberWithInt:_js.fw_date], @"fw_date",
+                                              [NSNumber numberWithInt:_js.flag], @"flag",
+                                              nil];
+                    
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_INFO
+                                                                        object:self
+                                                                      userInfo:userInfo];
+                    
+                    code = 1;
+                }
+                break;
+        
+            case UDP_CMD_WIFI_SCAN:
+                NSLog(@"I got a broadcast yeah.....");
+                break;
+        
+            case UDP_CMD_DELAY_TIMER:
+                if(code == 0){
+                    code = 1;
+                    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:code] forKey:@"code"];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_SET_TIMER_DELAY
+                                                                        object:self
+                                                                      userInfo:userInfo];
+                    code = 1;
+                }
+                break;
+
+            case UDP_CMD_SET_DEVICE_STATUS:
+                if(code == 0){
+                    code = 1;
+                    NSLog(@"DEVICE STATUS CHANGED");
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_STATUS_CHANGED
+                                                                        object:self
+                                                                      userInfo:nil];
+                }
+                break;
+
+            case UDP_CMD_GET_DEVICE_STATUS:
+                if(code == 0){
+                    code = 1;
+                    [self process_get_device_status];
+                    [[SQLHelper getInstance] updatePlugServices:_js];
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
+                                                                        object:self
+                                                                      userInfo:nil];
+                }
+                break;
+                
+            case UDP_CMD_SET_DEVICE_TIMERS:
+                if(code == 0){
+                    NSLog(@"TIMERS SENT SUCCESSFULLY");
+                    code = 1;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMERS_SENT_SUCCESS
+                                                                        object:self
+                                                                      userInfo:nil];
+                }
+                break;
+
+            case 0x000F:
+                if(code == 0){
+                    NSLog(@"OTA SENT SUCCESSFULLY");
+                    code = 1;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_SENT
+                                                                        object:self
+                                                                      userInfo:nil];
+                }
+                break;
+                
+            case 0x010F:
+                if(code == 0){
+                    NSLog(@"DELETE SEND SUCCESSFULLY");
+                    code = 1;
+                    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_SENT
+                                                                        object:self
+                                                                      userInfo:nil];
+                }
+        }
+    }
 }
 
 - (void)process_query_device_command
@@ -421,7 +433,7 @@ static UDPListenerService *instance;
             NSLog(@"Relay normal condition");
             _js.hall_sensor = 0;
         }
-        uint8_t datatype = lMsg[26];
+        //uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if (data == 0x01){
             _js.relay = 1;
@@ -431,9 +443,9 @@ static UDPListenerService *instance;
             NSLog(@"Relay is off");
         }
         
-        NSLog(@"MAC: %@", g_DeviceMac);
-        [[SQLHelper getInstance] updatePlugRelayService:_js.relay sid:g_DeviceMac];
-        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:g_DeviceMac];
+        NSLog(@"MAC: %@", mCurrentCommand.macID);
+        [[SQLHelper getInstance] updatePlugRelayService:_js.relay sid:mCurrentCommand.macID];
+        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:mCurrentCommand.macID];
     }
 }
 
@@ -442,8 +454,8 @@ static UDPListenerService *instance;
     int service_id = [Global process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
     if(service_id == NIGHTLED_SERVICE) {
         NSLog(@"NIGHT LIGHT SERVICE");
-        int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
-        uint8_t datatype = lMsg[36];                                                    //always the same 0x01
+        //int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        //uint8_t datatype = lMsg[36];                                                    //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
             _js.nightlight = 1;
@@ -453,7 +465,7 @@ static UDPListenerService *instance;
             NSLog(@"Nighlight is off");
         }
         
-        [[SQLHelper getInstance] updatePlugNightlightService:data sid:g_DeviceMac];
+        [[SQLHelper getInstance] updatePlugNightlightService:data sid:mCurrentCommand.macID];
     }
 }
 
@@ -476,53 +488,10 @@ static UDPListenerService *instance;
             NSLog(@"CO SENSOR NORMAL CONDITION");
             _js.co_sensor = costatus;                      //NORMAL
         }
-        [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:g_DeviceMac];
-        uint8_t datatype = lMsg[46];
-        uint8_t data = lMsg[47];
+        [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:mCurrentCommand.macID];
+        //uint8_t datatype = lMsg[46];
+        //uint8_t data = lMsg[47];
     }
-}
-
-- (void)generate_header
-{
-    int header = 0x534D5254;
-    int msgid = (int)(random() * 429496729) + 1;
-    int seq = 0x80000000;
-    hMsg[0] = (uint8_t) header;
-    hMsg[1] = (uint8_t) (header >> 8);
-    hMsg[2] = (uint8_t) (header >> 16);
-    hMsg[3] = (uint8_t) (header >> 24);
-    hMsg[4] = (uint8_t) msgid;
-    hMsg[5] = (uint8_t) (msgid >> 8);
-    hMsg[6] = (uint8_t) (msgid >> 16);
-    hMsg[7] = (uint8_t) (msgid >> 24);
-    hMsg[8] = (uint8_t) seq;
-    hMsg[9] = (uint8_t) (seq >> 8);
-    hMsg[10] = (uint8_t) (seq >> 16);
-    hMsg[11] = (uint8_t) (seq >> 24);
-    hMsg[12] = (uint8_t) g_UdpCommand;
-    hMsg[13] = (uint8_t) (g_UdpCommand >> 8);
-}
-
-- (void)generate_header_http
-{
-    int header = 0x534D5254;
-    hMsg[3] = (uint8_t)(header);
-    hMsg[2] = (uint8_t)((header >> 8 ));
-    hMsg[1] = (uint8_t)((header >> 16 ));
-    hMsg[0] = (uint8_t)((header >> 24 ));
-    int msid = (int)(random()*4294967+1);
-    hMsg[7] = (uint8_t)(msid);
-    hMsg[6] = (uint8_t)((msid >> 8 ));
-    hMsg[5] = (uint8_t)((msid >> 16 ));
-    hMsg[4] = (uint8_t)((msid >> 24 ));
-    int seq = 0x80000000;
-    hMsg[11] = (uint8_t)(seq);
-    hMsg[10] = (uint8_t)((seq >> 8 ));
-    hMsg[9] = (uint8_t)((seq >> 16 ));
-    hMsg[8] = (uint8_t)((seq >> 24 ));
-    short cmd = g_UdpCommand;
-    hMsg[13] = (uint8_t)(cmd);
-    hMsg[12] = (uint8_t)((cmd >> 8 ));
 }
 
 //==================================================================

@@ -229,7 +229,7 @@
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
     
-    [[UDPCommunication getInstance] queryDevices:_ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
+    [[UDPCommunication getInstance] queryDevices:_ip command:UDP_CMD_DEVICE_QUERY];
     [_crashTimer startTimer];
 }
 
@@ -249,7 +249,7 @@
     // Check added plugs
     NSArray *plugs = [[SQLHelper getInstance] getPlugData:address];
     if (plugs) {
-        JSmartPlug *plug = [plugs objectAtIndex:0];
+        //JSmartPlug *plug = [plugs objectAtIndex:0];
         NSString *devIdStr = [[NSString alloc] initWithBytes:[data bytes] length:data.length encoding:NSUTF8StringEncoding];
         NSNumberFormatter *f = [[NSNumberFormatter alloc] init];
         f.numberStyle = NSNumberFormatterDecimalStyle;
@@ -471,7 +471,7 @@
         
         [NSThread detachNewThreadSelector:@selector(waitForAckThread:) toTarget:self withObject:nil];
         
-        NSTimer *stopTimer = [NSTimer scheduledTimerWithTimeInterval:SMARTCONFIG_BROADCAST_TIME target:self selector:@selector(stopAction) userInfo:nil repeats:NO];
+        //NSTimer *stopTimer = [NSTimer scheduledTimerWithTimeInterval:SMARTCONFIG_BROADCAST_TIME target:self selector:@selector(stopAction) userInfo:nil repeats:NO];
                               
         [self enableUIAccess:NO];
     }
@@ -567,7 +567,7 @@
     [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:plug.sid title:g_DeviceName model:plug.model];
     */
     
-    [[UDPCommunication getInstance] queryDevices:plug.ip udpMsg_param:UDP_CMD_DEVICE_QUERY];
+    [[UDPCommunication getInstance] queryDevices:plug.sid command:UDP_CMD_DEVICE_QUERY];
      
     [self.view makeToast:NSLocalizedString(@"msg_pleaseWait", nil)
                 duration:3.0
@@ -607,7 +607,7 @@
                 
                 [[SQLHelper getInstance] insertPlug:_plug active:1];
                 
-                NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
+                //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 [self.navigationController popViewControllerAnimated:YES];
             } else {
                 // Failure

@@ -88,7 +88,7 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceInfo:) name:NOTIFICATION_DEVICE_INFO object:nil];
     
     short command = 0x0001;
-    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:command];
+    [[UDPCommunication getInstance] queryDevices:g_DeviceMac command:command];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -191,7 +191,7 @@
     }
     
     short command = 0x0001;
-    [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:command];
+    [[UDPCommunication getInstance] queryDevices:g_DeviceMac command:command];
     [self dismissWaitingIndicator];
 }
 
