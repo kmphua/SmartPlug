@@ -21,10 +21,6 @@
 #define STATUS_CHECKER_TIMER_INTERVAL       7
 
 @interface MainViewController () <UITableViewDataSource, UITableViewDelegate, WebServiceDelegate, MainViewCellDelegate>
-{
-    NSString *_ipParam;
-    NSString *_macParam;
-}
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
 @property (strong, nonatomic) NSArray *plugs;
@@ -72,7 +68,7 @@
     }
     
     // Remove all plugs
-    [[SQLHelper getInstance] deletePlugs];
+    //[[SQLHelper getInstance] deletePlugs];
     
     // Get device list
     WebService *ws = [WebService new];
@@ -222,7 +218,12 @@
 
 - (void)deviceStatusChanged:(NSNotification *)notification {
     _deviceStatusChangedFlag = true;
-    [self startRepeatingTask];
+    
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *macId = [userInfo objectForKey:@"macId"];
+        [self startRepeatingTaskByMac:macId];
+    }
 }
 
 - (void)deviceInfo:(NSNotification *)notification {
@@ -291,42 +292,22 @@
 
 - (void)m1UpdateUI:(NSNotification *)notification {
     NSLog(@"UDP BROADCAST RECEIVED");
+    
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *macId = [userInfo objectForKey:@"macId"];
+        [self startRepeatingTaskByMac:macId];
+    }
 }
 
 - (void)checkStatus:(id)sender {
     // Remove all plugs
-    [[SQLHelper getInstance] deletePlugs];
+    //[[SQLHelper getInstance] deletePlugs];
     
     // Get device list
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devList:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution]];
-}
-
-- (void)statusChecker {
-    if (_ipParam != nil && _ipParam.length>0) {
-        short command = UDP_CMD_GET_DEVICE_STATUS;
-        if ([[UDPCommunication getInstance] queryDevices:_macParam command:command]) {
-            int counter = 10000;
-            while (!_deviceStatusChangedFlag && counter > 0) {
-                counter--;
-                //waiting time
-            }
-        } else {
-            if(!_deviceStatusChangedFlag) {
-                [self getDeviceStatus:_macParam];
-            }
-        }
-    } else {
-        NSLog(@"IP IS NULL");
-        if(!_deviceStatusChangedFlag) {
-            [self getDeviceStatus:_macParam];
-        }
-    }
-    
-    _deviceStatusChangedFlag = false;
-    
-    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_REPEATING_TASK_DONE object:nil];
 }
 
 - (void)updateStatus {
@@ -345,11 +326,13 @@
     NSArray *plugs = [[SQLHelper getInstance] getPlugData];
     if (plugs && plugs.count > 0) {
         for (JSmartPlug *plug in plugs) {
-            _ipParam = plug.ip;
-            _macParam = plug.sid;
-            [self statusChecker];
+            [[UDPCommunication getInstance] queryDevices:plug.sid command:UDP_CMD_GET_DEVICE_STATUS];
         }
     }
+}
+
+- (void)startRepeatingTaskByMac:(NSString *)macId {
+    [[UDPCommunication getInstance] queryDevices:macId command:UDP_CMD_GET_DEVICE_STATUS];
 }
 
 - (BOOL)deviceHasAlarm:(NSString *)deviceId {
@@ -504,16 +487,11 @@
         action = 0x00;
     }
     
-    [[UDPCommunication getInstance] setDeviceStatus:plug.ip serviceId:serviceId action:action];
-    //g_DeviceIp = plug.ip;
-    //g_DeviceMac = plug.sid;
-
-    int counter = 1;
-    while (!_deviceStatusChangedFlag && counter > 0) {
-        [NSThread sleepForTimeInterval:1];
-        counter--;
-        // waiting time
+    if ([[UDPCommunication getInstance] setDeviceStatus:plug.sid serviceId:serviceId action:action]) {
+        _deviceStatusChangedFlag = false;
     }
+    
+    /*
     
     if (_deviceStatusChangedFlag) {
         [[SQLHelper getInstance] updatePlugRelayService:action sid:plug.sid];
@@ -530,6 +508,7 @@
     }
     
     _deviceStatusChangedFlag = false;
+     */
 }
      
 - (void)setDeviceStatus:(NSString *)devId serviceId:(int)serviceId action:(uint8_t)action send:(int)send
@@ -624,10 +603,15 @@
                     [self.navigationController pushViewController:addDeviceController animated:YES];
                 }
                 
-                [[SQLHelper getInstance] deletePlugs];
-                
                 if (devices) {
                     NSLog(@"Total %ld devices", (unsigned long)devices.count);
+                    
+                    NSArray *plugs = [[SQLHelper getInstance] getPlugData];
+                    NSMutableDictionary *macToPlugs = [NSMutableDictionary dictionary];
+                    
+                    for( JSmartPlug *plug in plugs ) {
+                        [macToPlugs setObject:plug forKey:plug.sid];
+                    }
                     
                     for (NSDictionary *device in devices) {
                         JSmartPlug *plug = [JSmartPlug new];
@@ -693,16 +677,17 @@
                         if (plug.name == nil || plug.name.length == 0) {
                             plug.name = plug.givenName;
                         }
+                        
+                        [macToPlugs removeObjectForKey:plug.sid];
 
-                        NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:plug.sid];
-                        if (!plugs || plugs.count == 0) {
-                            // Insert new plug to database
-                            [[SQLHelper getInstance] insertPlug:plug active:1];
-                            NSLog(@"Inserted new plug %@ devId %@", plug.name, plug.sid);
-                        } else {
-                            // Update plug
-                            //[[SQLHelper getInstance] updatePlugServices:plug];
-                        }
+                        // Insert or update plug to database
+                        [[SQLHelper getInstance] insertPlug:plug active:1];
+                        NSLog(@"Inserted new plug %@ devId %@", plug.name, plug.sid);
+                    }
+                    
+                    // Delete unwanted plugs
+                    for (NSString *key in macToPlugs) {
+                        [[SQLHelper getInstance] deletePlugDataByID:key];
                     }
                 }
                 

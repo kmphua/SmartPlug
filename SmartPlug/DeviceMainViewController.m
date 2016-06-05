@@ -275,7 +275,13 @@
 
 - (void)deviceStatusChanged:(NSNotification *)notification {
     _deviceStatusChangedFlag = true;
-    [self startRepeatingTask];
+    
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *macId = [userInfo objectForKey:@"macId"];
+        [self startRepeatingTaskByMac:macId];
+    }
+
     [self dismissWaitingIndicator];
 }
 
@@ -309,16 +315,6 @@
 - (void)broadcastUdpUpdateUi:(NSNotification *)notification {
     _udpConnection = true;
     [_crashTimer stopTimer];
-    
-    //while(!mServiceBound){System.out.println("."); SystemClock.sleep(100);}
-    
-    /*
-    if (g_DeviceIp && g_DeviceIp.length>0) {
-        [[UDPCommunication getInstance] queryDevices:g_DeviceIp udpMsg_param:UDP_CMD_GET_DEVICE_STATUS];
-    } else {
-        NSLog(@"IP IS NULL");
-    }
-    */
 }
 
 - (void)getDataFromServer {
@@ -561,6 +557,10 @@
     }
     [self dismissWaitingIndicator];
     [self updateUI:nil];
+}
+
+- (void)startRepeatingTaskByMac:(NSString *)macId {
+    [[UDPCommunication getInstance] queryDevices:macId command:UDP_CMD_GET_DEVICE_STATUS];
 }
 
 - (void)onRightBarButton:(id)sender {

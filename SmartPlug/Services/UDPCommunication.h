@@ -32,6 +32,7 @@
 
 + (UDPCommunication *)getInstance;
 
+- (Command *)dequeueCommandByIp:(NSString *)ip msgID:(int)msgID;
 - (Command *)dequeueCommand:(NSString *)macID msgID:(int)msgID;
 
 - (BOOL)delayTimer:(NSString *)macId snooze:(int)snooze protocol:(int)protocol serviceId:(int)serviceId send:(int)send;

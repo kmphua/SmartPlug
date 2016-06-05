@@ -220,23 +220,27 @@ static UDPListenerService *instance;
     /**********************************************/
     code = [Global process_short:lMsg[16] b:lMsg[17]];
     NSLog(@"CODE: %d", code);
-    
+
+    NSString *mac = [[SQLHelper getInstance] getPlugMacFromIP:ipAddress];
+    NSDictionary *userInfo = (mac!=nil)?[NSDictionary dictionaryWithObject:mac forKey:@"macId"]:nil;
+
     if (isCommand) {
 
         if(code == 0x1000){
             code = 1;
             NSLog(@"I GOT A BROADCAST");
+            
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
                                                                 object:self
-                                                              userInfo:nil];
+                                                              userInfo:userInfo];
         }
         
-        if(code == 0x001F && process_data == true){
+        if(code == 0x001F){
             code = 1;
             NSLog(@"OTA FINISHED");
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
                                                                 object:self
-                                                              userInfo:nil];
+                                                              userInfo:userInfo];
         }
         
     } else {
@@ -247,7 +251,7 @@ static UDPListenerService *instance;
         
         previous_msgid = msgid;
         
-        mCurrentCommand = [[UDPCommunication getInstance] dequeueCommand:ipAddress msgID:msgid];
+        mCurrentCommand = [[UDPCommunication getInstance] dequeueCommandByIp:ipAddress msgID:msgid];
         if( !mCurrentCommand ) {
             return;
         }
@@ -308,7 +312,7 @@ static UDPListenerService *instance;
                     NSLog(@"DEVICE STATUS CHANGED");
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_STATUS_CHANGED
                                                                         object:self
-                                                                      userInfo:nil];
+                                                                      userInfo:userInfo];
                 }
                 break;
 
@@ -319,7 +323,7 @@ static UDPListenerService *instance;
                     [[SQLHelper getInstance] updatePlugServices:_js];
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
                                                                         object:self
-                                                                      userInfo:nil];
+                                                                      userInfo:userInfo];
                 }
                 break;
                 
@@ -329,7 +333,7 @@ static UDPListenerService *instance;
                     code = 1;
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_TIMERS_SENT_SUCCESS
                                                                         object:self
-                                                                      userInfo:nil];
+                                                                      userInfo:userInfo];
                 }
                 break;
 
@@ -339,7 +343,7 @@ static UDPListenerService *instance;
                     code = 1;
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_SENT
                                                                         object:self
-                                                                      userInfo:nil];
+                                                                      userInfo:userInfo];
                 }
                 break;
                 
@@ -349,7 +353,7 @@ static UDPListenerService *instance;
                     code = 1;
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DELETE_SENT
                                                                         object:self
-                                                                      userInfo:nil];
+                                                                      userInfo:userInfo];
                 }
         }
     }
