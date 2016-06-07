@@ -298,6 +298,7 @@
 		75A02F5F1C99C29A007B461B /* IREditModeViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75A02F5D1C99C29A007B461B /* IREditModeViewController.xib */; };
 		75A02F631C99C47B007B461B /* IREditItemViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A02F611C99C47B007B461B /* IREditItemViewController.m */; };
 		75A02F641C99C47B007B461B /* IREditItemViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 75A02F621C99C47B007B461B /* IREditItemViewController.xib */; };
+		75A14F071D067B7100E0C458 /* NSMutableArray+QueueStack.m in Sources */ = {isa = PBXBuildFile; fileRef = 75A14F061D067B7100E0C458 /* NSMutableArray+QueueStack.m */; };
 		75B5B3D21CB3A11E00295C64 /* lamp.png in Resources */ = {isa = PBXBuildFile; fileRef = 75B5B3D11CB3A11E00295C64 /* lamp.png */; };
 		75C4CD861C731DA600E8C629 /* Alarm.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD831C731DA600E8C629 /* Alarm.m */; };
 		75C4CD8A1C731EDC00E8C629 /* BroadcastReply.m in Sources */ = {isa = PBXBuildFile; fileRef = 75C4CD891C731EDC00E8C629 /* BroadcastReply.m */; };
@@ -689,6 +690,8 @@
 		75A02F601C99C47B007B461B /* IREditItemViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = IREditItemViewController.h; sourceTree = "<group>"; };
 		75A02F611C99C47B007B461B /* IREditItemViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = IREditItemViewController.m; sourceTree = "<group>"; };
 		75A02F621C99C47B007B461B /* IREditItemViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = IREditItemViewController.xib; sourceTree = "<group>"; };
+		75A14F051D067B5900E0C458 /* NSMutableArray+QueueStack.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "NSMutableArray+QueueStack.h"; sourceTree = "<group>"; };
+		75A14F061D067B7100E0C458 /* NSMutableArray+QueueStack.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSMutableArray+QueueStack.m"; sourceTree = "<group>"; };
 		75B5B3D11CB3A11E00295C64 /* lamp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = lamp.png; sourceTree = "<group>"; };
 		75C4CD821C731DA600E8C629 /* Alarm.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Alarm.h; sourceTree = "<group>"; };
 		75C4CD831C731DA600E8C629 /* Alarm.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Alarm.m; sourceTree = "<group>"; };
@@ -876,6 +879,8 @@
 				7512C15D1C1BB3B700489091 /* Global.m */,
 				7512C15E1C1BB3B700489091 /* ISO8601DateFormatter.h */,
 				7512C15F1C1BB3B700489091 /* ISO8601DateFormatter.m */,
+				75A14F051D067B5900E0C458 /* NSMutableArray+QueueStack.h */,
+				75A14F061D067B7100E0C458 /* NSMutableArray+QueueStack.m */,
 			);
 			path = Misc;
 			sourceTree = "<group>";
@@ -1799,6 +1804,7 @@
 				7512C17B1C1BB3B700489091 /* LoginViewController.m in Sources */,
 				7512C17D1C1BB3B700489091 /* Global.m in Sources */,
 				752946EB1CE975CE00F2588E /* IRListCommandsViewController.m in Sources */,
+				75A14F071D067B7100E0C458 /* NSMutableArray+QueueStack.m in Sources */,
 				75A02F5E1C99C29A007B461B /* IREditModeViewController.m in Sources */,
 				7508AA641C325FFC00EB88D1 /* ScheduleActionViewController.m in Sources */,
 				75C4CD861C731DA600E8C629 /* Alarm.m in Sources */,

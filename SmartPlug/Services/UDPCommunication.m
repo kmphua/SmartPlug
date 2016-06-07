@@ -10,6 +10,7 @@
 #import "GCDAsyncUdpSocket.h"
 #include <arpa/inet.h>
 #import "SQLHelper.h"
+#import "NSMutableArray+QueueStack.h"
 
 #define MAX_UDP_DATAGRAM_LEN        128
 #define UDP_SERVER_PORT             20004
@@ -137,14 +138,26 @@ static UDPCommunication *instance;
 
 - (void)addCommand:(Command *)command
 {
-    [mQueuedCommands setObject:command forKey:command.macID];
+    // Check to see if command queue exists for key
+    NSMutableArray *commandQueue = [mQueuedCommands objectForKey:command.macID];
+    if (commandQueue) {
+        // Add command to queue
+        [commandQueue queuePush:command];
+    } else {
+        // Does not exist, create one
+        commandQueue = [NSMutableArray new];
+        [commandQueue queuePush:command];
+    }
+    
+    [mQueuedCommands setObject:commandQueue forKey:command.macID];
 }
 
 - (Command *)dequeueCommandByIp:(NSString *)ip msgID:(int)msgID
 {
     NSString *mac = [[SQLHelper getInstance] getPlugMacFromIP:ip];
     if (!mac) {
-        //mac = ia.getHostAddress();
+        NSLog(@"dequeueCommandByIp: NULL MAC!!!");
+        return nil;
     }
     
     // convert ia to string
@@ -153,19 +166,23 @@ static UDPCommunication *instance;
 
 - (Command *)dequeueCommand:(NSString *)macID msgID:(int)msgID
 {
-    if (!macID)
-        return nil;
-    
-    Command *cmd = [mQueuedCommands objectForKey:macID];
-    if(!cmd) {
+    if (!macID) {
+        NSLog(@"dequeueCommand: NULL macID!!!");
         return nil;
     }
     
-    if( cmd.msgID!=msgID ) {
+    NSMutableArray *commandQueue = [mQueuedCommands objectForKey:macID];
+    if (!commandQueue) {
+        NSLog(@"dequeueCommand: No commands!");
         return nil;
     }
     
-    [mQueuedCommands removeObjectForKey:macID];
+    Command *cmd = [commandQueue queuePop];
+    if( cmd.msgID != msgID ) {
+        NSLog(@"dequeueCommand: No matching msgID!");
+        return nil;
+    }
+    
     return cmd;
 }
 
