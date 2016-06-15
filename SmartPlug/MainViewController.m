@@ -124,14 +124,14 @@
 }
 
 - (void)showWaitingIndicator {
-    _hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    _hud.mode = MBProgressHUDModeIndeterminate;
-    _hud.labelText = NSLocalizedString(@"please_wait_done",nil);
-    [_hud show:YES];
+    //_hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    //_hud.mode = MBProgressHUDModeIndeterminate;
+    //_hud.labelText = NSLocalizedString(@"please_wait_done",nil);
+    //[_hud show:YES];
 }
 
 - (void)dismissWaitingIndicator {
-    [_hud hide:YES];
+    //[_hud hide:YES];
 }
 
 - (void)adjustHeightOfTableview

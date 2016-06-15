@@ -208,14 +208,14 @@
 }
 
 - (void)showWaitingIndicator:(NSString *)labelText {
-    _hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    _hud.mode = MBProgressHUDModeIndeterminate;
-    _hud.labelText = labelText;
-    [_hud show:YES];
+    //_hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
+    //_hud.mode = MBProgressHUDModeIndeterminate;
+    //_hud.labelText = labelText;
+    //[_hud show:YES];
 }
 
 - (void)dismissWaitingIndicator {
-    [_hud hide:YES];
+    //[_hud hide:YES];
 }
 
 - (void)timersSentSuccess:(NSNotification *)notification {
@@ -428,10 +428,8 @@
     }
     
     // Relay snooze
-    NSLog(@"updateUI: snooze=%d", device.snooze);
     if (device.snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:RELAY_SERVICE];
-         NSLog(@"updateUI: relay alarms=%@", alarms);
         if (alarms && alarms.count>0) {
             [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {
@@ -442,10 +440,8 @@
     }
     
     // Led snooze
-    NSLog(@"updateUI: led_snooze=%d", device.led_snooze);
     if (device.led_snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:NIGHTLED_SERVICE];
-        NSLog(@"updateUI: night led alarms=%@", alarms);
         if (alarms && alarms.count>0) {
             [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {
@@ -456,10 +452,8 @@
     }
 
     // Ir snooze
-    NSLog(@"updateUI: ir_snooze=%d", device.ir_snooze);
     if (device.ir_snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:IR_SERVICE];
-         NSLog(@"updateUI: ir alarms=%@", alarms);
         if (alarms && alarms.count>0) {
             [_btnIrTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {

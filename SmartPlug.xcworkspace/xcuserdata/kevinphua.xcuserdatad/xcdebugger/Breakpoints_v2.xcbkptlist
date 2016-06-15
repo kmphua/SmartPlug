@@ -68,11 +68,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/DeviceMainViewController.m"
-            timestampString = "487695164.812273"
+            timestampString = "487699154.249737"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "671"
-            endingLineNumber = "671"
+            startingLineNumber = "665"
+            endingLineNumber = "665"
             landmarkName = "-updateAlarms"
             landmarkType = "5">
          </BreakpointContent>
