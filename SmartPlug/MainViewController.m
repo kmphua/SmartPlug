@@ -101,7 +101,7 @@
     
     //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteSent:) name:NOTIFICATION_DELETE_SENT object:nil];
     
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -264,8 +264,8 @@
 }
 
 - (void)handleDeviceFound:(NSNotification*)notification {
+    NSLog(@"BROADCAST: Device found!");
     [self startRepeatingTask];
-    NSLog(@"NEW DEVICE FOUND");
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
@@ -273,8 +273,59 @@
     if (userInfo) {
         NSString *serviceName = [userInfo objectForKey:@"name"];
         [[SQLHelper getInstance] updatePlugIP:serviceName ip:@""];
-        NSLog(@"%@", serviceName);
+        NSLog(@"BROADCAST: Device removed - %@", serviceName);
     }
+}
+
+// TODO
+- (void)timerCrashReached:(NSNotification *)notification {
+    
+    NSString *url = @"";
+    
+    /*
+    if(ListDevices.deviceStatusChangedFlag == false){
+        System.out.println("device status changed flag == false");
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                String url = "devctrl?token=" + Miscellaneous.getToken(getApplicationContext()) + "&hl=" + Locale.getDefault().getLanguage() + "&devid=" + ListDevicesServicesService.mac + "&send=0&ignoretoken="+ RegistrationIntentService.regToken;
+                try {
+                    if (httpHelper.setDeviceStatus(url, (byte) ListDevicesServicesService.action, ListDevicesServicesService.serviceId)) {
+                        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_RELAY_SERVICE) {
+                            mySQLHelper.updatePlugRelayService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
+                        }
+                        
+                        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_NIGHLED_SERVICE) {
+                            mySQLHelper.updatePlugNightlightService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
+                        }
+                        Intent i = new Intent("status_changed_update_ui");
+                        sendBroadcast(i);
+                    } else {
+                        Intent i = new Intent("http_device_status");
+                        i.putExtra("error", "yes");
+                        sendBroadcast(i);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+        
+    } else {
+        
+        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_RELAY_SERVICE) {
+            mySQLHelper.updatePlugRelayService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
+        }
+        
+        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_NIGHLED_SERVICE) {
+            mySQLHelper.updatePlugNightlightService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
+        }
+        Intent i = new Intent("status_changed_update_ui");
+        sendBroadcast(i);
+    }
+    
+    ListDevices.deviceStatusChangedFlag = false;
+    */
 }
 
 - (void)syncDeviceIpAddresses {
@@ -291,12 +342,11 @@
 }
 
 - (void)m1UpdateUI:(NSNotification *)notification {
-    NSLog(@"UDP BROADCAST RECEIVED");
-    
     NSDictionary *userInfo = notification.userInfo;
     if (userInfo) {
         NSString *macId = [userInfo objectForKey:@"macId"];
-        [self startRepeatingTaskByMac:macId];
+        NSLog(@"BROADCAST: BROADCAST RECEIVED FROM DEVICE %@", macId);
+        [self getData];
     }
 }
 

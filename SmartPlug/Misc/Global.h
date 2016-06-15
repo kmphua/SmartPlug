@@ -45,6 +45,11 @@
 #define CO_SERVICE                      0xD1000002
 #define IR_SERVICE                      0xD1000003
 
+#define SERVICE_FLAGS_NORMAL            0x00000000       // not problems reported by service
+#define SERVICE_FLAGS_ERROR             0x00000001       // service is in error
+#define SERVICE_FLAGS_WARNING           0x00000002       // service has warning
+#define SERVICE_FLAGS_DISABLED          0x00000004
+
 // Protocol
 #define PROTOCOL_HTTP                   0
 #define PROTOCOL_UDP                    1

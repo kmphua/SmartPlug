@@ -32,14 +32,12 @@
     uint8_t delatT[18];
     uint8_t ir2[2];
     int previous_msgid;
-    BOOL process_data;
     short code;
     BOOL shouldRestartSocketListen;
     int IRFlag;
     int IRSendFlag;
     int irCode;
     NSMutableArray *IRCodes;
-    Command *mCurrentCommand;
 }
 
 @property (nonatomic, strong) GCDAsyncUdpSocket *udpSocket;
@@ -66,7 +64,6 @@ static UDPListenerService *instance;
     if (self) {
         IRCodes = [NSMutableArray new];
         previous_msgid = 0;
-        process_data = NO;
         code = 1;
         IRFlag = 0;
         IRSendFlag = 0;
@@ -167,21 +164,19 @@ static UDPListenerService *instance;
 
 - (BOOL)listenForIRFileName
 {
-    if (process_data == true) {
-        IRFlag = 0;
-        int name = lMsg[18];
-        if(name >= 0) {
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:name] forKey:@"filename"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_IR_FILENAME
-                                                                object:self
-                                                              userInfo:userInfo];
-        }
-        if(name == 'x'){
-            NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:-1] forKey:@"filename"];
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_IR_FILENAME
-                                                                object:self
-                                                              userInfo:userInfo];
-        }
+    IRFlag = 0;
+    int name = lMsg[18];
+    if(name >= 0) {
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:name] forKey:@"filename"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_IR_FILENAME
+                                                            object:self
+                                                          userInfo:userInfo];
+    }
+    if(name == 'x'){
+        NSDictionary *userInfo = [NSDictionary dictionaryWithObject:[NSNumber numberWithInt:-1] forKey:@"filename"];
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_IR_FILENAME
+                                                            object:self
+                                                          userInfo:userInfo];
     }
     return true;
 }
@@ -191,8 +186,6 @@ static UDPListenerService *instance;
     code = 1;
     /**********************************************/
     int header = abs([Global process_long:lMsg[0] b:lMsg[1] c:lMsg[2] d:lMsg[3]]);
-    
-    NSLog(@"HEADER: %d", header);
     
     BOOL isCommand;
     
@@ -204,59 +197,52 @@ static UDPListenerService *instance;
         isCommand = true;
     } else {
         // failed
+        NSLog(@"UDPListenerService: ignoring header = %d", header);
         return;
     }
     
-    /**********************************************/
+    // process header
     int msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
-    
-    NSLog(@"MSGID: %d", msgid);
-    /**********************************************/
     int seq = abs([Global process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
-    NSLog(@"SEQ: %d", seq);
-    /**********************************************/
     int size = [Global process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
-    NSLog(@"SIZE: %d", size);
-    /**********************************************/
     code = [Global process_short:lMsg[16] b:lMsg[17]];
-    NSLog(@"CODE: %d", code);
 
     NSString *mac = [[SQLHelper getInstance] getPlugMacFromIP:ipAddress];
     NSDictionary *userInfo = (mac!=nil)?[NSDictionary dictionaryWithObject:mac forKey:@"macId"]:nil;
 
     if (isCommand) {
 
-        if(code == 0x1000){
+        if (code == 0x1000){
             code = 1;
-            NSLog(@"I GOT A BROADCAST");
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI
-                                                                object:self
-                                                              userInfo:userInfo];
-        }
-        
-        if(code == 0x001F){
+            NSLog(@"UDPListenerService: command = BROADCAST");
+            [self process_broadcast_info:ipAddress];
+        } else if (code == 0x001F) {
             code = 1;
-            NSLog(@"OTA FINISHED");
+            NSLog(@"UDPListenerService: command = OTA firmware OK" );
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
                                                                 object:self
                                                               userInfo:userInfo];
+        } else {
+            NSLog(@"UDPListenerService: unknown command %d", code);
         }
         
     } else {
         
         if(msgid == previous_msgid){
+            NSLog(@"UDPListenerService: ignoring duplicate msg#%d", msgid);
             return; // ignore repeated command
         }
         
+        NSLog(@"UDPListenerService: Received header=%d msg#%d seq#%d size=%d code=%d", header, msgid, seq, size, code);
+        
         previous_msgid = msgid;
         
-        mCurrentCommand = [[UDPCommunication getInstance] dequeueCommandByIp:ipAddress msgID:msgid];
-        if( !mCurrentCommand ) {
+        Command *currentCommand = [[UDPCommunication getInstance] dequeueCommandByIp:ipAddress msgID:msgid];
+        if( !currentCommand ) {
             return;
         }
         
-        switch ( mCurrentCommand.command ) {
+        switch ( currentCommand.command ) {
         
             case UDP_CMD_ADV_DEVICE_SETTINGS:
                 NSLog(@"Entering IR Mode");
@@ -359,6 +345,76 @@ static UDPListenerService *instance;
     }
 }
 
+- (void)updateRelayFlags:(int)flags sid:(NSString *)sid
+{
+    if ((flags & SERVICE_FLAGS_WARNING) == SERVICE_FLAGS_WARNING) {
+        _js.hall_sensor = 1;
+        NSLog(@"Relay warning");
+        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:sid];
+    } else {
+        NSLog(@"Relay normal condition");
+        _js.hall_sensor = 0;
+        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:sid];
+    }
+}
+
+- (void)updateCOSensorFlags:(int)flags sid:(NSString *)sid {
+    int costatus = 0;
+    if((flags & SERVICE_FLAGS_WARNING) == SERVICE_FLAGS_WARNING) {
+        NSLog(@"CO SENSOR WARNING");
+        costatus = 1;
+        _js.co_sensor = costatus;
+    } else if ((flags & SERVICE_FLAGS_DISABLED) == SERVICE_FLAGS_DISABLED){
+        costatus = 3;
+        NSLog(@"CO SENSOR NOT PLUGGED IN");
+        _js.co_sensor = costatus;                                             //NOT PLUGGED
+    } else {
+        NSLog(@"CO SENSOR NORMAL CONDITION = %d", flags);
+        _js.co_sensor = costatus;                                             //NORMAL
+    }
+    
+    [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:sid];
+}
+
+- (void)process_broadcast_info:(NSString *)ipAddress {
+    NSString *sid = [[SQLHelper getInstance] getPlugMacFromIP:ipAddress];
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:sid forKey:@"macId"];
+    
+    // TODO
+    //HTTPHelper.mPollingDevices.remove(id);
+    
+    /**********************************************/
+    
+    int pos = 18;
+    int serviceID;
+    while( (serviceID = [Global process_long:lMsg[pos] b:lMsg[pos+1] c:lMsg[pos+2] d:lMsg[pos+3]]) !=0 ) {
+        pos+=4;
+        int flags = [Global process_long:lMsg[pos] b:lMsg[pos+1] c:lMsg[pos+2] d:lMsg[pos+3]];
+        pos+=4;
+        uint8_t serviceFormat = lMsg[pos];
+        pos++;
+        uint8_t serviceData = lMsg[pos];   // NOTE: currently only need 1 byte, but in future, make sure
+        // this data size is based on serviceFormat!
+        pos++;
+        
+        if( serviceFormat!=0x11 )
+            break;  // unhandled service format (This will need to be updated for future devices!)
+        
+        if( serviceID == RELAY_SERVICE) {
+            [[SQLHelper getInstance] updatePlugRelayService:serviceData sid:sid];
+            [self updateRelayFlags:flags sid:sid];
+        } else if( serviceID == NIGHTLED_SERVICE) {
+            [[SQLHelper getInstance] updatePlugNightlightService:serviceData sid:sid];
+        } else if( serviceID == CO_SERVICE ) {
+            [self updateCOSensorFlags:flags sid:sid];
+        } else {
+            break; // stop processing when unknown services are reached
+        }
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_M1_UPDATE_UI object:self userInfo:userInfo];
+}
+
 - (void)process_query_device_command
 {
     /**********************************************/
@@ -411,11 +467,11 @@ static UDPListenerService *instance;
     [[SQLHelper getInstance] updatePlugServices:_js];
 }
 
-- (void)process_get_device_status
+- (void)process_get_device_status:(Command *)currentCommand
 {
-    [self get_relay_status];
-    [self get_nightlight_status];
-    [self get_co_status];
+    [self get_relay_status:currentCommand];
+    [self get_nightlight_status:currentCommand];
+    [self get_co_status:currentCommand];
     /**************TERMINATOR**************/
     int terminator = [Global process_long:lMsg[48] b:lMsg[49] c:lMsg[50] d:lMsg[51]];
     NSLog(@"TERMINATOR: %d", terminator);
@@ -424,20 +480,14 @@ static UDPListenerService *instance;
 //==================================================================
 #pragma mark - Private methods
 //==================================================================
-- (void)get_relay_status
+- (void)get_relay_status:(Command *)currentCommand
 {
     int service_id = [Global process_long:lMsg[18] b:lMsg[19] c:lMsg[20] d:lMsg[21]];
     if (service_id == RELAY_SERVICE) {
         NSLog(@"IS OUTLET SERVICE");
         int flag = [Global process_long:lMsg[22] b:lMsg[23] c:lMsg[24] d:lMsg[25]];
-        if(flag == 0x00000010){
-            _js.hall_sensor = 1;
-            NSLog(@"Relay warning");
-        } else {
-            NSLog(@"Relay normal condition");
-            _js.hall_sensor = 0;
-        }
-        //uint8_t datatype = lMsg[26];
+        [self updateRelayFlags:flag sid:currentCommand.macID];
+        uint8_t datatype = lMsg[26];
         uint8_t data = lMsg[27];
         if (data == 0x01){
             _js.relay = 1;
@@ -447,19 +497,19 @@ static UDPListenerService *instance;
             NSLog(@"Relay is off");
         }
         
-        NSLog(@"MAC: %@", mCurrentCommand.macID);
-        [[SQLHelper getInstance] updatePlugRelayService:_js.relay sid:mCurrentCommand.macID];
-        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:mCurrentCommand.macID];
+        NSLog(@"MAC: %@", currentCommand.macID);
+        [[SQLHelper getInstance] updatePlugRelayService:_js.relay sid:currentCommand.macID];
+        [[SQLHelper getInstance] updatePlugHallSensorService:_js.hall_sensor sid:currentCommand.macID];
     }
 }
 
-- (void)get_nightlight_status
+- (void)get_nightlight_status:(Command *)currentCommand
 {
     int service_id = [Global process_long:lMsg[28] b:lMsg[29] c:lMsg[30] d:lMsg[31]];
     if(service_id == NIGHTLED_SERVICE) {
         NSLog(@"NIGHT LIGHT SERVICE");
-        //int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
-        //uint8_t datatype = lMsg[36];                                                    //always the same 0x01
+        int flag = [Global process_long:lMsg[32] b:lMsg[33] c:lMsg[34] d:lMsg[35]];             //not used for this service
+        uint8_t datatype = lMsg[36];                                  //always the same 0x01
         uint8_t data = lMsg[37];
         if (data == 0x01){
             _js.nightlight = 1;
@@ -469,32 +519,20 @@ static UDPListenerService *instance;
             NSLog(@"Nighlight is off");
         }
         
-        [[SQLHelper getInstance] updatePlugNightlightService:data sid:mCurrentCommand.macID];
+        [[SQLHelper getInstance] updatePlugNightlightService:data sid:currentCommand.macID];
     }
 }
 
-- (void)get_co_status
+- (void)get_co_status:(Command *)currentCommand
 {
     int service_id = [Global process_long:lMsg[38] b:lMsg[39] c:lMsg[40] d:lMsg[41]];
     int costatus = 0;
     if (service_id == CO_SERVICE) {
         int flag = [Global process_long:lMsg[42] b:lMsg[43] c:lMsg[44] d:lMsg[45]];
-        if(flag == 0x00000010){
-            NSLog(@"CO SENSOR WARNING");
-            costatus = 1;
-            _js.co_sensor = costatus;                      //WARNING
-        } else if (flag == 0x00000100){
-            costatus = 3;
-            NSLog(@"CO SENSOR NOT PLUGGED IN");
-            _js.co_sensor = costatus;                      //NOT PLUGGED
-        } else {
-            costatus = 0;
-            NSLog(@"CO SENSOR NORMAL CONDITION");
-            _js.co_sensor = costatus;                      //NORMAL
-        }
-        [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:mCurrentCommand.macID];
-        //uint8_t datatype = lMsg[46];
-        //uint8_t data = lMsg[47];
+        [self updateCOSensorFlags:flag sid:currentCommand.macID];
+        [[SQLHelper getInstance] updatePlugCoSensorService:costatus sid:currentCommand.macID];
+        uint8_t datatype = lMsg[46];
+        uint8_t data = lMsg[47];
     }
 }
 

@@ -236,7 +236,7 @@
         
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
         
-        [self setDeviceStatus:_serviceId send:1];
+        //[self setDeviceStatus:_serviceId send:1];
     }
     
     _deviceStatusChangedFlag = false;
@@ -265,7 +265,12 @@
 }
 
 - (void)m1UpdateUI:(NSNotification *)notification {
-    [self updateDeviceStatusFromServer];
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *macId = [userInfo objectForKey:@"macId"];
+        NSLog(@"BROADCAST: BROADCAST RECEIVED FROM DEVICE %@", macId);
+    }
+    [self updateUI:notification];
 }
 
 - (void)udpUpdateUI:(NSNotification *)notification {
@@ -999,12 +1004,6 @@
                 }
                 
                 [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
-                
-                //[[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS
-                //                                                    object:self
-                //                                                  userInfo:nil];
-                
-                [self updateUI:nil];
 
                 // Update alarms from server
                 [self updateAlarms];

@@ -102,6 +102,13 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleSetTimerDelay:) name:NOTIFICATION_SET_TIMER_DELAY object:nil];
 }
 
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+    
+    [self.txtTimer scrollRangeToVisible:NSMakeRange(0,0)];
+}
+
 - (void)viewWillDisappear:(BOOL)animated
 {
     [super viewWillDisappear:animated];
@@ -163,7 +170,6 @@
     
     self.txtTimer.text = timerStr;
     [self.txtTimer sizeToFit];
-    [self.txtTimer setScrollsToTop:YES];
 }
 
 - (void)handleSetTimerDelay:(NSNotification *)notification
