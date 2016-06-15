@@ -575,7 +575,7 @@
 }
 
 - (void)startRepeatingTaskByMac:(NSString *)macId {
-    [[UDPCommunication getInstance] queryDevices:macId command:UDP_CMD_GET_DEVICE_STATUS];
+    //[[UDPCommunication getInstance] queryDevices:macId command:UDP_CMD_GET_DEVICE_STATUS];
 }
 
 - (void)onRightBarButton:(id)sender {
