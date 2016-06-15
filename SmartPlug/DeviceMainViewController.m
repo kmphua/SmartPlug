@@ -261,7 +261,17 @@
 }
 
 - (void)handlePushNotification:(NSNotification *)notification {
-    [self updateDeviceStatusFromServer];
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *getDataFlag = [userInfo objectForKey:@"getDataFlag"];
+        NSString *getAlarmFlag = [userInfo objectForKey:@"getAlarmFlag"];
+        if ([getDataFlag isEqualToString:@"true"]) {
+            [self updateDeviceStatusFromServer];
+        }
+        if ([getAlarmFlag isEqualToString:@"true"]) {
+            [self updateAlarms];
+        }
+    }
 }
 
 - (void)m1UpdateUI:(NSNotification *)notification {
@@ -418,8 +428,10 @@
     }
     
     // Relay snooze
+    NSLog(@"updateUI: snooze=%d", device.snooze);
     if (device.snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:RELAY_SERVICE];
+         NSLog(@"updateUI: relay alarms=%@", alarms);
         if (alarms && alarms.count>0) {
             [_btnOutletTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {
@@ -430,8 +442,10 @@
     }
     
     // Led snooze
+    NSLog(@"updateUI: led_snooze=%d", device.led_snooze);
     if (device.led_snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:NIGHTLED_SERVICE];
+        NSLog(@"updateUI: night led alarms=%@", alarms);
         if (alarms && alarms.count>0) {
             [_btnNightLightTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {
@@ -442,8 +456,10 @@
     }
 
     // Ir snooze
+    NSLog(@"updateUI: ir_snooze=%d", device.ir_snooze);
     if (device.ir_snooze == 0) {
         NSArray *alarms = [[SQLHelper getInstance] getAlarmDataByDeviceAndService:g_DeviceMac serviceId:IR_SERVICE];
+         NSLog(@"updateUI: ir alarms=%@", alarms);
         if (alarms && alarms.count>0) {
             [_btnIrTimer setBackgroundImage:[UIImage imageNamed:@"btn_timer_on"] forState:UIControlStateNormal];
         } else {
@@ -1004,9 +1020,8 @@
                 }
                 
                 [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
-
-                // Update alarms from server
-                [self updateAlarms];
+                
+                [self updateUI:nil];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];

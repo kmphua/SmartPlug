@@ -169,22 +169,11 @@ NSString *g_DeviceMac;
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
-    [self handleRemoteNotification:userInfo];
-}
-
-- (void)handleRemoteNotification:(NSDictionary *)userInfo
-{
     if (userInfo) {
-        NSDictionary *aps = [userInfo objectForKey:@"aps"];
-        if (aps) {
-            NSNumber *badge = [aps objectForKey:@"badge"];
-            NSLog(@"Push badge = %ld", [badge integerValue]);
-            
-            // Send push notification
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
-                                                                object:self
-                                                              userInfo:userInfo];
-        }
+        // Send push notification
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
+                                                            object:self
+                                                          userInfo:userInfo];
     }
 }
 
