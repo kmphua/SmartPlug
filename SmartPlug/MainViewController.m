@@ -85,7 +85,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePush:) name:NOTIFICATION_PUSH object:nil];
     
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusChangedUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 
@@ -99,9 +99,7 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(httpDeviceStatus:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
     
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteSent:) name:NOTIFICATION_DELETE_SENT object:nil];
-    
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteSent:) name:NOTIFICATION_DELETE_SENT object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -183,6 +181,21 @@
     [self getData];
 }
 
+- (void)deleteSent:(NSNotification *)notification {
+    
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *mac = [userInfo objectForKey:@"macId"];
+        
+        if ([[SQLHelper getInstance] deletePlugData:mac]) {
+            NSLog(@"Data removed successfully: %@", mac);
+            [[UDPCommunication getInstance] sendResetCommand:mac];
+            //http.removeDevice(param, mac);
+        }
+        [self getData];
+    }
+};
+
 - (void)repeatingTaskDone:(NSNotification *)notification {
     NSLog(@"Repeating TASK DONE");
     NSDictionary *userInfo = notification.userInfo;
@@ -217,7 +230,7 @@
 }
 
 - (void)deviceStatusChanged:(NSNotification *)notification {
-    _deviceStatusChangedFlag = true;
+    //_deviceStatusChangedFlag = true;
     
     NSDictionary *userInfo = notification.userInfo;
     if (userInfo) {
@@ -275,57 +288,6 @@
         [[SQLHelper getInstance] updatePlugIP:serviceName ip:@""];
         NSLog(@"BROADCAST: Device removed - %@", serviceName);
     }
-}
-
-// TODO
-- (void)timerCrashReached:(NSNotification *)notification {
-    
-    NSString *url = @"";
-    
-    /*
-    if(ListDevices.deviceStatusChangedFlag == false){
-        System.out.println("device status changed flag == false");
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                String url = "devctrl?token=" + Miscellaneous.getToken(getApplicationContext()) + "&hl=" + Locale.getDefault().getLanguage() + "&devid=" + ListDevicesServicesService.mac + "&send=0&ignoretoken="+ RegistrationIntentService.regToken;
-                try {
-                    if (httpHelper.setDeviceStatus(url, (byte) ListDevicesServicesService.action, ListDevicesServicesService.serviceId)) {
-                        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_RELAY_SERVICE) {
-                            mySQLHelper.updatePlugRelayService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
-                        }
-                        
-                        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_NIGHLED_SERVICE) {
-                            mySQLHelper.updatePlugNightlightService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
-                        }
-                        Intent i = new Intent("status_changed_update_ui");
-                        sendBroadcast(i);
-                    } else {
-                        Intent i = new Intent("http_device_status");
-                        i.putExtra("error", "yes");
-                        sendBroadcast(i);
-                    }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
-        
-    } else {
-        
-        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_RELAY_SERVICE) {
-            mySQLHelper.updatePlugRelayService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
-        }
-        
-        if (ListDevicesServicesService.serviceId == GlobalVariables.ALARM_NIGHLED_SERVICE) {
-            mySQLHelper.updatePlugNightlightService(ListDevicesServicesService.action, ListDevicesServicesService.mac);
-        }
-        Intent i = new Intent("status_changed_update_ui");
-        sendBroadcast(i);
-    }
-    
-    ListDevices.deviceStatusChangedFlag = false;
-    */
 }
 
 - (void)syncDeviceIpAddresses {
@@ -498,7 +460,7 @@
     if (editingStyle == UITableViewCellEditingStyleDelete) {
         // Remove device
         JSmartPlug *plug = [self.plugs objectAtIndex:indexPath.row];
-        if ([[SQLHelper getInstance] deletePlugDataByID:plug.sid]) {
+        if ([[SQLHelper getInstance] deletePlugData:plug.sid]) {
             NSLog(@"Device removed successfully %@", plug.sid);
             WebService *ws = [WebService new];
             ws.delegate = self;
@@ -737,7 +699,7 @@
                     
                     // Delete unwanted plugs
                     for (NSString *key in macToPlugs) {
-                        [[SQLHelper getInstance] deletePlugDataByID:key];
+                        [[SQLHelper getInstance] deletePlugData:key];
                     }
                 }
                 

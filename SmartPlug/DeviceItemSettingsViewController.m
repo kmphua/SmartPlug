@@ -415,7 +415,7 @@
                                               preferredStyle:UIAlertControllerStyleAlert];
         
         UIAlertAction* actionYes = [UIAlertAction actionWithTitle:NSLocalizedString(@"btn_yes", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {
-            [[SQLHelper getInstance] deletePlugDataByID:g_DeviceMac];
+            [[SQLHelper getInstance] deletePlugData:g_DeviceMac];
         }];
         [alertController addAction:actionYes];
         UIAlertAction* actionNo = [UIAlertAction actionWithTitle:NSLocalizedString(@"btn_no", nil) style:UIAlertActionStyleDefault handler:^(UIAlertAction *action) {

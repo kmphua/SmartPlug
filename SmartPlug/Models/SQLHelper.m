@@ -891,14 +891,6 @@ static SQLHelper *instance;
     return result;
 }
 
-- (BOOL)deletePlugDataByID:(NSString *)mac
-{
-    [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM smartplugs WHERE sid = ?", mac];
-    [db close];
-    return result;
-}
-
 - (BOOL)updatePlugNameNotify:(NSString *)mac name:(NSString *)name notifyOnPowerOutage:(int)notifyOnPowerOutage notifyOnCoWarning:(int)notifyOnCoWarning notifyOnTimerActivated:(int)notifyOnTimerActivated icon:(NSString *)icon
 {
     [db open];

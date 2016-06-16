@@ -80,7 +80,6 @@
 - (NSArray *)getPlugData;
 - (NSArray *)getNonActivePlugData;
 - (BOOL)deletePlugData:(NSString *)sid;
-- (BOOL)deletePlugDataByID:(NSString *)mac;
 - (BOOL)updatePlugNameNotify:(NSString *)mac name:(NSString *)name notifyOnPowerOutage:(int)notifyOnPowerOutage notifyOnCoWarning:(int)notifyOnCoWarning notifyOnTimerActivated:(int)notifyOnTimerActivated icon:(NSString *)icon;
 - (BOOL)deletePlugs;
 - (BOOL)deleteNonActivePlug:(NSString *)name;
