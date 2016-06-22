@@ -123,6 +123,12 @@ NSString *g_DeviceMac;
     // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     [_udpListener startUdpBroadcastListener];
     [_mDNSService startBrowsing];
+    
+    // Simulate push when becoming active
+    NSDictionary *userInfo = [NSDictionary new];
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
+                                                        object:self
+                                                      userInfo:userInfo];
 }
 
 - (void)applicationWillTerminate:(UIApplication *)application {
