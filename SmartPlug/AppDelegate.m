@@ -171,6 +171,7 @@ NSString *g_DeviceMac;
 {
     if (userInfo) {
         // Send push notification
+        NSLog(@"Push received");
         [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
                                                             object:self
                                                           userInfo:userInfo];

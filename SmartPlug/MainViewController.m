@@ -85,8 +85,6 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePush:) name:NOTIFICATION_PUSH object:nil];
     
-    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deviceStatusChanged:) name:NOTIFICATION_DEVICE_STATUS_CHANGED object:nil];
-
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(statusChangedUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
@@ -216,7 +214,7 @@
 
 - (void)handlePush:(NSNotification *)notification {
     [self checkStatus:nil];
-    //[self getData];
+    [self getData];
 }
 
 - (void)updateAlarmServiceDone:(NSNotification *)notification {

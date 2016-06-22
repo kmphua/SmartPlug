@@ -1412,7 +1412,7 @@
 						DevelopmentTeam = 3WTUK99XFZ;
 						SystemCapabilities = {
 							com.apple.BackgroundModes = {
-								enabled = 0;
+								enabled = 1;
 							};
 						};
 					};

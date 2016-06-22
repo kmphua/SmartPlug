@@ -261,17 +261,7 @@
 }
 
 - (void)handlePushNotification:(NSNotification *)notification {
-    NSDictionary *userInfo = notification.userInfo;
-    if (userInfo) {
-        NSString *getDataFlag = [userInfo objectForKey:@"getDataFlag"];
-        NSString *getAlarmFlag = [userInfo objectForKey:@"getAlarmFlag"];
-        if ([getDataFlag isEqualToString:@"true"]) {
-            [self updateDeviceStatusFromServer];
-        }
-        if ([getAlarmFlag isEqualToString:@"true"]) {
-            [self updateAlarms];
-        }
-    }
+    [self updateDeviceStatusFromServer];
 }
 
 - (void)m1UpdateUI:(NSNotification *)notification {
@@ -1015,7 +1005,10 @@
                 
                 [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
                 
-                [self updateUI:nil];
+                //[self updateUI:nil];
+                
+                [self updateAlarms];
+
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
