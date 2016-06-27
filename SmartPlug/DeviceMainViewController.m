@@ -642,11 +642,9 @@
     
     [self dismissWaitingIndicator];
 
-    /*
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:g_DeviceMac];
-     */
 
     [self updateUI:nil];
 }
@@ -770,14 +768,29 @@
     
     if(serviceId == RELAY_SERVICE){
         snooze = [[SQLHelper getInstance] getRelaySnooze:g_DeviceMac];
+        if (minutes > 0) {
+            snooze += minutes;
+        } else {
+            snooze = 0;
+        }
     }
     
     if(serviceId == NIGHTLED_SERVICE){
         snooze = [[SQLHelper getInstance] getLedSnooze:g_DeviceMac];
+        if (minutes > 0) {
+            snooze += minutes;
+        } else {
+            snooze = 0;
+        }
     }
 
     if(serviceId == IR_SERVICE){
         snooze = [[SQLHelper getInstance] getIRSnooze:g_DeviceMac];
+        if (minutes > 0) {
+            snooze += minutes;
+        } else {
+            snooze = 0;
+        }
     }
 
     if ([[UDPCommunication getInstance] delayTimer:g_DeviceMac snooze:snooze protocol:1 serviceId:serviceId send:0]) {

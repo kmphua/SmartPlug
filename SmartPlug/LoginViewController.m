@@ -10,6 +10,7 @@
 #import "CreateAccountViewController.h"
 #import "ResetPasswordViewController.h"
 #import "MainViewController.h"
+#import "AppDelegate.h"
 
 @interface LoginViewController ()
 
@@ -216,9 +217,13 @@
                 }
             }
             
-            // Go to main view
+            // Set main view as root
             MainViewController *mainController = [[MainViewController alloc] initWithNibName:@"MainViewController" bundle:nil];
-            [self.navigationController pushViewController:mainController animated:YES];
+            UINavigationController *navi = [[UINavigationController alloc] initWithRootViewController:mainController];
+            AppDelegate *appDelegate = (AppDelegate *)[[UIApplication sharedApplication] delegate];
+            appDelegate.window.rootViewController = navi;
+            [appDelegate.window makeKeyAndVisible];
+            
         } else if ([resultName isEqualToString:WS_REG_PUSH]) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {

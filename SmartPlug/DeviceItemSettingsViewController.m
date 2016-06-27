@@ -89,6 +89,10 @@
     
     short command = 0x0001;
     [[UDPCommunication getInstance] queryDevices:g_DeviceMac command:command];
+    
+    WebService *ws = [WebService new];
+    ws.delegate = self;
+    [ws devGet:g_UserToken lang:[Global getCurrentLang] iconRes:[Global getIconResolution] devId:_device.sid];
 }
 
 - (void)viewWillDisappear:(BOOL)animated {
@@ -358,14 +362,14 @@
             }
             break;
         case ROW_HARDWARE:
+            cell.textLabel.text = NSLocalizedString(@"id_hardware", nil);
             if (hardware && hardware.length > 0) {
-                cell.textLabel.text = NSLocalizedString(@"id_hardware", nil);
                 cell.detailTextLabel.text = hardware;
             }
             break;
         case ROW_FIRMWARE:
+            cell.textLabel.text = NSLocalizedString(@"id_firmware", nil);
             if (firmware && firmware.length > 0) {
-                cell.textLabel.text = NSLocalizedString(@"id_firmware", nil);
                 cell.detailTextLabel.text = firmware;
             }
             break;
@@ -514,6 +518,15 @@
                                                           cancelButtonTitle:NSLocalizedString(@"OK", nil)
                                                           otherButtonTitles:nil, nil];
                 [alertView show];
+            }
+        } else if ([resultName compare:WS_DEV_GET] == NSOrderedSame) {
+            long result = [[jsonObject objectForKey:@"r"] longValue];
+            if (result == 0) {
+                hardware = [jsonObject objectForKey:@"hardware"];
+                firmware = [jsonObject objectForKey:@"firmware"];
+                [self.tableView reloadData];                
+            } else {
+                // Failure
             }
         }
     }
