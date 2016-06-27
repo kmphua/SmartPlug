@@ -32,7 +32,6 @@
     uint8_t iMsg[22];
     uint8_t kMsg[46];
     uint8_t ir[128];
-    uint8_t delayT[22];
     uint8_t ir2[1];
     uint8_t timers[512];
     int previous_msgid;
@@ -199,6 +198,7 @@ static UDPCommunication *instance;
         cmd = [self generate_header:macId command:UDP_CMD_DELAY_TIMER];
     }
     
+    uint8_t delayT[22];
     memset(delayT, 0, sizeof(delayT));
     for (int i = 0; i < 14; i++) {
         delayT[i] = hMsg[i];
@@ -468,7 +468,7 @@ static UDPCommunication *instance;
         }
     } else {
         NSLog(@"SENDING ALL ZERO TIMER");
-        for(int x = 0; x < 11; x++){
+        for(int x = 0; x < 12; x++){
             timers[i++] = 0;
         }
     }
