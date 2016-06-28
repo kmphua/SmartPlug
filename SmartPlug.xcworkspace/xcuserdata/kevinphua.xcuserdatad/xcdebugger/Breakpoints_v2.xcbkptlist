@@ -20,27 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "SmartPlug/IR/IRCodeModeViewController.m"
-            timestampString = "486838284.626269"
+            timestampString = "488776072.213815"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "314"
-            endingLineNumber = "314"
-            landmarkName = "-GMGridView:didTapOnItemAtIndex:"
-            landmarkType = "5">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "SmartPlug/IR/IREditModeViewController.m"
-            timestampString = "486838508.386915"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "266"
-            endingLineNumber = "266"
+            startingLineNumber = "319"
+            endingLineNumber = "319"
             landmarkName = "-GMGridView:didTapOnItemAtIndex:"
             landmarkType = "5">
          </BreakpointContent>
@@ -99,13 +83,13 @@
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "SmartPlug/AppDelegate.m"
-            timestampString = "488297872.287301"
+            filePath = "SmartPlug/IR/IRCodeModeViewController.m"
+            timestampString = "488776169.472583"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "129"
-            endingLineNumber = "129"
-            landmarkName = "-applicationDidBecomeActive:"
+            startingLineNumber = "232"
+            endingLineNumber = "232"
+            landmarkName = "-onBtnIr:"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>

@@ -230,8 +230,13 @@
     for (IrCode *code in _codes) {
         if (code.code_id == codeId) {
             [self setDeviceStatus:g_DeviceMac serviceId:IR_SERVICE action:code.filename];
-            [[UDPCommunication getInstance] sendIRFileName:g_DeviceMac filename:code.filename];
+            //[[UDPCommunication getInstance] sendIRFileName:g_DeviceMac filename:code.filename];
             NSLog(@"Sending IR filename %d", code.filename);
+            
+            [self.view makeToast:NSLocalizedString(@"processing_ir_command", nil)
+                        duration:1.0
+                        position:CSToastPositionBottom];
+            
             break;
         }
     }
@@ -302,7 +307,7 @@
     
     WebService *ws = [WebService new];
     ws.delegate = self;
-    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:1 data:deviceData];
+    [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:devId send:0 data:deviceData];
 }
 
 //////////////////////////////////////////////////////////////
