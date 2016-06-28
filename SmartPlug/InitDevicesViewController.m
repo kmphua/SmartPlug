@@ -37,7 +37,7 @@
     self.imgBackground.image = stretchableImage;
     
     self.lblInitDevices.text = NSLocalizedString(@"title_initializeDevices", nil);
-    self.lblMessage.text = NSLocalizedString(@"msg_enterSSID&password", nil);
+    self.lblMessage.text = NSLocalizedString(@"msg_enterSSID_password", nil);
     self.lblSSID.text = @"SSID";
     self.lblPassword.text = NSLocalizedString(@"id_password", nil);
     self.txtSSID.placeholder = @"SSID";

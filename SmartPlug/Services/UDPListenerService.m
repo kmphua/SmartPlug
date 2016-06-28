@@ -305,7 +305,7 @@ static UDPListenerService *instance;
             case UDP_CMD_GET_DEVICE_STATUS:
                 if(code == 0){
                     code = 1;
-                    [self process_get_device_status];
+                    [self process_get_device_status:currentCommand];
                     [[SQLHelper getInstance] updatePlugServices:_js];
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI
                                                                         object:self

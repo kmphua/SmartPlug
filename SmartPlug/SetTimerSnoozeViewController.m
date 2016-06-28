@@ -53,7 +53,7 @@
     self.lblTitle.text = title;
     [self.btnAddTimer setTitle:NSLocalizedString(@"add_new_timer", nil) forState:UIControlStateNormal];
     [self.btnShowModifyTimer setTitle:NSLocalizedString(@"show_modify_timer", nil) forState:UIControlStateNormal];
-    [self.btnCancelSnooze setTitle:NSLocalizedString(@"cancel_snooze", nil) forState:UIControlStateNormal];
+    [self.btnCancelSnooze setTitle:NSLocalizedString(@"delay_cancel", nil) forState:UIControlStateNormal];
     
     if (_alarmCount <= 0) {
         self.lblTitle.text = NSLocalizedString(@"no_timer_set", nil);

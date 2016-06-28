@@ -155,7 +155,7 @@ NSString *g_DeviceMac;
     NSString * deviceTokenString = [[[[deviceToken description]
                                       stringByReplacingOccurrencesOfString: @"<" withString: @""]
                                      stringByReplacingOccurrencesOfString: @">" withString: @""]
-                                    stringByReplacingOccurrencesOfString: @" " withString: @""];
+                                     stringByReplacingOccurrencesOfString: @" " withString: @""];
     
     NSLog(@"Device token = %@", deviceTokenString);
     g_DevToken = deviceTokenString;
@@ -175,6 +175,16 @@ NSString *g_DeviceMac;
 
 - (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo
 {
+    if (userInfo) {
+        // Send push notification
+        NSLog(@"Push received");
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_PUSH
+                                                            object:self
+                                                          userInfo:userInfo];
+    }
+}
+
+- (void)application:(UIApplication *)application didReceiveRemoteNotification:(nonnull NSDictionary *)userInfo fetchCompletionHandler:(nonnull void (^)(UIBackgroundFetchResult))completionHandler {
     if (userInfo) {
         // Send push notification
         NSLog(@"Push received");

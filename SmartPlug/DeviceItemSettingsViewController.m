@@ -251,21 +251,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    if (g_DeviceIp && g_DeviceIp.length>0) {
-        if (indexPath.row == ROW_HARDWARE ||
-            indexPath.row == ROW_FIRMWARE ||
-            indexPath.row == ROW_CO_SENSOR) {
-            return 55;
-        }
-        return 55;
-    } else {
-        if (indexPath.row == ROW_HARDWARE ||
-            indexPath.row == ROW_FIRMWARE ||
-            indexPath.row == ROW_CO_SENSOR) {
-            return 0;
-        }
-        return 55;
-    }
+    return 55;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -308,7 +294,7 @@
             cell.detailTextLabel.text = @"";
             cell.accessoryType = UITableViewCellAccessoryDisclosureIndicator;
             
-            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 30, 7, 40, 40)];
+            UIImageView *imageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 100, 7, 40, 40)];
             [imageView setBackgroundColor:[UIColor colorWithRed:134.0/255.0 green:211.0/255.0 blue:209.0/255.0 alpha:1.0]];
             
             NSString *imagePath = DEFAULT_ICON_PATH;
@@ -323,14 +309,14 @@
                 imagePath = DEFAULT_ICON_PATH;
                 [imageView sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
             }
-            [cell addSubview:imageView];
+            cell.accessoryView = imageView;
         }
             break;
         case ROW_DEVICE_NAME:
             cell.textLabel.text = NSLocalizedString(@"id_name", nil);
             
             if (!_txtName) {
-                _txtName = [[UITextField alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-120, 5, 150, cell.contentView.frame.size.height)];
+                _txtName = [[UITextField alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-150, 5, 100, cell.contentView.frame.size.height)];
                 _txtName.backgroundColor = [UIColor whiteColor];
                 _txtName.borderStyle = UITextBorderStyleNone;
                 _txtName.textAlignment = NSTextAlignmentRight;
@@ -345,7 +331,7 @@
             } else {
                 _txtName.text = _device.name;
             }
-            [cell.contentView addSubview:_txtName];
+            cell.accessoryView = _txtName;
             break;
         case ROW_WIFI:
             cell.textLabel.text = NSLocalizedString(@"id_wifi", nil);
@@ -393,7 +379,7 @@
             break;
         case ROW_CONFIG_MSG:
             cell.textLabel.text = NSLocalizedString(@"msg_deskLampBtn", nil);
-            cell.textLabel.adjustsFontSizeToFitWidth = YES;
+            cell.textLabel.numberOfLines = 0;
             break;
         case ROW_UPDATE_FIRMWARE:{
             NSAttributedString* attribStrBtnOta = [[NSAttributedString alloc] initWithString:NSLocalizedString(@"btn_ota", nil) attributes:@{NSForegroundColorAttributeName:[Global colorWithType:COLOR_TYPE_LINK],NSFontAttributeName:[UIFont systemFontOfSize:18], NSUnderlineStyleAttributeName:@(NSUnderlineStyleSingle)}];

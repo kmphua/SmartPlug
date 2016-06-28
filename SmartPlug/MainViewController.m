@@ -120,10 +120,9 @@
 }
 
 - (void)showWaitingIndicator {
-    //_hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    //_hud.mode = MBProgressHUDModeIndeterminate;
-    //_hud.labelText = NSLocalizedString(@"please_wait_done",nil);
-    //[_hud show:YES];
+    [self.view makeToast:NSLocalizedString(@"processing_command", nil)
+                duration:1.0
+                position:CSToastPositionBottom];
 }
 
 - (void)dismissWaitingIndicator {

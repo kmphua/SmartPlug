@@ -208,10 +208,9 @@
 }
 
 - (void)showWaitingIndicator:(NSString *)labelText {
-    //_hud = [MBProgressHUD showHUDAddedTo:self.view animated:YES];
-    //_hud.mode = MBProgressHUDModeIndeterminate;
-    //_hud.labelText = labelText;
-    //[_hud show:YES];
+    [self.view makeToast:labelText
+                duration:1.0
+                position:CSToastPositionBottom];
 }
 
 - (void)dismissWaitingIndicator {
