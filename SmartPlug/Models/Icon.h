@@ -10,7 +10,7 @@
 
 @interface Icon : NSObject
 
-@property (nonatomic, assign) NSString *sid;
+@property (nonatomic, copy) NSString *sid;
 @property (nonatomic, copy) NSString *url;
 @property (nonatomic, assign) int size;
 

@@ -16,6 +16,23 @@
 #define UDP_SERVER_PORT             20004
 #define UDP_TESTING_PORT            20005
 
+@interface QueueItem : NSObject  {
+}
+
+@property unsigned int msgID;
+@property int serviceID;
+@property int action;
+@property NSString *macID;
+@property bool shouldRun;
+
+@end
+
+@implementation QueueItem {
+    
+}
+@end
+
+
 @implementation Command
 
 @end
@@ -34,7 +51,7 @@
     uint8_t ir[128];
     uint8_t ir2[1];
     uint8_t timers[512];
-    int previous_msgid;
+    uint32_t previous_msgid;
     BOOL process_data;
     short code;
     int IRFlag;
@@ -45,8 +62,10 @@
     GCDAsyncUdpSocket *udpSocket;
     BOOL isRunning;
     
-    int mLastMsgID;
+    uint32_t mLastMsgID;
     NSMutableDictionary *mQueuedCommands;
+    
+    NSMutableDictionary *mSetStatusQueue;
 }
 
 @end
@@ -76,8 +95,9 @@ static UDPCommunication *instance;
         irCode = 0;
         _IRCodes = [NSMutableArray new];
         _js = [JSmartPlug new];
-        mLastMsgID = 0;
+        mLastMsgID = arc4random();
         mQueuedCommands = [NSMutableDictionary new];
+        mSetStatusQueue = [NSMutableDictionary new];
     }
     return self;
 }
@@ -96,7 +116,7 @@ static UDPCommunication *instance;
         return;
     }
 
-    NSLog(@"sendUDP: MAC = %@", cmd.macID);
+    NSLog(@"sendUDP: MAC = %@, msgID = %d", cmd.macID, cmd.msgID);
     NSString *ip = [[SQLHelper getInstance] getPlugIP:cmd.macID];
     if (ip && ip.length>0) {
         [self addCommand:cmd];
@@ -137,6 +157,7 @@ static UDPCommunication *instance;
 
 - (void)addCommand:(Command *)command
 {
+    /*
     // Check to see if command queue exists for key
     NSMutableArray *commandQueue = [mQueuedCommands objectForKey:command.macID];
     if (commandQueue) {
@@ -147,11 +168,12 @@ static UDPCommunication *instance;
         commandQueue = [NSMutableArray new];
         [commandQueue queuePush:command];
     }
+     */
     
-    [mQueuedCommands setObject:commandQueue forKey:command.macID];
+    [mQueuedCommands setObject:command forKey:command.macID];
 }
 
-- (Command *)dequeueCommandByIp:(NSString *)ip msgID:(int)msgID
+- (Command *)dequeueCommandByIp:(NSString *)ip msgID:(uint32_t)msgID
 {
     NSString *mac = [[SQLHelper getInstance] getPlugMacFromIP:ip];
     if (!mac) {
@@ -163,13 +185,25 @@ static UDPCommunication *instance;
     return [self dequeueCommand:mac msgID:msgID];
 }
 
-- (Command *)dequeueCommand:(NSString *)macID msgID:(int)msgID
+- (Command *)dequeueCommand:(NSString *)macID msgID:(uint32_t)msgID
 {
     if (!macID) {
         NSLog(@"dequeueCommand: NULL macID!!!");
         return nil;
     }
+
+    Command *cmd = [mQueuedCommands objectForKey:macID];
+    if (!cmd) {
+        NSLog(@"dequeueCommand: No commands!");
+        return nil;
+    }
     
+    if( cmd.msgID != msgID ) {
+        NSLog(@"dequeueCommand: No matching msgID! (Expected %d, but queued ID=%d)", msgID, cmd.msgID);
+        return nil;
+    }
+
+    /*
     NSMutableArray *commandQueue = [mQueuedCommands objectForKey:macID];
     if (!commandQueue) {
         NSLog(@"dequeueCommand: No commands!");
@@ -181,6 +215,7 @@ static UDPCommunication *instance;
         NSLog(@"dequeueCommand: No matching msgID!");
         return nil;
     }
+     */
     
     return cmd;
 }
@@ -218,7 +253,7 @@ static UDPCommunication *instance;
         WebService *ws = [WebService new];
         ws.delegate = self;
         NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
-        [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:send data:data];
+        [ws setTimerDelay:g_UserToken lang:[Global getCurrentLang] devId:macId send:send data:data];
     } else if (protocol == PROTOCOL_UDP) {
         NSData *data = [NSData dataWithBytes:delayT length:sizeof(delayT)];
         [self sendUDP:cmd data:data];
@@ -549,7 +584,7 @@ static UDPCommunication *instance;
             if(protocol == PROTOCOL_HTTP) {
                 WebService *ws = [WebService new];
                 ws.delegate = self;
-                [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac send:sendFlag data:data];
+                [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:macId send:sendFlag data:data];
             } else if(protocol == PROTOCOL_UDP) {
                 //[self sendUDP:ip data:data];
             }
@@ -557,6 +592,28 @@ static UDPCommunication *instance;
     }
 
     return toReturn;
+}
+
+- (void) finishDeviceStatus : (uint32_t)msgID {
+    
+    NSNumber *key = [NSNumber numberWithUnsignedInt:msgID];
+    
+    QueueItem *item2 = [mSetStatusQueue objectForKey:key];
+    if( item2==nil )
+        return;
+    
+    item2.shouldRun = false;
+    
+    [mSetStatusQueue removeObjectForKey:key];
+
+    if (item2.serviceID == RELAY_SERVICE) {
+        [[SQLHelper getInstance] updatePlugRelayService:item2.action sid:item2.macID];
+    }
+    if (item2.serviceID == NIGHTLED_SERVICE) {
+        [[SQLHelper getInstance] updatePlugNightlightService:item2.action sid:item2.macID];
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
 }
 
 - (BOOL)setDeviceStatus:(NSString *)macID serviceId:(int)serviceId action:(uint8_t)action
@@ -587,6 +644,85 @@ static UDPCommunication *instance;
     sMsg[22] = (uint8_t)((terminator >> 16 ) & 0xff);
     sMsg[23] = (uint8_t)((terminator >> 24 ) & 0xff);
     
+    QueueItem *item = [[QueueItem alloc] init];
+    item.msgID = cmd.msgID;
+    item.serviceID = serviceId;
+    item.action = action;
+    item.macID = macID;
+    item.shouldRun = true;
+    
+    NSNumber *key = [NSNumber numberWithUnsignedInt:item.msgID];
+    
+    NSArray *queuedItems = [mSetStatusQueue allValues];
+    for( QueueItem *queuedItem in queuedItems ) {
+        if( [queuedItem.macID isEqualToString:macID] && queuedItem.serviceID==serviceId ) {
+            queuedItem.shouldRun = false;
+            [mSetStatusQueue removeObjectForKey:[NSNumber numberWithUnsignedInt:queuedItem.msgID]];
+        }
+    }
+    
+    [mSetStatusQueue setObject:item forKey:key];
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, .5 * NSEC_PER_SEC), dispatch_get_main_queue(), ^{
+        if( !item.shouldRun )
+            return;
+        
+        QueueItem *item2 = [mSetStatusQueue objectForKey:key];
+        if( item2==nil )
+            return;
+        
+        [mSetStatusQueue removeObjectForKey:key];
+        
+        // Set device status
+        WebService *ws = [WebService new];
+        ws.delegate = self;
+        ws.serviceId = serviceId;
+        ws.action = action;
+        
+        int header = 0x534D5254;
+        uint8_t sMsg2[24];
+        sMsg2[3] = (uint8_t)(header);
+        sMsg2[2] = (uint8_t)((header >> 8 ));
+        sMsg2[1] = (uint8_t)((header >> 16 ));
+        sMsg2[0] = (uint8_t)((header >> 24 ));
+        
+        int msid = (int)(random()*4294967+1);
+        sMsg2[7] = (uint8_t)(msid);
+        sMsg2[6] = (uint8_t)((msid >> 8 ));
+        sMsg2[5] = (uint8_t)((msid >> 16 ));
+        sMsg2[4] = (uint8_t)((msid >> 24 ));
+        int seq = 0x80000000;
+        sMsg2[11] = (uint8_t)(seq);
+        sMsg2[10] = (uint8_t)((seq >> 8 ));
+        sMsg2[9] = (uint8_t)((seq >> 16 ));
+        sMsg2[8] = (uint8_t)((seq >> 24 ));
+        short command = 0x0008;
+        sMsg2[13] = (uint8_t)(command);
+        sMsg2[12] = (uint8_t)((command >> 8 ));
+        //int serviceId = 0xD1000000;
+        sMsg2[17] = (uint8_t)(serviceId);
+        sMsg2[16] = (uint8_t)((serviceId >> 8 ));
+        sMsg2[15] = (uint8_t)((serviceId >> 16 ));
+        sMsg2[14] = (uint8_t)((serviceId >> 24 ));
+        
+        uint8_t datatype = 0x01;
+        sMsg2[18] = datatype;
+        uint8_t data = action;
+        sMsg2[19] = data;
+        int terminator = 0x00000000;
+        sMsg2[23] = (uint8_t)(terminator & 0xff);
+        sMsg2[22] = (uint8_t)((terminator >> 8 ) & 0xff);
+        sMsg2[21] = (uint8_t)((terminator >> 16 ) & 0xff);
+        sMsg2[20] = (uint8_t)((terminator >> 24 ) & 0xff);
+        
+        NSLog(@"Data length = %ld", sizeof(sMsg2));
+        
+        NSData *deviceData = [NSData dataWithBytes:sMsg2 length:sizeof(sMsg2)];
+        
+        [ws devCtrl:g_UserToken lang:[Global getCurrentLang] devId:item2.macID send:0 data:deviceData];
+
+    });
+    
     NSData *udpData = [NSData dataWithBytes:sMsg length:sizeof(sMsg)];
     [self sendUDP:cmd data:udpData];
     return YES;
@@ -599,7 +735,7 @@ static UDPCommunication *instance;
     c.command = command;
     
     int header = 0x534D5254;
-    int msgid = c.msgID = (mLastMsgID++);
+    uint32_t msgid = c.msgID = (mLastMsgID++);
     int seq = 0x80000000;
     memset(hMsg, 0, sizeof(hMsg));
     hMsg[0] = (uint8_t) header;
@@ -645,7 +781,7 @@ static UDPCommunication *instance;
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
     
@@ -664,6 +800,15 @@ static UDPCommunication *instance;
             if (result == 0) {
                 // Success
                 NSLog(@"Devctrl success!");
+                
+                if (ws.serviceId == RELAY_SERVICE) {
+                    [[SQLHelper getInstance] updatePlugRelayService:ws.action sid:ws.devId];
+                }
+                if (ws.serviceId == NIGHTLED_SERVICE) {
+                    [[SQLHelper getInstance] updatePlugNightlightService:ws.action sid:ws.devId];
+                }
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil userInfo:nil];
             } else {
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];

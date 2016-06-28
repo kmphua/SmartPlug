@@ -243,22 +243,23 @@ static SQLHelper *instance;
     return result;
 }
 
-- (BOOL)updateIRGroup:(IrGroup *)group
+- (BOOL)updateIRGroup:(IrGroup *)group devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE irgroups SET name = ?, icon = ?, position = ? WHERE _id = ?",
+    BOOL result = [db executeUpdate:@"UPDATE irgroups SET name = ?, icon = ?, position = ? WHERE _id = ? AND mac = ?",
                    group.name,
                    group.icon,
                    [NSNumber numberWithInt:group.position],
-                   [NSNumber numberWithInt:group.group_id]];
+                   [NSNumber numberWithInt:group.group_id],
+                   devId];
     [db close];
     return result;
 }
 
-- (NSArray *)getIRGroups
+- (NSArray *)getIRGroups: (NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups"];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE mac = ?", devId];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
         IrGroup *irGroup = [IrGroup new];
@@ -274,12 +275,12 @@ static SQLHelper *instance;
     return irGroups;
 }
 
-- (BOOL)deleteIRGroups
+- (BOOL)deleteIRGroups : (NSString *)devId
 {
     [db open];
-    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups"];
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE mac = ?", devId];
     if (toReturn){
-        if ([self deleteAllIRCodes]){
+        if ([self deleteAllIRCodes: devId]){
             toReturn = true;
         } else {
             toReturn = false;
@@ -289,10 +290,10 @@ static SQLHelper *instance;
     return toReturn;
 }
 
-- (IrGroup *)getIRGroupBySID:(int)sid
+- (IrGroup *)getIRGroupBySID:(int)sid devId:(NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ? AND mac = ?", [NSNumber numberWithInt:sid], devId];
     IrGroup *irGroup;
     while ([results next]) {
         irGroup = [IrGroup new];
@@ -326,10 +327,10 @@ static SQLHelper *instance;
     return irGroups;
 }
 
-- (NSArray *)getIRGroupByName:(NSString *)groupName
+- (NSArray *)getIRGroupByName:(NSString *)groupName devId:(NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ?", groupName];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ? AND mac = ?", groupName];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
         IrGroup * irGroup = [IrGroup new];
@@ -345,12 +346,12 @@ static SQLHelper *instance;
     return irGroups;
 }
 
-- (BOOL)deleteIRGroupById:(int)groupId
+- (BOOL)deleteIRGroupById:(int)groupId devId:(NSString *)devId
 {
     [db open];
-    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:groupId]];
+    BOOL toReturn = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ? AND mac = ?", [NSNumber numberWithInt:groupId], devId];
     if (toReturn){
-        if ([self deleteIRCodes:groupId]){
+        if ([self deleteIRCodes:groupId devId:devId]){
             toReturn = true;
         } else {
             toReturn = false;
@@ -360,54 +361,54 @@ static SQLHelper *instance;
     return toReturn;
 }
 
-- (BOOL)deleteAllIRCodes
+- (BOOL)deleteAllIRCodes: (NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM ircodes"];
+    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE mac = ?", devId];
     [db close];
     return result;
 }
 
-- (BOOL)deleteIRCodes:(int)groupId
+- (BOOL)deleteIRCodes:(int)groupId devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE group_id = ?", [NSNumber numberWithInt:groupId]];
+    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE group_id = ? AND mac = ?", [NSNumber numberWithInt:groupId], devId];
     [db close];
     return result;
 }
 
-- (BOOL)deleteIRGroupBySID:(int)sid
+- (BOOL)deleteIRGroupBySID:(int)sid devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    BOOL result = [db executeUpdate:@"DELETE FROM irgroups WHERE sid = ? AND mac = ?", [NSNumber numberWithInt:sid], devId];
     if (result) {
-        result = [self deleteIRCodesBySID:sid];
+        result = [self deleteIRCodesBySID:sid devId:devId];
     }
     [db close];
     return result;
 }
 
-- (BOOL)deleteIRCodesBySID:(int)groupId
+- (BOOL)deleteIRCodesBySID:(int)groupId devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE group_id = ?", [NSNumber numberWithInt:groupId]];
+    BOOL result = [db executeUpdate:@"DELETE FROM ircodes WHERE group_id = ? AND mac = ?", [NSNumber numberWithInt:groupId], devId];
     [db close];
     return result;
 }
 
-- (BOOL)deleteIRCode:(int)sid
+- (BOOL)deleteIRCode:(int)sid  devId:(NSString *)devId
 {
     BOOL result;
     [db open];
-    result = [db executeUpdate:@"DELETE FROM ircodes WHERE sid = ?", [NSNumber numberWithInt:sid]];
+    result = [db executeUpdate:@"DELETE FROM ircodes WHERE sid = ? AND mac = ?", [NSNumber numberWithInt:sid], devId];
     [db close];
     return result;
 }
 
-- (NSArray *)getIRGroup:(int)groupId
+- (NSArray *)getIRGroup:(int)groupId  devId:(NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ?", [NSNumber numberWithInt:groupId]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE sid = ? AND mac = ?", [NSNumber numberWithInt:groupId], devId];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
         IrGroup *irGroup = [IrGroup new];
@@ -433,30 +434,31 @@ static SQLHelper *instance;
     return result;
 }
 
-- (BOOL)updateIRCodeSID:(int)filename sid:(int)sid
+- (BOOL)updateIRCodeSID:(int)filename sid:(int)sid  devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE ircodes SET sid = ? WHERE filename = ?",
+    BOOL result = [db executeUpdate:@"UPDATE ircodes SET sid = ? WHERE filename = ? AND mac = ?",
                    [NSNumber numberWithInt:sid],
-                   [NSNumber numberWithInt:filename]];
+                   [NSNumber numberWithInt:filename], devId];
     [db close];
     return result;
 }
 
-- (BOOL)updateIRGroupID:(int)groupId sid:(int)sid
+- (BOOL)updateIRGroupID:(int)groupId sid:(int)sid  devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE irgroups SET sid = ? WHERE _id = ?",
+    BOOL result = [db executeUpdate:@"UPDATE irgroups SET sid = ? WHERE _id = ? AND mac = ?",
                    [NSNumber numberWithInt:sid],
-                   [NSNumber numberWithInt:groupId]];
+                   [NSNumber numberWithInt:groupId],
+                   devId];
     [db close];
     return result;
 }
 
-- (BOOL)updateIRCode:(IrCode *)code
+- (BOOL)updateIRCode:(IrCode *)code  devId:(NSString *)devId
 {
     [db open];
-    BOOL result = [db executeUpdate:@"UPDATE ircodes SET group_id = ?, name = ?, filename = ?, icon = ?, mac = ?, position = ?, brand = ?, model = ? WHERE _id = ?",
+    BOOL result = [db executeUpdate:@"UPDATE ircodes SET group_id = ?, name = ?, filename = ?, icon = ?, mac = ?, position = ?, brand = ?, model = ? WHERE _id = ? AND mac = ?",
                    [NSNumber numberWithInt:code.group_id],
                    code.name,
                    [NSNumber numberWithInt:code.filename],
@@ -465,15 +467,16 @@ static SQLHelper *instance;
                    [NSNumber numberWithInt:code.position],
                    code.brand,
                    code.model,
-                   [NSNumber numberWithInt:code.code_id]];
+                   [NSNumber numberWithInt:code.code_id],
+                   devId];
     [db close];
     return result;
 }
 
-- (NSArray *)getIRCodes
+- (NSArray *)getIRCodes : (NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes"];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE mac = ?", devId];
     NSMutableArray *irCodes = [NSMutableArray new];
     while ([results next]) {
         IrCode *irCode = [IrCode new];
@@ -493,10 +496,10 @@ static SQLHelper *instance;
     return irCodes;
 }
 
-- (NSArray *)getIRCodesByGroup:(int)groupId
+- (NSArray *)getIRCodesByGroup:(int)groupId  devId:(NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE group_id = ?", [NSNumber numberWithInt:groupId]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE group_id = ? AND mac = ?", [NSNumber numberWithInt:groupId], devId];
     NSMutableArray *irCodes = [NSMutableArray new];
     while ([results next]) {
         IrCode *irCode = [IrCode new];
@@ -516,10 +519,10 @@ static SQLHelper *instance;
     return irCodes;
 }
 
-- (NSArray *)getIRCodeById:(int)filename
+- (NSArray *)getIRCodeById:(int)filename  devId:(NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE filename = ?", [NSNumber numberWithInt:filename]];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM ircodes WHERE filename = ? AND mac = ?", [NSNumber numberWithInt:filename], devId];
     NSMutableArray *irCodes = [NSMutableArray new];
     while ([results next]) {
         IrCode *irCode = [IrCode new];

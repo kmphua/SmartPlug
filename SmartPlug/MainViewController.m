@@ -255,7 +255,7 @@
         [[SQLHelper getInstance] updatePlugIP:jsTemp.name ip:jsTemp.ip];
     }
     
-    NSArray *plugs = [[SQLHelper getInstance] getPlugDataByID:g_DeviceMac];
+    NSArray *plugs = [[SQLHelper getInstance] getPlugData];
     if (plugs && plugs.count > 0) {
         JSmartPlug *plug = [plugs firstObject];
         NSString *model = plug.model;
@@ -267,7 +267,7 @@
         
         WebService *ws = [WebService new];
         ws.delegate = self;
-        [ws devSet2:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac model:model buildNumber:buildnumber protocol:protocol hardware:hardware firmware:firmware firmwareDate:firmwaredate];
+        [ws devSet2:g_UserToken lang:[Global getCurrentLang] devId:plug.sid model:model buildNumber:buildnumber protocol:protocol hardware:hardware firmware:firmware firmwareDate:firmwaredate];
     }
     
     [self getData];
@@ -397,7 +397,7 @@
         imagePath = DEFAULT_ICON_PATH;
     }
     [cell.imgDeviceIcon sd_setImageWithURL:[NSURL URLWithString:imagePath] placeholderImage:nil];
-    [cell.imgDeviceIcon setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
+    //[cell.imgDeviceIcon setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
     
     if ([self deviceHasAlarm:plug.sid]) {
         [cell.btnTimer setHidden:NO];
@@ -500,8 +500,6 @@
         _deviceStatusChangedFlag = false;
     }
     
-    /*
-    
     if (_deviceStatusChangedFlag) {
         [[SQLHelper getInstance] updatePlugRelayService:action sid:plug.sid];
         
@@ -517,9 +515,8 @@
     }
     
     _deviceStatusChangedFlag = false;
-     */
 }
-     
+
 - (void)setDeviceStatus:(NSString *)devId serviceId:(int)serviceId action:(uint8_t)action send:(int)send
 {
     int header = 0x534D5254;
@@ -579,7 +576,7 @@
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
     
@@ -796,47 +793,51 @@
                       relay, nightlight, co_sensor, hall_sensor, snooze);
                 
                 if(![relay isKindOfClass:[NSNull class]] && relay != nil) {
-                    [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugRelayService:[relay intValue] sid:ws.devId];
                 } else {
-                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugRelayService:0 sid:ws.devId];
                 }
                 if(![nightlight isKindOfClass:[NSNull class]] && nightlight != nil) {
-                    [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugNightlightService:[nightlight intValue] sid:ws.devId];
                 } else {
-                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugNightlightService:0 sid:ws.devId];
                 }
                 if(![co_sensor isKindOfClass:[NSNull class]] && co_sensor != nil) {
-                    [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugCoSensorService:[co_sensor intValue] sid:ws.devId];
                 } else {
-                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugCoSensorService:0 sid:ws.devId];
                 }
                 if(![hall_sensor isKindOfClass:[NSNull class]] && hall_sensor != nil) {
-                    [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugHallSensorService:[hall_sensor intValue] sid:ws.devId];
                 } else {
-                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:g_DeviceMac];
+                    [[SQLHelper getInstance] updatePlugHallSensorService:0 sid:ws.devId];
                 }
                 if(![snooze isKindOfClass:[NSNull class]] && snooze != nil) {
-                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:[snooze intValue]];
+                    [[SQLHelper getInstance] updateDeviceSnooze:ws.devId serviceId:RELAY_SERVICE snooze:[snooze intValue]];
                 } else {
-                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:RELAY_SERVICE snooze:0];
+                    [[SQLHelper getInstance] updateDeviceSnooze:ws.devId serviceId:RELAY_SERVICE snooze:0];
                 }
                 if(![led_snooze isKindOfClass:[NSNull class]] && led_snooze != nil) {
-                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:[led_snooze intValue]];
+                    [[SQLHelper getInstance] updateDeviceSnooze:ws.devId serviceId:NIGHTLED_SERVICE snooze:[led_snooze intValue]];
                 } else {
-                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:NIGHTLED_SERVICE snooze:0];
+                    [[SQLHelper getInstance] updateDeviceSnooze:ws.devId serviceId:NIGHTLED_SERVICE snooze:0];
                 }
                 if(![ir_snooze isKindOfClass:[NSNull class]] && ir_snooze != nil) {
-                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:[led_snooze intValue]];
+                    [[SQLHelper getInstance] updateDeviceSnooze:ws.devId serviceId:IR_SERVICE snooze:[led_snooze intValue]];
                 } else {
-                    [[SQLHelper getInstance] updateDeviceSnooze:g_DeviceMac serviceId:IR_SERVICE snooze:0];
+                    [[SQLHelper getInstance] updateDeviceSnooze:ws.devId serviceId:IR_SERVICE snooze:0];
                 }
                 
-                [[SQLHelper getInstance] updateDeviceVersions:g_DeviceMac model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
+                [[SQLHelper getInstance] updateDeviceVersions:ws.devId model:model build_no:buildNumber prot_ver:protocol hw_ver:hardware_version fw_ver:firmware_version fw_date:firmwareDate];
                 
                 // Get devices from database
                 self.plugs = [[SQLHelper getInstance] getPlugData];
                 [self.tableView reloadData];
                 [self adjustHeightOfTableview];
+
+                // start updating alarm
+                WebService *ws2 = [WebService new];
+                [ws2 alarmGet:g_UserToken lang:[Global getCurrentLang] devId:ws.devId];
 
                 /*
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS

@@ -40,7 +40,7 @@
     self.lblTitle.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
     self.lblTitle.layer.cornerRadius = CORNER_RADIUS;
     
-    _group = [[SQLHelper getInstance] getIRGroupBySID:_groupId];
+    _group = [[SQLHelper getInstance] getIRGroupBySID:_groupId devId:g_DeviceMac];
     if (_group) {
         self.lblTitle.text = _group.name;
     }
@@ -112,7 +112,7 @@
 
 - (void)updateView
 {
-    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId];
+    _codes = [[SQLHelper getInstance] getIRCodesByGroup:_groupId devId:g_DeviceMac];
     [_gmGridView reloadData];
     if (self.codes.count > 0) {
         self.navigationItem.rightBarButtonItem = _rightBarBtn;
@@ -247,7 +247,7 @@
     _codeId = (int)btnDelete.tag;
     
     int groupId = 0;
-    IrGroup *irGroup = [[SQLHelper getInstance] getIRGroupBySID:_groupId];
+    IrGroup *irGroup = [[SQLHelper getInstance] getIRGroupBySID:_groupId devId:g_DeviceMac];
     if (irGroup) {
         groupId = irGroup.sid;
     }
@@ -347,7 +347,7 @@
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
     
@@ -391,7 +391,7 @@
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                [[SQLHelper getInstance] deleteIRGroups];
+                [[SQLHelper getInstance] deleteIRGroups:g_DeviceMac];
                 
                 NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
                 if (groups) {
@@ -399,14 +399,14 @@
                     
                     for (NSDictionary *group in groups) {
                         int groupId = [[group objectForKey:@"id"] intValue];
-                        //NSString *title = [group objectForKey:@"title"];
-                        //NSString *icon = [group objectForKey:@"icon"];
+                        NSString *title = [group objectForKey:@"title"];
+                        NSString *icon = [group objectForKey:@"icon"];
                         
-                        [[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId];
+                        //[[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId];
                         
-                        //[[SQLHelper getInstance] deleteIRGroupBySID:groupId];
-                        //[[SQLHelper getInstance] deleteIRCodes:groupId];
-                        //[[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId devId:g_DeviceMac];
+                        [[SQLHelper getInstance] deleteIRCodes:groupId devId:g_DeviceMac];
+                        [[SQLHelper getInstance] insertIRGroup:title devId:g_DeviceMac icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
                         for (NSDictionary *button in buttons) {

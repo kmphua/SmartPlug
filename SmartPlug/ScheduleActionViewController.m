@@ -128,7 +128,7 @@
     // Init IR buttons
     if(self.alarmId != -1){
         NSString *init_name = @"";
-        NSArray *irCodes = [[SQLHelper getInstance] getIRCodeById:init_ir_code];
+        NSArray *irCodes = [[SQLHelper getInstance] getIRCodeById:init_ir_code devId:g_DeviceMac];
         if (irCodes && irCodes.count>0) {
             IrCode *irCode = [irCodes firstObject];
             init_name = irCode.name;
@@ -136,7 +136,7 @@
         _btnInitIR.titleLabel.text = init_name;
         
         NSString *end_name = @"";
-        irCodes = [[SQLHelper getInstance] getIRCodeById:end_ir_code];
+        irCodes = [[SQLHelper getInstance] getIRCodeById:end_ir_code devId:g_DeviceMac];
         if (irCodes && irCodes.count>0) {
             IrCode *irCode = [irCodes firstObject];
             end_name = irCode.name;
@@ -353,11 +353,11 @@
     int groupId = 0;
     int IRId = -1;
     
-    NSArray *irGroups = [[SQLHelper getInstance] getIRGroupByName:group];
+    NSArray *irGroups = [[SQLHelper getInstance] getIRGroupByName:group devId:g_DeviceMac];
     if (irGroups && irGroups.count > 0) {
         for (IrGroup *group in irGroups) {
             groupId = group.group_id;
-            NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:groupId];
+            NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:groupId devId:g_DeviceMac];
             if (codes && codes.count > 0) {
                 for (IrCode *code in codes) {
                     if ([irName isEqualToString:code.name]) {

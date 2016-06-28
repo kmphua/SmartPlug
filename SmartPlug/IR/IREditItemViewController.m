@@ -23,6 +23,7 @@
 @property (nonatomic, strong) UIImageView *iconImageView;
 @property (nonatomic, strong) UIImage *pickerImage;
 @property (nonatomic, strong) NSString *icon;
+@property (nonatomic) int groupId;
 
 @end
 
@@ -72,13 +73,15 @@
         iconId = [icon.sid intValue];
     }
     
+    _groupId = [[SQLHelper getInstance] insertIRGroup:_txtName.text devId:g_DeviceMac icon:FILE_PATH position:0 sid:-1];
+    
     WebService *ws = [WebService new];
     ws.delegate = self;
     
     if (!customIcon) {
-        [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text icon:iconId iconRes:[Global getIconResolution]];
+        [ws devIrSetGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:_groupId name:_txtName.text icon:iconId iconRes:[Global getIconResolution]];
     } else {
-        [ws uploadIrImageGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:0 name:_txtName.text iconRes:[Global getIconResolution] image:_pickerImage];
+        [ws uploadIrImageGroup:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE action:IR_SET_ADD groupId:_groupId name:_txtName.text iconRes:[Global getIconResolution] image:_pickerImage];
     }
 }
 
@@ -152,7 +155,7 @@
         cell.textLabel.text = NSLocalizedString(@"title_title", nil);
         
         if (!_txtName) {
-            _txtName = [[UITextField alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-70, 5, 100, cell.contentView.frame.size.height)];
+            _txtName = [[UITextField alloc] initWithFrame:CGRectMake(100, 5, tableView.frame.size.width-110, cell.contentView.frame.size.height)];
             _txtName.backgroundColor = [UIColor whiteColor];
             _txtName.borderStyle = UITextBorderStyleNone;
             _txtName.textAlignment = NSTextAlignmentRight;
@@ -167,7 +170,7 @@
         
         // Add icon
         if (!_iconImageView) {
-            _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20, 7, 40, 40)];
+            _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(tableView.frame.size.width - 80, 7, 40, 40)];
             [_iconImageView setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
             [cell addSubview:_iconImageView];
         }
@@ -201,7 +204,7 @@
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
     
@@ -226,8 +229,7 @@
                 NSLog(@"IR set success");
                 
                 int sid = [[jsonObject objectForKey:@"id"] intValue];
-                int groupId = [[jsonObject objectForKey:@"groupid"] intValue];
-                [[SQLHelper getInstance] updateIRGroupID:groupId sid:sid];
+                [[SQLHelper getInstance] updateIRGroupID:_groupId sid:sid devId:g_DeviceMac];
                 
                 [self.navigationController popViewControllerAnimated:YES];
                 [self.delegate onAddedIRGroup];

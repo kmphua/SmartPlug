@@ -96,7 +96,7 @@
         NSString *groupName = group.name;
         [_irGroups addObject:group.name];
         NSMutableArray *codeList = [NSMutableArray new];
-        NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:group.group_id];
+        NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:group.group_id devId:g_DeviceMac];
         for (IrCode *code in codes) {
             [codeList addObject:[code copy]];
         }

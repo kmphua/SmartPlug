@@ -66,7 +66,7 @@
 @property (weak, nonatomic) IBOutlet UILabel *lblWarning;
 @property (weak, nonatomic) IBOutlet UIImageView *imgRightWarning;
 
-@property (strong, nonatomic) CrashCountDown *crashTimer;
+//@property (strong, nonatomic) CrashCountDown *crashTimer;
 @property (strong, nonatomic) NSTimer *statusCheckerTimer;
 @property (assign, nonatomic) BOOL udpConnection;
 
@@ -85,7 +85,7 @@
     self.bgView.layer.cornerRadius = CORNER_RADIUS;
     
     _udpConnection = NO;
-    _crashTimer = [CrashCountDown getInstance];
+    //_crashTimer = [CrashCountDown getInstance];
     _alarms = [NSMutableArray new];
     _relaySnooze = 0;
     _ledSnooze = 0;
@@ -162,7 +162,7 @@
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handlePushNotification:) name:NOTIFICATION_PUSH object:nil];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
+    //[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(timerCrashReached:) name:NOTIFICATION_TIMER_CRASH_REACHED object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(httpDeviceStatus:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
     
@@ -175,6 +175,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(m1UpdateUI:) name:NOTIFICATION_M1_UPDATE_UI object:nil];
+    
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateAlarmFromDB:) name:NOTIFICATION_UPDATE_ALARM_SERVICE_DONE object:nil];
     
     [self updateDeviceStatusFromServer];
     
@@ -272,6 +274,17 @@
     [self updateUI:notification];
 }
 
+- (void)updateAlarmFromDB: (NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *macId = [userInfo objectForKey:@"macId"];
+
+        if( [macId isEqualToString:g_DeviceMac] ) {
+            [self updateUI:notification];
+        }
+    }
+}
+
 - (void)udpUpdateUI:(NSNotification *)notification {
     [self dismissWaitingIndicator];
     [self updateUI:nil];
@@ -318,7 +331,7 @@
 
 - (void)broadcastUdpUpdateUi:(NSNotification *)notification {
     _udpConnection = true;
-    [_crashTimer stopTimer];
+    //[_crashTimer stopTimer];
 }
 
 - (void)getDataFromServer {
@@ -490,7 +503,7 @@
     _deviceStatusChangedFlag = false;
     [[UDPCommunication getInstance] setDeviceStatus:_device.sid serviceId:_serviceId action:_action];
     
-    [_crashTimer startTimer];
+    //[_crashTimer startTimer];
 }
 
 - (void)setDeviceStatus:(int)serviceId send:(int)send
@@ -581,7 +594,7 @@
     setTimerSnoozeVC.modalTransitionStyle = UIModalTransitionStyleCoverVertical;
     setTimerSnoozeVC.devId = _device.sid;
     setTimerSnoozeVC.serviceId = RELAY_SERVICE;
-    setTimerSnoozeVC.snooze = _relaySnooze;
+    setTimerSnoozeVC.snooze = [[SQLHelper getInstance] getRelaySnooze:g_DeviceMac];
     setTimerSnoozeVC.alarmCount = (int)alarms.count;
     setTimerSnoozeVC.delegate = self;
     [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
@@ -597,7 +610,7 @@
     setTimerSnoozeVC.serviceId = NIGHTLED_SERVICE;
     setTimerSnoozeVC.alarmCount = (int)alarms.count;
     setTimerSnoozeVC.delegate = self;
-    setTimerSnoozeVC.snooze = _ledSnooze;
+    setTimerSnoozeVC.snooze = [[SQLHelper getInstance] getLedSnooze:g_DeviceMac];
     [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
 }
 
@@ -619,7 +632,7 @@
     setTimerSnoozeVC.serviceId = IR_SERVICE;
     setTimerSnoozeVC.alarmCount = (int)alarms.count;
     setTimerSnoozeVC.delegate = self;
-    setTimerSnoozeVC.snooze = _ledSnooze;
+    setTimerSnoozeVC.snooze = [[SQLHelper getInstance] getIRSnooze:g_DeviceMac];
     [self presentViewController:setTimerSnoozeVC animated:YES completion:nil];
 }
 
@@ -650,66 +663,7 @@
 
 - (void)updateAlarms {
     WebService *ws = [WebService new];
-    ws.delegate = self;
     [ws alarmGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac];
-    [_alarms removeAllObjects];
-    if(![[SQLHelper getInstance] removeAlarms:g_DeviceMac]) {
-        NSLog(@"ALARM WAS NOT ABLE TO BE REMOVED WITH DEVID: %@", g_DeviceMac);
-    }
-}
-
-- (void)handleUpdateAlarm:(NSData *)data {
-    if (!data || data.length == 0) {
-        NSLog(@"NULL alarm data!!!");
-        return;
-    }
-    
-    uint8_t array[512];
-    memset(array, 0, 512);
-    //I need to delete all the alarms
-    [data getBytes:array length:data.length];
-    
-    for (int i = 0; i < data.length ; i+=12) {
-        int serviceId = [Global process_long:array[i] b:array[i+1] c:array[i+2] d:array[i+3]];
-        
-        if(serviceId != 0) {
-            Alarm *a = [Alarm new];
-            a.device_id = g_DeviceMac;
-            if(serviceId == RELAY_SERVICE) {
-                a.service_id = RELAY_SERVICE;
-            } else if(serviceId == NIGHTLED_SERVICE){
-                a.service_id = NIGHTLED_SERVICE;
-            } else if(serviceId == IR_SERVICE){
-                a.service_id = IR_SERVICE;
-            }
-            
-            NSLog(@"SERVICE FROM SERVER: %d", a.service_id);
-            
-            a.init_ir = array[i + 5];
-            a.end_ir = array[i + 6];
-            a.dow = array[i + 7];
-            a.initial_hour = array[i + 8];
-            a.initial_minute = array[i + 9];
-            a.end_hour = array[i + 10];
-            a.end_minute = array[i + 11];
-            NSLog(@"ALARM GET CONTROL - Service Id: %d, DOW: %d, Init Hour: %d, Init Minute: %d, End Hour: %d, End Minute: %d", a.service_id, a.dow, a.initial_hour, a.initial_minute, a.end_hour, a.end_minute);
-            [_alarms addObject:a];
-        }
-    }
-    
-    if (_alarms.count > 0) {
-        //[[SQLHelper getInstance] removeAlarms:g_DeviceMac];
-        for(int i = 0; i < _alarms.count; i++){
-            Alarm *a = [_alarms objectAtIndex:i];
-            if ([[SQLHelper getInstance] insertAlarm:a]) {
-                //NSLog(@"ALARM INSERTED");
-            } else {
-                //NSLog(@"ALARM INSERTION FAILURE");
-            }
-        }
-    }
-    
-    [self updateUI:nil];
 }
 
 //==================================================================
@@ -908,7 +862,7 @@
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
 
@@ -1057,15 +1011,11 @@
                 
                 [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_HTTP_DEVICE_STATUS object:nil userInfo:userInfo];
             }
-        } else if ([resultName isEqualToString:WS_ALARM_GET]) {
-            if (data) {
-                [self handleUpdateAlarm:data];
-            }
         } else if ([resultName isEqualToString:WS_DEV_IR_GET]) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
                 // Success
-                [[SQLHelper getInstance] deleteIRGroups];
+                [[SQLHelper getInstance] deleteIRGroups:g_DeviceMac];
                 
                 NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
                 if (groups) {
@@ -1073,14 +1023,14 @@
                     
                     for (NSDictionary *group in groups) {
                         int groupId = [[group objectForKey:@"id"] intValue];
-                        //NSString *title = [group objectForKey:@"title"];
-                        //NSString *icon = [group objectForKey:@"icon"];
+                        NSString *title = [group objectForKey:@"title"];
+                        NSString *icon = [group objectForKey:@"icon"];
+                    
+                        //[[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId  devId:g_DeviceMac];
                         
-                        //[[SQLHelper getInstance] updateIRCodeSID:_codeId sid:groupId];
-                        
-                        //[[SQLHelper getInstance] deleteIRGroupBySID:groupId];
-                        //[[SQLHelper getInstance] deleteIRCodes:groupId];
-                        //[[SQLHelper getInstance] insertIRGroup:title icon:icon position:0 sid:groupId];
+                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId  devId:g_DeviceMac];
+                        [[SQLHelper getInstance] deleteIRCodes:groupId  devId:g_DeviceMac];
+                        [[SQLHelper getInstance] insertIRGroup:title devId:g_DeviceMac icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];
                         for (NSDictionary *button in buttons) {

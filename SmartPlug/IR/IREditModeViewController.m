@@ -83,7 +83,7 @@
 
 - (void)updateView
 {
-    self.irGroups = [[SQLHelper getInstance] getIRGroups];
+    self.irGroups = [[SQLHelper getInstance] getIRGroups:g_DeviceMac];
     [_gmGridView reloadData];
     if (self.irGroups.count > 0) {
         self.navigationItem.rightBarButtonItem = _rightBarBtn;
@@ -106,11 +106,6 @@
 - (void)onBtnAddNew:(id)sender {
     IREditItemViewController *irEditItemVC = [[IREditItemViewController alloc] initWithNibName:@"IREditItemViewController" bundle:nil];
     [self.navigationController pushViewController:irEditItemVC animated:YES];
-
-    /*
-    IRAddNewViewController *irAddNewVC = [[IRAddNewViewController alloc] initWithNibName:@"IRAddNewViewController" bundle:nil];
-    [self.navigationController pushViewController:irAddNewVC animated:YES];
-     */
 }
 
 //////////////////////////////////////////////////////////////
@@ -235,7 +230,7 @@
     int newIndex = 0;
     NSString *groupName = @"";
     NSString *iconId = @"";
-    NSArray *groups = [[SQLHelper getInstance] getIRGroup:groupId];
+    NSArray *groups = [[SQLHelper getInstance] getIRGroup:groupId  devId:g_DeviceMac];
     if (groups && groups.count>0) {
         IrGroup *group = groups.firstObject;
         newIndex = group.sid;
@@ -243,7 +238,7 @@
         iconId = group.icon;
     }
     
-    if ([[SQLHelper getInstance] deleteIRGroupById:groupId]){
+    if ([[SQLHelper getInstance] deleteIRGroupById:groupId  devId:g_DeviceMac]){
         NSLog(@"Successfully deleted");
     }
     
@@ -295,7 +290,7 @@
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
     
@@ -316,7 +311,7 @@
         if ([resultName isEqualToString:WS_DEV_IR_GET]) {
             long result = [[jsonObject objectForKey:@"r"] longValue];
             if (result == 0) {
-                [[SQLHelper getInstance] deleteIRGroups];
+                [[SQLHelper getInstance] deleteIRGroups:g_DeviceMac];
 
                 // Success
                 NSArray *groups = (NSArray *)[jsonObject objectForKey:@"groups"];
@@ -328,8 +323,8 @@
                         NSString *title = [group objectForKey:@"title"];
                         NSString *icon = [group objectForKey:@"icon"];
                         
-                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId];
-                        [[SQLHelper getInstance] deleteIRCodes:groupId];
+                        [[SQLHelper getInstance] deleteIRGroupBySID:groupId devId:g_DeviceMac];
+                        [[SQLHelper getInstance] deleteIRCodes:groupId devId:g_DeviceMac];
                         [[SQLHelper getInstance] insertIRGroup:title devId:g_DeviceMac icon:icon position:0 sid:groupId];
                         
                         NSArray *buttons = (NSArray *)[group objectForKey:@"buttons"];

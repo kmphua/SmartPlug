@@ -12,7 +12,7 @@
 #define UPLOAD_IMAGE_QUALITY                0.6
 #define UPLOAD_IMAGE_SCALE                  0.25
 
-@interface WebService ()
+@interface WebService () <WebServiceDelegate>
 
 @property (nonatomic, strong) NSMutableData *webData;
 @property (nonatomic, strong) UIWaitingView *waitingView;
@@ -128,7 +128,7 @@
 - (void)connection:(NSURLConnection *)connection didFailWithError:(NSError *)error
 {
     NSLog(@"ERROR with theConenction");
-    [self.delegate connectFail:self.resultName];
+    [self.delegate connectFail:self.resultName webservice:self];
     [self performSelectorOnMainThread:@selector(dismissWaitingView) withObject:nil waitUntilDone:NO];
     NSLog(@"Error %@",error);
 }
@@ -140,7 +140,7 @@
     [self performSelectorOnMainThread:@selector(dismissWaitingView) withObject:nil waitUntilDone:NO];
     
     if (self.delegate != nil) {
-        [self.delegate didReceiveData:self.webData resultName:self.resultName];
+        [self.delegate didReceiveData:self.webData resultName:self.resultName webservice:self];
     }
 }
 
@@ -221,6 +221,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ACT_DEV];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&title=%@&model=%@", userToken, lang, devId, title, model];
     self.resultName = WS_ACT_DEV;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -229,6 +230,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&send=%d", userToken, lang, devId, send];
     self.resultName = WS_DEV_CTRL;
+    self.devId = devId;
     
     NSLog(@"Send devctrl: %@", [Global hexStringFromData:data]);    
     [self postDataWithBody:apiUrl params:params body:data];
@@ -247,6 +249,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_GET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&res=%d&devid=%@", userToken, lang, iconRes, devId];
     self.resultName = WS_DEV_GET;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -255,6 +258,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=%@&title=%@&notify_power=%@&notify_timer=%@&notify_danger=%@&send=1", userToken, lang, devId, icon, title, notifyPower, notifyTimer, notifyDanger];
     self.resultName = WS_DEV_SET;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -263,6 +267,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&model=%@&buildnumber=%d&protocol=%d&hardware=%@&firmware=%@&firmwaredate=%d&send=1", userToken, lang, devId, model, buildNumber, protocol, hardware, firmware, firmwareDate];
     self.resultName = WS_DEV_SET;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -271,6 +276,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=upload&notify_power=%@&notify_timer=%@&notify_danger=%@&send=1", userToken, lang, devId, notifyPower, notifyTimer, notifyDanger];
     self.resultName = WS_DEV_SET;
+    self.devId = devId;
     [self postImageData:apiUrl params:params image:image];
 }
 
@@ -279,6 +285,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_LOG];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
     self.resultName = WS_DEV_LOG;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -295,6 +302,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_NEW_DEV];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&icon=%d&title=%@&notify_power=%@&notify_timer=%@&notify_danger=%@&orititle=%@&ip=%@&server=%@&snooze=%@&relay=%@", userToken, lang, devId,iconRes, title, notifyPower, notifyTimer, notifyDanger, oriTitle, ip, server, snooze, relay];
     self.resultName = WS_NEW_DEV;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -303,6 +311,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_DEL];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
     self.resultName = WS_DEV_DEL;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -315,11 +324,18 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ALARM_DEL];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
     self.resultName = WS_ALARM_DEL;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
 - (void)alarmGet:(NSString *)userToken lang:(NSString *)lang devId:(NSString *)devId
 {
+    self.devId = devId;
+    
+    if( self.delegate==nil) {
+        self.delegate = self;
+    }
+    
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_ALARM_GET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@", userToken, lang, devId];
     self.resultName = WS_ALARM_GET;
@@ -331,6 +347,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_CTRL];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&send=%d", userToken, lang, devId, send];
     self.resultName = WS_DEV_CTRL;
+    self.devId = devId;
     [self postDataWithBody:apiUrl params:params body:data];
 }
 
@@ -367,6 +384,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_GET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&res=%d", userToken, lang, devId, serviceId, iconRes];
     self.resultName = WS_DEV_IR_GET;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -375,6 +393,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=group&action=%@&groupid=%d&name=%@&icon=%d&res=%d", userToken, lang, devId, serviceId, action, groupId, name, icon, iconRes];
     self.resultName = WS_DEV_IR_SET;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -383,6 +402,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=button&action=%@&groupid=%d&buttonid=%d&name=%@&icon=%d&code=%d&res=%d", userToken, lang, devId, serviceId, action, groupId, buttonId, name, icon, code, iconRes];
     self.resultName = WS_DEV_IR_SET;
+    self.devId = devId;
     [self postData:apiUrl params:params];
 }
 
@@ -399,6 +419,7 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=group&action=%@&groupid=%d&name=%@&icon=upload&res=%d", userToken, lang, devId, serviceId, action, groupId, name, iconRes];
     self.resultName = WS_DEV_IR_SET;
+    self.devId = devId;
     [self postImageData:apiUrl params:params image:image];
 }
 
@@ -407,7 +428,105 @@
     NSString *apiUrl = [NSString stringWithFormat:@"%@%@", SERVER_URL, WS_DEV_IR_SET];
     NSString *params = [NSString stringWithFormat:@"token=%@&hl=%@&devid=%@&serviceid=%d&type=group&action=%@&groupid=%d&buttonid=%d&name=%@&icon=upload&res=%d", userToken, lang, devId, serviceId, action, groupId, buttonId, name, iconRes];
     self.resultName = WS_DEV_IR_SET;
+    self.devId = devId;
     [self postImageData:apiUrl params:params image:image];
 }
+
+#pragma mark - WebServiceDelegate
+
+- (void)handleUpdateAlarm:(NSData *)data {
+    NSMutableArray *alarms = [NSMutableArray array];
+    if(![[SQLHelper getInstance] removeAlarms:_devId]) {
+        NSLog(@"ALARM WAS NOT ABLE TO BE REMOVED WITH DEVID: %@", _devId);
+    }
+    
+    NSDictionary *userInfo = [NSDictionary dictionaryWithObject:_devId forKey:@"macId"];
+
+    if (!data || data.length == 0) {
+        NSLog(@"NULL alarm data!!!");
+        [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_ALARM_SERVICE_DONE object:nil userInfo:userInfo];
+        return;
+    }
+    
+    uint8_t array[512];
+    memset(array, 0, 512);
+    //I need to delete all the alarms
+    [data getBytes:array length:data.length];
+    
+    for (int i = 0; i < data.length ; i+=12) {
+        int serviceId = [Global process_long:array[i] b:array[i+1] c:array[i+2] d:array[i+3]];
+        
+        if(serviceId != 0) {
+            Alarm *a = [Alarm new];
+            a.device_id = _devId;
+            if(serviceId == RELAY_SERVICE) {
+                a.service_id = RELAY_SERVICE;
+            } else if(serviceId == NIGHTLED_SERVICE){
+                a.service_id = NIGHTLED_SERVICE;
+            } else if(serviceId == IR_SERVICE){
+                a.service_id = IR_SERVICE;
+            }
+            
+            NSLog(@"SERVICE FROM SERVER: %d", a.service_id);
+            
+            a.init_ir = array[i + 5];
+            a.end_ir = array[i + 6];
+            a.dow = array[i + 7];
+            a.initial_hour = array[i + 8];
+            a.initial_minute = array[i + 9];
+            a.end_hour = array[i + 10];
+            a.end_minute = array[i + 11];
+            NSLog(@"ALARM GET CONTROL - Service Id: %d, DOW: %d, Init Hour: %d, Init Minute: %d, End Hour: %d, End Minute: %d", a.service_id, a.dow, a.initial_hour, a.initial_minute, a.end_hour, a.end_minute);
+            [alarms addObject:a];
+        }
+    }
+    
+    if (alarms.count > 0) {
+        //[[SQLHelper getInstance] removeAlarms:_devId];
+        for(int i = 0; i < alarms.count; i++){
+            Alarm *a = [alarms objectAtIndex:i];
+            if ([[SQLHelper getInstance] insertAlarm:a]) {
+                //NSLog(@"ALARM INSERTED");
+            } else {
+                //NSLog(@"ALARM INSERTION FAILURE");
+            }
+        }
+    }
+    
+    [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_UPDATE_ALARM_SERVICE_DONE object:nil userInfo:userInfo];
+}
+
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
+    NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+    NSLog(@"Received data for %@: %@", resultName, dataString);
+    
+    
+    NSError *error = nil;
+    id jsonObject = [NSJSONSerialization JSONObjectWithData:data options:NSJSONReadingMutableContainers error:&error];
+    
+    if (error) {
+        NSLog(@"Error received: %@", [error localizedDescription]);
+    }
+    
+    if ([jsonObject isKindOfClass:[NSArray class]]) {
+        NSArray *jsonArray = (NSArray *)jsonObject;
+        NSLog(@"jsonArray - %@", jsonArray);
+    } else {
+        NSDictionary *jsonDict = (NSDictionary *)jsonObject;
+        NSLog(@"jsonDict - %@", jsonDict);
+        
+        if ([resultName isEqualToString:WS_ALARM_GET]) {
+            if (data) {
+            [self handleUpdateAlarm:data];
+            }
+        }
+
+    }
+}
+
+- (void)connectFail:(NSString*)resultName {
+    NSLog(@"Connect fail for %@", resultName);
+}
+
 
 @end

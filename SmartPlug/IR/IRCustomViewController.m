@@ -153,7 +153,7 @@
         cell.textLabel.text = NSLocalizedString(@"title_title", nil);
         
         if (!_txtName) {
-            _txtName = [[UITextField alloc] initWithFrame:CGRectMake(cell.contentView.frame.size.width-70, 5, 100, cell.contentView.frame.size.height)];
+            _txtName = [[UITextField alloc] initWithFrame:CGRectMake(100, 5, tableView.frame.size.width-110, cell.contentView.frame.size.height)];
             _txtName.backgroundColor = [UIColor whiteColor];
             _txtName.borderStyle = UITextBorderStyleNone;
             _txtName.textAlignment = NSTextAlignmentRight;
@@ -169,7 +169,7 @@
         
         // Add icon
         if (!_iconImageView) {
-            _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(cell.frame.size.width - 20, 7, 40, 40)];
+            _iconImageView = [[UIImageView alloc] initWithFrame:CGRectMake(tableView.frame.size.width - 80, 7, 40, 40)];
             [_iconImageView setBackgroundColor:[Global colorWithType:COLOR_TYPE_ICON_BG]];
             [cell addSubview:_iconImageView];
         }

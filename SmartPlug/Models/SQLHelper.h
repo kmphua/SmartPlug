@@ -31,31 +31,31 @@
 - (NSArray *)getIconByUrl:(NSString *)url;
 
 // IR Groups
-- (NSArray *)getIRGroups;
-- (BOOL)deleteIRGroups;
-- (NSArray *)getIRGroup:(int)groupId;
-- (IrGroup *)getIRGroupBySID:(int)sid;
+- (NSArray *)getIRGroups: (NSString *)devId;
+- (BOOL)deleteIRGroups: (NSString *)devId;
+- (NSArray *)getIRGroup:(int)groupId devId:(NSString *)devId;
+- (IrGroup *)getIRGroupBySID:(int)sid devId:(NSString *)devId;
 - (NSArray *)getIRGroupByMac:(NSString *)mac;
-- (NSArray *)getIRGroupByName:(NSString *)groupName;
-- (BOOL)deleteIRGroupById:(int)groupId;
-- (BOOL)deleteIRGroupBySID:(int)sid;
+- (NSArray *)getIRGroupByName:(NSString *)groupName devId:(NSString *)devId ;
+- (BOOL)deleteIRGroupById:(int)groupId devId:(NSString *)devId;
+- (BOOL)deleteIRGroupBySID:(int)sid devId:(NSString *)devId;
 - (BOOL)insertIRGroup:(NSString *)name devId:(NSString *)devId icon:(NSString *)icon position:(int)position sid:(int)sid;
-- (BOOL)updateIRGroup:(IrGroup *)group;
+- (BOOL)updateIRGroup:(IrGroup *)group devId:(NSString *)devId;
 
 // IR Codes
-- (NSArray *)getIRCodes;
-- (NSArray *)getIRCodesByGroup:(int)groupid;
-- (NSArray *)getIRCodeById:(int)filename;
+- (NSArray *)getIRCodes:(NSString *)devId;
+- (NSArray *)getIRCodesByGroup:(int)groupid devId:(NSString *)devId;
+- (NSArray *)getIRCodeById:(int)filename devId:(NSString *)devId;
 - (BOOL)insertIRCodes:(int)groupId name:(NSString *)name filename:(int)filename
                  icon:(NSString *)icon mac:(NSString *)mac sid:(int)sid;
-- (BOOL)updateIRCodeSID:(int)filename sid:(int)sid;
-- (BOOL)updateIRGroupID:(int)groupId sid:(int)sid;
-- (BOOL)updateIRCode:(IrCode *)code;
-- (BOOL)deleteIRCodes:(int)groupId;
-- (BOOL)deleteIRCodesBySID:(int)groupId;
+- (BOOL)updateIRCodeSID:(int)filename sid:(int)sid devId:(NSString *)devId;
+- (BOOL)updateIRGroupID:(int)groupId sid:(int)sid devId:(NSString *)devId;
+- (BOOL)updateIRCode:(IrCode *)code devId:(NSString *)devId ;
+- (BOOL)deleteIRCodes:(int)groupId devId:(NSString *)devId ;
+- (BOOL)deleteIRCodesBySID:(int)groupId devId:(NSString *)devId ;
 
-- (BOOL)deleteIRCode:(int)sid;
-- (BOOL)deleteAllIRCodes;
+- (BOOL)deleteIRCode:(int)sid devId:(NSString *)devId ;
+- (BOOL)deleteAllIRCodes: (NSString *)devId;
 
 // Plugs
 - (BOOL)insertPlug:(JSmartPlug *)js active:(int)active;

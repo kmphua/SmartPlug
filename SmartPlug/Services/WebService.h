@@ -44,17 +44,22 @@
 #define IR_SET_MODIFY               @"mod"
 #define IR_SET_DELETE               @"del"
 
+@class WebService;
+
 @protocol WebServiceDelegate <NSObject>
 
 @required
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName;
-- (void)connectFail:(NSString *)resultName;
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws;
+- (void)connectFail:(NSString *)resultName webservice:(WebService *)ws;
 
 @end
 
 @interface WebService : NSObject
 
 @property (nonatomic, strong) id <WebServiceDelegate> delegate;
+@property NSString *devId;
+@property int serviceId;
+@property int action;
 
 - (void)showWaitingView:(UIView*)parentView;
 - (void)dismissWaitingView;

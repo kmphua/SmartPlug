@@ -13,7 +13,7 @@
 
 @property (nonatomic, strong) NSString *macID;
 @property (nonatomic, assign) short command;
-@property (nonatomic, assign) int msgID;
+@property (nonatomic, assign) uint32_t msgID;
 
 @end
 
@@ -32,8 +32,8 @@
 
 + (UDPCommunication *)getInstance;
 
-- (Command *)dequeueCommandByIp:(NSString *)ip msgID:(int)msgID;
-- (Command *)dequeueCommand:(NSString *)macID msgID:(int)msgID;
+- (Command *)dequeueCommandByIp:(NSString *)ip msgID:(uint32_t)msgID;
+- (Command *)dequeueCommand:(NSString *)macID msgID:(uint32_t)msgID;
 
 - (BOOL)delayTimer:(NSString *)macId snooze:(int)snooze protocol:(int)protocol serviceId:(int)serviceId send:(int)send;
 - (BOOL)queryDevices:(NSString *)macId command:(short)command;
@@ -47,6 +47,7 @@
 - (BOOL)sendTimers:(NSString *)macId;
 - (BOOL)sendTimersHTTP:(NSString *)macId send:(int)send;
 - (BOOL)sendTimers:(NSString *)macId protocol:(int)protocol;
+- (void) finishDeviceStatus : (uint32_t)msgID;
 - (BOOL)setDeviceStatus:(NSString *)macID serviceId:(int)serviceId action:(uint8_t)action;
 
 @end

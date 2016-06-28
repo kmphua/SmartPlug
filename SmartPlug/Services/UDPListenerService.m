@@ -31,7 +31,7 @@
     uint8_t ir[128];
     uint8_t delatT[18];
     uint8_t ir2[2];
-    int previous_msgid;
+    uint32_t previous_msgid;
     short code;
     BOOL shouldRestartSocketListen;
     int IRFlag;
@@ -202,7 +202,7 @@ static UDPListenerService *instance;
     }
     
     // process header
-    int msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
+    uint32_t msgid = abs([Global process_long:lMsg[4] b:lMsg[5] c:lMsg[6] d:lMsg[7]]);
     int seq = abs([Global process_long:lMsg[8] b:lMsg[9] c:lMsg[10] d:lMsg[11]]);
     int size = [Global process_long:lMsg[12] b:lMsg[13] c:lMsg[14] d:lMsg[15]];
     code = [Global process_short:lMsg[16] b:lMsg[17]];
@@ -295,6 +295,7 @@ static UDPListenerService *instance;
             case UDP_CMD_SET_DEVICE_STATUS:
                 if(code == 0){
                     code = 1;
+                    [[UDPCommunication getInstance] finishDeviceStatus:currentCommand.msgID];
                     NSLog(@"DEVICE STATUS CHANGED");
                     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_STATUS_CHANGED
                                                                         object:self
@@ -539,7 +540,7 @@ static UDPListenerService *instance;
 //==================================================================
 #pragma WebServiceDelegate
 //==================================================================
-- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName {
+- (void)didReceiveData:(NSData *)data resultName:(NSString *)resultName webservice:(WebService *)ws {
     NSString *dataString = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
     NSLog(@"Received data for %@: %@", resultName, dataString);
     
