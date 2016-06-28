@@ -623,7 +623,7 @@
     }
 }
 
-- (void)connectFail:(NSString*)resultName {
+- (void)connectFail:(NSString*)resultName webservice:(WebService *)ws {
     NSLog(@"Connect fail for %@", resultName);
 }
 
