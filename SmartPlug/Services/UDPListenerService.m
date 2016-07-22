@@ -208,17 +208,33 @@ static UDPListenerService *instance;
     code = [Global process_short:lMsg[16] b:lMsg[17]];
 
     NSString *mac = [[SQLHelper getInstance] getPlugMacFromIP:ipAddress];
-    NSDictionary *userInfo = (mac!=nil)?[NSDictionary dictionaryWithObject:mac forKey:@"macId"]:nil;
+    NSMutableDictionary *userInfo = (mac!=nil) ? [NSMutableDictionary dictionaryWithObject:mac forKey:@"macId"]:nil;
 
     if (isCommand) {
 
-        if (code == 0x1000){
+        if (code == 0x1000 && msgid != previous_msgid){
             code = 1;
             NSLog(@"UDPListenerService: command = BROADCAST");
+            NSLog(@"msid: %d - previous_msgid: %d", msgid, previous_msgid);
+            
             [self process_broadcast_info:ipAddress];
         } else if (code == 0x001F) {
             code = 1;
             NSLog(@"UDPListenerService: command = OTA firmware OK" );
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
+                                                                object:self
+                                                              userInfo:userInfo];
+        } else if(code == 0x0F0F){
+            int mac = 0;
+            for (int i = 18; i < 24; i++) {
+                mac += lMsg[i] & 0xff;
+            }
+            code = 1;
+            NSLog(@"DEVICE IS ALIVE");
+            
+            [userInfo setObject:ipAddress forKey:@"ip"];
+            [userInfo setObject:[NSString stringWithFormat:@"JSPlug%d", mac] forKey:@"name"];
+            
             [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
                                                                 object:self
                                                               userInfo:userInfo];
@@ -228,7 +244,7 @@ static UDPListenerService *instance;
         
     } else {
         
-        if(msgid == previous_msgid){
+        if (msgid == previous_msgid) {
             NSLog(@"UDPListenerService: ignoring duplicate msg#%d", msgid);
             return; // ignore repeated command
         }
@@ -342,6 +358,14 @@ static UDPListenerService *instance;
                                                                         object:self
                                                                       userInfo:userInfo];
                 }
+                break;
+                
+            case 0x0F0F:
+                if(code == 0){
+                    //do nothing if we already receive this command
+                    code = 1;
+                }
+                break;
         }
     }
 }

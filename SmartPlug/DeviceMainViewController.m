@@ -178,6 +178,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateAlarmFromDB:) name:NOTIFICATION_UPDATE_ALARM_SERVICE_DONE object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastedPresence:) name:NOTIFICATION_BROADCASTED_PRESENCE object:nil];
+    
     [self updateDeviceStatusFromServer];
     
     // Start status checker timer
@@ -338,6 +340,15 @@
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws devIrGet:g_UserToken lang:[Global getCurrentLang] devId:g_DeviceMac serviceId:IR_SERVICE iconRes:[Global getIconResolution]];
+}
+
+- (void)broadcastedPresence:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *name = [userInfo objectForKey:@"name"];
+        NSString *ip = [userInfo objectForKey:@"ip"];
+        [[SQLHelper getInstance] updatePlugIP:name ip:ip];
+    }
 }
 
 - (void)updateUI:(NSNotification *)notification {

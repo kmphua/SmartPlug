@@ -30,7 +30,7 @@
 @property (nonatomic, strong) FirstTimeConfig *config;
 @property (nonatomic, strong) Reachability *wifiReachability;
 
-@property (nonatomic, strong) NSArray *plugs;
+@property (nonatomic, strong) NSMutableArray *plugs;
 @property (nonatomic, strong) NSString *devId;
 @property (nonatomic, strong) NSString *name;
 @property (nonatomic, strong) NSString *ip;
@@ -113,7 +113,10 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(handleDeviceRemoved:) name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
     
-    self.plugs = [[mDNSService getInstance] plugs];
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(requestDeviceInfo:) name:NOTIFICATION_BROADCASTED_PRESENCE object:nil];
+    
+    //self.plugs = [[mDNSService getInstance] plugs];
+    self.plugs = [NSMutableArray new];
     
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
@@ -124,11 +127,8 @@
 - (void)viewWillDisappear:(BOOL)animated {
     [super viewWillDisappear:animated];
     
-    [[NSNotificationCenter defaultCenter] removeObserver:UIApplicationDidEnterBackgroundNotification];
-    [[NSNotificationCenter defaultCenter] removeObserver:UIApplicationWillEnterForegroundNotification];
-    [[NSNotificationCenter defaultCenter] removeObserver:NOTIFICATION_DEVICE_INFO];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_FOUND object:nil];
-    [[NSNotificationCenter defaultCenter] removeObserver:self name:NOTIFICATION_MDNS_DEVICE_REMOVED object:nil];
+    // Deregister notifications
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)didReceiveMemoryWarning {
@@ -224,19 +224,64 @@
     NSDictionary *userInfo = notification.userInfo;
     _name = [userInfo objectForKey:@"name"];
     _ip = [userInfo objectForKey:@"ip"];
-
-    self.plugs = [[mDNSService getInstance] plugs];
-    [self.tableView reloadData];
-    [self adjustHeightOfTableview];
-    
-    [[UDPCommunication getInstance] queryDevices:_ip command:UDP_CMD_DEVICE_QUERY];
-    [_crashTimer startTimer];
+    NSLog(@"New Device Received %@, IP %@", _name, _ip);
+    [self updateListNew:_name ip:_ip];
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
     self.plugs = [[mDNSService getInstance] plugs];
     [self.tableView reloadData];
     [self adjustHeightOfTableview];
+}
+
+- (void)requestDeviceInfo:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        _name = [userInfo objectForKey:@"name"];
+        _ip = [userInfo objectForKey:@"ip"];
+        NSLog(@"New Device Received %@, IP %@", _name, _ip);
+        [self updateListNew:_name ip:_ip];
+        [[UDPCommunication getInstance] queryDevices:_ip command:UDP_CMD_DEVICE_QUERY];
+    }
+}
+
+- (void)updateListNew:(NSString *)name ip:(NSString *)ip
+{
+    // Check if the name is not already in the database
+    BOOL plugExist = false;
+    NSArray *plugData = [[SQLHelper getInstance] getPlugDataByName:name];
+    if (plugData && plugData.count > 0){
+        plugExist = true;
+    } else {
+        if (name != nil && name.length>0 && ip != nil && ip.length>0) {
+            if (_plugs.count > 0) {
+                //check if the name is not already in the plugs array
+                for (int i = 0; i < _plugs.count; i++) {
+                    JSmartPlug *plug = [_plugs objectAtIndex:i];
+                    if ([plug.name isEqualToString:name]) {
+                        plugExist = true;
+                    } else {
+                        JSmartPlug *jSmartPlug = [JSmartPlug new];
+                        jSmartPlug.name = name;
+                        jSmartPlug.ip = ip;
+                        NSLog(@"Plug Added, Name: %@", jSmartPlug.name);
+                        [_plugs addObject:jSmartPlug];
+                        [self.tableView reloadData];
+                    }
+                }
+            } else {
+                JSmartPlug *jSmartPlug = [JSmartPlug new];
+                jSmartPlug.name = name;
+                jSmartPlug.ip = ip;
+                NSLog(@"Plug Added, Name: %@", jSmartPlug.name);
+                [_plugs addObject:jSmartPlug];
+            }
+            
+            if (!plugExist) {
+                [self.tableView reloadData];
+            }
+        }
+    }
 }
 
 //==================================================================

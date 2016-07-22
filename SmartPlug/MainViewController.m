@@ -98,6 +98,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(httpDeviceStatus:) name:NOTIFICATION_HTTP_DEVICE_STATUS object:nil];
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteSent:) name:NOTIFICATION_DELETE_SENT object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastedPresence:) name:NOTIFICATION_BROADCASTED_PRESENCE object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -306,6 +308,15 @@
         NSString *macId = [userInfo objectForKey:@"macId"];
         NSLog(@"BROADCAST: BROADCAST RECEIVED FROM DEVICE %@", macId);
         [self getData];
+    }
+}
+
+- (void)broadcastedPresence:(NSNotification *)notification {
+    NSDictionary *userInfo = notification.userInfo;
+    if (userInfo) {
+        NSString *name = [userInfo objectForKey:@"name"];
+        NSString *ip = [userInfo objectForKey:@"ip"];
+        [[SQLHelper getInstance] updatePlugIP:name ip:ip];
     }
 }
 

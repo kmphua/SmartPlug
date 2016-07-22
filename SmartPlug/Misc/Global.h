@@ -90,6 +90,7 @@
 #define NOTIFICATION_OTA_FINISHED               @"ota_finished"
 #define NOTIFICATION_UPDATE_ALARM_SERVICE_DONE  @"updateAlarmServiceDone"
 #define NOTIFICATION_ADAPTER_ON_CLICK           @"adapaterOnClick"
+#define NOTIFICATION_BROADCASTED_PRESENCE       @"broadcasted_presence"
 
 typedef enum {
     COLOR_TYPE_NAVBAR_BG,
