@@ -212,7 +212,7 @@
                 //NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSArray *icons = (NSArray *)[jsonObject objectForKey:@"icons"];
                 if (icons) {
-                    NSLog(@"Total %ld icons", icons.count);
+                    NSLog(@"Total %ld icons", (unsigned long)icons.count);
                     g_DeviceIcons = icons;
                 }
             }

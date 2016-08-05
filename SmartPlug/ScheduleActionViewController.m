@@ -318,9 +318,9 @@
 - (void)multiSelect:(MultiSelectSegmentedControl *)multiSelectSegmentedControl didChangeValue:(BOOL)selected atIndex:(NSUInteger)index {
     
     if (selected) {
-        NSLog(@"multiSelect with tag %ld selected button at index: %ld", multiSelectSegmentedControl.tag, index);
+        NSLog(@"multiSelect with tag %ld selected button at index: %ld", (long)multiSelectSegmentedControl.tag, index);
     } else {
-        NSLog(@"multiSelect with tag %ld deselected button at index: %ld", multiSelectSegmentedControl.tag, index);
+        NSLog(@"multiSelect with tag %ld deselected button at index: %ld", (long)multiSelectSegmentedControl.tag, index);
     }
     
     int position = (int)index;

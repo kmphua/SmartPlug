@@ -180,7 +180,7 @@
                               options:0
                              progress:^(NSInteger receivedSize, NSInteger expectedSize) {
                                  // progression tracking code
-                                 NSLog(@"Received image %ld of %ld bytes", receivedSize, expectedSize);
+                                 NSLog(@"Received image %ld of %ld bytes", (long)receivedSize, expectedSize);
                              }
                             completed:^(UIImage *image, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
                                 if (image) {
@@ -258,7 +258,7 @@
 
 - (void)GMGridView:(GMGridView *)gridView didTapOnItemAtIndex:(NSInteger)position
 {
-    NSLog(@"tapped on index : %d", position);
+    NSLog(@"tapped on index : %ld", (long)position);
     //IrGroup *group = [_irGroups objectAtIndex:position-1];
     //[[UDPCommunication getInstance] sendIRFileName:code.filename];
     //NSLog(@"Sending IR filename %d", code.filename);

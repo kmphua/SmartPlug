@@ -407,12 +407,12 @@
     // CO sensor
     if (device.co_sensor == 0) {
         [_imgCoWarning setHidden:YES];
-        //[_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
-        //[_imgCoWarning stopAnimating];
+        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
+        [_imgCoWarning stopAnimating];
         [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
-        //[_imgLeftWarning setHidden:YES];
-        //[_imgRightWarning setHidden:YES];
-        //[_lblWarning setHidden:YES];
+        [_imgLeftWarning setHidden:YES];
+        [_imgRightWarning setHidden:YES];
+        [_lblWarning setHidden:YES];
     } else if (device.co_sensor == 1) {
         [_imgCoWarning setHidden:NO];
         [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
@@ -423,12 +423,14 @@
         [_lblWarning setText:NSLocalizedString(@"msg_co_warning", nil)];
         [_lblWarning setHidden:NO];
     } else if (device.co_sensor == 3) {
-        [_viewCo setHidden:NO];
+        // Show toast
+        [self.view makeToast:NSLocalizedString(@"USB_not_plugged_in", nil)
+                    duration:3.0
+                    position:CSToastPositionBottom];
         [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big_off"]];
         [_imgLeftWarning setHidden:NO];
         [_imgRightWarning setHidden:NO];
-        [_lblWarning setText:NSLocalizedString(@"USB_not_plugged_in", nil)];
-        [_lblWarning setHidden:NO];
+        [_lblWarning setHidden:YES];
     }
     
     // Night light
