@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="IRRecordViewController">
@@ -21,20 +22,20 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="DM0-YP-6v5">
-                    <rect key="frame" x="0.0" y="80" width="600" height="21"/>
+                    <rect key="frame" x="60" y="80" width="480" height="21"/>
                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                     <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                     <nil key="highlightedColor"/>
                 </label>
-                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OP9-Ms-Ixx">
-                    <rect key="frame" x="276" y="140" width="48" height="48"/>
+                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="OP9-Ms-Ixx">
+                    <rect key="frame" x="276" y="141" width="48" height="48"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="48" id="971-3A-n6a"/>
                         <constraint firstAttribute="width" constant="48" id="ZTn-rF-Crf"/>
                     </constraints>
                 </imageView>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWd-V1-lMz">
-                    <rect key="frame" x="213" y="238" width="175" height="50"/>
+                <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="CWd-V1-lMz">
+                    <rect key="frame" x="213" y="239" width="175" height="50"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="4qf-oB-GTq"/>
                         <constraint firstAttribute="width" constant="175" id="OzD-kY-4rr"/>
@@ -47,8 +48,8 @@
                         <action selector="onBtnRecordAgain:" destination="-1" eventType="touchUpInside" id="SKR-xU-8ao"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ndR-aX-M9f">
-                    <rect key="frame" x="213" y="308" width="175" height="50"/>
+                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ndR-aX-M9f">
+                    <rect key="frame" x="213" y="309" width="175" height="50"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="HgO-P0-k9b"/>
                         <constraint firstAttribute="width" constant="175" id="sZ0-io-iJV"/>
@@ -61,8 +62,8 @@
                         <action selector="onBtnTestCommand:" destination="-1" eventType="touchUpInside" id="miu-04-u8V"/>
                     </connections>
                 </button>
-                <button opaque="NO" contentMode="scaleToFill" misplaced="YES" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sd9-Pz-AQ3">
-                    <rect key="frame" x="213" y="378" width="175" height="50"/>
+                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="sd9-Pz-AQ3">
+                    <rect key="frame" x="213" y="379" width="175" height="50"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="50" id="0Ep-nN-nFt"/>
                         <constraint firstAttribute="width" constant="175" id="edW-th-qBQ"/>
@@ -86,7 +87,7 @@
                 <constraint firstItem="sd9-Pz-AQ3" firstAttribute="centerX" secondItem="CWd-V1-lMz" secondAttribute="centerX" id="QfS-sD-Dt5"/>
                 <constraint firstItem="OP9-Ms-Ixx" firstAttribute="top" secondItem="DM0-YP-6v5" secondAttribute="bottom" constant="40" id="U4F-9v-V5M"/>
                 <constraint firstItem="ndR-aX-M9f" firstAttribute="top" secondItem="CWd-V1-lMz" secondAttribute="bottom" constant="20" id="f2S-i0-cBM"/>
-                <constraint firstItem="DM0-YP-6v5" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="hcW-sW-qVX"/>
+                <constraint firstItem="DM0-YP-6v5" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.8" id="hcW-sW-qVX"/>
                 <constraint firstItem="sd9-Pz-AQ3" firstAttribute="top" secondItem="ndR-aX-M9f" secondAttribute="bottom" constant="20" id="huH-j6-UiA"/>
                 <constraint firstItem="CWd-V1-lMz" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="uka-43-B3F"/>
                 <constraint firstItem="OP9-Ms-Ixx" firstAttribute="top" secondItem="DM0-YP-6v5" secondAttribute="bottom" constant="30" id="vOj-xt-J3v"/>

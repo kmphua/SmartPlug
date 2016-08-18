@@ -31,6 +31,7 @@
     
     // Do any additional setup after loading the view from its nib.
     self.lblMessage.text = NSLocalizedString(@"msg_recordIr", nil);
+    self.lblMessage.numberOfLines = 0;
     [self.btnRecordAgain setTitle:NSLocalizedString(@"btn_recordAgain", nil) forState:UIControlStateNormal];
     [self.btnTestCommand setTitle:NSLocalizedString(@"btn_testCommand", nil) forState:UIControlStateNormal];
     [self.btnAddNow setTitle:NSLocalizedString(@"btn_addNow", nil) forState:UIControlStateNormal];

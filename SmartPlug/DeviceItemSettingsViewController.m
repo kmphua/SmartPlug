@@ -24,7 +24,7 @@
 #define ROW_CONFIG_MSG              8
 #define ROW_UPDATE_FIRMWARE         9
 
-@interface DeviceItemSettingsViewController ()<DeviceIconDelegate, UITextFieldDelegate>
+@interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
 {
     NSString *model;
     int buildnumber;
@@ -38,6 +38,7 @@
     int notify_on_timer_activated;
     BOOL customIcon;
     BOOL isSave;
+    BOOL isNameChanged;
 }
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
@@ -62,6 +63,7 @@
     notify_on_timer_activated = 0;
     customIcon = false;
     isSave = false;
+    isNameChanged = false;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
@@ -251,7 +253,7 @@
 
 - (CGFloat)tableView:(UITableView *)tableView heightForRowAtIndexPath:(NSIndexPath *)indexPath
 {
-    return 55;
+    return 60;
 }
 
 - (UIView *)tableView:(UITableView *)tableView viewForHeaderInSection:(NSInteger)section
@@ -320,16 +322,20 @@
                 _txtName.backgroundColor = [UIColor whiteColor];
                 _txtName.borderStyle = UITextBorderStyleNone;
                 _txtName.textAlignment = NSTextAlignmentRight;
-                _txtName.delegate = self;
                 _txtName.placeholder = @"TV on/off";
                 _txtName.font = [UIFont systemFontOfSize:18];
                 _txtName.adjustsFontSizeToFitWidth = YES;
+                [_txtName addTarget:self
+                              action:@selector(textFieldDidChange:)
+                    forControlEvents:UIControlEventEditingChanged];
             }
             
-            if (_device.givenName && _device.givenName.length > 0) {
-                _txtName.text = _device.givenName;
-            } else {
-                _txtName.text = _device.name;
+            if (!isNameChanged) {
+                if (_device.givenName && _device.givenName.length > 0) {
+                    _txtName.text = _device.givenName;
+                } else {
+                    _txtName.text = _device.name;
+                }
             }
             cell.accessoryView = _txtName;
             break;
@@ -439,6 +445,14 @@
 }
 
 //==================================================================
+#pragma UITextFieldDelegate
+//==================================================================
+- (void)textFieldDidChange:(id)sender
+{
+    isNameChanged = true;
+}
+
+//==================================================================
 #pragma DeviceIconDelegate
 //==================================================================
 - (void)selectedIcon:(NSString *)icon
@@ -510,7 +524,7 @@
             if (result == 0) {
                 hardware = [jsonObject objectForKey:@"hardware"];
                 firmware = [jsonObject objectForKey:@"firmware"];
-                [self.tableView reloadData];                
+                [self.tableView reloadData];
             } else {
                 // Failure
             }

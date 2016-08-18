@@ -30,6 +30,7 @@
     int _irSnooze;
     int _serviceId;
     BOOL _deviceStatusChangedFlag;
+    BOOL _usbUnpluggedFlag;
 }
 
 @property (weak, nonatomic) IBOutlet UIView *bgView;
@@ -90,6 +91,7 @@
     _relaySnooze = 0;
     _ledSnooze = 0;
     _deviceStatusChangedFlag = false;
+    _usbUnpluggedFlag = false;
     
     // See current device info
     g_DeviceName = _device.name;
@@ -154,6 +156,7 @@
     [_imgOutletWarning setHidden:YES];
     [_imgCoWarning setHidden:YES];
     [_imgLeftWarning setHidden:YES];
+    [_imgRightWarning setHidden:YES];
     
     // Register notifications
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(udpUpdateUI:) name:NOTIFICATION_STATUS_CHANGED_UPDATE_UI object:nil];
@@ -388,53 +391,6 @@
         [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big"]];
     }
     
-    // Hall effect sensor
-    if (device.hall_sensor == 0) {
-        [_imgOutletWarning setHidden:YES];
-        [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn"]];
-        [_imgOutletWarning stopAnimating];
-        [_lblWarning setText:@""];
-        [_imgLeftWarning setHidden:YES];
-        [_imgRightWarning setHidden:YES];
-    } else if (device.hall_sensor == 1) {
-        [_imgOutletWarning setHidden:NO];
-        [_lblWarning setHidden:NO];
-        [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
-        [_imgOutletWarning startAnimating];
-        [_imgLeftWarning setHidden:NO];
-        [_imgRightWarning setHidden:NO];
-        [_lblWarning setText:NSLocalizedString(@"msg_ha_warning", nil)];
-    }
-    
-    // CO sensor
-    if (device.co_sensor == 0) {
-        [_imgCoWarning setHidden:YES];
-        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
-        [_imgCoWarning stopAnimating];
-        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
-        [_imgLeftWarning setHidden:YES];
-        [_imgRightWarning setHidden:YES];
-        [_lblWarning setHidden:YES];
-    } else if (device.co_sensor == 1) {
-        [_imgCoWarning setHidden:NO];
-        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
-        [_imgCoWarning startAnimating];
-        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
-        [_imgLeftWarning setHidden:NO];
-        [_imgRightWarning setHidden:NO];
-        [_lblWarning setText:NSLocalizedString(@"msg_co_warning", nil)];
-        [_lblWarning setHidden:NO];
-    } else if (device.co_sensor == 3) {
-        // Show toast
-        [self.view makeToast:NSLocalizedString(@"USB_not_plugged_in", nil)
-                    duration:3.0
-                    position:CSToastPositionBottom];
-        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big_off"]];
-        [_imgLeftWarning setHidden:NO];
-        [_imgRightWarning setHidden:NO];
-        [_lblWarning setHidden:YES];
-    }
-    
     // Night light
     if (device.nightlight == 0) {
         _nightlight = 0;
@@ -482,6 +438,58 @@
     
     [_viewNightLight setUserInteractionEnabled:YES];
     [_viewOutlet setUserInteractionEnabled:YES];
+    
+    // CO sensor
+    if (device.co_sensor == 0) {
+        _usbUnpluggedFlag = false;
+        [_imgCoWarning setHidden:YES];
+        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn"]];
+        [_imgCoWarning stopAnimating];
+        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
+        [_imgLeftWarning setHidden:YES];
+        [_imgRightWarning setHidden:YES];
+        [_lblWarning setHidden:YES];
+    } else if (device.co_sensor == 1) {
+        _usbUnpluggedFlag = false;
+        [_imgCoWarning setHidden:NO];
+        [_imgCoWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
+        [_imgCoWarning startAnimating];
+        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big"]];
+        [_imgLeftWarning setHidden:NO];
+        [_imgRightWarning setHidden:NO];
+        [_lblWarning setText:NSLocalizedString(@"msg_co_warning", nil)];
+        [_lblWarning setHidden:NO];
+    } else if (device.co_sensor == 3) {
+        // Show toast
+        if (!_usbUnpluggedFlag) {
+            _usbUnpluggedFlag = true;
+            [self.view makeToast:NSLocalizedString(@"USB_not_plugged_in", nil)
+                        duration:3.0
+                        position:CSToastPositionBottom];
+        }
+        [_imgCoIcon setImage:[UIImage imageNamed:@"svc_3_big_off"]];
+        [_imgLeftWarning setHidden:YES];
+        [_imgRightWarning setHidden:YES];
+        [_lblWarning setHidden:YES];
+    }
+    
+    // Hall effect sensor
+    if (device.hall_sensor == 0) {
+        [_imgOutletWarning setHidden:YES];
+        [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn"]];
+        [_imgOutletWarning stopAnimating];
+        [_lblWarning setText:@""];
+        [_imgLeftWarning setHidden:YES];
+        [_imgRightWarning setHidden:YES];
+    } else if (device.hall_sensor == 1) {
+        [_imgOutletWarning setHidden:NO];
+        [_lblWarning setHidden:NO];
+        [_imgOutletWarning setImage:[UIImage imageNamed:@"marker_warn2"]];
+        [_imgOutletWarning startAnimating];
+        [_imgLeftWarning setHidden:NO];
+        [_imgRightWarning setHidden:NO];
+        [_lblWarning setText:NSLocalizedString(@"msg_ha_warning", nil)];
+    }
 }
 
 - (void)sendService:(int)serviceId
@@ -507,10 +515,10 @@
 
     _serviceId = serviceId;
     
-    [_imgLeftWarning setHidden:NO];
     [_lblWarning setText:NSLocalizedString(@"please_wait_done", nil)];
     [_lblWarning setHidden:NO];
-    [_imgRightWarning setHidden:NO];
+    [_imgLeftWarning setHidden:YES];
+    [_imgRightWarning setHidden:YES];
 
     [_viewOutlet setUserInteractionEnabled:NO];
     [_viewNightLight setUserInteractionEnabled:NO];

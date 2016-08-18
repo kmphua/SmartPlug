@@ -294,8 +294,14 @@
         [self.navigationController popViewControllerAnimated:YES];
         [self.delegate didUpdateAlarms];
     });
+    
+    [self.view makeToast:NSLocalizedString(@"please_wait", nil)
+                duration:3.0
+                position:CSToastPositionBottom];
 
+    /*
     [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVICE_NOT_REACHED object:self userInfo:userInfo];
+     */
 }
 
 - (IBAction)onBtnInitIR:(id)sender {

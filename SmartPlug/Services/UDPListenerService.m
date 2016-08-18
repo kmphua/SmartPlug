@@ -257,10 +257,10 @@ static UDPListenerService *instance;
         
     } else {
         
-        if (msgid == previous_msgid) {
-            NSLog(@"UDPListenerService: ignoring duplicate msg#%d", msgid);
-            return; // ignore repeated command
-        }
+        //if (msgid == previous_msgid) {
+        //    NSLog(@"UDPListenerService: ignoring duplicate msg#%d", msgid);
+        //    return; // ignore repeated command
+        //}
         
         NSLog(@"UDPListenerService: Received header=%d msg#%d seq#%d size=%d code=%d", header, msgid, seq, size, code);
         
