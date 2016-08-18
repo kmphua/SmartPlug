@@ -28,6 +28,7 @@
 
 @property (strong, nonatomic) MBProgressHUD *hud;
 @property (nonatomic) BOOL deviceStatusChangedFlag;
+@property (nonatomic) BOOL isUpdatingStatus;
 
 @end
 
@@ -42,6 +43,7 @@
     self.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     _deviceStatusChangedFlag = false;
+    _isUpdatingStatus = false;
     
     WebService *ws = [WebService new];
     ws.delegate = self;
@@ -225,6 +227,7 @@
 - (void)statusChangedUpdateUI:(NSNotification *)notification {
     NSLog(@"DEVICE STATUS CHANGED UI");
     _deviceStatusChangedFlag = true;
+    _isUpdatingStatus = false;
     [self getData];
 }
 
@@ -493,22 +496,36 @@
 
 - (void)onClickBtnPower:(id)sender
 {
+    if (_isUpdatingStatus) {
+        NSLog(@"Updating status..");
+        return;
+    }
+    
+    [self showWaitingIndicator];
+    
     MainViewCell *clickedCell = (MainViewCell*)[[sender superview] superview];
     NSIndexPath *indexPathCell = [self.tableView indexPathForCell:clickedCell];
 
     JSmartPlug *plug = [self.plugs objectAtIndex:indexPathCell.row];
     int action;
     int serviceId = RELAY_SERVICE;
-    int relay = plug.relay;
     
-    if (relay == 0) {
+    if (plug.relay == 0) {
         action = 0x01;
+        plug.relay = 1;
     } else {
         action = 0x00;
+        plug.relay = 0;
     }
+    
+    // Refresh relay status immediately
+    [[SQLHelper getInstance] updatePlugServices:plug];
+    self.plugs = [[SQLHelper getInstance] getPlugData];
+    [self.tableView reloadData];
     
     if ([[UDPCommunication getInstance] setDeviceStatus:plug.sid serviceId:serviceId action:action]) {
         _deviceStatusChangedFlag = false;
+        _isUpdatingStatus = true;
     }
     
     if (_deviceStatusChangedFlag) {
