@@ -33,7 +33,7 @@
 "title_resetPassword" = "Reset Password";
 "title_initializeDevices" = "Initialize Devices";
 "msg_enterSSID_password" = "Please enter your current SSID and password. ";
-"msg_pleaseWait." = "Please wait.";
+"msg_pleaseWait" = "Please wait";
 "msg_enterNewUserName" = "Enter User Name";
 "btn_submit" = "Submit";
 "title_accountCreated" = "Account Created";

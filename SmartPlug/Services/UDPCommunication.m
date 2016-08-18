@@ -279,6 +279,27 @@ static UDPCommunication *instance;
     return YES;
 }
 
+- (BOOL)queryDevicesByIp:(NSString *)ip command:(short)command
+{
+    if (!udpSocket) {
+        udpSocket = [[GCDAsyncUdpSocket alloc] initWithDelegate:self delegateQueue:dispatch_get_main_queue()];
+    }
+    
+    Command *cmd = [self generate_header:ip command:command];
+    
+    memset(rMsg, 0, sizeof(rMsg));
+    for(int i=0; i<14;i++){
+        rMsg[i] = hMsg[i];
+    }
+    
+    NSData *data = [NSData dataWithBytes:rMsg length:sizeof(rMsg)];
+    
+    [self addCommand:cmd];
+    [udpSocket sendData:data toHost:ip port:UDP_SERVER_PORT withTimeout:-1 tag:0];
+    NSLog(@"UDP PACKET SENT");
+    return YES;
+}
+
 - (BOOL)sendIRMode:(NSString *)macId
 {
     if (!udpSocket) {

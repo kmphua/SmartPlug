@@ -229,13 +229,26 @@ static UDPListenerService *instance;
             for (int i = 18; i < 24; i++) {
                 mac += lMsg[i] & 0xff;
             }
+            
+            NSMutableString *macStr = [NSMutableString new];
+            for (int i = 18; i < 24; i++) {
+                [macStr appendString:[NSString stringWithFormat:@"%02x", lMsg[i]]];
+            }
+            _js.sid = macStr;
+            NSLog(@"MAC: %@", macStr);
+            [[SQLHelper getInstance] updatePlugID:macStr ip:ipAddress];
+            
             code = 1;
             NSLog(@"DEVICE IS ALIVE");
             
+            if (!userInfo) {
+                userInfo = [NSMutableDictionary new];
+            }
             [userInfo setObject:ipAddress forKey:@"ip"];
+            [userInfo setObject:macStr forKey:@"macId"];
             [userInfo setObject:[NSString stringWithFormat:@"JSPlug%d", mac] forKey:@"name"];
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_OTA_FINISHED
+            [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_BROADCASTED_PRESENCE
                                                                 object:self
                                                               userInfo:userInfo];
         } else {
@@ -403,6 +416,11 @@ static UDPListenerService *instance;
 
 - (void)process_broadcast_info:(NSString *)ipAddress {
     NSString *sid = [[SQLHelper getInstance] getPlugMacFromIP:ipAddress];
+    if (!sid) {
+        [[UDPCommunication getInstance] queryDevicesByIp:ipAddress command:UDP_CMD_DEVICE_QUERY];
+        sid = @"";
+    }
+    
     NSDictionary *userInfo = [NSDictionary dictionaryWithObject:sid forKey:@"macId"];
     
     // TODO

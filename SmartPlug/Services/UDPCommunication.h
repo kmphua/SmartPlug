@@ -12,6 +12,7 @@
 @interface Command : NSObject
 
 @property (nonatomic, strong) NSString *macID;
+@property (nonatomic, strong) NSString *ip;
 @property (nonatomic, assign) short command;
 @property (nonatomic, assign) uint32_t msgID;
 
@@ -37,6 +38,7 @@
 
 - (BOOL)delayTimer:(NSString *)macId snooze:(int)snooze protocol:(int)protocol serviceId:(int)serviceId send:(int)send;
 - (BOOL)queryDevices:(NSString *)macId command:(short)command;
+- (BOOL)queryDevicesByIp:(NSString *)ip command:(short)command;
 - (BOOL)sendIRMode:(NSString *)macId;
 - (BOOL)cancelIRMode:(NSString *)macId;
 - (BOOL)sendOTACommand:(NSString *)macId;

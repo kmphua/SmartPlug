@@ -214,7 +214,7 @@
 - (void)showWaitingIndicator:(NSString *)labelText {
     [self.view makeToast:labelText
                 duration:1.0
-                position:CSToastPositionBottom];
+                position:CSToastPositionCenter];
 }
 
 - (void)dismissWaitingIndicator {

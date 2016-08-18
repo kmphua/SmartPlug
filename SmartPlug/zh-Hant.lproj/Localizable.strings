@@ -33,7 +33,7 @@
 "title_resetPassword" = "重設密碼";
 "title_initializeDevices" = "裝置初始化";
 "msg_enterSSID_password" = "請輸入您現在的SSID與密碼!";
-"msg_pleaseWait." = "請稍後!";
+"msg_pleaseWait" = "請稍後";
 "msg_enterNewUserName" = "請輸入新帳號";
 "btn_submit" = "提出";
 "title_accountCreated" = "帳號已建立";

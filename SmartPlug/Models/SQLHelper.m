@@ -549,7 +549,7 @@ static SQLHelper *instance;
     FMResultSet *results = [db executeQuery:@"SELECT * FROM smartplugs WHERE sid = ?", js.sid];
     if (!results || !results.next) {
         // Plug doesn't exist, can insert
-        result = [db executeUpdate:@"INSERT INTO smartplugs (name, given_name, icon, sid, model, build_no, prot_ver, hw_ver, fw_ver, fw_date, flag, relay, hsensor, csensor, nightlight, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        result = [db executeUpdate:@"INSERT INTO smartplugs (name, given_name, icon, sid, model, build_no, prot_ver, hw_ver, fw_ver, fw_date, flag, relay, hsensor, csensor, nightlight, active) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 js.name, js.givenName, js.icon, js.sid, js.model, [NSNumber numberWithInt:js.buildno], [NSNumber numberWithInt:js.prot_ver], js.hw_ver, js.fw_ver, [NSNumber numberWithInt:js.fw_date], [NSNumber numberWithInt:js.flag], [NSNumber numberWithInt:js.relay], [NSNumber numberWithInt:js.hall_sensor], [NSNumber numberWithInt:js.co_sensor], [NSNumber numberWithInt:js.nightlight], [NSNumber numberWithInt:active]];
     } else {
         // Plug exists, update

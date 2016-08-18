@@ -25,7 +25,6 @@
 @property (weak, nonatomic) IBOutlet UIImageView *imgWait;
 
 @property (weak, nonatomic) IBOutlet UITableView *tableView;
-@property (weak, nonatomic) IBOutlet NSLayoutConstraint *tableViewHeightConstraint;
 
 @property (nonatomic, strong) FirstTimeConfig *config;
 @property (nonatomic, strong) Reachability *wifiReachability;
@@ -119,8 +118,6 @@
     self.plugs = [NSMutableArray new];
     
     [self.tableView reloadData];
-    [self adjustHeightOfTableview];
-    
     [self.imgWait startAnimating];
 }
 
@@ -149,26 +146,6 @@
         inputAlertVC.delegate = self;
         [self presentViewController:inputAlertVC animated:YES completion:nil];
     }
-}
-
-- (void)adjustHeightOfTableview
-{
-    CGFloat height = self.tableView.contentSize.height;
-    CGFloat maxHeight = 0.85 * self.tableView.superview.frame.size.height;
-    
-    // if the height of the content is greater than the maxHeight of
-    // total space on the screen, limit the height to the size of the
-    // superview.
-    
-    if (height > maxHeight)
-        height = maxHeight;
-    
-    // now set the height constraint accordingly
-    
-    [UIView animateWithDuration:0.25 animations:^{
-        self.tableViewHeightConstraint.constant = height;
-        [self.view setNeedsUpdateConstraints];
-    }];
 }
 
 /*
@@ -225,13 +202,12 @@
     _name = [userInfo objectForKey:@"name"];
     _ip = [userInfo objectForKey:@"ip"];
     NSLog(@"New Device Received %@, IP %@", _name, _ip);
-    [self updateListNew:_name ip:_ip];
+    [self updateListNew:_name ip:_ip mac:_devId];
 }
 
 - (void)handleDeviceRemoved:(NSNotification*)notification {
     self.plugs = [[mDNSService getInstance] plugs];
     [self.tableView reloadData];
-    [self adjustHeightOfTableview];
 }
 
 - (void)requestDeviceInfo:(NSNotification *)notification {
@@ -239,13 +215,14 @@
     if (userInfo) {
         _name = [userInfo objectForKey:@"name"];
         _ip = [userInfo objectForKey:@"ip"];
-        NSLog(@"New Device Received %@, IP %@", _name, _ip);
-        [self updateListNew:_name ip:_ip];
-        [[UDPCommunication getInstance] queryDevices:_ip command:UDP_CMD_DEVICE_QUERY];
+        _devId = [userInfo objectForKey:@"macId"];
+        NSLog(@"New Device Received %@, IP %@, MAC %@", _name, _ip, _devId);
+        [self updateListNew:_name ip:_ip mac:_devId];
+        [[UDPCommunication getInstance] queryDevices:_devId command:UDP_CMD_DEVICE_QUERY];
     }
 }
 
-- (void)updateListNew:(NSString *)name ip:(NSString *)ip
+- (void)updateListNew:(NSString *)name ip:(NSString *)ip mac:(NSString *)mac
 {
     // Check if the name is not already in the database
     BOOL plugExist = false;
@@ -264,6 +241,7 @@
                         JSmartPlug *jSmartPlug = [JSmartPlug new];
                         jSmartPlug.name = name;
                         jSmartPlug.ip = ip;
+                        jSmartPlug.sid = mac;
                         NSLog(@"Plug Added, Name: %@", jSmartPlug.name);
                         [_plugs addObject:jSmartPlug];
                         [self.tableView reloadData];
@@ -273,8 +251,10 @@
                 JSmartPlug *jSmartPlug = [JSmartPlug new];
                 jSmartPlug.name = name;
                 jSmartPlug.ip = ip;
+                jSmartPlug.sid = mac;
                 NSLog(@"Plug Added, Name: %@", jSmartPlug.name);
                 [_plugs addObject:jSmartPlug];
+                [self.tableView reloadData];
             }
             
             if (!plugExist) {
@@ -600,17 +580,15 @@
     JSmartPlug *plug = [self.plugs objectAtIndex:[indexPath row]];
     _plug = plug;
 
-    //[[SQLHelper getInstance] insertPlug:plug active:1];
+    [[SQLHelper getInstance] insertPlug:plug active:1];
 
     // Set temp device name
     g_DeviceName = plug.name;
     
-    /*
     // Activate device
     WebService *ws = [WebService new];
     ws.delegate = self;
     [ws actDev:g_UserToken lang:[Global getCurrentLang] devId:plug.sid title:g_DeviceName model:plug.model];
-    */
     
     [[UDPCommunication getInstance] queryDevices:plug.sid command:UDP_CMD_DEVICE_QUERY];
      

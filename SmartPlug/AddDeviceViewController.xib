@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15E65" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -11,7 +11,6 @@
                 <outlet property="imgWait" destination="8Jj-LV-kxk" id="aq8-dV-XfY"/>
                 <outlet property="lblTitle" destination="qvZ-fH-Gxv" id="Eak-ou-OJf"/>
                 <outlet property="tableView" destination="Dzi-s1-wXy" id="OI4-mC-1Td"/>
-                <outlet property="tableViewHeightConstraint" destination="bsI-lc-zD5" id="rp6-0t-hOz"/>
                 <outlet property="titleBgView" destination="dh3-d0-b9x" id="fwd-78-aLg"/>
                 <outlet property="tvDescription" destination="mOy-lr-zB7" id="aJd-j1-Y7Y"/>
                 <outlet property="view" destination="i5M-Pr-FkT" id="sfx-zR-JGt"/>
@@ -83,11 +82,8 @@
                     </constraints>
                 </imageView>
                 <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Dzi-s1-wXy">
-                    <rect key="frame" x="20" y="390" width="560" height="150"/>
+                    <rect key="frame" x="20" y="380" width="560" height="200"/>
                     <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="150" id="bsI-lc-zD5"/>
-                    </constraints>
                     <connections>
                         <outlet property="dataSource" destination="-1" id="4HM-rf-vjS"/>
                         <outlet property="delegate" destination="-1" id="TfH-o9-5HZ"/>
@@ -97,10 +93,12 @@
             <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
             <constraints>
                 <constraint firstItem="dh3-d0-b9x" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="90" id="7gi-bh-hHL"/>
+                <constraint firstItem="Dzi-s1-wXy" firstAttribute="top" secondItem="Z3l-Do-Uje" secondAttribute="bottom" constant="20" id="Dqq-lx-2gM"/>
                 <constraint firstItem="Dzi-s1-wXy" firstAttribute="top" secondItem="Z3l-Do-Uje" secondAttribute="bottom" constant="30" id="EzX-CM-rvo"/>
                 <constraint firstAttribute="bottom" secondItem="Dzi-s1-wXy" secondAttribute="bottom" constant="20" id="Nzx-pa-OvL"/>
                 <constraint firstAttribute="trailing" secondItem="8Jj-LV-kxk" secondAttribute="trailing" constant="-18" id="PXu-Qd-HaO"/>
                 <constraint firstItem="8Jj-LV-kxk" firstAttribute="leading" secondItem="Z3l-Do-Uje" secondAttribute="trailing" constant="20" id="TXf-OH-ABA"/>
+                <constraint firstAttribute="bottom" secondItem="Dzi-s1-wXy" secondAttribute="bottom" constant="20" id="YQ5-mG-ZPd"/>
                 <constraint firstAttribute="trailing" secondItem="Dzi-s1-wXy" secondAttribute="trailing" constant="20" id="aXZ-ry-2fO"/>
                 <constraint firstAttribute="bottom" secondItem="dh3-d0-b9x" secondAttribute="bottom" constant="330" id="b2I-0z-Jhy"/>
                 <constraint firstItem="dh3-d0-b9x" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="-64" id="bYq-0K-j9b"/>
@@ -121,6 +119,7 @@
                     <exclude reference="bYq-0K-j9b"/>
                     <exclude reference="byg-38-ozF"/>
                     <exclude reference="w8z-Fc-mXb"/>
+                    <exclude reference="EzX-CM-rvo"/>
                     <exclude reference="Nzx-pa-OvL"/>
                     <exclude reference="PXu-Qd-HaO"/>
                 </mask>
