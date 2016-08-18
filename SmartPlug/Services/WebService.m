@@ -482,13 +482,13 @@
     }
     
     if (alarms.count > 0) {
-        //[[SQLHelper getInstance] removeAlarms:_devId];
+        [[SQLHelper getInstance] removeAlarms:_devId];
         for(int i = 0; i < alarms.count; i++){
             Alarm *a = [alarms objectAtIndex:i];
             if ([[SQLHelper getInstance] insertAlarm:a]) {
-                //NSLog(@"ALARM INSERTED");
+                NSLog(@"ALARM INSERTED");
             } else {
-                //NSLog(@"ALARM INSERTION FAILURE");
+                NSLog(@"ALARM INSERTION FAILURE");
             }
         }
     }
@@ -517,7 +517,7 @@
         
         if ([resultName isEqualToString:WS_ALARM_GET]) {
             if (data) {
-            [self handleUpdateAlarm:data];
+                [self handleUpdateAlarm:data];
             }
         }
 

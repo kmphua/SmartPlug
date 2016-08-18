@@ -444,7 +444,7 @@ static UDPCommunication *instance;
     if(alarms && alarms.count > 0) {
         for (Alarm *alarm in alarms) {
             int serviceId = alarm.service_id;
-            if(serviceId == RELAY_SERVICE || serviceId == NIGHTLED_SERVICE) {
+            if(serviceId == RELAY_SERVICE || serviceId == NIGHTLED_SERVICE || serviceId == IR_SERVICE) {
                 timers[i++] = (uint8_t) ((serviceId >> 24) & 0xff);
                 timers[i++] = (uint8_t) ((serviceId >> 16) & 0xff);
                 timers[i++] = (uint8_t) ((serviceId >> 8) & 0xff);

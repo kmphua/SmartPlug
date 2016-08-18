@@ -114,8 +114,10 @@
             init_minute = a.initial_minute;
             end_hour = a.end_hour;
             end_minute = a.end_minute;
-            init_ir_code = a.init_ir;
-            end_ir_code = a.end_ir;
+            if (a.init_ir > 0)
+                init_ir_code = a.init_ir;
+            if (a.end_ir > 0)
+                end_ir_code = a.end_ir;
             dow = a.dow;
             [self setDOW];
             [self setTime];
@@ -235,6 +237,14 @@
 
 
 - (void)onRightBarButton:(id)sender {
+    if (self.serviceId == IR_SERVICE) {
+        // Check that both IR buttons are selected
+        if (init_ir_code == -1 && end_ir_code == -1) {
+            NSLog(@"Init and End IR Codes not selected!!!");
+            return;
+        }
+    }
+    
     [self showWaitingIndicator:NSLocalizedString(@"processing_command", nil)];
     
     self.navigationItem.rightBarButtonItem.enabled = NO;
@@ -245,6 +255,8 @@
     a.service_id = _serviceId;
     a.alarm_id = _alarmId;
     a.dow = dow;
+    a.init_ir = init_ir_code;
+    a.end_ir = end_ir_code;
     
     NSCalendar *calendar = [NSCalendar currentCalendar];
     NSDateComponents *components = [calendar components:(NSCalendarUnitHour | NSCalendarUnitMinute) fromDate:_pickerFromTime.date];
@@ -362,12 +374,13 @@
     NSArray *irGroups = [[SQLHelper getInstance] getIRGroupByName:group devId:g_DeviceMac];
     if (irGroups && irGroups.count > 0) {
         for (IrGroup *group in irGroups) {
-            groupId = group.group_id;
+            groupId = group.sid;
             NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:groupId devId:g_DeviceMac];
             if (codes && codes.count > 0) {
                 for (IrCode *code in codes) {
                     if ([irName isEqualToString:code.name]) {
                         IRId = code.filename;
+                        break;
                     }
                 }
             }

@@ -330,7 +330,7 @@ static SQLHelper *instance;
 - (NSArray *)getIRGroupByName:(NSString *)groupName devId:(NSString *)devId
 {
     [db open];
-    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ? AND mac = ?", groupName];
+    FMResultSet *results = [db executeQuery:@"SELECT * FROM irgroups WHERE name = ? AND mac = ?", groupName, devId];
     NSMutableArray *irGroups = [NSMutableArray new];
     while ([results next]) {
         IrGroup * irGroup = [IrGroup new];

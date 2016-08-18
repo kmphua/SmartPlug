@@ -96,9 +96,9 @@
         NSString *groupName = group.name;
         [_irGroups addObject:group.name];
         NSMutableArray *codeList = [NSMutableArray new];
-        NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:group.group_id devId:g_DeviceMac];
+        NSArray *codes = [[SQLHelper getInstance] getIRCodesByGroup:group.sid devId:g_DeviceMac];
         for (IrCode *code in codes) {
-            [codeList addObject:[code copy]];
+            [codeList addObject:code];
         }
         [_irCodes setObject:codes forKey:groupName];
     }
@@ -145,6 +145,8 @@
     static NSString *CellIdentifier = @"TableViewCell";
     UITableViewCell *cell = [[UITableViewCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
     
+    NSLog(@"Section = %ld, Row = %ld", indexPath.section, indexPath.row-1);
+    
     NSString *groupName = [_irGroups objectAtIndex:indexPath.section];
     NSArray *codes = [_irCodes objectForKey:groupName];
     IrCode *code = [codes objectAtIndex:indexPath.row-1];
@@ -157,7 +159,7 @@
     if (self.delegate) {
         NSString *groupName = [_irGroups objectAtIndex:indexPath.section];
         NSArray *codes = [_irCodes objectForKey:groupName];
-        IrCode *code = [codes objectAtIndex:indexPath.row];
+        IrCode *code = [codes objectAtIndex:indexPath.row-1];
         [self.delegate onSelectIRCommand:_status group:groupName irName:code.name];
     }
     [self.navigationController popViewControllerAnimated:YES];
@@ -187,6 +189,7 @@
     }
     
     NSString *groupName = [_irGroups objectAtIndex:section];
+    cell.backgroundColor = [Global colorWithType:COLOR_TYPE_TITLE_BG_GREEN];
     cell.textLabel.text = groupName;
     return cell;
 }
