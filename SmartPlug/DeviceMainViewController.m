@@ -628,11 +628,25 @@
 }
 
 - (void)onTapOutletButton:(UITapGestureRecognizer *)recognizer {
-   [self sendService:RELAY_SERVICE];
+    [self sendService:RELAY_SERVICE];
+    if (_relay == 1) {
+        _relay = 0;
+        [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big_off"]];
+    } else if (_relay == 0) {
+        _relay = 1;
+        [_imgOutletIcon setImage:[UIImage imageNamed:@"svc_0_big"]];
+    }
 }
 
 - (void)onTapNightlightButton:(UITapGestureRecognizer *)recognizer {
     [self sendService:NIGHTLED_SERVICE];
+    if (_nightlight == 1) {
+        _nightlight = 0;
+        [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big_off"]];
+    } else if (_nightlight == 0) {
+        _nightlight = 1;
+        [_imgNightLightIcon setImage:[UIImage imageNamed:@"svc_1_big"]];
+    }
 }
 
 - (void)onBtnIRTimer:(UITapGestureRecognizer *)recognizer {
