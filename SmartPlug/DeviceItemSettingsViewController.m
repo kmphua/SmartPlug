@@ -422,7 +422,7 @@
         // Update firmare
         if (g_DeviceIp && g_DeviceIp.length>0) {
             if ([Global isNetworkReady]) {
-                [[UDPCommunication getInstance] sendOTACommand:g_DeviceIp];
+                [[UDPCommunication getInstance] sendOTACommand:g_DeviceMac];
                 
                 [self.view makeToast:NSLocalizedString(@"please_wait", nil)
                             duration:3.0
