@@ -228,3 +228,5 @@
 "DeviceAlreadyAdded" = "设备已存在";
 "DeviceAddressUpdated" = "设备IP位址已更新";
 "NameEmptyMsg" = "名称未填";
+
+"ota_error" = "韧体更新失敗败";

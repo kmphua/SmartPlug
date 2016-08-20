@@ -229,3 +229,5 @@
 "DeviceAlreadyAdded" = "設備已存在";
 "DeviceAddressUpdated" = "設備IP位址已更新";
 "NameEmptyMsg" = "名稱未填";
+
+"ota_error" = "韌體更新失敗";

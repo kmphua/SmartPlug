@@ -24,6 +24,8 @@
 #define ROW_CONFIG_MSG              8
 #define ROW_UPDATE_FIRMWARE         9
 
+#define OTA_TIMEOUT                 30
+
 @interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
 {
     NSString *model;
@@ -231,6 +233,14 @@
     }
 }
 
+- (void)otaTimeout:(id)sender {
+    [self dismissWaitingIndicator];
+    
+    [self.view makeToast:NSLocalizedString(@"ota_error", nil)
+                duration:3.0
+                position:CSToastPositionCenter];
+}
+
 //==================================================================
 #pragma mark - Table view delegate
 //==================================================================
@@ -423,10 +433,14 @@
         if (g_DeviceIp && g_DeviceIp.length>0) {
             if ([Global isNetworkReady]) {
                 [[UDPCommunication getInstance] sendOTACommand:g_DeviceMac];
+                [self showWaitingIndicator];
                 
-                [self.view makeToast:NSLocalizedString(@"please_wait", nil)
-                            duration:3.0
-                            position:CSToastPositionBottom];
+                // Start timeout timer
+                [NSTimer scheduledTimerWithTimeInterval:OTA_TIMEOUT
+                                                 target:self
+                                               selector:@selector(otaTimeout:)
+                                               userInfo:nil
+                                                repeats:NO];
             } else {
                 [self.view makeToast:NSLocalizedString(@"no_udp_Connection", nil)
                             duration:3.0

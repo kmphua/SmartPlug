@@ -230,3 +230,5 @@
 "DeviceAlreadyAdded" = "Device already added";
 "DeviceAddressUpdated" = "Device IP address updated";
 "NameEmptyMsg" = "Name field must not be empty";
+
+"ota_error" = "Firmware update failed";
