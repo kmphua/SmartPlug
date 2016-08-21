@@ -24,7 +24,7 @@
 #define ROW_CONFIG_MSG              8
 #define ROW_UPDATE_FIRMWARE         9
 
-#define OTA_TIMEOUT                 30
+#define OTA_TIMEOUT                 60
 
 @interface DeviceItemSettingsViewController ()<DeviceIconDelegate>
 {
