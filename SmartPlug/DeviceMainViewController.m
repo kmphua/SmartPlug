@@ -183,6 +183,8 @@
     
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastedPresence:) name:NOTIFICATION_BROADCASTED_PRESENCE object:nil];
     
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(devCtrlError:) name:NOTIFICATION_DEVCTRL_ERROR object:nil];
+    
     [self updateDeviceStatusFromServer];
     
     // Start status checker timer
@@ -490,6 +492,12 @@
         [_imgRightWarning setHidden:NO];
         [_lblWarning setText:NSLocalizedString(@"msg_ha_warning", nil)];
     }
+}
+
+- (void)devCtrlError:(NSNotification*)notification {
+    [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                duration:3.0
+                position:CSToastPositionBottom];
 }
 
 - (void)sendService:(int)serviceId
@@ -1040,6 +1048,10 @@
                 // Update device status
                 //[self updateDeviceStatusFromServer];
 
+            } else if (result == 3) {
+                [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                            duration:3.0
+                            position:CSToastPositionBottom];
             } else {
                 // Failure
                 NSLog(@"Set device status failed");

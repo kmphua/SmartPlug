@@ -370,6 +370,10 @@
             if (result == 0) {
                 // Success
                 NSLog(@"Set device status success");
+            } else if (result == 3) {
+                [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                            duration:3.0
+                            position:CSToastPositionBottom];
             } else {
                 // Failure
                 NSLog(@"Set device status failed");

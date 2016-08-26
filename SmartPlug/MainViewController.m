@@ -104,6 +104,8 @@
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(deleteSent:) name:NOTIFICATION_DELETE_SENT object:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(broadcastedPresence:) name:NOTIFICATION_BROADCASTED_PRESENCE object:nil];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(devCtrlError:) name:NOTIFICATION_DEVCTRL_ERROR object:nil];
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -292,6 +294,12 @@
         [[SQLHelper getInstance] updatePlugIP:serviceName ip:@""];
         NSLog(@"BROADCAST: Device removed - %@", serviceName);
     }
+}
+
+- (void)devCtrlError:(NSNotification*)notification {
+    [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                duration:3.0
+                position:CSToastPositionBottom];
 }
 
 - (void)syncDeviceIpAddresses {
@@ -774,6 +782,10 @@
                 
                 // Update device status
                 
+            } else if (result == 3) {
+                [self.view makeToast:NSLocalizedString(@"connection_error", nil)
+                            duration:3.0
+                            position:CSToastPositionBottom];
             } else {
                 // Failure
                 NSLog(@"Set device status failed");

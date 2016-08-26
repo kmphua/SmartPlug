@@ -605,6 +605,8 @@ static UDPListenerService *instance;
                 // Failure
                 NSString *message = (NSString *)[jsonObject objectForKey:@"m"];
                 NSLog(@"Devctrl failed: %@", message);
+                
+                [[NSNotificationCenter defaultCenter] postNotificationName:NOTIFICATION_DEVCTRL_ERROR object:nil userInfo:nil];
             }
         }
     }
