@@ -9,6 +9,7 @@ PODS:
   - GMGridView (1.1.1)
   - KLCPopup (1.0)
   - MBProgressHUD (0.9.2)
+  - Reachability (3.2)
   - SDWebImage+ExtensionSupport (3.7.1.2):
     - SDWebImage+ExtensionSupport/Core (= 3.7.1.2)
   - SDWebImage+ExtensionSupport/Core (3.7.1.2)
@@ -22,6 +23,7 @@ DEPENDENCIES:
   - GMGridView (~> 1.1)
   - KLCPopup (~> 1.0)
   - MBProgressHUD (~> 0.9)
+  - Reachability (~> 3.2)
   - SDWebImage+ExtensionSupport (~> 3.7)
   - SLExpandableTableView
   - Toast (~> 3.0)
@@ -33,10 +35,11 @@ SPEC CHECKSUMS:
   GMGridView: 0e91e818e8b4768cfa1132ff3fdff24391ee230c
   KLCPopup: 76c5a19227977f1e53d85236f9ef42257c168d98
   MBProgressHUD: 1569cf7ace17a8bac47aabfbb8580a49690386d1
+  Reachability: 33e18b67625424e47b6cde6d202dce689ad7af96
   SDWebImage+ExtensionSupport: 72b57456f83ccd7996b258912c749a8275309b74
   SLExpandableTableView: ff63a4bb4b71c6c3ae2b7cb1cde6a36c1645f23c
   Toast: 32c59229abfcf41850162b83bb9259dc84372473
 
-PODFILE CHECKSUM: 67c954e4c5e41a3f99287676cfd624f5b74345f8
+PODFILE CHECKSUM: 41ce9c3cf731453eac8402e1e4c88db69ed452e2
 
 COCOAPODS: 1.0.0

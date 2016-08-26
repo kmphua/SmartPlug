@@ -136,5 +136,6 @@ extern NSString *g_DeviceMac;
 + (int)process_long:(uint8_t)a b:(uint8_t)b c:(uint8_t)c d:(uint8_t)d;
 + (short)process_short:(uint8_t)a b:(uint8_t)b;
 + (UIImage *)squareCropImageToSideLength:(UIImage *)sourceImage sideLength:(CGFloat)sideLength;
++ (UIViewController *)visibleViewController:(UIViewController *)rootViewController;
 
 @end

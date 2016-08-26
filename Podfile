@@ -11,5 +11,6 @@ pod 'FMDB', '~> 2.6'
 pod 'GMGridView', '~> 1.1'
 pod 'MBProgressHUD', '~> 0.9'
 pod 'SLExpandableTableView'
+pod 'Reachability', '~> 3.2'
 
 end

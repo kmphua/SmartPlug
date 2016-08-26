@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="10117" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="10085"/>
@@ -32,10 +32,10 @@
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uAu-qT-Kda">
-                    <rect key="frame" x="31" y="80" width="352" height="447"/>
+                    <rect key="frame" x="20" y="80" width="374" height="513"/>
                     <subviews>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Schedule Action" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Uf-FM-WxN">
-                            <rect key="frame" x="0.0" y="0.0" width="352" height="75"/>
+                            <rect key="frame" x="0.0" y="0.0" width="374" height="75"/>
                             <color key="backgroundColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="75" id="YKn-lT-Bkx"/>
@@ -45,7 +45,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Time Each Day" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gtn-bm-pAI">
-                            <rect key="frame" x="5" y="164" width="342" height="19"/>
+                            <rect key="frame" x="5" y="164" width="364" height="19"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="1QN-LF-mCN"/>
                                 <constraint firstAttribute="height" constant="19" id="iKD-uN-6nk"/>
@@ -60,7 +60,7 @@
                             </variation>
                         </label>
                         <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Action" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="X0T-xr-UgL">
-                            <rect key="frame" x="5" y="348" width="342" height="19"/>
+                            <rect key="frame" x="5" y="414" width="364" height="19"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="sLf-Fc-j4T"/>
                                 <constraint firstAttribute="height" constant="19" id="zWr-sf-WJa"/>
@@ -75,7 +75,7 @@
                             </variation>
                         </label>
                         <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="zHk-jt-5sX">
-                            <rect key="frame" x="5" y="188" width="169" height="150"/>
+                            <rect key="frame" x="5" y="188" width="179.5" height="216"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="150" id="YZC-gc-zwq"/>
                                 <constraint firstAttribute="width" constant="120" id="Z8c-Xu-w0J"/>
@@ -85,12 +85,13 @@
                             </date>
                             <variation key="default">
                                 <mask key="constraints">
+                                    <exclude reference="YZC-gc-zwq"/>
                                     <exclude reference="Z8c-Xu-w0J"/>
                                 </mask>
                             </variation>
                         </datePicker>
                         <segmentedControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="top" segmentControlStyle="plain" translatesAutoresizingMaskIntoConstraints="NO" id="HxZ-ID-Rmr" customClass="MultiSelectSegmentedControl">
-                            <rect key="frame" x="10" y="114" width="332" height="31"/>
+                            <rect key="frame" x="10" y="114" width="354" height="31"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="30" id="Ito-9z-urx"/>
                             </constraints>
@@ -105,7 +106,7 @@
                             </segments>
                         </segmentedControl>
                         <datePicker contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" datePickerMode="time" minuteInterval="1" translatesAutoresizingMaskIntoConstraints="NO" id="nCo-qe-vMN">
-                            <rect key="frame" x="178" y="188" width="169" height="150"/>
+                            <rect key="frame" x="189.5" y="188" width="179.5" height="216"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="120" id="1m2-aa-g8g"/>
                             </constraints>
@@ -119,14 +120,14 @@
                             </variation>
                         </datePicker>
                         <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="lamp.png" translatesAutoresizingMaskIntoConstraints="NO" id="7Q1-2L-YiL">
-                            <rect key="frame" x="5" y="375" width="48" height="48"/>
+                            <rect key="frame" x="5" y="441" width="48" height="48"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="Csi-cA-4Hc"/>
                                 <constraint firstAttribute="width" constant="48" id="ngd-7X-w7b"/>
                             </constraints>
                         </imageView>
                         <label hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Desk Lamp" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Tj5-xZ-4Im">
-                            <rect key="frame" x="61" y="380.5" width="228" height="37.5"/>
+                            <rect key="frame" x="61" y="447.5" width="250" height="36.5"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="120" id="b5L-8e-40X"/>
                             </constraints>
@@ -140,14 +141,14 @@
                             </variation>
                         </label>
                         <imageView hidden="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="svc_0_small.png" translatesAutoresizingMaskIntoConstraints="NO" id="6Xq-Eg-AZo">
-                            <rect key="frame" x="294" y="375" width="48" height="48"/>
+                            <rect key="frame" x="316" y="441" width="48" height="48"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="48" id="Quq-Ac-SAv"/>
                                 <constraint firstAttribute="width" constant="48" id="Wqx-DY-UPR"/>
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Days of Week" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="P4K-32-rsf">
-                            <rect key="frame" x="5" y="90" width="342" height="19"/>
+                            <rect key="frame" x="5" y="90" width="364" height="19"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="19" id="P1H-Ht-MCt"/>
                                 <constraint firstAttribute="height" constant="30" id="bZy-Kn-8Od"/>
@@ -164,7 +165,7 @@
                             </variation>
                         </label>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="ndZ-k7-0ER">
-                            <rect key="frame" x="10" y="387" width="100" height="40"/>
+                            <rect key="frame" x="10" y="453" width="100" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="width" constant="100" id="iKP-Vb-nIZ"/>
                                 <constraint firstAttribute="height" constant="40" id="uPk-wb-a3W"/>
@@ -175,7 +176,7 @@
                             </connections>
                         </button>
                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="KB6-1p-rpa">
-                            <rect key="frame" x="242" y="387" width="100" height="40"/>
+                            <rect key="frame" x="264" y="453" width="100" height="40"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="40" id="JBb-dz-CGD"/>
                                 <constraint firstAttribute="width" constant="100" id="JLc-XH-mzO"/>
@@ -239,11 +240,14 @@
                 <constraint firstItem="uAu-qT-Kda" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" multiplier="0.85" id="AAa-nb-Xjl"/>
                 <constraint firstItem="uAu-qT-Kda" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="GVp-Jo-3gr"/>
                 <constraint firstItem="uAu-qT-Kda" firstAttribute="top" secondItem="i5M-Pr-FkT" secondAttribute="top" constant="80" id="Nan-k2-D3q"/>
+                <constraint firstAttribute="trailing" secondItem="uAu-qT-Kda" secondAttribute="trailing" constant="20" id="kY6-tl-Rgh"/>
+                <constraint firstItem="uAu-qT-Kda" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" constant="20" id="qbe-x2-7ci"/>
             </constraints>
             <simulatedScreenMetrics key="simulatedDestinationMetrics" type="retina55"/>
             <variation key="default">
                 <mask key="constraints">
                     <exclude reference="0dH-WT-36r"/>
+                    <exclude reference="AAa-nb-Xjl"/>
                 </mask>
             </variation>
         </view>

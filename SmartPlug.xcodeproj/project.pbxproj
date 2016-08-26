@@ -16,7 +16,6 @@
 		7508AA521C323C5800EB88D1 /* CC3xAPManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA4C1C323C5800EB88D1 /* CC3xAPManager.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		7508AA531C323C5800EB88D1 /* CC3xUtility.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA4F1C323C5800EB88D1 /* CC3xUtility.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		7508AA551C323C5800EB88D1 /* libFTC_RELEASE_ARM_64.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7508AA511C323C5800EB88D1 /* libFTC_RELEASE_ARM_64.a */; };
-		7508AA5A1C32525100EB88D1 /* Reachability.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA591C32525100EB88D1 /* Reachability.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		7508AA5F1C325FE300EB88D1 /* ScheduleMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA5D1C325FE300EB88D1 /* ScheduleMainViewController.m */; };
 		7508AA601C325FE300EB88D1 /* ScheduleMainViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 7508AA5E1C325FE300EB88D1 /* ScheduleMainViewController.xib */; };
 		7508AA641C325FFC00EB88D1 /* ScheduleActionViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7508AA621C325FFC00EB88D1 /* ScheduleActionViewController.m */; };
@@ -356,8 +355,6 @@
 		7508AA4F1C323C5800EB88D1 /* CC3xUtility.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CC3xUtility.m; sourceTree = "<group>"; };
 		7508AA511C323C5800EB88D1 /* libFTC_RELEASE_ARM_64.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libFTC_RELEASE_ARM_64.a; sourceTree = "<group>"; };
 		7508AA561C323CBE00EB88D1 /* FirstTimeConfig.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FirstTimeConfig.h; sourceTree = "<group>"; };
-		7508AA581C32525100EB88D1 /* Reachability.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Reachability.h; sourceTree = "<group>"; };
-		7508AA591C32525100EB88D1 /* Reachability.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Reachability.m; sourceTree = "<group>"; };
 		7508AA5C1C325FE300EB88D1 /* ScheduleMainViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ScheduleMainViewController.h; sourceTree = "<group>"; };
 		7508AA5D1C325FE300EB88D1 /* ScheduleMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ScheduleMainViewController.m; sourceTree = "<group>"; };
 		7508AA5E1C325FE300EB88D1 /* ScheduleMainViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ScheduleMainViewController.xib; sourceTree = "<group>"; };
@@ -770,15 +767,6 @@
 			path = SmartConfig;
 			sourceTree = "<group>";
 		};
-		7508AA571C32525100EB88D1 /* Reachability */ = {
-			isa = PBXGroup;
-			children = (
-				7508AA581C32525100EB88D1 /* Reachability.h */,
-				7508AA591C32525100EB88D1 /* Reachability.m */,
-			);
-			path = Reachability;
-			sourceTree = "<group>";
-		};
 		7508AA5B1C325FA500EB88D1 /* Schedule */ = {
 			isa = PBXGroup;
 			children = (
@@ -874,7 +862,6 @@
 		7512C15B1C1BB3B700489091 /* Misc */ = {
 			isa = PBXGroup;
 			children = (
-				7508AA571C32525100EB88D1 /* Reachability */,
 				7512C15C1C1BB3B700489091 /* Global.h */,
 				7512C15D1C1BB3B700489091 /* Global.m */,
 				7512C15E1C1BB3B700489091 /* ISO8601DateFormatter.h */,
@@ -1840,7 +1827,6 @@
 				7578519B1C8F335900983AE7 /* mDNSService.m in Sources */,
 				7508AA521C323C5800EB88D1 /* CC3xAPManager.m in Sources */,
 				7508AA731C326D2900EB88D1 /* ScheduleMainViewCell.m in Sources */,
-				7508AA5A1C32525100EB88D1 /* Reachability.m in Sources */,
 				75D9D1501C2BF5CE0032F96E /* ChangePasswordViewController.m in Sources */,
 				7512C1841C1BB3B700489091 /* CustomBadgeAppDelegate.m in Sources */,
 				7512C1221C1BA3B900489091 /* main.m in Sources */,

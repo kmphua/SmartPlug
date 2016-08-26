@@ -15,6 +15,7 @@
 #import "mDNSService.h"
 #import "HelpPageViewController.h"
 #import "AddDeviceViewController.h"
+#import "Reachability.h"
 
 @interface AppDelegate ()<WebServiceDelegate>
 
@@ -67,6 +68,35 @@ NSString *g_DeviceMac;
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
     BOOL isFirstUse = [ud boolForKey:UD_KEY_FIRST_USE];
     NSString *userToken = [ud stringForKey:UD_USER_TOKEN];
+    
+    // Start Reachability
+    Reachability* reach = [Reachability reachabilityWithHostname:@"www.google.com"];
+    
+    // Set the blocks
+    reach.reachableBlock = ^(Reachability*reach)
+    {
+        // keep in mind this is called on a background thread
+        // and if you are updating the UI it needs to happen
+        // on the main thread, like this:
+        
+        dispatch_async(dispatch_get_main_queue(), ^{
+            NSLog(@"REACHABLE!");
+        });
+    };
+    
+    reach.unreachableBlock = ^(Reachability*reach)
+    {
+        dispatch_async(dispatch_get_main_queue(), ^{
+            UIViewController *vc = [Global visibleViewController:[UIApplication sharedApplication].keyWindow.rootViewController];
+            
+            [vc.view makeToast:NSLocalizedString(@"connection_error", nil)
+                        duration:3.0
+                        position:CSToastPositionBottom];
+        });
+    };
+    
+    // Start the notifier, which will cause the reachability object to retain itself!
+    [reach startNotifier];
     
     // Start UDP listener service
     _udpListener = [UDPListenerService getInstance];
